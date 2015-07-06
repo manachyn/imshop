@@ -1,0 +1,53 @@
+/* Theme */
+.content {
+    /*overflow: auto;*/
+}
+
+/* Bootstrap */
+.popover.horizontal {
+    max-width: none
+}
+
+/* Custom */
+.drop-area {
+    background: #f4f4f4;
+    border: 1px dashed #ddd;
+    padding: 20px;
+    min-height: 200px;
+}
+
+.drop-area.active {
+
+}
+
+.drop-area.hover {
+
+}
+
+.drop-area-placeholder {
+    text-align: center;
+}
+
+.sortable-placeholder {
+    background: #E4E4E4;
+    border: 1px dashed #C2C2C2;
+    /*height: 42px;*/
+    margin-bottom: 20px;
+}
+
+.widget-area {
+    margin-bottom: 10px;
+}
+
+.box.box-solid.collapsed-box .box-body,
+.box.box-solid.collapsed-box .box-footer {
+    display: none;
+}
+
+.alert {
+    margin-top: 15px;
+}
+
+.box.box-solid.box-primary > .box-header a.btn-primary {
+    color: #FFF;
+}
