@@ -15,7 +15,7 @@ class Bootstrap implements BootstrapInterface
     public function bootstrap($app)
     {
         /** @var $module Module */
-        $module = $app->getModule('user');
+        $module = $app->getModule('users');
 
         if ($module) {
             $this->registerTranslations();
@@ -51,7 +51,7 @@ class Bootstrap implements BootstrapInterface
         Yii::$app->i18n->translations['modules/users/*'] = [
             'class' => 'yii\i18n\PhpMessageSource',
             'sourceLanguage' => 'en-US',
-            'basePath' => '@app/modules/users/messages',
+            'basePath' => '@app/modules/users/src/messages',
             'fileMap' => [
                 'modules/users/module' => 'module.php',
                 'modules/users/user' => 'user.php'

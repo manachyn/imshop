@@ -16,7 +16,7 @@ use yii\web\IdentityInterface;
  * @property integer $id ID
  * @property string $username Username
  * @property string $password_hash Password hash
- * @property string $password_reset_token
+ * @property string $password_reset_token Password reset token
  * @property string $email E-mail
  * @property string $auth_key Authentication key
  * @property string $access_token Access token
@@ -101,7 +101,7 @@ class User extends ActiveRecord implements IdentityInterface
         return [
             // Required
             [['username', 'email'], 'required'],
-            [['password', 'password2'], 'required', 'on' => ['create'], 'skipOnEmpty' => $module->passwordAutoGenerating],
+            [['password', 'password2'], 'required', 'on' => ['create'], 'skipOnEmpty' => $this->getModule()->passwordAutoGenerating],
 
             // Trim
             [['username', 'email', 'password', 'password2'], 'trim'],
@@ -292,14 +292,23 @@ class User extends ActiveRecord implements IdentityInterface
     public function attributeLabels()
     {
         return [
-            'username' => Module::t('users', 'Username'),
-            'email' => Module::t('users', 'E-mail'),
-            'role' => Module::t('users', 'Role'),
-            'status' => Module::t('users', 'Status'),
-            'created_at' => Module::t('users', 'Created at'),
-            'updated_at' => Module::t('users', 'Updated at'),
-            'password' => Module::t('users', 'Password'),
-            'password2' => Module::t('users', 'Repeated password')
+            'username' => Module::t('user', 'Username'),
+            'password_hash' => Module::t('user', 'Password hash'),
+            'password_reset_token' => Module::t('user', 'Password reset token'),
+            'email' => Module::t('user', 'E-mail'),
+            'auth_key' => Module::t('user', 'Authentication key'),
+            'access_token' => Module::t('user', 'Access token'),
+            'role' => Module::t('user', 'Role'),
+            'status' => Module::t('user', 'Status'),
+            'registration_ip' => Module::t('user', 'Registration IP'),
+            'last_login_ip' => Module::t('user', 'Last login IP'),
+            'created_at' => Module::t('user', 'Created at'),
+            'updated_at' => Module::t('user', 'Updated at'),
+            'confirmed_at' => Module::t('user', 'Confirmed at'),
+            'last_login_at' => Module::t('user', 'Last login at'),
+            'blocked_at' => Module::t('user', 'Blocked at'),
+            'password' => Module::t('user', 'Password'),
+            'password2' => Module::t('user', 'Repeated password')
         ];
     }
 
@@ -313,7 +322,6 @@ class User extends ActiveRecord implements IdentityInterface
             if ($this->isNewRecord && !$this->password && $module->passwordAutoGenerating) {
                 $this->password = Yii::$app->security->generateRandomString($module->passwordLength);
             }
-
             if ($this->isNewRecord || $this->password) {
                 $this->setPassword($this->password);
                 $this->generateAuthKey();
@@ -322,6 +330,7 @@ class User extends ActiveRecord implements IdentityInterface
 
             return true;
         }
+
         return false;
     }
 

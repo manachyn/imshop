@@ -7,6 +7,11 @@ use Yii;
 class Module extends \yii\base\Module
 {
     /**
+     * @inheritdoc
+     */
+    public $controllerNamespace = 'im\users\controllers';
+
+    /**
      * @var bool whether to enable registration.
      */
     public $enableRegistration = true;
@@ -20,6 +25,11 @@ class Module extends \yii\base\Module
      * @var int generated password length.
      */
     public $passwordLength = 5;
+
+    /**
+     * @var string user model class
+     */
+    public $userModel = 'im\users\models\User';
 
     /**
      * @var string profile model class
@@ -55,7 +65,7 @@ class Module extends \yii\base\Module
      */
     public static function t($category, $message, $params = [], $language = null)
     {
-        return Yii::t('modules/cms/' . $category, $message, $params, $language);
+        return Yii::t('modules/users/' . $category, $message, $params, $language);
     }
 
 }

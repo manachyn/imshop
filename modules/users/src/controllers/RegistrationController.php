@@ -2,9 +2,11 @@
 
 namespace im\users\controllers;
 use im\users\models\RegistrationForm;
+use im\users\Module;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use Yii;
 
 /**
  * Class RegistrationController
@@ -37,17 +39,24 @@ class RegistrationController extends Controller
             throw new NotFoundHttpException;
         }
 
-        /** @var RegistrationForm $model */
-        $model = \Yii::createObject(RegistrationForm::className());
+        /** @var Module $module */
+        $module = Yii::$app->getModule('users');
+        $user = Yii::createObject($module->userModel);
+        $profile = Yii::createObject($module->profileModel);
 
-        if ($model->load(\Yii::$app->request->post()) && $model->register()) {
-            return $this->render('success', [
-                'user' => $model->user
-            ]);
+        if ($user->load(Yii::$app->request->post()) && $profile->load(Yii::$app->request->post())) {
+            if ($user->save() && $profile->save()) {
+                return $this->render('success', [
+                    'user' => $user,
+                    'profile' => $profile
+                ]);
+            }
         }
 
         return $this->render('register', [
-            'model'  => $model
+            'module' => $module,
+            'user' => $user,
+            'profile' => $profile
         ]);
     }
 }

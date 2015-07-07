@@ -1,41 +1,37 @@
 <?php
+
 use im\users\Module;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $user yii\web\User */
-/* @var $profile yii\web\User */
+/* @var $module im\users\Module */
+/* @var $user im\users\models\User */
+/* @var $profile im\users\models\Profile */
 
 $this->title = Module::t('module', 'Sign up');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+<div class="registration-success">
 
-<div class="row">
-    <div class="col-md-4 col-md-offset-4">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title"><?= Html::encode($this->title) ?></h3>
-            </div>
-            <div class="panel-body">
+    <h1><?= Html::encode($this->title) ?></h1>
 
-                <?php $form = ActiveForm::begin(['id' => 'registration-form']); ?>
+    <?php $form = ActiveForm::begin(['id' => 'registration-form']); ?>
 
-                <?= $form->field($model, 'username') ?>
+    <?= $form->field($user, 'username') ?>
 
-                <?= $form->field($model, 'email') ?>
+    <?= $form->field($user, 'email') ?>
 
-                <?php if ($module->enableGeneratingPassword == false): ?>
-                    <?= $form->field($model, 'password')->passwordInput() ?>
-                <?php endif ?>
+    <?php if (!$module->passwordAutoGenerating): ?>
+        <?= $form->field($user, 'password')->passwordInput() ?>
+    <?php endif ?>
 
-                <?= Html::submitButton(Yii::t('user', 'Sign up'), ['class' => 'btn btn-success btn-block']) ?>
-
-                <?php ActiveForm::end(); ?>
-            </div>
-        </div>
-        <p class="text-center">
-            <?= Html::a(Yii::t('user', 'Already registered? Sign in!'), ['/user/security/login']) ?>
-        </p>
+    <div class="form-group">
+        <?= Html::submitButton(Module::t('module', 'Sign up'), ['class' => 'btn btn-primary']) ?>
     </div>
+
+    <?php ActiveForm::end(); ?>
+
+    <?= Html::a(Module::t('module', 'Already registered? Sign in!'), ['/user/security/login']) ?>
+
 </div>
