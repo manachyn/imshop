@@ -1,0 +1,14 @@
+{
+    "name": "im/base",
+    "description": "IM Base module",
+    "authors": [
+        {
+            "name": "Ivan Manachyn",
+            "email": "manachyn@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "yiisoft/yii2": ">=2.0.4"
+    }
+}

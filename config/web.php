@@ -5,8 +5,14 @@ $params = require(__DIR__ . '/params.php');
 $config = [
     'id' => 'basic',
     'basePath' => dirname(__DIR__),
-    'bootstrap' => ['log'],
+    'bootstrap' => [
+        'log',
+        'im\users\Bootstrap'
+    ],
     'modules' => [
+        'users' => [
+            'class' => 'im\users\Module'
+        ],
         'cms' => [
             'class' => 'im\cms\Module'
         ],

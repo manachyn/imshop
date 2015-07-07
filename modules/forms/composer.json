@@ -1,0 +1,15 @@
+{
+    "name": "im/forms",
+    "description": "IM Forms module",
+    "authors": [
+        {
+            "name": "Ivan Manachyn",
+            "email": "manachyn@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "yiisoft/yii2": ">=2.0.4",
+        "yiisoft/yii2-jui": "^2.0"
+    }
+}

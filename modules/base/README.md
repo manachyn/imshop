@@ -1,0 +1,5 @@
+'im\\base\\' => array($baseDir . '/modules/base/src'),
+'im\\config\\' => array($baseDir . '/modules/config/src'),
+'im\\adminlte\\' => array($baseDir . '/themes/adminlte/src'),
+'im\\cms\\' => array($baseDir . '/modules/cms/src'),
+'im\\users\\' => array($baseDir . '/modules/users/src'),

@@ -1,0 +1,15 @@
+{
+    "name": "im/users",
+    "description": "IM Users module",
+    "authors": [
+        {
+            "name": "Ivan Manachyn",
+            "email": "manachyn@gmail.com"
+        }
+    ],
+    "require": {
+        "dektrium/yii2-user": "0.9.*@dev",
+        "amnah/yii2-user": "^2.1",
+        "vova07/yii2-users-module": "^0.1.3"
+    }
+}

@@ -2,10 +2,10 @@
 
 namespace im\cms\backend\controllers;
 
+use im\base\controllers\CrudController;
 use im\cms\models\PageSearch;
 use im\cms\Module;
 use im\cms\models\Page;
-use im\controllers\CrudController;
 
 /**
  * Class PageController implements the CRUD actions for Page model.

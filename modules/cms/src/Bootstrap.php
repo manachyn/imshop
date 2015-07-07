@@ -24,6 +24,9 @@ class Bootstrap implements BootstrapInterface
         $this->registerDefinitions();
     }
 
+    /**
+     * Register module translations.
+     */
     public function registerTranslations()
     {
         Yii::$app->i18n->translations['modules/cms/*'] = [
@@ -39,7 +42,8 @@ class Bootstrap implements BootstrapInterface
     }
 
     /**
-     * Adds rules.
+     * Adds module rules.
+     *
      * @param Application $app
      */
     public function addRules($app)

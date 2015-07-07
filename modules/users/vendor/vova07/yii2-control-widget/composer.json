@@ -1,0 +1,25 @@
+{
+    "name": "vova07/yii2-control-widget",
+    "description": "The control widget for Yii framework backend.",
+    "type": "yii2-extension",
+    "keywords": ["yii2", "yii 2", "control", "widget"],
+    "license": "BSD-3-Clause",
+    "authors": [
+        {
+            "name": "Crudu Vasile",
+            "email": "bazillio07@yandex.ru"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/vova07/yii2-control-widget/issues?state=open",
+        "source": "https://github.com/vova07/yii2-control-widget"
+    },
+    "require": {
+        "yiisoft/yii2": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "vova07\\control\\": ""
+        }
+    }
+}
