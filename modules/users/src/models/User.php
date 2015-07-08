@@ -35,6 +35,21 @@ use yii\web\IdentityInterface;
 class User extends ActiveRecord implements IdentityInterface
 {
     /**
+     * @var string the name of the login scenario.
+     */
+    const SCENARIO_LOGIN = 'login';
+
+    /**
+     * @var string the name of the register scenario.
+     */
+    const SCENARIO_REGISTER = 'register';
+
+    /**
+     * @var string the name of the create scenario.
+     */
+    const SCENARIO_CREATE = 'create';
+
+    /**
      * @var int inactive status
      */
     const STATUS_INACTIVE = 0;
@@ -102,7 +117,7 @@ class User extends ActiveRecord implements IdentityInterface
         return [
             // Required
             [['username', 'email'], 'required'],
-            [['password', 'password2'], 'required', 'on' => ['create'], 'skipOnEmpty' => $module->passwordAutoGenerating],
+            [['password', 'password2'], 'required', 'on' => [static::SCENARIO_REGISTER], 'skipOnEmpty' => $module->passwordAutoGenerating],
 
             // Trim
             [['username', 'email', 'password', 'password2'], 'trim'],
@@ -110,11 +125,13 @@ class User extends ActiveRecord implements IdentityInterface
             // Unique
             [['username', 'email'], 'unique'],
 
+            [['username'], 'string', 'max' => 100],
+
             // E-mail
             ['email', 'email'],
 
             // Password
-            ['password2', 'compare', 'compareAttribute' => 'password', 'on' => ['create']],
+            ['password2', 'compare', 'compareAttribute' => 'password', 'on' => [static::SCENARIO_REGISTER]],
 
             ['status', 'default', 'value' => $module->registrationConfirmation ? self::STATUS_INACTIVE : self::STATUS_ACTIVE],
             ['status', 'in', 'range' => array_keys(self::getStatusesList())],

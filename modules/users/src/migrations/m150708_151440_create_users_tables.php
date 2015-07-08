@@ -15,21 +15,28 @@ class m150708_151440_create_users_tables extends Migration
         // Users table
         $this->createTable('{{%users}}', [
             'id' => Schema::TYPE_PK,
-            'username' => Schema::TYPE_STRING . ' NOT NULL',
-            'auth_key' => Schema::TYPE_STRING . '(32) NOT NULL',
+            'username' => Schema::TYPE_STRING . '(100) NOT NULL',
             'password_hash' => Schema::TYPE_STRING . ' NOT NULL',
             'password_reset_token' => Schema::TYPE_STRING,
+            'auth_key' => Schema::TYPE_STRING . '(32) NOT NULL',
+            'access_token' => Schema::TYPE_STRING . ' NOT NULL',
             'email' => Schema::TYPE_STRING . ' NOT NULL',
             'role' => Schema::TYPE_STRING . ' NOT NULL DEFAULT "user"',
-
             'status' => 'tinyint(1) NOT NULL DEFAULT 1',
+            'registration_ip' => Schema::TYPE_BIGINT . ' NOT NULL',
+            'last_login_ip' => Schema::TYPE_BIGINT . ' NOT NULL',
             'created_at' => Schema::TYPE_INTEGER . ' NOT NULL',
             'updated_at' => Schema::TYPE_INTEGER . ' NOT NULL',
+            'confirmed_at' => Schema::TYPE_INTEGER . ' NOT NULL',
+            'last_login_at' => Schema::TYPE_INTEGER . ' NOT NULL',
+            'blocked_at' => Schema::TYPE_INTEGER . ' NOT NULL'
         ], $tableOptions);
 
         // Indexes
         $this->createIndex('username', '{{%users}}', 'username', true);
         $this->createIndex('email', '{{%users}}', 'email', true);
+        $this->createIndex('access_token', '{{%users}}', 'access_token');
+        $this->createIndex('password_reset_token', '{{%users}}', 'password_reset_token');
         $this->createIndex('role', '{{%users}}', 'role');
         $this->createIndex('status', '{{%users}}', 'status');
 
@@ -47,37 +54,11 @@ class m150708_151440_create_users_tables extends Migration
         );
 
         // Foreign Keys
-        $this->addForeignKey('FK_profile_user', '{{%profiles}}', 'user_id', '{{%users}}', 'id', 'CASCADE', 'CASCADE');
+        $this->addForeignKey('FK_profiles_user_id', '{{%profiles}}', 'user_id', '{{%users}}', 'id', 'CASCADE', 'CASCADE');
 
         // Add super-administrator
         $this->execute($this->getUserSql());
         $this->execute($this->getProfileSql());
-
-
-//        // Users table
-//        $this->createTable(
-//            '{{%users}}',
-//            [
-//                'id' => Schema::TYPE_PK,
-//                'username' => Schema::TYPE_STRING . '(30) NOT NULL',
-//                'email' => Schema::TYPE_STRING . '(100) NOT NULL',
-//                'password_hash' => Schema::TYPE_STRING . ' NOT NULL',
-//                'auth_key' => Schema::TYPE_STRING . '(32) NOT NULL',
-//                'token' => Schema::TYPE_STRING . '(53) NOT NULL',
-//                'role' => Schema::TYPE_STRING . '(64) NOT NULL DEFAULT "user"',
-//                'status_id' => 'tinyint(4) NOT NULL DEFAULT 0',
-//                'created_at' => Schema::TYPE_INTEGER . ' NOT NULL',
-//                'updated_at' => Schema::TYPE_INTEGER . ' NOT NULL'
-//            ],
-//            $tableOptions
-//        );
-//
-//        // Indexes
-//        $this->createIndex('username', '{{%users}}', 'username', true);
-//        $this->createIndex('email', '{{%users}}', 'email', true);
-//        $this->createIndex('role', '{{%users}}', 'role');
-//        $this->createIndex('status_id', '{{%users}}', 'status_id');
-//        $this->createIndex('created_at', '{{%users}}', 'created_at');
     }
 
     /**
@@ -97,7 +78,7 @@ class m150708_151440_create_users_tables extends Migration
      */
     private function getProfileSql()
     {
-        return "INSERT INTO {{%profiles}} (`user_id`, `first_name`, `last_name`, `avatar_url`) VALUES (1, 'Administration', 'Site', '')";
+        return "INSERT INTO {{%profiles}} (`user_id`, `first_name`, `last_name`, `avatar_url`) VALUES (1, 'Admin', 'Admin', '')";
     }
 
     public function safeDown()

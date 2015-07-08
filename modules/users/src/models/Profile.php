@@ -2,7 +2,7 @@
 
 namespace im\users\models;
 
-use app\modules\users\Module;
+use im\users\Module;
 use Yii;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
@@ -19,6 +19,11 @@ use yii\db\ActiveRecord;
  */
 class Profile extends ActiveRecord
 {
+    /**
+     * @var string the name of the register scenario.
+     */
+    const SCENARIO_REGISTER = 'register';
+
     /**
      * @inheritdoc
      */
@@ -40,7 +45,8 @@ class Profile extends ActiveRecord
     public function scenarios()
     {
         return [
-            'default' => ['first_name', 'last_name', 'user_id']
+            static::SCENARIO_DEFAULT => ['first_name', 'last_name', 'user_id'],
+            static::SCENARIO_REGISTER => ['first_name', 'last_name', 'user_id']
         ];
     }
 
@@ -50,9 +56,9 @@ class Profile extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'first_name' => Module::t('users', 'First Name'),
-            'last_name' => Module::t('users', 'Last Name'),
-            'avatar_url' => Module::t('users', 'Avatar URL')
+            'first_name' => Module::t('user', 'First Name'),
+            'last_name' => Module::t('user', 'Last Name'),
+            'avatar_url' => Module::t('user', 'Avatar URL')
         ];
     }
 

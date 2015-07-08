@@ -24,7 +24,12 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php if (!$module->passwordAutoGenerating): ?>
         <?= $form->field($user, 'password')->passwordInput() ?>
+        <?= $form->field($user, 'password2')->passwordInput() ?>
     <?php endif ?>
+
+    <?= $form->field($profile, 'first_name') ?>
+
+    <?= $form->field($profile, 'last_name') ?>
 
     <div class="form-group">
         <?= Html::submitButton(Module::t('module', 'Sign up'), ['class' => 'btn btn-primary']) ?>

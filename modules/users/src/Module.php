@@ -19,7 +19,17 @@ class Module extends \yii\base\Module
     /**
      * @var bool whether the user have to confirm registration
      */
-    public $registrationConfirmation = true;
+    public $registrationConfirmation = false;
+
+    /**
+     * @var bool whether to login user after registration
+     */
+    public $loginAfterRegistration = true;
+
+    /**
+     * @var string|array the url to which to redirect the user after registration
+     */
+    public $redirectAfterRegistration;
 
     /**
      * @var bool whether to enable automatic password generation.

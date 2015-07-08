@@ -45,19 +45,41 @@ class RegistrationController extends Controller
 
         /** @var Module $module */
         $module = Yii::$app->getModule('users');
+
+        /** @var User $userClass */
+        $userClass = $module->userModel;
+
         /** @var User $user */
-        $user = Yii::createObject($module->userModel);
+        $user = Yii::$container->get($userClass, [], ['scenario' => $userClass::SCENARIO_REGISTER]);
+
+        /** @var Profile $profileClass */
+        $profileClass = $module->profileModel;
+
         /** @var Profile $profile */
-        $profile = Yii::createObject($module->profileModel);
+        $profile = Yii::$container->get($profileClass, [], ['scenario' => $profileClass::SCENARIO_REGISTER]);
 
         if ($user->load(Yii::$app->request->post()) && $profile->load(Yii::$app->request->post())) {
-            $user->registration_ip = Yii::$app->request->userIP;
+
+            $user->registration_ip = ip2long(Yii::$app->request->userIP);
+
             if ($user->validate() && $profile->validate()) {
                 if ($user->save() && $profile->save()) {
-                    return $this->render('success', [
-                        'user' => $user,
-                        'profile' => $profile
-                    ]);
+
+                    Yii::$app->session->setFlash('success', Module::t('module', 'Your account has been created.'));
+
+                    if (!$module->registrationConfirmation && $module->loginAfterRegistration) {
+                        Yii::$app->user->login($user);
+                    }
+
+                    if ($module->redirectAfterRegistration) {
+                        $this->redirect($module->redirectAfterRegistration);
+                    } else {
+                        return $this->refresh();
+                    }
+
+                } else {
+                    Yii::$app->session->setFlash('danger', Module::t('module', 'An error occurred during registration.'));
+                    return $this->refresh();
                 }
             } elseif (Yii::$app->request->isAjax) {
                 Yii::$app->response->format = Response::FORMAT_JSON;
