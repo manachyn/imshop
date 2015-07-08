@@ -1,12 +1,16 @@
 <?php
 
 namespace im\users\controllers;
+use im\users\models\Profile;
 use im\users\models\RegistrationForm;
+use im\users\models\User;
 use im\users\Module;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use Yii;
+use yii\web\Response;
+use yii\widgets\ActiveForm;
 
 /**
  * Class RegistrationController
@@ -41,15 +45,23 @@ class RegistrationController extends Controller
 
         /** @var Module $module */
         $module = Yii::$app->getModule('users');
+        /** @var User $user */
         $user = Yii::createObject($module->userModel);
+        /** @var Profile $profile */
         $profile = Yii::createObject($module->profileModel);
 
         if ($user->load(Yii::$app->request->post()) && $profile->load(Yii::$app->request->post())) {
-            if ($user->save() && $profile->save()) {
-                return $this->render('success', [
-                    'user' => $user,
-                    'profile' => $profile
-                ]);
+            $user->registration_ip = Yii::$app->request->userIP;
+            if ($user->validate() && $profile->validate()) {
+                if ($user->save() && $profile->save()) {
+                    return $this->render('success', [
+                        'user' => $user,
+                        'profile' => $profile
+                    ]);
+                }
+            } elseif (Yii::$app->request->isAjax) {
+                Yii::$app->response->format = Response::FORMAT_JSON;
+                return ActiveForm::validate($user, $profile);
             }
         }
 

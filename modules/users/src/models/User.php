@@ -98,10 +98,11 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function rules()
     {
+        $module = $this->getModule();
         return [
             // Required
             [['username', 'email'], 'required'],
-            [['password', 'password2'], 'required', 'on' => ['create'], 'skipOnEmpty' => $this->getModule()->passwordAutoGenerating],
+            [['password', 'password2'], 'required', 'on' => ['create'], 'skipOnEmpty' => $module->passwordAutoGenerating],
 
             // Trim
             [['username', 'email', 'password', 'password2'], 'trim'],
@@ -115,7 +116,7 @@ class User extends ActiveRecord implements IdentityInterface
             // Password
             ['password2', 'compare', 'compareAttribute' => 'password', 'on' => ['create']],
 
-            ['status', 'default', 'value' => self::STATUS_ACTIVE],
+            ['status', 'default', 'value' => $module->registrationConfirmation ? self::STATUS_INACTIVE : self::STATUS_ACTIVE],
             ['status', 'in', 'range' => array_keys(self::getStatusesList())],
 
             ['role', 'default', 'value' => self::ROLE_DEFAULT],

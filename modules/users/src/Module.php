@@ -17,6 +17,11 @@ class Module extends \yii\base\Module
     public $enableRegistration = true;
 
     /**
+     * @var bool whether the user have to confirm registration
+     */
+    public $registrationConfirmation = true;
+
+    /**
      * @var bool whether to enable automatic password generation.
      */
     public $passwordAutoGenerating = false;

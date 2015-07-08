@@ -8,7 +8,7 @@ use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
 /**
- * This is the model class for table "{{%profiles}}".
+ * User profile model.
  *
  * @property integer $user_id
  * @property string $first_name
@@ -33,8 +33,7 @@ class Profile extends ActiveRecord
     public function rules()
     {
         return [
-//            [['first_name', 'last_name', 'avatar_url'], 'required'],
-//            [['first_name', 'last_name', 'avatar_url'], 'string', 'max' => 100]
+            [['first_name', 'last_name', 'avatar_url'], 'string', 'max' => 100]
         ];
     }
 
