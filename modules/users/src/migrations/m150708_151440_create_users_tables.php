@@ -56,6 +56,23 @@ class m150708_151440_create_users_tables extends Migration
         // Foreign Keys
         $this->addForeignKey('FK_profiles_user_id', '{{%profiles}}', 'user_id', '{{%users}}', 'id', 'CASCADE', 'CASCADE');
 
+        // Users tokens table
+        $this->createTable(
+            '{{%tokens}}',
+            [
+                'id' => Schema::TYPE_PK,
+                'user_id' => Schema::TYPE_INTEGER,
+                'token' => Schema::TYPE_STRING . '(32) NOT NULL',
+                'type' => 'tinyint(1) NOT NULL',
+                'created_at' => Schema::TYPE_INTEGER . ' NOT NULL',
+                'expire_at' => Schema::TYPE_INTEGER . ' NOT NULL',
+            ],
+            $tableOptions
+        );
+
+        // Foreign Keys
+        $this->addForeignKey('FK_tokens_user_id', '{{%tokens}}', 'user_id', '{{%users}}', 'id', 'CASCADE', 'CASCADE');
+
         // Add super-administrator
         $this->execute($this->getUserSql());
         $this->execute($this->getProfileSql());
@@ -83,6 +100,7 @@ class m150708_151440_create_users_tables extends Migration
 
     public function safeDown()
     {
+        $this->dropTable('{{%tokens}}');
         $this->dropTable('{{%profiles}}');
         $this->dropTable('{{%users}}');
     }

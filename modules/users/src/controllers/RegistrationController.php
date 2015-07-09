@@ -3,7 +3,6 @@
 namespace im\users\controllers;
 
 use im\users\models\Profile;
-use im\users\models\RegistrationForm;
 use im\users\models\User;
 use im\users\Module;
 use yii\filters\AccessControl;
@@ -80,12 +79,13 @@ class RegistrationController extends Controller
                 } else {
                     return $this->refresh();
                 }
-            } elseif (Yii::$app->request->isAjax) {
-                Yii::$app->response->format = Response::FORMAT_JSON;
-                return ActiveForm::validate($user, $profile);
+            } elseif ($user->hasErrors() || $profile->hasErrors()) {
+                if (Yii::$app->request->isAjax) {
+                    Yii::$app->response->format = Response::FORMAT_JSON;
+                    return ActiveForm::validate($user, $profile);
+                }
             } else {
-//                Yii::$app->session->setFlash('registration.error', Module::t('module', 'An error occurred during registration.'));
-//                return $this->refresh();
+                Yii::$app->session->setFlash('registration.error', Module::t('module', 'An error occurred during registration.'));
             }
         }
 
@@ -104,5 +104,29 @@ class RegistrationController extends Controller
     public function actionSuccess()
     {
         return $this->render('success');
+    }
+
+    /**
+     * Confirms user's account. If confirmation was successful logs the user and shows success message. Otherwise
+     * shows error message.
+     * @param  integer $id
+     * @param  string  $code
+     * @return string
+     * @throws \yii\web\HttpException
+     */
+    public function actionConfirm($id, $code)
+    {
+        $user = $this->finder->findUserById($id);
+
+        if ($user === null || $this->module->enableConfirmation == false) {
+            throw new NotFoundHttpException;
+        }
+
+        $user->attemptConfirmation($code);
+
+        return $this->render('/message', [
+            'title'  => \Yii::t('user', 'Account confirmation'),
+            'module' => $this->module,
+        ]);
     }
 }

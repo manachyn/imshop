@@ -5,9 +5,11 @@ namespace im\users\components;
 use im\users\models\User;
 use yii\base\Component;
 use yii\base\Event;
+use yii\base\ModelEvent;
 
 /**
  * Class UserEventsHandler handles user events.
+ *
  * @package im\users\components
  */
 class UserEventsHandler extends Component
@@ -23,12 +25,18 @@ class UserEventsHandler extends Component
         Event::on(User::className(), User::EVENT_AFTER_REGISTRATION, [$this, 'afterUserRegistration']);
     }
 
-    public function afterUserRegistration ($event)
+    /**
+     * @param Event $event
+     */
+    public function afterUserRegistration (Event $event)
     {
+
     }
 
-    public function beforeUserRegistration ($event)
+    /**
+     * @param ModelEvent $event
+     */
+    public function beforeUserRegistration (ModelEvent $event)
     {
-        $event->is
     }
 }
