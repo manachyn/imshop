@@ -1,6 +1,7 @@
 <?php
 
 namespace im\users\controllers;
+
 use im\users\models\Profile;
 use im\users\models\RegistrationForm;
 use im\users\models\User;
@@ -29,14 +30,19 @@ class RegistrationController extends Controller
             'access' => [
                 'class' => AccessControl::className(),
                 'rules' => [
-                    ['allow' => true, 'actions' => ['register', 'connect'], 'roles' => ['?']],
+                    ['allow' => true, 'actions' => ['register', 'success', 'connect'], 'roles' => ['?']],
                     ['allow' => true, 'actions' => ['confirm', 'resend'], 'roles' => ['?', '@']]
                 ]
             ],
         ];
     }
 
-
+    /**
+     * Displays the registration page.
+     *
+     * @return mixed
+     * @throws NotFoundHttpException
+     */
     public function actionRegister()
     {
         if (!$this->module->enableRegistration) {
@@ -60,30 +66,26 @@ class RegistrationController extends Controller
 
         if ($user->load(Yii::$app->request->post()) && $profile->load(Yii::$app->request->post())) {
 
-            $user->registration_ip = ip2long(Yii::$app->request->userIP);
+            $user->profile = $profile;
 
-            if ($user->validate() && $profile->validate()) {
-                if ($user->save() && $profile->save()) {
+            if ($user->register()) {
+                Yii::$app->session->setFlash('registration.success', Module::t('module', 'Your account has been created.'));
 
-                    Yii::$app->session->setFlash('success', Module::t('module', 'Your account has been created.'));
+                if (!$module->registrationConfirmation && $module->loginAfterRegistration) {
+                    $user->login();
+                }
 
-                    if (!$module->registrationConfirmation && $module->loginAfterRegistration) {
-                        Yii::$app->user->login($user);
-                    }
-
-                    if ($module->redirectAfterRegistration) {
-                        $this->redirect($module->redirectAfterRegistration);
-                    } else {
-                        return $this->refresh();
-                    }
-
+                if ($module->redirectAfterRegistration) {
+                    return $this->redirect($module->redirectAfterRegistration);
                 } else {
-                    Yii::$app->session->setFlash('danger', Module::t('module', 'An error occurred during registration.'));
                     return $this->refresh();
                 }
             } elseif (Yii::$app->request->isAjax) {
                 Yii::$app->response->format = Response::FORMAT_JSON;
                 return ActiveForm::validate($user, $profile);
+            } else {
+//                Yii::$app->session->setFlash('registration.error', Module::t('module', 'An error occurred during registration.'));
+//                return $this->refresh();
             }
         }
 
@@ -92,5 +94,15 @@ class RegistrationController extends Controller
             'user' => $user,
             'profile' => $profile
         ]);
+    }
+
+    /**
+     * Displays the success page after registration.
+     *
+     * @return mixed
+     */
+    public function actionSuccess()
+    {
+        return $this->render('success');
     }
 }

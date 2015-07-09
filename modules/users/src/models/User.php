@@ -3,6 +3,8 @@ namespace im\users\models;
 
 use im\users\Module;
 use Yii;
+use yii\base\Event;
+use yii\base\ModelEvent;
 use yii\base\NotSupportedException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
@@ -72,6 +74,16 @@ class User extends ActiveRecord implements IdentityInterface
     const ROLE_USER = 10;
 
     const ROLE_DEFAULT = 'user';
+
+    /**
+     * @event ModelEvent an event that is triggered before user registration.
+     */
+    const EVENT_BEFORE_REGISTRATION = 'beforeRegistration';
+
+    /**
+     * @event Event an event that is triggered after a user is registered.
+     */
+    const EVENT_AFTER_REGISTRATION = 'afterRegistration';
 
     /**
      * @var string|null Password
@@ -393,6 +405,8 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
+     * Return statuses list.
+     *
      * @return array Statuses list
      */
     public static function getStatusesList()
@@ -405,10 +419,78 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
+     * Set user profile.
+     *
+     * @param Profile $profile
+     */
+    public function setProfile(Profile $profile)
+    {
+        $this->populateRelation('profile', $profile);
+    }
+
+    /**
+     * Return roles list.
+     *
      * @return array Roles list
      */
     public static function getRolesList()
     {
         return Yii::$app->authManager ? ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'description') : array();
+    }
+
+    /**
+     * Log in a user.
+     *
+     * @return bool whether the user is logged in.
+     */
+    public function login()
+    {
+        return Yii::$app->user->login($this);
+    }
+
+    /**
+     * Register a user.
+     *
+     * @return bool whether the user is registered.
+     */
+    public function register()
+    {
+        if (!$this->beforeRegister(false)) {
+            return false;
+        }
+
+        $this->registration_ip = ip2long(Yii::$app->request->userIP);
+
+        if ($this->save() && $this->profile->save()) {
+            $this->link('profile', $this->profile);
+            $this->afterRegister();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * This method is called at the beginning of user registration.
+     * The default implementation will trigger an [[EVENT_BEFORE_REGISTRATION]] event.
+     *
+     * @return boolean whether the registration should continue.
+     */
+    public function beforeRegister()
+    {
+        $event = new ModelEvent;
+        $this->trigger(self::EVENT_BEFORE_REGISTRATION, $event);
+
+        return $event->isValid;
+    }
+
+    /**
+     * This method is called at the end of user registration.
+     * The default implementation will trigger an [[EVENT_AFTER_REGISTRATION]] event.
+     */
+    public function afterRegister()
+    {
+        $event = new Event;
+        $this->trigger(self::EVENT_AFTER_REGISTRATION, $event);
     }
 }

@@ -16,27 +16,37 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <?php $form = ActiveForm::begin(['id' => 'registration-form']); ?>
+    <?php if (Yii::$app->getSession()->has('registration.success')) : ?>
+        <div class="alert alert-success"><?= Yii::$app->getSession()->getFlash('registration.success') ?></div>
+    <?php else: ?>
 
-    <?= $form->field($user, 'username') ?>
+        <?php if (Yii::$app->getSession()->has('registration.error')) : ?>
+            <div class="alert alert-danger"><?= Yii::$app->getSession()->getFlash('registration.error') ?></div>
+        <?php endif ?>
 
-    <?= $form->field($user, 'email') ?>
+        <?php $form = ActiveForm::begin(['id' => 'registration-form']); ?>
 
-    <?php if (!$module->passwordAutoGenerating): ?>
-        <?= $form->field($user, 'password')->passwordInput() ?>
-        <?= $form->field($user, 'password2')->passwordInput() ?>
+        <?= $form->field($user, 'username') ?>
+
+        <?= $form->field($user, 'email') ?>
+
+        <?php if (!$module->passwordAutoGenerating): ?>
+            <?= $form->field($user, 'password')->passwordInput() ?>
+            <?= $form->field($user, 'password2')->passwordInput() ?>
+        <?php endif ?>
+
+        <?= $form->field($profile, 'first_name') ?>
+
+        <?= $form->field($profile, 'last_name') ?>
+
+        <div class="form-group">
+            <?= Html::submitButton(Module::t('module', 'Sign up'), ['class' => 'btn btn-primary']) ?>
+        </div>
+
+        <?php ActiveForm::end(); ?>
+
+        <?= Html::a(Module::t('module', 'Already registered? Sign in!'), ['/user/security/login']) ?>
+
     <?php endif ?>
-
-    <?= $form->field($profile, 'first_name') ?>
-
-    <?= $form->field($profile, 'last_name') ?>
-
-    <div class="form-group">
-        <?= Html::submitButton(Module::t('module', 'Sign up'), ['class' => 'btn btn-primary']) ?>
-    </div>
-
-    <?php ActiveForm::end(); ?>
-
-    <?= Html::a(Module::t('module', 'Already registered? Sign in!'), ['/user/security/login']) ?>
 
 </div>

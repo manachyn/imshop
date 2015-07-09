@@ -2,7 +2,10 @@
 
 namespace im\users;
 
+use im\users\components\UserEventsHandler;
 use Yii;
+use yii\base\Component;
+use yii\di\Instance;
 
 class Module extends \yii\base\Module
 {
@@ -29,7 +32,7 @@ class Module extends \yii\base\Module
     /**
      * @var string|array the url to which to redirect the user after registration
      */
-    public $redirectAfterRegistration;
+    public $redirectAfterRegistration = 'success';
 
     /**
      * @var bool whether to enable automatic password generation.
@@ -40,6 +43,11 @@ class Module extends \yii\base\Module
      * @var int generated password length.
      */
     public $passwordLength = 5;
+
+    /**
+     * @var UserEventsHandler|array|string the handler object or the application component ID of the handler
+     */
+    public $userEventsHandler = ['class' => 'im\users\components\UserEventsHandler'];
 
     /**
      * @var string user model class
@@ -67,6 +75,18 @@ class Module extends \yii\base\Module
         'recover/<id:\d+>/<code:\w+>' => 'recovery/reset',
         'settings/<action:\w+>'       => 'settings/<action>'
     ];
+
+    /**
+     * @inheritdoc
+     */
+    public function init()
+    {
+        parent::init();
+
+        if ($this->userEventsHandler !== null && !is_object($this->userEventsHandler)) {
+            $this->userEventsHandler = Yii::createObject($this->userEventsHandler);
+        }
+    }
 
     /**
      * Translate a message to the specified language using module translations.
