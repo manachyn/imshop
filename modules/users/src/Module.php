@@ -60,6 +60,11 @@ class Module extends \yii\base\Module
     public $profileModel = 'im\users\models\Profile';
 
     /**
+     * @var string registration form model class
+     */
+    public $registrationForm = 'im\users\models\RegistrationForm';
+
+    /**
      * @var string The prefix for user module URL.
      * @See [[GroupUrlRule::prefix]]
      */

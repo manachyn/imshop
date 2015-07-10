@@ -56,8 +56,8 @@ class Profile extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'first_name' => Module::t('user', 'First Name'),
-            'last_name' => Module::t('user', 'Last Name'),
+            'first_name' => Module::t('user', 'First name'),
+            'last_name' => Module::t('user', 'Last name'),
             'avatar_url' => Module::t('user', 'Avatar URL')
         ];
     }

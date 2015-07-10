@@ -6,8 +6,7 @@ use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
 /* @var $module im\users\Module */
-/* @var $user im\users\models\User */
-/* @var $profile im\users\models\Profile */
+/* @var $model im\users\models\RegistrationForm */
 
 $this->title = Module::t('module', 'Sign up');
 $this->params['breadcrumbs'][] = $this->title;
@@ -26,18 +25,18 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <?php $form = ActiveForm::begin(['id' => 'registration-form']); ?>
 
-        <?= $form->field($user, 'username') ?>
+        <?= $form->field($model, 'username') ?>
 
-        <?= $form->field($user, 'email') ?>
+        <?= $form->field($model, 'email') ?>
 
         <?php if (!$module->passwordAutoGenerating): ?>
-            <?= $form->field($user, 'password')->passwordInput() ?>
-            <?= $form->field($user, 'password2')->passwordInput() ?>
+            <?= $form->field($model, 'password')->passwordInput() ?>
+            <?= $form->field($model, 'password2')->passwordInput() ?>
         <?php endif ?>
 
-        <?= $form->field($profile, 'first_name') ?>
+        <?= $form->field($model, 'firstName') ?>
 
-        <?= $form->field($profile, 'last_name') ?>
+        <?= $form->field($model, 'lastName') ?>
 
         <div class="form-group">
             <?= Html::submitButton(Module::t('module', 'Sign up'), ['class' => 'btn btn-primary']) ?>

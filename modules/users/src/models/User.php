@@ -132,7 +132,7 @@ class User extends ActiveRecord implements IdentityInterface
             [['password', 'password2'], 'required', 'on' => [static::SCENARIO_REGISTER], 'skipOnEmpty' => $module->passwordAutoGenerating],
 
             // Trim
-            [['username', 'email', 'password', 'password2'], 'trim'],
+            [['username', 'email', 'password', 'password2'], 'filter', 'filter' => 'trim'],
 
             // Unique
             [['username', 'email'], 'unique'],

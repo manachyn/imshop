@@ -3,6 +3,7 @@
 namespace im\users\controllers;
 
 use im\users\models\Profile;
+use im\users\models\RegistrationForm;
 use im\users\models\User;
 use im\users\Module;
 use yii\filters\AccessControl;
@@ -50,49 +51,28 @@ class RegistrationController extends Controller
 
         /** @var Module $module */
         $module = Yii::$app->getModule('users');
+        /** @var RegistrationForm $model */
+        $model = Yii::createObject($module->registrationForm);
 
-        /** @var User $userClass */
-        $userClass = $module->userModel;
-
-        /** @var User $user */
-        $user = Yii::$container->get($userClass, [], ['scenario' => $userClass::SCENARIO_REGISTER]);
-
-        /** @var Profile $profileClass */
-        $profileClass = $module->profileModel;
-
-        /** @var Profile $profile */
-        $profile = Yii::$container->get($profileClass, [], ['scenario' => $profileClass::SCENARIO_REGISTER]);
-
-        if ($user->load(Yii::$app->request->post()) && $profile->load(Yii::$app->request->post())) {
-
-            $user->profile = $profile;
-
-            if ($user->register()) {
+        if ($model->load(Yii::$app->request->post())) {
+            if ($user = $model->register()) {
                 Yii::$app->session->setFlash('registration.success', Module::t('module', 'Your account has been created.'));
-
                 if (!$module->registrationConfirmation && $module->loginAfterRegistration) {
                     $user->login();
                 }
-
                 if ($module->redirectAfterRegistration) {
                     return $this->redirect($module->redirectAfterRegistration);
                 } else {
                     return $this->refresh();
                 }
-            } elseif ($user->hasErrors() || $profile->hasErrors()) {
-                if (Yii::$app->request->isAjax) {
-                    Yii::$app->response->format = Response::FORMAT_JSON;
-                    return ActiveForm::validate($user, $profile);
-                }
-            } else {
+            } elseif (!$model->hasErrors()) {
                 Yii::$app->session->setFlash('registration.error', Module::t('module', 'An error occurred during registration.'));
             }
         }
 
         return $this->render('register', [
-            'module' => $module,
-            'user' => $user,
-            'profile' => $profile
+            'model' => $model,
+            'module' => $module
         ]);
     }
 
