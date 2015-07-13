@@ -91,11 +91,6 @@ class User extends ActiveRecord implements IdentityInterface
     public $password;
 
     /**
-     * @var string|null Repeated password
-     */
-    public $password2;
-
-    /**
      * @var Module module instance
      */
     protected $module;
@@ -127,23 +122,19 @@ class User extends ActiveRecord implements IdentityInterface
     {
         $module = $this->getModule();
         return [
-            // Required
-            [['username', 'email'], 'required'],
-            [['password', 'password2'], 'required', 'on' => [static::SCENARIO_REGISTER], 'skipOnEmpty' => $module->passwordAutoGenerating],
+            ['username', 'filter', 'filter' => 'trim'],
+            ['username', 'required'],
+            ['username', 'unique'],
+            ['username', 'string', 'min' => 2, 'max' => 100],
 
-            // Trim
-            [['username', 'email', 'password', 'password2'], 'filter', 'filter' => 'trim'],
-
-            // Unique
-            [['username', 'email'], 'unique'],
-
-            [['username'], 'string', 'max' => 100],
-
-            // E-mail
+            ['email', 'filter', 'filter' => 'trim'],
+            ['email', 'required'],
             ['email', 'email'],
+            ['email', 'string', 'max' => 255],
+            ['email', 'unique'],
 
-            // Password
-            ['password2', 'compare', 'compareAttribute' => 'password', 'on' => [static::SCENARIO_REGISTER]],
+            ['password', 'required', 'on' => [static::SCENARIO_REGISTER]],
+            ['password', 'string', 'min' => 6],
 
             ['status', 'default', 'value' => $module->registrationConfirmation ? self::STATUS_INACTIVE : self::STATUS_ACTIVE],
             ['status', 'in', 'range' => array_keys(self::getStatusesList())],

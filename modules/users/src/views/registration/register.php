@@ -23,7 +23,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="alert alert-danger"><?= Yii::$app->getSession()->getFlash('registration.error') ?></div>
         <?php endif ?>
 
-        <?php $form = ActiveForm::begin(['id' => 'registration-form']); ?>
+        <?php $form = ActiveForm::begin(['id' => 'registration-form', 'enableClientValidation' => false]); ?>
 
         <?= $form->field($model, 'username') ?>
 
@@ -39,7 +39,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= $form->field($model, 'lastName') ?>
 
         <div class="form-group">
-            <?= Html::submitButton(Module::t('module', 'Sign up'), ['class' => 'btn btn-primary']) ?>
+            <?= Html::submitButton(Module::t('module', 'Sign up'), ['class' => 'btn btn-primary', 'name' => 'register-button']) ?>
         </div>
 
         <?php ActiveForm::end(); ?>

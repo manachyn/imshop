@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Sign up</title>
+    <link href="/assets/2ca74d75/css/bootstrap.css" rel="stylesheet">
+<link href="/css/site.css" rel="stylesheet"></head>
+<body>
+
+    <div class="wrap">
+        <nav id="w10" class="navbar-inverse navbar-fixed-top navbar" role="navigation"><div class="container"><div class="navbar-header"><button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#w10-collapse"><span class="sr-only">Toggle navigation</span>
+<span class="icon-bar"></span>
+<span class="icon-bar"></span>
+<span class="icon-bar"></span></button><a class="navbar-brand" href="/index-test.php">My Company</a></div><div id="w10-collapse" class="collapse navbar-collapse"><ul id="w11" class="navbar-nav navbar-right nav"><li><a href="/index-test.php/site/index">Home</a></li>
+<li><a href="/index-test.php/site/about">About</a></li>
+<li><a href="/index-test.php/site/contact">Contact</a></li>
+<li><a href="/index-test.php/site/login">Login</a></li></ul></div></div></nav>
+        <div class="container">
+            <ul class="breadcrumb"><li><a href="/index-test.php">Home</a></li>
+<li class="active">Sign up</li>
+</ul>            <div class="registration-success">
+
+    <h1>Sign up</h1>
+
+    
+        
+        <form id="registration-form" action="/index-test.php/users/registration/register" method="post">
+        <div class="form-group field-registrationform-username required has-error">
+<label class="control-label" for="registrationform-username">Username</label>
+<input type="text" id="registrationform-username" class="form-control" name="RegistrationForm[username]" value="tester">
+
+<div class="help-block">Username &quot;tester&quot; has already been taken.</div>
+</div>
+        <div class="form-group field-registrationform-email required has-error">
+<label class="control-label" for="registrationform-email">E-mail</label>
+<input type="text" id="registrationform-email" class="form-control" name="RegistrationForm[email]" value="tester.email@example.com">
+
+<div class="help-block">E-mail &quot;tester.email@example.com&quot; has already been taken.</div>
+</div>
+                    <div class="form-group field-registrationform-password required">
+<label class="control-label" for="registrationform-password">Password</label>
+<input type="password" id="registrationform-password" class="form-control" name="RegistrationForm[password]" value="tester_password">
+
+<div class="help-block"></div>
+</div>            <div class="form-group field-registrationform-password2 required">
+<label class="control-label" for="registrationform-password2">Repeated password</label>
+<input type="password" id="registrationform-password2" class="form-control" name="RegistrationForm[password2]" value="tester_password">
+
+<div class="help-block"></div>
+</div>        
+        <div class="form-group field-registrationform-firstname">
+<label class="control-label" for="registrationform-firstname">First name</label>
+<input type="text" id="registrationform-firstname" class="form-control" name="RegistrationForm[firstName]" value="">
+
+<div class="help-block"></div>
+</div>
+        <div class="form-group field-registrationform-lastname">
+<label class="control-label" for="registrationform-lastname">Last name</label>
+<input type="text" id="registrationform-lastname" class="form-control" name="RegistrationForm[lastName]" value="">
+
+<div class="help-block"></div>
+</div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary" name="register-button">Sign up</button>        </div>
+
+        </form>
+        <a href="/index-test.php/user/security/login">Already registered? Sign in!</a>
+    
+</div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p class="pull-left">&copy; My Company 2015</p>
+            <p class="pull-right">Powered by <a href="http://www.yiiframework.com/" rel="external">Yii Framework</a></p>
+        </div>
+    </footer>
+
+<script src="/assets/c7765f72/jquery.js"></script>
+<script src="/assets/1d6985db/yii.js"></script>
+<script src="/assets/1d6985db/yii.activeForm.js"></script>
+<script src="/assets/2ca74d75/js/bootstrap.js"></script>
+<script type="text/javascript">jQuery(document).ready(function () {
+jQuery('#registration-form').yiiActiveForm([], []);
+});</script></body>
+</html>

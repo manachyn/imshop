@@ -11,6 +11,6 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="registration-success">
     <h1><?= Html::encode($this->title) ?></h1>
     <?php if (Yii::$app->getSession()->has('registration.success')) : ?>
-        <div class="alert alert-success"><?= Yii::$app->getSession()->getFlash('registration.success') ?></div>
+        <div class="alert alert-success"><?= Yii::$app->getSession()->getFlash('registration.success', null, true) ?></div>
     <?php endif ?>
 </div>

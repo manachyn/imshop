@@ -1,0 +1,1 @@
+php codeception/bin/yii migrate --migrationPath=@app/modules/users/src/migrations
