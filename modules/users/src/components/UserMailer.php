@@ -7,6 +7,7 @@ use im\users\models\User;
 use Yii;
 use yii\base\Component;
 use yii\di\Instance;
+use yii\mail\MailerInterface;
 
 /**
  * Class Mailer
@@ -16,9 +17,9 @@ use yii\di\Instance;
 class UserMailer extends Component implements UserMailerInterface
 {
     /**
-     * @var \yii\mail\BaseMailer mailer component
+     * @var MailerInterface|array|string the mailer object or the application component ID of the mailer object.
      */
-    public $mailer;
+    public $mailer = 'mailer';
 
     /**
      * @var string
@@ -42,7 +43,6 @@ class UserMailer extends Component implements UserMailerInterface
     public function init()
     {
         parent::init();
-
         $this->mailer = Instance::ensure($this->mailer, 'yii\mail\BaseMailer');
         $this->mailer->viewPath = $this->viewPath;
         $this->mailer->getView()->theme = Yii::$app->view->theme;
@@ -63,7 +63,7 @@ class UserMailer extends Component implements UserMailerInterface
         $this->mailer->compose($email->view, ['user' => $user, 'token' => $token])
             ->setTo($user->email)
             ->setFrom($this->sender)
-            ->setSubject($subject)
+            ->setSubject('Test')
             ->send();
     }
 }

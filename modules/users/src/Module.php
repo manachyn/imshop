@@ -22,7 +22,7 @@ class Module extends \yii\base\Module
     /**
      * @var bool whether the user have to confirm registration
      */
-    public $registrationConfirmation = false;
+    public $registrationConfirmation = true;
 
     /**
      * @var bool whether to login user after registration
@@ -47,7 +47,12 @@ class Module extends \yii\base\Module
     /**
      * @var UserEventsHandler|array|string the handler object or the application component ID of the handler
      */
-    public $userEventsHandler = ['class' => 'im\users\components\UserEventsHandler'];
+    public $userEventsHandler = [
+        'class' => 'im\users\components\UserEventsHandler',
+        'mailer' => [
+            'class' => 'im\users\components\UserMailer'
+        ]
+    ];
 
     /**
      * @var string user model class

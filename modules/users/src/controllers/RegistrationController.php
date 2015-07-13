@@ -30,7 +30,7 @@ class RegistrationController extends Controller
             'access' => [
                 'class' => AccessControl::className(),
                 'rules' => [
-                    ['allow' => true, 'actions' => ['register', 'success', 'connect'], 'roles' => ['?']],
+                    ['allow' => true, 'actions' => ['register', 'success', 'connect', 'email'], 'roles' => ['?']],
                     ['allow' => true, 'actions' => ['confirm', 'resend'], 'roles' => ['?', '@']]
                 ]
             ],
@@ -86,27 +86,33 @@ class RegistrationController extends Controller
         return $this->render('success');
     }
 
-    /**
-     * Confirms user's account. If confirmation was successful logs the user and shows success message. Otherwise
-     * shows error message.
-     * @param  integer $id
-     * @param  string  $code
-     * @return string
-     * @throws \yii\web\HttpException
-     */
-    public function actionConfirm($id, $code)
+//    /**
+//     * Confirms user's account. If confirmation was successful logs the user and shows success message. Otherwise
+//     * shows error message.
+//     * @param  integer $id
+//     * @param  string  $code
+//     * @return string
+//     * @throws \yii\web\HttpException
+//     */
+//    public function actionConfirm($id, $code)
+//    {
+//        $user = $this->finder->findUserById($id);
+//
+//        if ($user === null || $this->module->enableConfirmation == false) {
+//            throw new NotFoundHttpException;
+//        }
+//
+//        $user->attemptConfirmation($code);
+//
+//        return $this->render('/message', [
+//            'title'  => \Yii::t('user', 'Account confirmation'),
+//            'module' => $this->module,
+//        ]);
+//    }
+
+    public function actionEmail()
     {
-        $user = $this->finder->findUserById($id);
-
-        if ($user === null || $this->module->enableConfirmation == false) {
-            throw new NotFoundHttpException;
-        }
-
-        $user->attemptConfirmation($code);
-
-        return $this->render('/message', [
-            'title'  => \Yii::t('user', 'Account confirmation'),
-            'module' => $this->module,
-        ]);
+        $user = User::findByUsername('admin');
+        $user->afterRegister();
     }
 }

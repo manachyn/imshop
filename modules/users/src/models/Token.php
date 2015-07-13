@@ -126,7 +126,8 @@ class Token extends ActiveRecord
      */
     public static function findByUserId($userId, $type)
     {
-        return static::find()->where(['user_id' => $userId, 'type' => $type, ['>', 'expire_at', time()]])
+        return static::find()->where(['user_id' => $userId, 'type' => $type])
+            ->andWhere(['or', ['>', 'expire_at', time()], ['expire_at' => null]])
             //->andWhere("([[expire_time]] >= '$now' or [[expire_time]] is NULL)")
             ->one();
     }

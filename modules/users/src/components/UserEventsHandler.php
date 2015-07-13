@@ -2,9 +2,9 @@
 
 namespace im\users\components;
 
-use im\users\models\ModuleTrait;
 use im\users\models\Token;
 use im\users\models\User;
+use im\users\traits\ModuleTrait;
 use yii\base\Component;
 use yii\base\Event;
 use yii\base\ModelEvent;

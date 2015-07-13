@@ -1,6 +1,6 @@
 <?php
 
-namespace im\users\models;
+namespace im\users\traits;
 
 /**
  * Class ModuleTrait

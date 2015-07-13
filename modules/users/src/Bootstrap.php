@@ -14,8 +14,12 @@ class Bootstrap implements BootstrapInterface
      */
     public function bootstrap($app)
     {
+        Yii::setAlias('@im/users', __DIR__);
+
         /** @var $module Module */
         $module = $app->getModule('users');
+
+
 
         if ($module) {
             $this->registerTranslations();

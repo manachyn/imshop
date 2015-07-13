@@ -64,8 +64,8 @@ class m150708_151440_create_users_tables extends Migration
                 'user_id' => Schema::TYPE_INTEGER,
                 'token' => Schema::TYPE_STRING . '(32) NOT NULL',
                 'type' => 'tinyint(1) NOT NULL',
-                'created_at' => Schema::TYPE_INTEGER . ' NOT NULL',
-                'expire_at' => Schema::TYPE_INTEGER . ' NOT NULL',
+                'created_at' => Schema::TYPE_INTEGER,
+                'expire_at' => Schema::TYPE_INTEGER,
             ],
             $tableOptions
         );
