@@ -2,10 +2,13 @@
 
 namespace im\users\components;
 
+use im\users\models\ModuleTrait;
+use im\users\models\Token;
 use im\users\models\User;
 use yii\base\Component;
 use yii\base\Event;
 use yii\base\ModelEvent;
+use yii\di\Instance;
 
 /**
  * Class UserEventsHandler handles user events.
@@ -14,6 +17,13 @@ use yii\base\ModelEvent;
  */
 class UserEventsHandler extends Component
 {
+    use ModuleTrait;
+
+    /**
+     * @var \im\users\components\UserMailerInterface
+     */
+    public $mailer;
+
     /**
      * @inheritdoc
      */
@@ -21,6 +31,7 @@ class UserEventsHandler extends Component
     {
         parent::init();
 
+        $this->mailer = Instance::ensure($this->mailer, 'im\users\components\UserMailerInterface');
         Event::on(User::className(), User::EVENT_BEFORE_REGISTRATION, [$this, 'beforeUserRegistration']);
         Event::on(User::className(), User::EVENT_AFTER_REGISTRATION, [$this, 'afterUserRegistration']);
     }
@@ -30,7 +41,12 @@ class UserEventsHandler extends Component
      */
     public function afterUserRegistration (Event $event)
     {
-
+        /** @var User $user */
+        $user = $event->sender;
+        if ($this->getModule()->registrationConfirmation) {
+            $token = Token::generate($user->getId(), Token::TYPE_REGISTRATION_CONFIRMATION);
+            $this->mailer->sendRegistrationConfirmationEmail($user, $token);
+        }
     }
 
     /**

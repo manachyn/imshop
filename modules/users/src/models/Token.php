@@ -21,9 +21,9 @@ use Yii;
 class Token extends ActiveRecord
 {
     /**
-     * @var int Key for email confirmation
+     * @var int token for registration confirmation
      */
-    const TYPE_EMAIL_CONFIRMATION = 1;
+    const TYPE_REGISTRATION_CONFIRMATION = 1;
 
     /**
      * @var int Key for email confirmation
@@ -99,17 +99,19 @@ class Token extends ActiveRecord
      * @param \DateTime $expireTime
      * @return static
      */
-    public static function generate($userId, $type, \DateTime $expireTime)
+    public static function generate($userId, $type, \DateTime $expireTime = null)
     {
         $token = static::findByUserId($userId, $type);
         if (!$token) {
-            $token = new static();
+            $token = \Yii::createObject(static::className());
         }
 
         $token->user_id = $userId;
         $token->token = Yii::$app->security->generateRandomString();
         $token->type = $type;
-        $token->expire_at = $expireTime->getTimestamp();
+        if ($expireTime) {
+            $token->expire_at = $expireTime->getTimestamp();
+        }
         $token->save(false);
 
         return $token;

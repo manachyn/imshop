@@ -3,3 +3,4 @@
 'im\\adminlte\\' => array($baseDir . '/themes/adminlte/src'),
 'im\\cms\\' => array($baseDir . '/modules/cms/src'),
 'im\\users\\' => array($baseDir . '/modules/users/src'),
+'im\\mailer\\' => array($baseDir . '/modules/mailer/src'),

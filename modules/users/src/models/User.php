@@ -1,4 +1,5 @@
 <?php
+
 namespace im\users\models;
 
 use im\users\Module;
