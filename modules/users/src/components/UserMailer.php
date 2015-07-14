@@ -2,8 +2,8 @@
 
 namespace im\users\components;
 
-use im\users\models\RegistrationConfirmationEmail;
 use im\users\models\User;
+use im\users\traits\ModuleTrait;
 use Yii;
 use yii\base\Component;
 use yii\di\Instance;
@@ -16,6 +16,8 @@ use yii\mail\MailerInterface;
  */
 class UserMailer extends Component implements UserMailerInterface
 {
+    use ModuleTrait;
+
     /**
      * @var MailerInterface|array|string the mailer object or the application component ID of the mailer object.
      */
@@ -49,8 +51,6 @@ class UserMailer extends Component implements UserMailerInterface
         if ($this->sender === null) {
             $this->sender = isset(Yii::$app->params['adminEmail']) ? Yii::$app->params['adminEmail'] : 'no-reply@example.com';
         }
-
-
     }
 
     /**
@@ -58,9 +58,8 @@ class UserMailer extends Component implements UserMailerInterface
      */
     public function sendRegistrationConfirmationEmail(User $user, $token)
     {
-        $email = new RegistrationConfirmationEmail();
         $view = 'registration_confirmation';
-        $this->mailer->compose($email->view, ['user' => $user, 'token' => $token])
+        $this->mailer->compose(['html' => $view, 'text' => 'text/' . $view], ['user' => $user, 'token' => $token])
             ->setTo($user->email)
             ->setFrom($this->sender)
             ->setSubject('Test')

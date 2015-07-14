@@ -70,6 +70,11 @@ class Module extends \yii\base\Module
     public $registrationForm = 'im\users\models\RegistrationForm';
 
     /**
+     * @var string token model class
+     */
+    public $tokenModel = 'im\users\models\Token';
+
+    /**
      * @var string The prefix for user module URL.
      * @See [[GroupUrlRule::prefix]]
      */

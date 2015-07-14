@@ -5,6 +5,7 @@ namespace im\users\traits;
 /**
  * Class ModuleTrait
  * Implements `getModule` method, to receive current module instance.
+ * @property \im\users\Module $module
  * @package im\users\models
  */
 trait ModuleTrait

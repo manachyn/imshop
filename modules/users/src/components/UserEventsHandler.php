@@ -4,7 +4,9 @@ namespace im\users\components;
 
 use im\users\models\Token;
 use im\users\models\User;
+use im\users\Module;
 use im\users\traits\ModuleTrait;
+use Yii;
 use yii\base\Component;
 use yii\base\Event;
 use yii\base\ModelEvent;
@@ -41,10 +43,12 @@ class UserEventsHandler extends Component
      */
     public function afterUserRegistration (Event $event)
     {
-        /** @var User $user */
-        $user = $event->sender;
         if ($this->getModule()->registrationConfirmation) {
-            $token = Token::generate($user->getId(), Token::TYPE_REGISTRATION_CONFIRMATION);
+            /** @var User $user */
+            $user = $event->sender;
+            /** @var Token $tokenClass */
+            $tokenClass = $this->getModule()->tokenModel;
+            $token = $tokenClass::generate($user->getId(), $tokenClass::TYPE_REGISTRATION_CONFIRMATION);
             $this->mailer->sendRegistrationConfirmationEmail($user, $token);
         }
     }

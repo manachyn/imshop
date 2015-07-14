@@ -3,6 +3,7 @@
 namespace im\users\models;
 
 use im\users\Module;
+use im\users\traits\ModuleTrait;
 use Yii;
 use yii\base\Model;
 
@@ -13,6 +14,8 @@ use yii\base\Model;
  */
 class RegistrationForm extends Model
 {
+    use ModuleTrait;
+
     /**
      * @var string username
      */
@@ -42,11 +45,6 @@ class RegistrationForm extends Model
      * @var string last name
      */
     public $lastName;
-
-    /**
-     * @var Module module instance
-     */
-    protected $module;
 
     /**
      * @inheritdoc
@@ -92,14 +90,6 @@ class RegistrationForm extends Model
     }
 
     /**
-     * @return Module
-     */
-    public function getModule()
-    {
-        return $this->module ?: $this->module = Yii::$app->getModule('users');
-    }
-
-    /**
      * Signs user up.
      *
      * @return User|null the saved model or null if saving fails
@@ -108,30 +98,7 @@ class RegistrationForm extends Model
     {
         if ($this->validate()) {
 
-            /** @var User $userClass */
-            $userClass = $this->module->userModel;
 
-            /** @var User $user */
-            $user = Yii::$container->get($userClass, [], ['scenario' => $userClass::SCENARIO_REGISTER]);
-
-            /** @var Profile $profileClass */
-            $profileClass = $this->module->profileModel;
-
-            /** @var Profile $profile */
-            $profile = Yii::$container->get($profileClass, [], ['scenario' => $profileClass::SCENARIO_REGISTER]);
-
-            $user->setAttributes([
-                'username' => $this->username,
-                'email' => $this->email,
-                'password' => $this->password
-            ]);
-
-            $profile->setAttributes([
-                'first_name' => $this->firstName,
-                'last_name' => $this->lastName
-            ]);
-
-            $user->profile = $profile;
 
             if ($user->register()) {
                 return $user;

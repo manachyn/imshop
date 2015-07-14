@@ -2,6 +2,7 @@
 
 namespace im\users\models;
 
+use im\users\components\ProfileInterface;
 use im\users\Module;
 use Yii;
 use yii\db\ActiveQuery;
@@ -17,7 +18,7 @@ use yii\db\ActiveRecord;
  *
  * @property User $user
  */
-class Profile extends ActiveRecord
+class Profile extends ActiveRecord implements ProfileInterface
 {
     /**
      * @var string the name of the register scenario.

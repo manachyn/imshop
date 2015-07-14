@@ -2,16 +2,16 @@
 
 namespace im\users\controllers;
 
-use im\users\models\Profile;
+use im\users\components\UserService;
 use im\users\models\RegistrationForm;
+use im\users\models\ResendForm;
+use im\users\models\Token;
 use im\users\models\User;
 use im\users\Module;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use Yii;
-use yii\web\Response;
-use yii\widgets\ActiveForm;
 
 /**
  * Class RegistrationController
@@ -41,7 +41,7 @@ class RegistrationController extends Controller
      * Displays the registration page.
      *
      * @return mixed
-     * @throws NotFoundHttpException
+     * @throws \yii\web\HttpException
      */
     public function actionRegister()
     {
@@ -49,30 +49,32 @@ class RegistrationController extends Controller
             throw new NotFoundHttpException;
         }
 
-        /** @var Module $module */
-        $module = Yii::$app->getModule('users');
+        /** @var UserService $userService */
+        $userService = Yii::$app->user;
         /** @var RegistrationForm $model */
-        $model = Yii::createObject($module->registrationForm);
+        $model = Yii::createObject($this->module->registrationForm);
 
-        if ($model->load(Yii::$app->request->post())) {
-            if ($user = $model->register()) {
-                Yii::$app->session->setFlash('registration.success', Module::t('module', 'Your account has been created.'));
-                if (!$module->registrationConfirmation && $module->loginAfterRegistration) {
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            if ($user = $userService->register($model)) {
+                Yii::$app->session->setFlash('registration.success', Module::t('registration', 'Your account has been created.'));
+                if ($this->module->registrationConfirmation) {
+                    Yii::$app->session->addFlash('registration.info', Module::t('registration', 'A message has been sent to your e-mail address. It contains a confirmation link that you have to click to complete registration.'));
+                } elseif ($this->module->loginAfterRegistration) {
                     $user->login();
                 }
-                if ($module->redirectAfterRegistration) {
-                    return $this->redirect($module->redirectAfterRegistration);
+                if ($this->module->redirectAfterRegistration) {
+                    return $this->redirect($this->module->redirectAfterRegistration);
                 } else {
                     return $this->refresh();
                 }
             } elseif (!$model->hasErrors()) {
-                Yii::$app->session->setFlash('registration.error', Module::t('module', 'An error occurred during registration.'));
+                Yii::$app->session->setFlash('registration.error', Module::t('registration', 'An error occurred during registration.'));
             }
         }
 
         return $this->render('register', [
             'model' => $model,
-            'module' => $module
+            'module' => $this->module
         ]);
     }
 
@@ -86,29 +88,69 @@ class RegistrationController extends Controller
         return $this->render('success');
     }
 
-//    /**
-//     * Confirms user's account. If confirmation was successful logs the user and shows success message. Otherwise
-//     * shows error message.
-//     * @param  integer $id
-//     * @param  string  $code
-//     * @return string
-//     * @throws \yii\web\HttpException
-//     */
-//    public function actionConfirm($id, $code)
-//    {
-//        $user = $this->finder->findUserById($id);
-//
-//        if ($user === null || $this->module->enableConfirmation == false) {
-//            throw new NotFoundHttpException;
-//        }
-//
-//        $user->attemptConfirmation($code);
-//
-//        return $this->render('/message', [
-//            'title'  => \Yii::t('user', 'Account confirmation'),
-//            'module' => $this->module,
-//        ]);
-//    }
+    /**
+     * Confirms user's account.
+     *
+     * @param string $token
+     * @return mixed
+     * @throws \yii\web\HttpException
+     */
+    public function actionConfirm($token)
+    {
+        if (!$this->module->registrationConfirmation) {
+            throw new NotFoundHttpException;
+        }
+
+        /** @var User $userClass */
+        $userClass = $this->module->userModel;
+        /** @var Token $tokenClass */
+        $tokenClass = $this->module->tokenModel;
+        /** @var Token $token */
+        $token = $tokenClass::findByToken($token, $tokenClass::TYPE_REGISTRATION_CONFIRMATION);
+        if ($token) {
+            /** @var User $user */
+            $user = $userClass::findOne($token->user_id);
+            if ($user->confirm()) {
+                $token->delete();
+                Yii::$app->session->setFlash('confirmation.success', Module::t('registration', 'Thank you! Registration is complete now.'));
+                if ($this->module->loginAfterRegistration) {
+                    $user->login();
+                }
+            } else {
+                Yii::$app->session->setFlash('confirmation.error', Module::t('registration', 'Something went wrong and your account has not been confirmed.'));
+            }
+        } else {
+            Yii::$app->session->setFlash('confirmation.error', Module::t('registration', 'The confirmation link is invalid or expired. Please try to request a new one.'));
+        }
+
+        return $this->render('confirm', [
+            'module' => $this->module
+        ]);
+    }
+
+    /**
+     * Displays page where user can request new confirmation token.
+     *
+     * @return string
+     * @throws \yii\web\HttpException
+     */
+    public function actionResend()
+    {
+        if (!$this->module->registrationConfirmation) {
+            throw new NotFoundHttpException;
+        }
+
+        /** @var ResendForm $model */
+        $model = Yii::createObject(ResendForm::className());
+
+        if ($model->load(Yii::$app->request->post()) && $model->resend()) {
+            Yii::$app->session->setFlash('resend.success', Module::t('registration', 'A message has been sent to your email address. It contains a confirmation link that you must click to complete registration.'));
+        }
+
+        return $this->render('resend', [
+            'model' => $model
+        ]);
+    }
 
     public function actionEmail()
     {

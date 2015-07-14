@@ -105,7 +105,6 @@ class Token extends ActiveRecord
         if (!$token) {
             $token = \Yii::createObject(static::className());
         }
-
         $token->user_id = $userId;
         $token->token = Yii::$app->security->generateRandomString();
         $token->type = $type;
@@ -128,7 +127,32 @@ class Token extends ActiveRecord
     {
         return static::find()->where(['user_id' => $userId, 'type' => $type])
             ->andWhere(['or', ['>', 'expire_at', time()], ['expire_at' => null]])
-            //->andWhere("([[expire_time]] >= '$now' or [[expire_time]] is NULL)")
             ->one();
+    }
+
+    /**
+     * Find token by token string.
+     *
+     * @param string $token
+     * @param int $type
+     * @return static|null
+     */
+    public static function findByToken($token, $type)
+    {
+        return static::find()->where(['token' => $token, 'type' => $type])
+            ->andWhere(['or', ['>', 'expire_at', time()], ['expire_at' => null]])
+            ->one();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function beforeSave($insert)
+    {
+        if ($insert) {
+            $this->created_at = time();
+        }
+
+        return parent::beforeSave($insert);
     }
 }

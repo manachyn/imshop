@@ -23,13 +23,13 @@ class m150708_151440_create_users_tables extends Migration
             'email' => Schema::TYPE_STRING . ' NOT NULL',
             'role' => Schema::TYPE_STRING . ' NOT NULL DEFAULT "user"',
             'status' => 'tinyint(1) NOT NULL DEFAULT 1',
-            'registration_ip' => Schema::TYPE_BIGINT . ' NOT NULL',
-            'last_login_ip' => Schema::TYPE_BIGINT . ' NOT NULL',
-            'created_at' => Schema::TYPE_INTEGER . ' NOT NULL',
-            'updated_at' => Schema::TYPE_INTEGER . ' NOT NULL',
-            'confirmed_at' => Schema::TYPE_INTEGER . ' NOT NULL',
-            'last_login_at' => Schema::TYPE_INTEGER . ' NOT NULL',
-            'blocked_at' => Schema::TYPE_INTEGER . ' NOT NULL'
+            'registration_ip' => Schema::TYPE_BIGINT,
+            'last_login_ip' => Schema::TYPE_BIGINT,
+            'created_at' => Schema::TYPE_INTEGER,
+            'updated_at' => Schema::TYPE_INTEGER,
+            'confirmed_at' => Schema::TYPE_INTEGER,
+            'last_login_at' => Schema::TYPE_INTEGER,
+            'blocked_at' => Schema::TYPE_INTEGER
         ], $tableOptions);
 
         // Indexes
@@ -72,6 +72,9 @@ class m150708_151440_create_users_tables extends Migration
 
         // Foreign Keys
         $this->addForeignKey('FK_tokens_user_id', '{{%tokens}}', 'user_id', '{{%users}}', 'id', 'CASCADE', 'CASCADE');
+        $this->createIndex('token', '{{%tokens}}', 'token');
+        $this->createIndex('type', '{{%tokens}}', 'type');
+        $this->createIndex('expire_at', '{{%tokens}}', 'expire_at');
 
         // Add super-administrator
         $this->execute($this->getUserSql());
