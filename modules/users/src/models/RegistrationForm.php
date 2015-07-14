@@ -88,23 +88,4 @@ class RegistrationForm extends Model
             'lastName' => Module::t('registration', 'Last name'),
         ];
     }
-
-    /**
-     * Signs user up.
-     *
-     * @return User|null the saved model or null if saving fails
-     */
-    public function register()
-    {
-        if ($this->validate()) {
-
-
-
-            if ($user->register()) {
-                return $user;
-            }
-        }
-
-        return null;
-    }
 }

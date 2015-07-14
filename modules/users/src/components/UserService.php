@@ -3,6 +3,7 @@
 namespace im\users\components;
 
 use im\users\models\Profile;
+use im\users\models\Token;
 use im\users\traits\ModuleTrait;
 use im\users\models\RegistrationForm;
 use im\users\models\User;
@@ -39,7 +40,7 @@ class UserService extends \yii\web\User
     const EVENT_AFTER_CONFIRMATION = 'afterConfirmation';
 
     /**
-     * Register a user.
+     * Registers a user.
      *
      * @param \im\users\models\RegistrationForm $form
      * @return User|null the saved user or null if saving fails
@@ -82,24 +83,74 @@ class UserService extends \yii\web\User
     }
 
     /**
+     * Confirms a user.
+     *
+     * @param string $token
+     * @throws TokenException
+     * @return User|null the confirmed user or null if confirmation fails
+     */
+    public function confirm($token)
+    {
+        /** @var Token $tokenClass */
+        $tokenClass = $this->module->tokenModel;
+        /** @var Token $token */
+        $token = $tokenClass::findByToken($token, $tokenClass::TYPE_REGISTRATION_CONFIRMATION);
+
+        if (!$token) {
+            throw new TokenException('Token is not found.');
+        }
+
+        /** @var User $userClass */
+        $userClass = $this->module->userModel;
+        /** @var User $user */
+        $user = $userClass::findOne($token->user_id);
+
+        if (!$this->beforeConfirm($user)) {
+            return null;
+        }
+        $user->status = $userClass::STATUS_ACTIVE;
+        $user->confirmed_at = time();
+        if ($user->save()) {
+            $token->delete();
+            $this->afterConfirm($user);
+            return $user;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Creates new confirmation token and sends it to the user.
+     *
+     * @param User $user user object
+     * @return bool whether the confirmation information was resent.
+     */
+    public function resendConfirmation(User $user)
+    {
+        /** @var Token $tokenClass */
+        $tokenClass = $this->module->tokenModel;
+        /** @var Token $token */
+        $token = $tokenClass::generate($user->getId(), $tokenClass::TYPE_REGISTRATION_CONFIRMATION);
+
+        //$this->mailer->sendRegistrationConfirmationEmail($user, $token);
+
+        //\Yii::$app->session->setFlash('info', \Yii::t('user', 'A message has been sent to your email address. It contains a confirmation link that you must click to complete registration.'));
+
+        return true;
+    }
+
+    /**
      * @inheritdoc
      */
     public function login(IdentityInterface $identity, $duration = 0)
     {
-        if ($this->beforeLogin($identity, false, $duration)) {
-            $this->switchIdentity($identity, $duration);
-            $id = $identity->getId();
-            $ip = Yii::$app->getRequest()->getUserIP();
-            if ($this->enableSession) {
-                $log = "User '$id' logged in from $ip with duration $duration.";
-            } else {
-                $log = "User '$id' logged in from $ip. Session not enabled.";
-            }
-            Yii::info($log, __METHOD__);
-            $this->afterLogin($identity, false, $duration);
+        if (parent::login($identity, $duration)) {
+            /** @var User $identity */
+            $identity->last_login_ip = ip2long(Yii::$app->request->userIP);
+            $identity->last_login_at = time();
+        } else {
+            return false;
         }
-
-        return !$this->getIsGuest();
     }
 
     /**
@@ -127,5 +178,32 @@ class UserService extends \yii\web\User
     {
         $event = new UserEvent(['user' => $user]);
         $this->trigger(self::EVENT_AFTER_REGISTRATION, $event);
+    }
+
+    /**
+     * This method is called at the beginning of user confirmation.
+     * The default implementation will trigger an [[EVENT_BEFORE_CONFIRMATION]] event.
+     *
+     * @param User $user user object
+     * @return boolean whether the confirmation should continue.
+     */
+    public function beforeConfirm(User $user)
+    {
+        $event = new UserEvent(['user' => $user]);
+        $this->trigger(self::EVENT_BEFORE_CONFIRMATION, $event);
+
+        return $event->isValid;
+    }
+
+    /**
+     * This method is called at the end of user confirmation.
+     * The default implementation will trigger an [[EVENT_AFTER_CONFIRMATION]] event.
+     *
+     * @param User $user
+     */
+    public function afterConfirm(User $user)
+    {
+        $event = new UserEvent(['user' => $user]);
+        $this->trigger(self::EVENT_AFTER_CONFIRMATION, $event);
     }
 }
