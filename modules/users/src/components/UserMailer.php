@@ -37,7 +37,7 @@ class UserMailer extends Component implements UserMailerInterface
     /**
      * @var string registration confirmation email subject
      */
-    public $registrationConfirmationSubject;
+    public $registrationConfirmationSubject = 'Registration confirmation';
 
     /**
      * @inheritdoc
@@ -62,7 +62,7 @@ class UserMailer extends Component implements UserMailerInterface
         $this->mailer->compose(['html' => $view, 'text' => 'text/' . $view], ['user' => $user, 'token' => $token])
             ->setTo($user->email)
             ->setFrom($this->sender)
-            ->setSubject('Test')
+            ->setSubject($this->registrationConfirmationSubject)
             ->send();
     }
 }

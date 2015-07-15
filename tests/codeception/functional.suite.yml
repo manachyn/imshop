@@ -10,6 +10,7 @@ modules:
         - Filesystem
         - Yii2
         - \Helper\Functional
+        - \Helper\Mail
     config:
         Yii2:
             configFile: 'codeception/config/functional.php'

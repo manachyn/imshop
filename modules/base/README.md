@@ -6,3 +6,6 @@
 'im\\mailer\\' => array($baseDir . '/modules/mailer/src'),
 
 yii migrate --migrationPath=@app/modules/users/src/migrations
+
+/home/ubuntu/.composer/vendor/bin/codecept build
+/home/ubuntu/.composer/vendor/bin/codecept run

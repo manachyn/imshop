@@ -3,6 +3,7 @@
 namespace im\users;
 
 use im\users\components\UserEventsHandler;
+use im\users\components\UserMailerInterface;
 use Yii;
 use yii\base\Component;
 use yii\di\Instance;
@@ -98,9 +99,9 @@ class Module extends \yii\base\Module
     {
         parent::init();
 
-        if ($this->userEventsHandler !== null && !is_object($this->userEventsHandler)) {
-            $this->userEventsHandler = Yii::createObject($this->userEventsHandler);
-        }
+//        if ($this->userEventsHandler !== null && !is_object($this->userEventsHandler)) {
+//            $this->userEventsHandler = Yii::createObject($this->userEventsHandler);
+//        }
     }
 
     /**

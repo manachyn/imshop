@@ -7,6 +7,12 @@ use im\users\traits\ModuleTrait;
 use Yii;
 use yii\base\Model;
 
+/**
+ * Class ResendForm is a model which collects user's email or username, validate it's confirmation status.
+ * It is used to send new confirmation token to the user.
+ *
+ * @package im\users\models
+ */
 class ResendForm extends Model
 {
     use ModuleTrait;
@@ -17,7 +23,7 @@ class ResendForm extends Model
     public $email;
 
     /**
-     * @var User
+     * @var User user instance
      */
     private $_user;
 
@@ -29,13 +35,8 @@ class ResendForm extends Model
         return [
             ['email', 'filter', 'filter' => 'trim'],
             ['email', 'required'],
-            ['email', 'email'],
             ['email', 'string', 'max' => 255],
-            ['email', function ($attribute) {
-                if ($this->getUser()->isConfirmed()) {
-                    $this->addError($attribute, Module::t('registration', 'This account has already been confirmed.'));
-                }
-            }]
+            ['email', 'validateEmail']
         ];
     }
 
@@ -45,7 +46,7 @@ class ResendForm extends Model
     public function attributeLabels()
     {
         return [
-            'email' => Module::t('registration', 'E-mail'),
+            'email' => Module::t('registration', 'E-mail or username'),
         ];
     }
 
@@ -71,31 +72,10 @@ class ResendForm extends Model
     {
         if ($this->_user === null) {
             /** @var User $userClass */
-            $userClass = $this->getModule()->userModel;
-            $this->_user = $userClass::findOne(['email' => $this->email]) || $userClass::findOne(['username' => $this->email]);
+            $userClass = $this->module->userModel;
+            $this->_user = $userClass::findOne(['email' => $this->email]) ?: $userClass::findOne(['username' => $this->email]);
         }
 
         return $this->_user;
-    }
-
-    /**
-     * Creates new confirmation token and sends it to the user.
-     *
-     * @return bool
-     */
-    public function resend()
-    {
-        if (!$this->validate()) {
-            return false;
-        }
-        $user = $this->getUser();
-        /** @var Token $tokenClass */
-        $tokenClass = $this->getModule()->tokenModel;
-        $token = $tokenClass::generate($user->getId(), $tokenClass::TYPE_REGISTRATION_CONFIRMATION);
-        $this->mailer->sendRegistrationConfirmationEmail($user, $token);
-
-        \Yii::$app->session->setFlash('info', \Yii::t('user', 'A message has been sent to your email address. It contains a confirmation link that you must click to complete registration.'));
-
-        return true;
     }
 }

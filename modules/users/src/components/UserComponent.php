@@ -8,6 +8,7 @@ use im\users\traits\ModuleTrait;
 use im\users\models\RegistrationForm;
 use im\users\models\User;
 use Yii;
+use yii\di\Instance;
 use yii\web\IdentityInterface;
 
 /**
@@ -15,9 +16,14 @@ use yii\web\IdentityInterface;
  *
  * @package im\users\components
  */
-class UserService extends \yii\web\User
+class UserComponent extends \yii\web\User
 {
     use ModuleTrait;
+
+    /**
+     * @var UserMailerInterface|array|string the mailer object or the application component ID of the mailer object.
+     */
+    public $mailer = 'im\users\components\UserMailer';
 
     /**
      * @event ModelEvent an event that is triggered before user registration.
@@ -38,6 +44,15 @@ class UserService extends \yii\web\User
      * @event Event an event that is triggered after a user is confirmed.
      */
     const EVENT_AFTER_CONFIRMATION = 'afterConfirmation';
+
+    /**
+     * @inheritdoc
+     */
+    public function init()
+    {
+        parent::init();
+        $this->mailer = Instance::ensure($this->mailer, 'im\users\components\UserMailerInterface');
+    }
 
     /**
      * Registers a user.
@@ -75,6 +90,9 @@ class UserService extends \yii\web\User
         }
         if ($user->save() && $user->profile->save()) {
             $user->link('profile', $user->profile);
+            if ($this->module->registrationConfirmation) {
+                $this->sendConfirmationToken($user);
+            }
             $this->afterRegister($user);
             return $user;
         } else {
@@ -125,16 +143,12 @@ class UserService extends \yii\web\User
      * @param User $user user object
      * @return bool whether the confirmation information was resent.
      */
-    public function resendConfirmation(User $user)
+    public function sendConfirmationToken(User $user)
     {
         /** @var Token $tokenClass */
         $tokenClass = $this->module->tokenModel;
-        /** @var Token $token */
         $token = $tokenClass::generate($user->getId(), $tokenClass::TYPE_REGISTRATION_CONFIRMATION);
-
-        //$this->mailer->sendRegistrationConfirmationEmail($user, $token);
-
-        //\Yii::$app->session->setFlash('info', \Yii::t('user', 'A message has been sent to your email address. It contains a confirmation link that you must click to complete registration.'));
+        $this->mailer->sendRegistrationConfirmationEmail($user, $token);
 
         return true;
     }
@@ -148,6 +162,7 @@ class UserService extends \yii\web\User
             /** @var User $identity */
             $identity->last_login_ip = ip2long(Yii::$app->request->userIP);
             $identity->last_login_at = time();
+            return true;
         } else {
             return false;
         }

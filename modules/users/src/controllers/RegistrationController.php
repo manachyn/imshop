@@ -3,10 +3,7 @@
 namespace im\users\controllers;
 
 use im\users\components\TokenException;
-use im\users\models\RegistrationForm;
 use im\users\models\ResendForm;
-use im\users\models\Token;
-use im\users\models\User;
 use im\users\Module;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -49,16 +46,16 @@ class RegistrationController extends Controller
             throw new NotFoundHttpException;
         }
 
-        $userService = $this->getUserService();
+        $userComponent = $this->getUserComponent();
         $model = $this->getRegistrationForm();
 
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            if ($user = $userService->register($model)) {
+            if ($user = $userComponent->register($model)) {
                 Yii::$app->session->setFlash('registration.success', Module::t('registration', 'Your account has been created.'));
                 if ($this->module->registrationConfirmation) {
                     Yii::$app->session->addFlash('registration.info', Module::t('registration', 'A message has been sent to your e-mail address. It contains a confirmation link that you have to click to complete registration.'));
                 } elseif ($this->module->loginAfterRegistration) {
-                    $userService->login($user);
+                    $userComponent->login($user);
                 }
                 if ($this->module->redirectAfterRegistration) {
                     return $this->redirect($this->module->redirectAfterRegistration);
@@ -99,13 +96,13 @@ class RegistrationController extends Controller
             throw new NotFoundHttpException;
         }
 
-        $userService = $this->getUserService();
+        $userComponent = $this->getUserComponent();
 
         try {
-            if ($user = $userService->confirm($token)) {
+            if ($user = $userComponent->confirm($token)) {
                 Yii::$app->session->setFlash('confirmation.success', Module::t('registration', 'Thank you! Registration is complete now.'));
                 if ($this->module->loginAfterRegistration) {
-                    $userService->login($user);
+                    $userComponent->login($user);
                 }
             } else {
                 Yii::$app->session->setFlash('confirmation.error', Module::t('registration', 'Something went wrong and your account has not been confirmed.'));
@@ -131,12 +128,13 @@ class RegistrationController extends Controller
             throw new NotFoundHttpException;
         }
 
-        $userService = $this->getUserService();
+        $userComponent = $this->getUserComponent();
         $model = $this->getResendForm();
 
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            if ($userService->resendConfirmation($model->getUser())) {
-                Yii::$app->session->setFlash('resend.success', Module::t('registration', 'A message has been sent to your email address. It contains a confirmation link that you must click to complete registration.'));
+            if ($userComponent->sendConfirmationToken($model->getUser())) {
+                Yii::$app->session->setFlash('resend.success', Module::t('registration', 'A message has been sent to your e-mail address. It contains a confirmation link that you have to click to complete registration.'));
+                return $this->refresh();
             }
         }
 
@@ -148,9 +146,9 @@ class RegistrationController extends Controller
     /**
      * Returns user service.
      *
-     * @return \im\users\components\UserService
+     * @return \im\users\components\UserComponent
      */
-    protected function getUserService()
+    protected function getUserComponent()
     {
         return Yii::$app->user;
     }

@@ -82,11 +82,6 @@ class User extends ActiveRecord implements IdentityInterface
     public $password;
 
     /**
-     * @var Module module instance
-     */
-    protected $module;
-
-    /**
      * @inheritdoc
      */
     public static function tableName()
@@ -131,6 +126,8 @@ class User extends ActiveRecord implements IdentityInterface
 
             ['role', 'default', 'value' => static::ROLE_DEFAULT],
             ['role', 'in', 'range' => [static::ROLE_DEFAULT]],
+
+            [['registration_ip', 'last_login_ip', 'created_at', 'updated_at', 'confirmed_at', 'last_login_at', 'blocked_at'], 'safe']
         ];
     }
 

@@ -2,6 +2,9 @@
 /**
  * Application configuration shared by all test types
  */
+
+use Helper\Mail;
+
 return [
     'controllerMap' => [
         'fixture' => [
@@ -17,6 +20,11 @@ return [
         ],
         'mailer' => [
             'useFileTransport' => true,
+            'on afterSend' => function ($event) {
+                if ($event->isSuccessful) {
+                    Mail::$mails[] = $event->message;
+                }
+            },
         ],
         'urlManager' => [
             'showScriptName' => true,

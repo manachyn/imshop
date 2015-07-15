@@ -1,7 +1,11 @@
 <?php
 
 namespace tests\codeception\functional;
+
+use im\users\models\Token;
 use im\users\models\User;
+use im\users\Module;
+use im\users\traits\ModuleTrait;
 use tests\codeception\_pages\RegistrationPage;
 
 /**
@@ -47,6 +51,9 @@ class RegisrationCest
      */
     public function testUserRegistration($I, $scenario)
     {
+        /** @var Module $module */
+        $module = \Yii::$app->getModule('users');
+
         $I->wantTo('ensure that registration works');
 
         $registrationPage = RegistrationPage::openBy($I);
@@ -87,10 +94,16 @@ class RegisrationCest
         ]);
 
         $I->expectTo('see that user is created');
-        $I->seeRecord('im\users\models\User', [
-            'username' => 'tester',
-            'email' => 'tester.email@example.com',
-        ]);
+        /** @var User $user */
+        $user = $I->grabRecord(User::className(), ['username' => 'tester', 'email' => 'tester.email@example.com']);
+
+        if ($module->registrationConfirmation) {
+            /** @var Token $token */
+            $token = $I->grabRecord(Token::className(), ['user_id' => $user->id, 'type' => Token::TYPE_REGISTRATION_CONFIRMATION]);
+            $I->seeInEmailSubject('Registration confirmation');
+            $I->seeInEmailRecipients('tester.email@example.com');
+            $I->seeInEmail($token->token);
+        }
 
         $registrationPage = RegistrationPage::openBy($I);
 
@@ -105,6 +118,8 @@ class RegisrationCest
         $I->expectTo('see that username and email address have already been taken');
         $I->see('Username "tester" has already been taken.', '.help-block');
         $I->see('E-mail "tester.email@example.com" has already been taken.', '.help-block');
+
+
 
 //        $I->expectTo('see that user logged in');
 //        $I->seeLink('Logout (tester)');

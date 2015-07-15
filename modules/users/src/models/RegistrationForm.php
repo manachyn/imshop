@@ -8,7 +8,8 @@ use Yii;
 use yii\base\Model;
 
 /**
- * Class RegistrationForm collects user input on registration process, validates it and creates new User model.
+ * Class RegistrationForm collects user input on registration process, validates it.
+ * It is used for creation new 'User' model.
  *
  * @package im\users\models
  */
