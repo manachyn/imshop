@@ -1,11 +1,11 @@
 <?php
-namespace Helper;
-// here you can define custom actions
-// all public methods declared in helper class will be available in $I
 
+namespace tests\codeception\_support;
+
+use \Codeception\Module;
 use yii\mail\MessageInterface;
 
-class Mail extends \Codeception\Module
+class MailHelper extends Module
 {
     /**
      * @var MessageInterface[]

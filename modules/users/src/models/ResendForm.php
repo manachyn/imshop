@@ -57,7 +57,7 @@ class ResendForm extends Model
     {
         $user = $this->getUser();
         if (!$user) {
-            $this->addError('email', Module::t('registration', 'User with such email or username is not found'));
+            $this->addError('email', Module::t('registration', 'User with such email or username is not found.'));
         } elseif ($user->isConfirmed()) {
             $this->addError('email', Module::t('registration', 'This account has already been confirmed.'));
         }

@@ -5,7 +5,8 @@ namespace tests\codeception\_pages;
 use yii\codeception\BasePage;
 
 /**
- * Represents registration page
+ * Represents registration page.
+ *
  * @property \AcceptanceTester|\FunctionalTester $actor
  */
 class RegistrationPage extends BasePage
@@ -13,7 +14,7 @@ class RegistrationPage extends BasePage
     /**
      * @inheritdoc
      */
-    public $route = 'users/registration/register';
+    public $route = '/users/registration/register';
 
     /**
      * @param array $registrationData

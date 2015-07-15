@@ -3,7 +3,7 @@
  * Application configuration shared by all test types
  */
 
-use Helper\Mail;
+use tests\codeception\_support\MailHelper;
 
 return [
     'controllerMap' => [
@@ -22,7 +22,7 @@ return [
             'useFileTransport' => true,
             'on afterSend' => function ($event) {
                 if ($event->isSuccessful) {
-                    Mail::$mails[] = $event->message;
+                    MailHelper::$mails[] = $event->message;
                 }
             },
         ],
