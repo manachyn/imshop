@@ -18,4 +18,13 @@ interface UserMailerInterface
      * @return bool
      */
     public function sendRegistrationConfirmationEmail(User $user, $token);
+
+    /**
+     * Sent password recovery email.
+     *
+     * @param User $user
+     * @param string $token
+     * @return bool
+     */
+    public function sendPasswordRecoveryEmail(User $user, $token);
 }

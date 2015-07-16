@@ -2,6 +2,7 @@
 
 namespace im\users\components;
 
+use DateTime;
 use im\users\models\Profile;
 use im\users\models\Token;
 use im\users\traits\ModuleTrait;
@@ -148,9 +149,36 @@ class UserComponent extends \yii\web\User
         /** @var Token $tokenClass */
         $tokenClass = $this->module->tokenModel;
         $token = $tokenClass::generate($user->getId(), $tokenClass::TYPE_REGISTRATION_CONFIRMATION);
-        $this->mailer->sendRegistrationConfirmationEmail($user, $token);
 
-        return true;
+        return $this->mailer->sendRegistrationConfirmationEmail($user, $token);
+    }
+
+    /**
+     * Return password recovery token by it's value.
+     *
+     * @param string $token
+     * @return null|Token
+     */
+    public function getPasswordRecoveryToken($token) {
+        /** @var Token $tokenClass */
+        $tokenClass = $this->module->tokenModel;
+
+        return $tokenClass::findByToken($token, $tokenClass::TYPE_PASSWORD_RECOVERY);
+    }
+
+
+    /**
+     * Resets user's password.
+     *
+     * @param User $user user object
+     * @param string $password new password
+     * @return bool whether the password was changed.
+     */
+    public function resetPassword(User $user, $password)
+    {
+        $user->setPassword($password);
+
+        return $user->save(false);
     }
 
     /**
@@ -166,6 +194,23 @@ class UserComponent extends \yii\web\User
         } else {
             return false;
         }
+    }
+
+    /**
+     * Creates new password recovery token and sends it to the user.
+     *
+     * @param User $user user object
+     * @return bool whether the recovery information was sent.
+     */
+    public function sendRecoveryToken(User $user)
+    {
+        /** @var Token $tokenClass */
+        $tokenClass = $this->module->tokenModel;
+        $expireTime = $this->module->passwordRecoveryTokenExpiration;
+        $expireTime = $expireTime !== null ? (new DateTime())->modify('+' . $expireTime) : null;
+        $token = $tokenClass::generate($user->getId(), $tokenClass::TYPE_PASSWORD_RECOVERY, $expireTime);
+
+        return $this->mailer->sendPasswordRecoveryEmail($user, $token);
     }
 
     /**

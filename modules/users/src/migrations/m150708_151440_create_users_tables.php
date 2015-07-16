@@ -17,7 +17,6 @@ class m150708_151440_create_users_tables extends Migration
             'id' => Schema::TYPE_PK,
             'username' => Schema::TYPE_STRING . '(100) NOT NULL',
             'password_hash' => Schema::TYPE_STRING . ' NOT NULL',
-            'password_reset_token' => Schema::TYPE_STRING,
             'auth_key' => Schema::TYPE_STRING . '(32) NOT NULL',
             'access_token' => Schema::TYPE_STRING . ' NOT NULL',
             'email' => Schema::TYPE_STRING . ' NOT NULL',
@@ -36,7 +35,6 @@ class m150708_151440_create_users_tables extends Migration
         $this->createIndex('username', '{{%users}}', 'username', true);
         $this->createIndex('email', '{{%users}}', 'email', true);
         $this->createIndex('access_token', '{{%users}}', 'access_token');
-        $this->createIndex('password_reset_token', '{{%users}}', 'password_reset_token');
         $this->createIndex('role', '{{%users}}', 'role');
         $this->createIndex('status', '{{%users}}', 'status');
 
@@ -89,8 +87,7 @@ class m150708_151440_create_users_tables extends Migration
         $time = time();
         $password_hash = Yii::$app->security->generatePasswordHash('admin12345');
         $auth_key = Yii::$app->security->generateRandomString();
-        $token = Yii::$app->security->generateRandomString() . '_' . time();
-        return "INSERT INTO {{%users}} (`username`, `email`, `password_hash`, `auth_key`, `password_reset_token`, `role`, `status`, `created_at`, `updated_at`) VALUES ('admin', 'admin@demo.com', '$password_hash', '$auth_key', '$token', 'superadmin', 1, $time, $time)";
+        return "INSERT INTO {{%users}} (`username`, `email`, `password_hash`, `auth_key`, `role`, `status`, `created_at`, `updated_at`) VALUES ('admin', 'admin@demo.com', '$password_hash', '$auth_key', 'superadmin', 1, $time, $time)";
     }
 
     /**

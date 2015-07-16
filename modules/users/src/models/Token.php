@@ -3,6 +3,7 @@
 namespace im\users\models;
 
 use im\users\Module;
+use im\users\traits\ModuleTrait;
 use yii\db\ActiveRecord;
 use Yii;
 
@@ -20,15 +21,17 @@ use Yii;
  */
 class Token extends ActiveRecord
 {
+    use ModuleTrait;
+
     /**
      * @var int token for registration confirmation
      */
     const TYPE_REGISTRATION_CONFIRMATION = 1;
 
     /**
-     * @var int Key for email confirmation
+     * @var int token for password recovery
      */
-    const TYPE_RECOVERY = 2;
+    const TYPE_PASSWORD_RECOVERY = 2;
 
     /**
      * @inheritdoc
@@ -37,11 +40,6 @@ class Token extends ActiveRecord
     {
         return '{{%tokens}}';
     }
-
-    /**
-     * @var Module module instance
-     */
-    protected $module;
 
     /**
      * @inheritdoc
@@ -68,19 +66,11 @@ class Token extends ActiveRecord
     }
 
     /**
-     * @return Module
-     */
-    public function getModule()
-    {
-        return $this->module ?: $this->module = Yii::$app->getModule('users');
-    }
-
-    /**
      * @return \yii\db\ActiveQuery
      */
     public function getUser()
     {
-        return $this->hasOne($this->getModule()->userModel, ['id' => 'user_id']);
+        return $this->hasOne($this->module->userModel, ['id' => 'user_id']);
     }
 
     /**

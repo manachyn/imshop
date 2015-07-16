@@ -1,4 +1,5 @@
 <?php
+
 use im\users\Module;
 use yii\helpers\Html;
 

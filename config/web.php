@@ -57,6 +57,24 @@ $config = [
             'cache' => false
         ],
         'backendTheme' => 'im\adminlte\Theme',
+        'authClientCollection' => [
+            'class' => 'yii\authclient\Collection',
+            'clients' => [
+                'facebook' => [
+                    'class' => 'yii\authclient\clients\Facebook',
+                    'clientId' => '507449656079588',
+                    'clientSecret' => 'd82712a6066ba2310eb6c20e770c28e2',
+                ],
+                'google' => [
+                    'class' => 'yii\authclient\clients\GoogleOpenId'
+                ],
+//                'vkontakte' => [
+//                    'class' => 'yii\authclient\clients\VKontakte',
+//                    'clientId' => 'vkontakte_client_id',
+//                    'clientSecret' => 'vkontakte_client_secret',
+//                ]
+            ],
+        ]
     ],
     'params' => $params,
 ];

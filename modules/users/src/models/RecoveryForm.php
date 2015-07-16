@@ -4,16 +4,14 @@ namespace im\users\models;
 
 use im\users\Module;
 use im\users\traits\ModuleTrait;
-use Yii;
 use yii\base\Model;
 
 /**
- * Class ResendForm is a model which collects user's email or username, validate it's confirmation status.
- * It is used to send new confirmation token to the user.
+ * Class RecoveryForm collects data for password recovery.
  *
  * @package im\users\models
  */
-class ResendForm extends Model
+class RecoveryForm extends Model
 {
     use ModuleTrait;
 
@@ -46,7 +44,7 @@ class ResendForm extends Model
     public function attributeLabels()
     {
         return [
-            'email' => Module::t('registration', 'E-mail or username'),
+            'email' => Module::t('recovery', 'E-mail or username'),
         ];
     }
 
@@ -57,9 +55,11 @@ class ResendForm extends Model
     {
         $user = $this->getUser();
         if (!$user) {
-            $this->addError('email', Module::t('registration', 'User with such email or username is not found.'));
-        } elseif ($user->isConfirmed()) {
-            $this->addError('email', Module::t('registration', 'This account has already been confirmed.'));
+            $this->addError('email', Module::t('recovery', 'User with such email or username is not found.'));
+        } elseif (!$user->isConfirmed()) {
+            $this->addError('email', Module::t('recovery', 'This account in not confirmed.'));
+        } elseif (!$user->isActive()) {
+            $this->addError('email', Module::t('recovery', 'This account in not activated.'));
         }
     }
 
