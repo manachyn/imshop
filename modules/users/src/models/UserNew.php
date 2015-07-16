@@ -16,7 +16,6 @@ use yii\web\IdentityInterface;
  * @property integer $id ID
  * @property string $username Username
  * @property string $password_hash Password hash
- * @property string $password_reset_token Password reset token
  * @property string $email E-mail
  * @property string $auth_key Authentication key
  * @property string $access_token Access token
@@ -136,22 +135,6 @@ class UserNew extends ActiveRecord implements IdentityInterface, UserInterface
     public function setAuthKey()
     {
         $this->auth_key = Yii::$app->security->generateRandomString();
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function setPasswordResetToken()
-    {
-        $this->password_reset_token = Yii::$app->security->generateRandomString() . '_' . time();
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function removePasswordResetToken()
-    {
-        $this->password_reset_token = null;
     }
 
     /**

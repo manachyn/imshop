@@ -40,6 +40,11 @@ class UserMailer extends Component implements UserMailerInterface
     public $registrationConfirmationSubject = 'Registration confirmation';
 
     /**
+     * @var string password recovery email subject
+     */
+    public $passwordRecoverySubject = 'Password recovery';
+
+    /**
      * @inheritdoc
      */
     public function init()
@@ -59,10 +64,23 @@ class UserMailer extends Component implements UserMailerInterface
     public function sendRegistrationConfirmationEmail(User $user, $token)
     {
         $view = 'registration_confirmation';
-        $this->mailer->compose(['html' => $view, 'text' => 'text/' . $view], ['user' => $user, 'token' => $token])
+        return $this->mailer->compose(['html' => $view, 'text' => 'text/' . $view], ['user' => $user, 'token' => $token])
             ->setTo($user->email)
             ->setFrom($this->sender)
             ->setSubject($this->registrationConfirmationSubject)
+            ->send();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function sendPasswordRecoveryEmail(User $user, $token)
+    {
+        $view = 'password_recovery';
+        return $this->mailer->compose(['html' => $view, 'text' => 'text/' . $view], ['user' => $user, 'token' => $token])
+            ->setTo($user->email)
+            ->setFrom($this->sender)
+            ->setSubject($this->passwordRecoverySubject)
             ->send();
     }
 }

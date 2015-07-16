@@ -3,14 +3,14 @@
 use im\users\Module;
 use yii\helpers\Url;
 
-/* @var $this yii\web\View */
-/* @var $user im\users\models\User */
-/* @var $token im\users\models\Token */
+/* @var yii\web\View $this */
+/* @var im\users\models\User $user */
+/* @var im\users\models\Token $token */
 
 ?>
 
 <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6; font-weight: normal; margin: 0 0 10px; padding: 0;">
-    <?= Module::t('registration', 'Hello') ?>, <?= $user->profile->first_name ?>
+    <?= Module::t('registration', 'Hello') ?> <?= $user->profile->first_name ?>,
 </p>
 <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6; font-weight: normal; margin: 0 0 10px; padding: 0;">
     <?= Module::t('registration', 'Thank you for registration on {0}', Yii::$app->name) ?>.

@@ -46,6 +46,11 @@ class Module extends \yii\base\Module
     public $passwordLength = 5;
 
     /**
+     * @var string time before password recovery token expire.
+     */
+    public $passwordRecoveryTokenExpiration = '48 hours';
+
+    /**
      * @var UserEventsHandler|array|string the handler object or the application component ID of the handler
      */
     public $userEventsHandler = [
@@ -66,14 +71,21 @@ class Module extends \yii\base\Module
     public $profileModel = 'im\users\models\Profile';
 
     /**
+     * @var string token model class
+     */
+    public $tokenModel = 'im\users\models\Token';
+
+    /**
+     * @var string auth model class
+     */
+    public $authModel = 'im\users\models\Auth';
+
+    /**
      * @var string registration form model class
      */
     public $registrationForm = 'im\users\models\RegistrationForm';
 
-    /**
-     * @var string token model class
-     */
-    public $tokenModel = 'im\users\models\Token';
+
 
     /**
      * @var string The prefix for user module URL.

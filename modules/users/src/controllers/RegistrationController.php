@@ -144,7 +144,7 @@ class RegistrationController extends Controller
     }
 
     /**
-     * Returns user service.
+     * Returns user component.
      *
      * @return \im\users\components\UserComponent
      */
