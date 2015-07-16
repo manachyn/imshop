@@ -1,0 +1,71 @@
+/* general styles */
+
+a, button {.ondrTransition;
+	   i.fa {margin: 0 5px;}
+}
+.clickable {cursor: pointer !important;}
+.required {color: @brand-primary;}
+.accent {color: @brand-primary;}
+.text-uppercase {text-transform: uppercase; letter-spacing: 0.08em;}
+.text-center-sm {  
+    @media (max-width: @screen-sm-max) {
+	text-align: center;
+    }
+}
+p.lead {margin-bottom: 40px;}
+section, div.section {margin-bottom: 40px;}
+.no-mb {margin-bottom: 0 !important;}
+.mb-small {margin-bottom: 20px !important;}
+
+.heading {margin-bottom: 40px;
+	  h1,h2,h3,h4,h5 {display: inline-block; border-bottom: solid 5px @brand-primary; line-height: @headings-line-height; margin-bottom: 0; padding-bottom: 10px; vertical-align: middle; text-transform: uppercase; letter-spacing: 0.06em; 
+			  i.fa {display: inline-block; background: @brand-primary; width: 30px; height: 30px;  vertical-align: middle; text-align: center; color: #fff; font-size: 12px; line-height: 30px; border-radius: 15px;}
+	  }
+}
+
+.icon {display: inline-block; width: 80px; height: 80px; color: #fff; line-height: 80px;  border-radius: 40px; border: solid 1px #fff; font-size: 20px; 
+       &.icon-lg {font-size: 30px; border-width: 2px;}
+}
+
+.ul-icons {padding-left: 10px;
+	   li {list-style-type: none; line-height: 20px; margin-bottom: 20px;
+	       i {width: 20px; height: 20px; background: @brand-primary; color: #fff; text-align: center; border-radius: 10px; line-height: 20px; margin-right: 10px;}
+	   }
+}
+ul.list-style-none {list-style: none;}
+
+#text-page {
+    h1,h2,h3 {font-weight: 700;}
+}
+
+#error-page {text-align: center; margin-top: 40px; margin-bottom: 100px;
+	     h4 {margin-bottom: 40px;}
+	     p.buttons {margin-top: 40px;}
+}
+
+.pages-listing {
+    .item {text-align: center; 
+	   h3 {font-size: @font-size-h4; text-transform: uppercase; margin-bottom: 20px; letter-spacing: 0.08em; 
+	       a {color: @gray;}
+	   }
+	   .text {margin-bottom: 20px; 
+		  p {color: @gray-light; font-size: @font-size-small; margin-bottom: 20px; }
+	   }
+    }
+}
+
+
+.banner {margin-bottom: @grid-gutter-width; text-align: center; 
+	 img {margin: 0 auto;}
+	 a:hover img {.opacity(0.8); .ondrTransition;}
+
+}
+
+.pages {text-align: center;
+	.loadMore {text-align: center;}
+	.pagination {text-align: center;}
+}
+
+.features-buttons {
+    button {margin-bottom: 20px;}
+}

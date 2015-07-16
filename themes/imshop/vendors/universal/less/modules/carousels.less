@@ -1,0 +1,81 @@
+.owl-carousel, .owl-theme {
+    .owl-controls .owl-page.active span,
+    .owl-controls.clickable .owl-page:hover span{
+        background: @brand-primary;
+    }
+    .owl-controls .owl-buttons{position: absolute; top: 5px; right: 0;   
+                               div {width: 26px; height: 26px; line-height: 25px; margin: 0 5px 0 0; font-size: 18px; color: @brand-primary; padding: 0; background: #fff; border-radius: 13px; vertical-align: middle; text-align: center; .opacity(1);
+                               }
+    }
+}
+
+.home-carousel {position: relative; background: url('../img/photogrid.jpg') center center repeat; background-size: cover; .ondrTransition();
+
+                .dark-mask {position: absolute;top: 0;left: 0;width: 100%;height: 100%;background: @brand-primary; .opacity(0.9);}
+
+                .owl-carousel {padding-top: 60px; padding-bottom: 20px;}
+
+                .owl-theme .owl-controls .owl-page span{background: #666;}                
+                .owl-theme .owl-controls .owl-page.active span{background: #fff;}                
+                .owl-theme .owl-controls .owl-page:hover span{background: #fff;}                
+
+                @media (max-width: @screen-xs-max) {
+                    text-align: center !important;
+                }
+
+                @media (min-width: @screen-md-min) {
+                    .right {text-align: right;}
+
+                }		
+
+                h1, h2, h3, p, ul {color: #fff; }
+                h1 {font-weight: 700; text-transform: uppercase; font-size: @font-size-h1 + 10px; letter-spacing: 0.08em;
+                    @media (max-width: @screen-sm-max) {
+                        font-size: @font-size-h1;
+                    }
+                }
+                h2 {font-weight: 700; text-transform: uppercase; font-size: @font-size-h2 + 10px; letter-spacing: 0.08em; }
+                ul, p {font-size: @font-size-base + 4px; font-weight: 700; padding: 0; text-transform: uppercase; letter-spacing: 0.10em;
+                       @media (max-width: @screen-sm-max) {
+                           font-size: @font-size-base;
+                       }
+                }
+                ul li {margin-bottom: 10px;}
+}
+
+.customers {padding: 0; margin-bottom: 40px;
+            .item {list-style-type: none; text-align: center; margin: 0 20px;
+                   img {display: inline-block; 
+                        filter: url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'grayscale\'><feColorMatrix type=\'matrix\' values=\'0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\'/></filter></svg>#grayscale"); /* Firefox 10+, Firefox on Android */
+                        filter: gray; /* IE6-9 */
+                        -webkit-filter: grayscale(100%); /* Chrome 19+, Safari 6+, Safari 6+ iOS */
+
+                        .ondrTransition(0.2s); 
+
+                        &:hover {max-width: auto;
+                                 filter: none;
+                                 -webkit-filter: none;
+                        }
+
+                   }
+            }
+}
+
+.testimonials {padding: 0;  margin-bottom: 40px;
+               .item {list-style-type: none; margin: 0 5px; background: #fff; padding-bottom: 60px;  .box-sizing(border-box); 
+                      .testimonial {position: relative; padding: 20px; .clearfix();
+                                    .text {color: @gray-light; margin-bottom: 40px;}   
+                                    .bottom {position: absolute; left: 0; bottom: 0; width: 100%; .box-sizing(border-box); padding: 20px; height: 50px;
+                                             .icon {color: @brand-primary; font-size: 30px; float: left; width: 20%;}
+                                    }
+                                    .name-picture {float: right; width: 80%; text-align: right;
+                                                   h5 {font-size: @font-size-base; text-transform: uppercase; letter-spacing: 0.08em;}
+                                                   p {color: @gray-light; margin: 0; font-size: @font-size-small;}
+                                                   img {float: right; width: 60px; border-radius: 30px; margin-left: 10px;}
+                                    }
+
+                      }
+
+               }
+}
+

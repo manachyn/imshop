@@ -1,0 +1,36 @@
+#intro {background: url('../img/home.jpg') no-repeat center top; -webkit-background-size: cover; -moz-background-size: cover; -o-background-size: cover; background-size: cover; 
+	.item {font-family: @font-family-sans-serif; height: 100%; 
+
+	       h1 {text-transform: uppercase; font-size: 50px; color: #fff;margin-bottom: 40px; letter-spacing: 0.08em;
+		   @media (max-width: @screen-sm-max) {
+		       font-size: 40px;
+		   }
+		   @media (max-width: @screen-xs-max) {
+		       font-size: 25px;
+		   }
+	       }
+	       h3 {color: #fff; margin-bottom: 40px;
+
+		   @media (max-width: @screen-xs-max) {
+		       font-size: 15px; margin-bottom: 20px;
+		   }
+
+	       }
+
+	       .btn {text-transform: none;
+		     @media (max-width: @screen-sm-max) {
+			 font-size: 14px;
+		     }
+	       }
+
+	       .carousel-caption {
+		   @media (max-width: @screen-sm-max) {
+		       left: 10%;
+		       right: 10%;
+		   }
+	       }
+	}  
+	.container, .row {
+	    height: 100%; position: relative;
+	}
+}

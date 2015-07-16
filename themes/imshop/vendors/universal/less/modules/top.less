@@ -1,0 +1,29 @@
+#top {background: @gray; color: @gray-lighter; padding: (@line-height-computed/2) 0;
+      p {margin: 0; font-size: @font-size-small;}
+      .social {float: right; text-align: right;
+	       a {color: @gray-light; display: inline-block; width: 24px; height: 24px; border-radius: 12px; line-height: 20px; font-size: 12px; text-align: center; vertical-align: bottom;
+		  &:hover {color: #fff; 
+			   &.facebook {background-color: #4460ae;}
+			   &.gplus {background-color: #c21f25;}
+			   &.twitter {background-color: #3cf;}
+			   &.instagram {background-color: #cd4378;}
+			   &.email {background-color: #4a7f45;}
+		  }
+	       }
+      }
+      .login {float: right;
+	      a {font-size: @font-size-small; color: @gray-lighter; margin-right: 15px; text-decoration: none; text-transform: uppercase; font-weight: 700; letter-spacing: 0.10em;}
+
+	      @media (max-width: @screen-xs-max) {
+		  float: left;
+	      }
+
+      }
+      .contact {}
+
+      &.light {background: #fff; color: @gray-light; border-bottom: solid 1px @gray-lighter;
+	       .login {
+		   a {color: @gray;}
+	       }
+      }
+}

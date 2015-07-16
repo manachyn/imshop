@@ -1,0 +1,22 @@
+/* ribbons for product sales etc. */
+
+.ribbon {position: absolute; top: 50px; padding-left:51px; font-weight: 700; letter-spacing: 0.08em;
+	 .ribbon-background {position:absolute;top:0;right:0;
+	 }
+	 .theribbon{position: relative;width: 80px; padding: 6px 20px 6px 20px;margin: 30px 10px 10px -71px;color: #fff;background-color: @brand-primary; font-family: @font-family-sans-serif;
+
+		    &:before, &:after {content: ' ';position: absolute;width: 0;height: 0;}
+		    &:after {left: 0px;top: 100%;border-width: 5px 10px;border-style: solid;border-color: darken(#333, 20%) darken(#333, 20%) transparent transparent;}
+	 }
+}
+.ribbon.sale {top: 0;}
+.ribbon.new {top: 50px;
+	     .theribbon{background-color: @brand-info;text-shadow: 0px 1px 2px #bbb;
+			&:after {border-color: darken(@brand-info, 20%) darken(@brand-info, 20%) transparent transparent;}
+	     }
+}
+.ribbon.gift {top: 100px;
+	      .theribbon{background-color: @brand-success;text-shadow: 0px 1px 2px #bbb;
+			 &:after {border-color: darken(@brand-success, 20%) darken(@brand-success, 20%) transparent transparent;}
+	      }
+}
