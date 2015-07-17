@@ -1,0 +1,35 @@
+.portfolio {
+    &.no-space {padding: 0 (@grid-gutter-width / 2);
+		.box-image {margin: 0 -(@grid-gutter-width / 2); }
+    }
+}
+
+.portfolio-project {
+    .project-more {
+	h4 {color: @gray; text-transform: uppercase; margin-bottom: 0; text-align: left; font-size: @font-size-h5; letter-spacing: 0.08em;}
+	p {color: @gray-light;  padding: 10px 0; margin-bottom: 20px;text-align: left; }
+    }
+}
+
+.portfolio-showcase {margin: (@grid-gutter-width / 2) 0 @grid-gutter-width * 2;
+		     h3 {
+			 a {text-transform: uppercase; line-height: 1.5; letter-spacing: 0.08em;}
+		     }
+		     p.lead {color: @gray; margin-bottom: 20px;}
+		     p {color: @gray-light;}
+		     p.buttons {margin-top: 40px;}
+
+}
+
+.see-more {text-align: center; margin-top: 20px; padding-top: 20px; 
+	  p {font-size: (@font-size-large + 10px); font-weight: 100; margin-bottom: 20px; }
+}
+
+.showcase {
+    .item {text-align: center; 
+	   .icon {display: inline-block; width: 50px; height: 50px; color: @gray; line-height: 50px;  border-radius: 25px; border: solid 1px @gray; }
+	   h4 {color: @gray; text-transform: uppercase; letter-spacing: 0.08em; line-height: 1.5; font-size: @font-size-h4 - 2px;
+	       span {font-weight: bold; font-size: @font-size-h1 + 15;}
+	   }
+    }
+}

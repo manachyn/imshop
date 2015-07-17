@@ -1,0 +1,970 @@
+/* Original Boostrap template overwrite */
+
+/* breadcrumbs */
+
+.breadcrumb {font-family: @font-family-sans-serif; text-transform: uppercase; background-color: none; letter-spacing: 0.08em;}
+
+/* nav */
+
+.nav {
+
+    > li {
+
+        > a {
+            padding: @nav-link-padding;
+            &:hover,
+                &:focus {
+                background-color: @nav-link-hover-bg;
+            }
+        }
+
+        // Disabled state sets text to gray and nukes hover/tab effects
+        &.disabled > a {
+            color: @nav-disabled-link-color;
+
+            &:hover,
+                &:focus {
+                color: @nav-disabled-link-hover-color;
+            }
+        }
+    }
+
+    // Open dropdowns
+    .open > a {
+        &,
+        &:hover,
+            &:focus {
+            background-color: @nav-link-hover-bg;
+            border-color: @link-color;
+        }
+    }
+
+}
+
+// Tabs
+// -------------------------
+
+// Give the tabs something to sit on
+.nav-tabs {
+    border-bottom: 1px solid @nav-tabs-border-color;
+    > li {
+        float: left;
+        // Make the list-items overlay the bottom border
+        margin-bottom: -1px;
+
+        // Actual tabs (as links)
+        > a {
+            margin-right: 2px;
+            line-height: @line-height-base;
+            border: 1px solid transparent;
+            border-radius: @border-radius-base @border-radius-base 0 0;
+            &:hover {
+                border-color: @nav-tabs-link-hover-border-color @nav-tabs-link-hover-border-color @nav-tabs-border-color;
+            }
+        }
+
+        // Active state, and its :hover to override normal :hover
+        &.active > a {
+            &,
+            &:hover,
+                &:focus {
+                color: @nav-tabs-active-link-hover-color;
+                background-color: @nav-tabs-active-link-hover-bg;
+                border: 1px solid @nav-tabs-active-link-hover-border-color;
+                border-bottom-color: transparent;
+                cursor: default;
+            }
+        }
+    }
+    // pulling this in mainly for less shorthand
+    &.nav-justified {
+        .nav-justified();
+        .nav-tabs-justified();
+    }
+}
+
+
+// Pills
+// -------------------------
+.nav-pills {
+    > li {
+        float: left;
+
+        // Links rendered as pills
+        > a {
+            border-radius: @nav-pills-border-radius;
+        }
+        + li {
+            margin-left: 2px;
+        }
+
+        // Active state
+        &.active > a {
+            &,
+            &:hover,
+                &:focus {
+                color: @nav-pills-active-link-hover-color;
+                background-color: @nav-pills-active-link-hover-bg;
+            }
+        }
+    }
+}
+
+// Stacked pills
+.nav-stacked {
+    > li {
+        float: none;
+        + li {
+            margin-top: 2px;
+            margin-left: 0; // no need for this gap between nav items
+        }
+    }
+} 
+
+
+
+// Nav variations
+// --------------------------------------------------
+
+// Justified nav links
+// -------------------------
+
+.nav-justified {
+    width: 100%;
+    border-bottom: solid 1px @brand-primary;
+    > li {
+        float: none;
+        > a {
+            text-align: center;
+            /*margin-bottom: 5px;*/
+        }
+    }
+
+    > .dropdown .dropdown-menu {
+        top: auto;
+        left: auto;
+    }
+
+}
+
+// Move borders to anchors instead of bottom of list
+//
+// Mixin for adding on top the shared `.nav-justified` styles for our tabs
+.nav-tabs-justified {
+    border-bottom: 0;
+
+    > li > a {
+        // Override margin from .nav-tabs
+        margin-right: 0;
+        border-radius: @border-radius-base;
+    }
+
+    > .active > a,
+    > .active > a:hover,
+        > .active > a:focus {
+        border: 1px solid @nav-tabs-justified-link-border-color;
+    }
+
+    @media (min-width: @screen-sm-min) {
+        > li > a {
+            border-bottom: 1px solid @nav-tabs-justified-link-border-color;
+            border-radius: @border-radius-base @border-radius-base 0 0;
+        }
+        > .active > a,
+        > .active > a:hover,
+            > .active > a:focus {
+            border-bottom-color: @nav-tabs-justified-active-link-border-color;
+        }
+    }
+}
+
+.tab-content {padding: 15px; border: solid 1px #ddd; border-top: none;}
+
+
+/* navbar */
+
+.navbar {
+    position: relative;
+    min-height: @navbar-height; // Ensure a navbar always shows (e.g., without a .navbar-brand in collapsed mode)
+    margin-bottom: @navbar-margin-bottom;
+    border-bottom: 1px solid transparent;
+
+
+    // Prevent floats from breaking the navbar
+    &:extend(.clearfix all);
+
+    @media (min-width: @grid-float-breakpoint) {
+        border-radius: @navbar-border-radius;
+    }
+}
+
+.navbar-header {
+    &:extend(.clearfix all);
+
+    @media (min-width: @grid-float-breakpoint) {
+        float: left;
+    }
+}
+
+
+.navbar-collapse {
+    overflow-x: visible;
+    padding-right: @navbar-padding-horizontal;
+    padding-left:  @navbar-padding-horizontal;
+
+    &.in {
+        overflow-y: auto;
+    }
+
+    @media (min-width: @grid-float-breakpoint) {
+        width: auto;
+        border-top: 0;
+        box-shadow: none;
+
+        &.collapse {
+            display: block !important;
+            height: auto !important;
+            padding-bottom: 0; // Override default setting
+            overflow: visible !important;
+        }
+
+        &.in {
+            overflow-y: visible;
+        }
+
+        .navbar-fixed-top &,
+        .navbar-static-top &,
+        .navbar-fixed-bottom & {
+            padding-left: 0;
+            padding-right: 0;
+        }
+    }
+}
+
+.navbar-fixed-top, .navbar-affixed-top,
+.navbar-fixed-bottom {
+    .navbar-collapse {
+        max-height: @navbar-collapse-max-height;
+
+        @media (max-width: @screen-xs-min) and (orientation: landscape) {
+            max-height: 200px;
+        }
+    }
+}
+
+.container,
+.container-fluid {
+    > .navbar-header,
+    > .navbar-collapse {
+        margin-right: -@navbar-padding-horizontal;
+        margin-left:  -@navbar-padding-horizontal;
+
+        @media (min-width: @grid-float-breakpoint) {
+            margin-right: 0;
+            margin-left:  0;
+        }
+    }
+}
+
+
+.navbar-static-top {
+    z-index: @zindex-navbar;
+    border-width: 0 0 1px;
+
+    @media (min-width: @grid-float-breakpoint) {
+        border-radius: 0;
+    }
+}
+
+.navbar-fixed-top,
+.navbar-fixed-bottom {
+    position: fixed;
+    right: 0;
+    left: 0;
+    z-index: @zindex-navbar-fixed;
+    .translate3d(0, 0, 0);
+
+    // Undo the rounded corners
+    @media (min-width: @grid-float-breakpoint) {
+        border-radius: 0;
+    }
+}
+.navbar-fixed-top {
+    top: 0;
+    border-width: 0 0 1px;
+}
+.navbar-fixed-bottom {
+    bottom: 0;
+    margin-bottom: 0; // override .navbar defaults
+    border-width: 1px 0 0;
+}
+
+
+.navbar-brand {
+    float: left;
+    padding: 10px @navbar-padding-horizontal;
+    font-size: @font-size-large;
+    line-height: @line-height-computed;
+    height: @navbar-height;
+
+    &:hover,
+        &:focus {
+        text-decoration: none;
+    }
+
+    @media (min-width: @grid-float-breakpoint) {
+        .navbar > .container &,
+        .navbar > .container-fluid & {
+            margin-left: -@navbar-padding-horizontal;
+        }
+    }
+}
+
+.navbar-toggle {
+    position: relative;
+    float: right;
+    margin-right: @navbar-padding-horizontal;
+    padding: 9px 10px;
+    .navbar-vertical-align(34px);
+    background-color: transparent;
+    background-image: none; // Reset unusual Firefox-on-Android default style; see https://github.com/necolas/normalize.css/issues/214
+    border: 1px solid transparent;
+    border-radius: @border-radius-base;
+
+    // We remove the `outline` here, but later compensate by attaching `:hover`
+    // styles to `:focus`.
+    &:focus {
+        outline: 0;
+    }
+}
+
+.navbar-nav {
+    margin: (@navbar-padding-vertical / 2) -@navbar-padding-horizontal;
+
+    > li > a {
+        padding-top:    10px;
+        padding-bottom: 10px;
+        line-height: @line-height-computed;
+    }
+
+    @media (max-width: @grid-float-breakpoint-max) {
+        // Dropdowns get custom display when collapsed
+        .open .dropdown-menu {
+            > li > a,
+            .dropdown-header {
+                padding: 5px 15px 5px 25px;
+            }
+            > li > a {
+                line-height: @line-height-computed;
+                &:hover,
+                    &:focus {
+                    background-image: none;
+                }
+            }
+        }
+    }
+
+    // Uncollapse the nav
+    @media (min-width: @grid-float-breakpoint) {
+        float: left;
+        margin: 0;
+
+        > li {
+            float: left;
+            > a {
+                padding-top:    @navbar-padding-vertical;
+                padding-bottom: @navbar-padding-vertical;
+            }
+        }
+
+        &.navbar-right:last-child {
+            margin-right: -@navbar-padding-horizontal;
+        }
+    }
+}
+
+
+@media (min-width: @grid-float-breakpoint) {
+    .navbar-left  { .pull-left(); }
+    .navbar-right { .pull-right(); }
+}
+
+.navbar-form {
+    margin-left: -@navbar-padding-horizontal;
+    margin-right: -@navbar-padding-horizontal;
+    padding: 10px @navbar-padding-horizontal;
+    border-top: 1px solid transparent;
+    border-bottom: 1px solid transparent;
+    @shadow: inset 0 1px 0 rgba(255,255,255,.1), 0 1px 0 rgba(255,255,255,.1);
+    .box-shadow(@shadow);
+
+    .form-group {
+        @media (max-width: @grid-float-breakpoint-max) {
+            margin-bottom: 5px;
+        }
+    }
+
+    .navbar-vertical-align(@input-height-base);
+
+    @media (min-width: @grid-float-breakpoint) {
+        width: auto;
+        border: 0;
+        margin-left: 0;
+        margin-right: 0;
+        padding-top: 0;
+        padding-bottom: 0;
+        .box-shadow(none);
+
+        // Outdent the form if last child to line up with content down the page
+        &.navbar-right:last-child {
+            margin-right: -@navbar-padding-horizontal;
+        }
+    }
+}
+
+
+// Dropdown menus
+
+// Menu position and menu carets
+.navbar-nav > li > .dropdown-menu {
+    margin-top: 0;
+    .border-top-radius(0);
+}
+// Menu position and menu caret support for dropups via extra dropup class
+.navbar-fixed-bottom .navbar-nav > li > .dropdown-menu {
+    .border-bottom-radius(0);
+}
+
+
+.navbar-btn {
+    .navbar-vertical-align(@input-height-base);
+
+    &.btn-sm {
+        .navbar-vertical-align(@input-height-small);
+    }
+    &.btn-xs {
+        .navbar-vertical-align(22);
+    }
+}
+
+.navbar-text {
+    .navbar-vertical-align(@line-height-computed);
+
+    @media (min-width: @grid-float-breakpoint) {
+        float: left;
+        margin-left: @navbar-padding-horizontal;
+        margin-right: @navbar-padding-horizontal;
+
+        // Outdent the form if last child to line up with content down the page
+        &.navbar-right:last-child {
+            margin-right: 0;
+        }
+    }
+}
+
+.navbar-default {
+    background-color: @navbar-default-bg;
+    border-color: @navbar-default-border;
+    border-bottom: none; 
+    .navbar-brand {
+        color: @navbar-default-brand-color;
+        &:hover,
+            &:focus {
+            color: @navbar-default-brand-hover-color;
+            background-color: @navbar-default-brand-hover-bg;
+        }
+    }
+
+    .navbar-text {
+        color: @navbar-default-color;
+    }
+
+    .navbar-nav {
+        > li > a {
+            color: @navbar-default-link-color;
+
+            &:hover,
+                &:focus {
+                color: @navbar-default-link-hover-color;
+                background-color: @navbar-default-link-hover-bg;
+            }
+        }
+        > .active > a {
+            &,
+            &:hover,
+                &:focus {
+                color: @navbar-default-link-active-color;
+                background-color: @navbar-default-link-active-bg;
+            }
+        }
+        > .disabled > a {
+            &,
+            &:hover,
+                &:focus {
+                color: @navbar-default-link-disabled-color;
+                background-color: @navbar-default-link-disabled-bg;
+            }
+        }
+    }
+
+    .navbar-toggle {
+        border-color: @navbar-default-toggle-border-color;
+        &:hover,
+            &:focus {
+            background-color: @navbar-default-toggle-hover-bg;
+        }
+        .icon-bar {
+            background-color: @navbar-default-toggle-icon-bar-bg;
+        }
+    }
+
+    .navbar-collapse,
+    .navbar-form {
+        border-color: @navbar-default-border;
+    }
+
+    // Dropdown menu items
+    .navbar-nav {
+        // Remove background color from open dropdown
+        > .open > a {
+            &,
+            &:hover,
+                &:focus {
+                background-color: @navbar-default-link-active-bg;
+                color: @navbar-default-link-active-color;
+            }
+        }
+
+        @media (max-width: @grid-float-breakpoint-max) {
+            // Dropdowns get custom display when collapsed
+            .open .dropdown-menu {
+                > li > a {
+                    color: @navbar-default-link-color;
+                    &:hover,
+                        &:focus {
+                        //color: @navbar-default-link-hover-color;
+                        //background-color: @navbar-default-link-hover-bg;
+                        color: @brand-primary;
+
+                    }
+                }
+                > .active > a {
+                    &,
+                    &:hover,
+                        &:focus {
+                        color: @navbar-default-link-active-color;
+                        background-color: @navbar-default-link-active-bg;
+                    }
+                }
+                > .disabled > a {
+                    &,
+                    &:hover,
+                        &:focus {
+                        color: @navbar-default-link-disabled-color;
+                        background-color: @navbar-default-link-disabled-bg;
+                    }
+                }
+            }
+        }
+    }
+
+    .navbar-link {
+        color: @navbar-default-link-color;
+        &:hover {
+            color: @navbar-default-link-hover-color;
+        }
+    }
+
+    .btn-link {
+        color: @navbar-default-link-color;
+        &:hover,
+            &:focus {
+            color: @navbar-default-link-hover-color;
+        }
+        &[disabled],
+        fieldset[disabled] & {
+            &:hover,
+                &:focus {
+                color: @navbar-default-link-disabled-color;
+            }
+        }
+    }
+}
+
+/* scaffolding */
+
+body {
+    font-family: @font-family-base;
+    font-size: @font-size-base;
+    line-height: @line-height-base;
+    color: @text-color;
+}
+
+a {
+    color: @link-color;
+    text-decoration: none;
+
+    &:hover,
+        &:focus {
+        color: @link-hover-color;
+        text-decoration: underline;
+    }
+
+    &:focus {
+        .tab-focus();
+    }
+}
+
+.img-rounded {
+    border-radius: @border-radius-large;
+}
+
+hr {
+    margin-top:    @line-height-computed;
+    margin-bottom: @line-height-computed;
+    border: 0;
+    border-top: 1px solid @hr-border;
+}
+
+/* breadcrumbs */
+
+.breadcrumb {
+    padding: @breadcrumb-padding-vertical @breadcrumb-padding-horizontal;
+    margin-bottom: @line-height-computed;
+    background-color: @breadcrumb-bg;
+    border-radius: 0;
+    text-align: right;
+
+    > li {
+
+        + li:before {
+            content: "@{breadcrumb-separator}\00a0"; // Unicode space added since inline-block means non-collapsing white-space
+            color: @breadcrumb-color;
+        }
+    }
+
+    > .active {
+        color: @breadcrumb-active-color;
+    }
+
+    @media (max-width: @screen-sm-max) {
+        padding: @breadcrumb-padding-vertical 0;
+        text-align: center;
+    }
+
+}
+
+/* dropdowns */
+
+.dropdown-menu {
+    z-index: @zindex-dropdown;
+    font-size: @font-size-base;
+    background-color: @dropdown-bg;
+    border: 1px solid @dropdown-fallback-border; // IE8 fallback
+    border: 1px solid @dropdown-border;
+    border-radius: 0;
+    .box-shadow(0 6px 12px rgba(0,0,0,.175));
+
+    &.pull-right {
+        right: 0;
+        left: auto;
+    }
+
+    .divider {
+        .nav-divider(@dropdown-divider-bg);
+    }
+
+    > li > a {
+        padding: 5px 20px;
+        line-height: @line-height-base;
+        color: @dropdown-link-color;
+        white-space: nowrap; // prevent links from randomly breaking onto new lines
+    }
+}
+
+/* labels */
+
+.label {font-family: @font-family-sans-serif; font-weight: normal; text-transform: uppercase; letter-spacing: 0.08em;}
+
+/* forms.less */
+
+label {font-weight: normal;}
+
+.form-control {
+    .box-shadow(none);
+    border-radius: @input-border-radius;
+    .form-control-focus();
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+/* pager*/
+
+.pager {
+    margin: @line-height-computed 0;
+    border-top: solid 1px @gray-lighter;
+    padding-top: @line-height-computed;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    font-family: @font-family-sans-serif;
+    li {
+        display: inline;
+        > a,
+        > span {
+            background-color: @pager-bg;
+            border: 1px solid @pager-border;
+            border-radius: @pager-border-radius;
+        }
+
+        > a:hover,
+            > a:focus {
+            text-decoration: none;
+            color: #fff;
+            background-color: @pager-hover-bg;
+        }
+    }
+
+    .disabled {
+        > a,
+        > a:hover,
+            > a:focus,
+            > span {
+            color: @pager-disabled-color;
+            background-color: @pager-bg;
+            border-color: #ddd;
+        }
+    }
+}
+
+/* pagination */
+
+.pagination {
+    margin: @line-height-computed 0;
+    font-family: @font-family-sans-serif;
+    border-radius: 0;
+    > li {
+        > a,
+        > span {
+            padding: @padding-base-vertical @padding-base-horizontal;
+            line-height: @line-height-base;
+            text-decoration: none;
+            color: @pagination-color;
+            background-color: @pagination-bg;
+            border: 1px solid @pagination-border;
+        }
+    }
+    > li > a,
+    > li > span {
+        &:hover,
+            &:focus {
+            color: @pagination-hover-color;
+            background-color: @pagination-hover-bg;
+            border-color: @pagination-hover-border;
+        }
+    }
+
+    > .active > a,
+    > .active > span {
+        &,
+        &:hover,
+            &:focus {
+            z-index: 2;
+            color: @pagination-active-color;
+            background-color: @pagination-active-bg;
+            border-color: @pagination-active-border;
+        }
+    }
+
+    > .disabled {
+        > span,
+        > span:hover,
+            > span:focus,
+            > a,
+            > a:hover,
+            > a:focus {
+            color: @pagination-disabled-color;
+            background-color: @pagination-disabled-bg;
+            border-color: @pagination-disabled-border;
+        }
+    }
+}
+
+/* responsive utilities */
+
+.text-center-xs {
+    @media (max-width: @screen-xs-max) {
+        text-align: center !important;
+        img {.center-block;}
+
+    }
+}
+
+.text-center-sm {
+    @media (min-width: @screen-sm-min) and (max-width: @screen-sm-max) {
+        text-align: center !important;
+        img {.center-block;}
+
+    }
+}
+
+/* type */
+
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+    font-family: @headings-font-family;
+    font-weight: @headings-font-weight;
+    line-height: @headings-line-height;
+    color: @headings-color;
+
+}
+
+h1, .h1,
+h2, .h2,
+h3, .h3 {
+    margin-top: @line-height-computed;
+    margin-bottom: (@line-height-computed);
+}
+
+p {
+    margin: 0 0 (@line-height-computed / 2);
+}
+
+.lead {
+    margin-bottom: @line-height-computed;
+    font-size: floor((@font-size-base * 1.3));
+
+    @media (min-width: @screen-sm-min) {
+        font-size: (@font-size-base * 1.5);
+    }
+}
+
+
+.text-small {font-size: @font-size-small;}
+.text-large {font-size: @font-size-large;}
+.text-italic {font-style: italic;}
+
+.text-primary {
+    .text-emphasis-variant(@brand-primary);
+}
+
+.bg-primary {
+    color: #fff;
+    .bg-variant(@brand-primary);
+}
+
+abbr[title],
+abbr[data-original-title] {
+    border-bottom: 1px dotted @abbr-border-color;
+}
+// Blockquotes
+blockquote {
+    padding: (@line-height-computed / 2) @line-height-computed;
+    margin: 0 0 @line-height-computed;
+    font-size: @blockquote-font-size;
+    border-left: 5px solid @blockquote-border-color;
+
+    footer,
+    small,
+    .small {
+        display: block;
+        font-size: 80%; // back to default font-size
+        line-height: @line-height-base;
+        color: @blockquote-small-color;
+
+        &:before {
+            content: '\2014 \00A0'; // em dash, nbsp
+        }
+    }
+}
+
+// Opposite alignment of blockquote
+//
+// Heads up: `blockquote.pull-right` has been deprecated as of v3.1.0.
+.blockquote-reverse,
+blockquote.pull-right {
+    border-right: 5px solid @blockquote-border-color;
+}
+
+// Addresses
+address {
+    margin-bottom: @line-height-computed;
+    line-height: @line-height-base;
+}
+
+.panel {
+    margin-bottom: @line-height-computed;
+    background-color: @panel-bg;
+    border: 1px solid transparent;
+    border-radius: @panel-border-radius;
+    .box-shadow(0 0 0);
+}
+
+// Optional heading
+.panel-heading {
+    .border-top-radius(0);
+    text-transform: uppercase; 
+    letter-spacing: 0.08em;
+    padding: 15px 15px;
+}
+
+.progress {
+    overflow: hidden;
+    height: @line-height-computed;
+    margin-bottom: @line-height-computed;
+    background-color: @progress-bg;
+    border-radius: @border-radius-base;
+    .box-shadow(none);
+}
+
+.panel-group {
+    margin-bottom: @line-height-computed;
+
+    // Tighten up margin so it's only between panels
+    .panel {
+        margin-bottom: 0;
+        border-radius: @panel-border-radius;
+        overflow: hidden; // crop contents when collapsed
+        + .panel {
+            margin-top: 5px;
+        }
+    }
+
+    &.accordion {
+        .panel {border-color: #ccc;}
+    }
+
+}
+
+.panel-primary {
+    .panel-variant(@panel-primary-border; @panel-primary-text; @panel-primary-heading-bg; @panel-primary-border);
+    .panel-title {font-weight: 300;
+                  a:hover {color: #fff; text-decoration: none;}
+    }
+}
+
+// Hover state, but only for links
+a.badge {
+    &:hover,
+        &:focus {
+        color: @badge-link-hover-color;
+        text-decoration: none;
+        cursor: pointer;
+    }
+}
+
+// Account for counters in navs
+a.list-group-item.active > .badge,
+.nav-pills > .active > a > .badge {
+    color: @badge-active-color;
+    background-color: @badge-active-bg;
+}
+.nav-pills > li > a > .badge {
+    margin-left: 3px;
+}
+
+// Progress bars
+// -------------------------
+.progress-bar-primary {
+    .progress-bar-variant(@brand-primary);  
+}

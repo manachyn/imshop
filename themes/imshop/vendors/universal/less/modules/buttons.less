@@ -1,0 +1,55 @@
+/* buttons  */
+
+.btn {
+    font-weight: @btn-font-weight;
+    font-family: @font-family-sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    .button-size(@padding-base-vertical; @padding-base-horizontal; @font-size-base - 1px; @line-height-base; @border-radius-small );
+}
+
+.input-group .btn {font-size: @font-size-base;}
+
+
+.btn-lg {
+    // line-height: ensure even-numbered height of button next to large input
+    .button-size(@padding-large-vertical; @padding-large-horizontal; @font-size-base; @line-height-large; @border-radius-base);
+}
+.btn-sm {
+    // line-height: ensure proper height of button next to small input
+    .button-size(@padding-small-vertical; @padding-small-horizontal; @font-size-small; @line-height-small; @border-radius-small);
+}
+.btn-xs {
+    .button-size(@padding-xs-vertical; @padding-xs-horizontal; @font-size-small; @line-height-small; @border-radius-small);
+}
+
+.btn-template-main {
+    .button-variant(@btn-primary-color; @btn-primary-bg; @btn-primary-border);
+
+    &:hover,
+	&:focus,
+	&:active,
+	&.active {background: @btn-primary-color; color: @btn-primary-bg; border-color: @btn-primary-color;}
+}
+
+.btn-template-transparent-primary {
+    .button-variant(#fff; transparent; #fff);
+
+    &:hover,
+	&:focus,
+	&:active,
+	&.active {background: #fff; color: @brand-primary; border-color: #fff;}
+}
+
+.btn-template-transparent-black {
+    .button-variant(#fff; transparent; #fff);
+
+    &:hover,
+	&:focus,
+	&:active,
+	&.active {background: #fff; color: #000; border-color: #fff;}
+}
+
+.btn-template-primary {
+    .button-variant(#fff; @brand-primary; @brand-primary);
+}

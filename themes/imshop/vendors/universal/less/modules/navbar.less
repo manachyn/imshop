@@ -1,0 +1,107 @@
+.navbar {border: none;
+         ul.nav > li > a {text-transform: uppercase; text-decoration: underline; font-weight: bold; letter-spacing: 0.08em;
+                          border-top: solid 5px transparent;
+                          &:hover {border-top: solid 5px @brand-primary;}
+         }
+
+         ul.nav > li.active >  a, ul.nav > li.open >  a  {text-decoration: none !important; border-top: solid 5px darken(@brand-primary, 20%);}
+
+
+         @media (max-width: @grid-float-breakpoint) { 
+             ul.nav > li.active >  a, ul.nav > li.open >  a {border-top-color: transparent;}
+             ul.nav > li > a:hover {border-top-color: transparent;}
+         }
+
+
+         &.navbar-light {
+             ul.nav > li.active > a {border-top: solid 5px darken(@brand-primary, 20%); background: #fff !important; color: @gray !important;
+                                     &:hover {border-top: solid 5px darken(@brand-primary, 20%);}
+             }
+             ul.nav > li > a, ul.nav > li.open > a{&:hover, &:focus {border-top: solid 5px @brand-primary; background: #fff !important;color: @gray !important;}
+             }
+         }
+
+         ul.dropdown-menu {margin: 0; padding: 0;
+                           li {list-style-type: none; border-bottom: solid 1px @gray-lighter; text-transform: uppercase; letter-spacing: 0.08em; padding: 4px 0; 
+                               a {position: relative; color: @gray-light; font-size: @font-size-small; display: block;.ondrTransition(); left: 0;
+                                  &:hover {color: @brand-primary; text-decoration: none; background: none; left: 2px; .ondrTransition();
+                                           @media (max-width: @grid-float-breakpoint-max) {
+                                               left: 0;
+                                           }
+
+                                  }
+                               }
+                           }
+         }
+
+         .yamm-content {
+             h3 {font-size: @font-size-h4; text-transform: uppercase; padding-bottom: 10px; margin-top: 5px;  border-bottom: dotted 1px @gray; letter-spacing: 0.08em;
+                 @media (max-width: @grid-float-breakpoint-max) {
+                     font-size: @font-size-h5;
+                 }
+             }
+             h5 {text-transform: uppercase; padding-bottom: 10px;  border-bottom: dotted 1px @gray; letter-spacing: 0.08em;}
+
+             ul {margin: 0; padding: 0;
+                 li {list-style-type: none; border-bottom: solid 1px @gray-lighter; text-transform: uppercase; padding: 4px 0; 
+                     a {position: relative; color: @gray-light; font-size: @font-size-small; display: block; .ondrTransition();
+                        &:hover {color: @brand-primary; text-decoration: none; padding-left: 2px;
+                        }
+                     }
+                 }
+             }
+
+             .banner {margin-bottom: 10px;}
+         }
+
+         .yamm-fw .dropdown-menu {padding: 0; }
+
+         .navbar-buttons {float: right;
+                          button, a.btn, .btn-default.navbar-toggle {.navbar-vertical-align(40px); margin-left: 0; margin-right: 5px;}
+
+         }
+
+         .btn-default, .btn-default.navbar-toggle {color: @gray-light; background-color: #fff; margin-left: 7px; margin-right: 0;
+                                                   &:hover,
+                                                       &:focus {
+                                                       background-color: #fff; border-color: @brand-primary; color: @brand-primary;
+                                                   } 
+
+         }
+
+         #search {clear: both; border-top: solid 1px @brand-primary; text-align: right;
+                  form {float: right;
+                        .input-group {width: 500px;
+                                      @media (max-width: @grid-float-breakpoint) {
+                                          width: 100%;
+                                      }
+                        }
+                  }
+
+         }
+
+
+         #basket-overview {
+             a {margin-left: 7px;}
+         }
+
+         &.navbar-light {
+
+         }
+}
+
+.navbar-affixed-top{
+    top:-32px;
+    &.affix-top {.ondrTransition(0.5s);}
+    &.affix {   position: fixed;
+                width: 100%;
+                top: 0;
+                z-index:1000;
+                .box-shadow(0 0 5px #ccc);
+                .ondrTransition(0.5s);
+    }
+}
+
+body.boxed {
+    .navbar-affixed-top.affix {position: static;}
+}
