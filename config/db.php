@@ -4,7 +4,7 @@ return [
     'class' => 'yii\db\Connection',
     'dsn' => 'mysql:host=localhost;dbname=imshop',
     'username' => 'root',
-    'password' => 'vanik',
+    'password' => 'ubuntu',
     'charset' => 'utf8',
     'tablePrefix' => 'tbl_'
 ];
