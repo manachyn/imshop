@@ -49,12 +49,12 @@ $this->params['breadcrumbs'][] = $this->title;
 
                 <br/><br/>
 
-                <p><?= Html::a(Module::t('login', 'Forgot password?'), ['/user/recovery']) ?></p>
+                <p><?= Html::a(Module::t('login', 'Forgot password?'), ['/users/recovery']) ?></p>
                 <?php if ($module->registrationConfirmation): ?>
-                    <p><?= Html::a(Module::t('login', 'Didn\'t receive confirmation message?'), ['/user/registration/resend']) ?></p>
+                    <p><?= Html::a(Module::t('login', 'Didn\'t receive confirmation message?'), ['/users/registration/resend']) ?></p>
                 <?php endif ?>
                 <?php if ($module->enableRegistration): ?>
-                    <p><?= Html::a(Module::t('login', 'Don\'t have an account? Sign up!'), ['/user/registration/register']) ?></p>
+                    <p><?= Html::a(Module::t('login', 'Don\'t have an account? Sign up!'), ['/users/registration/register']) ?></p>
                 <?php endif ?>
 
             </div>
@@ -65,8 +65,8 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php if (Yii::$app->get('authClientCollection', false)): ?>
             <div>
                 <?= yii\authclient\widgets\AuthChoice::widget([
-                    'baseAuthUrl' => ['site/auth'],
-                    'popupMode' => false,
+                    'baseAuthUrl' => ['/users/auth/auth'],
+                    'popupMode' => false
                 ]) ?>
             </div>
         <?php endif; ?>

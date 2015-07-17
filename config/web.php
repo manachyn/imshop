@@ -61,12 +61,14 @@ $config = [
             'class' => 'yii\authclient\Collection',
             'clients' => [
                 'facebook' => [
-                    'class' => 'yii\authclient\clients\Facebook',
+                    'class' => 'im\users\clients\Facebook',
                     'clientId' => '507449656079588',
-                    'clientSecret' => 'd82712a6066ba2310eb6c20e770c28e2',
+                    'clientSecret' => 'd82712a6066ba2310eb6c20e770c28e2'
                 ],
                 'google' => [
-                    'class' => 'yii\authclient\clients\GoogleOpenId'
+                    'class' => 'im\users\clients\Google',
+                    'clientId' => '855363173801-ub3r8uvbkc5458anquemm8jcuvogfvug.apps.googleusercontent.com',
+                    'clientSecret' => 'oO1HUqyxUpBpaxM1gWQ4ALIL'
                 ],
 //                'vkontakte' => [
 //                    'class' => 'yii\authclient\clients\VKontakte',

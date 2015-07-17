@@ -52,6 +52,16 @@ class User extends ActiveRecord implements IdentityInterface
     const SCENARIO_CREATE = 'create';
 
     /**
+     * @var string the name of the update scenario.
+     */
+    const SCENARIO_UPDATE = 'update';
+
+    /**
+     * @var string the name of the connect scenario.
+     */
+    const SCENARIO_CONNECT = 'connect';
+
+    /**
      * @var int inactive status
      */
     const STATUS_INACTIVE = 0;
@@ -133,6 +143,18 @@ class User extends ActiveRecord implements IdentityInterface
     /**
      * @inheritdoc
      */
+    public function scenarios()
+    {
+        return [
+            self::SCENARIO_LOGIN => ['username', 'password'],
+            self::SCENARIO_REGISTER => ['username', 'email', 'password'],
+            self::SCENARIO_CONNECT => ['username', 'email'],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function attributeLabels()
     {
         return [
@@ -175,22 +197,34 @@ class User extends ActiveRecord implements IdentityInterface
      * Finds user by username.
      *
      * @param string $username
-     * @return null|static
+     * @param int $status
+     * @return static|null
      */
-    public static function findByUsername($username)
+    public static function findByUsername($username, $status = null)
     {
-        return static::findOne(['username' => $username, 'status' => static::STATUS_ACTIVE]);
+        $condition = ['username' => $username];
+        if ($status) {
+            $condition['status'] = $status;
+        }
+
+        return static::findOne($condition);
     }
 
     /**
      * Finds user by email.
      *
      * @param string $email
-     * @return null|static
+     * @param int $status
+     * @return static|null
      */
-    public static function findByEmail($email)
+    public static function findByEmail($email, $status = null)
     {
-        return static::findOne(['email' => $email, 'status' => static::STATUS_ACTIVE]);
+        $condition = ['email' => $email];
+        if ($status) {
+            $condition['status'] = $status;
+        }
+
+        return static::findOne($condition);
     }
 
     /**
@@ -259,7 +293,6 @@ class User extends ActiveRecord implements IdentityInterface
             if ($this->isNewRecord || $this->password) {
                 $this->setPassword($this->password);
                 $this->setAuthKey();
-                $this->setPasswordResetToken();
             }
 
             return true;

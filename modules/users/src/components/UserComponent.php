@@ -3,6 +3,8 @@
 namespace im\users\components;
 
 use DateTime;
+use im\users\clients\ClientInterface;
+use im\users\models\Auth;
 use im\users\models\Profile;
 use im\users\models\Token;
 use im\users\traits\ModuleTrait;
@@ -66,11 +68,11 @@ class UserComponent extends \yii\web\User
         /** @var User $userClass */
         $userClass = $this->module->userModel;
         /** @var User $user */
-        $user = Yii::$container->get($userClass, [], ['scenario' => $userClass::SCENARIO_REGISTER]);
+        $user = Yii::createObject(['class' => $userClass, 'scenario' => $userClass::SCENARIO_REGISTER]);
         /** @var Profile $profileClass */
         $profileClass = $this->module->profileModel;
         /** @var Profile $profile */
-        $profile = Yii::$container->get($profileClass, [], ['scenario' => $profileClass::SCENARIO_REGISTER]);
+        $profile = Yii::createObject(['class' => $profileClass, 'scenario' => $profileClass::SCENARIO_REGISTER]);
 
         $user->setAttributes([
             'username' => $form->username,
@@ -214,6 +216,114 @@ class UserComponent extends \yii\web\User
     }
 
     /**
+     * Logs in user via social network using auth client.
+     *
+     * @param ClientInterface $client auth client
+     * @return boolean whether the user is logged in
+     */
+    public function loginAuthClient(ClientInterface $client)
+    {
+        /** @var Auth $authClass */
+        $authClass = $this->module->authModel;
+        /** @var User $userClass */
+        $userClass = $this->module->userModel;
+        $attributes = $client->getUserAttributes();
+        /** @var Auth $auth */
+        $auth = $authClass::findByClient($client);
+
+        if ($auth) {
+            $user = $auth->user;
+            $this->login($user);
+            return true;
+        } else {
+            if (isset($attributes['email'])/* && isset($attributes['username'])*/) {
+                /** @var User $user */
+                $user = $userClass::findByEmail($attributes['email']);
+                if ($user) {
+                    $auth = $authClass::getInstance($client);
+                    $auth->user_id = $user->getId();
+                    $auth->save();
+                    $this->login($user);
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Registers a user from auth client.
+     *
+     * @param ClientInterface $client auth client
+     * @return User|null the registered user or null if saving fails
+     */
+    public function registerAuthClient(ClientInterface $client)
+    {
+        /** @var User $userClass */
+        $userClass = $this->module->userModel;
+        /** @var User $user */
+        $user = Yii::createObject(['class' => $userClass, 'scenario' => $userClass::SCENARIO_CONNECT]);
+        /** @var Profile $profileClass */
+        $profileClass = $this->module->profileModel;
+        /** @var Profile $profile */
+        $profile = Yii::createObject(['class' => $profileClass, 'scenario' => $profileClass::SCENARIO_CONNECT]);
+
+        $user->setAttributes([
+            'username' => $client->getUsername(),
+            'email' => $client->getEmail(),
+            'registration_ip' => ip2long(Yii::$app->request->userIP),
+            'status' => $userClass::STATUS_ACTIVE
+        ]);
+
+        $profile->setFullName($client->getFullName());
+
+        $transaction = $user->getDb()->beginTransaction();
+        if ($user->save()) {
+            $profile->user_id = $user->getId();
+            /** @var Auth $authClass */
+            $authClass = $this->module->authModel;
+            $auth = $authClass::getInstance($client);
+            $auth->user_id = $user->getId();
+            if ($profile->save() && $auth->save()) {
+                $transaction->commit();
+                return $user;
+            } else {
+                print_r($profile->getErrors());
+                print_r($auth->getErrors());
+            }
+        } else {
+            print_r($user->getErrors());
+        }
+
+        return null;
+    }
+
+    /**
+     * Connects auth client with user.
+     *
+     * @param ClientInterface $client auth client
+     * @param IdentityInterface $identity the user identity
+     * @return boolean whether the auth client is connected to user
+     */
+    public function connectAuthClient(ClientInterface $client, IdentityInterface $identity)
+    {
+        /** @var Auth $authClass */
+        $authClass = $this->module->authModel;
+        /** @var Auth $auth */
+        $auth = $authClass::findByClient($client);
+        if (!$auth) {
+            $auth = $authClass::getInstance($client);
+        }
+        if (!$auth->user || $auth->isNewRecord) {
+            $auth->user_id = $identity->getId();
+            $auth->save();
+        }
+
+        return $auth->user_id ? true : false;
+    }
+
+    /**
      * This method is called at the beginning of user registration.
      * The default implementation will trigger an [[EVENT_BEFORE_REGISTRATION]] event.
      *
@@ -247,7 +357,7 @@ class UserComponent extends \yii\web\User
      * @param User $user user object
      * @return boolean whether the confirmation should continue.
      */
-    public function beforeConfirm(User $user)
+    protected function beforeConfirm(User $user)
     {
         $event = new UserEvent(['user' => $user]);
         $this->trigger(self::EVENT_BEFORE_CONFIRMATION, $event);
@@ -261,7 +371,7 @@ class UserComponent extends \yii\web\User
      *
      * @param User $user
      */
-    public function afterConfirm(User $user)
+    protected function afterConfirm(User $user)
     {
         $event = new UserEvent(['user' => $user]);
         $this->trigger(self::EVENT_AFTER_CONFIRMATION, $event);

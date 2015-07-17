@@ -1,8 +1,8 @@
 <?php
 
-namespace amnah\yii2\user\models;
+namespace im\users\models;
 
-use vova07\users\traits\ModuleTrait;
+use im\users\traits\ModuleTrait;
 use Yii;
 use yii\authclient\ClientInterface;
 use yii\behaviors\TimestampBehavior;
@@ -51,13 +51,13 @@ class Auth extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => Yii::t('user', 'ID'),
-            'user_id' => Yii::t('user', 'User ID'),
-            'provider' => Yii::t('user', 'Provider'),
-            'provider_id' => Yii::t('user', 'Provider ID'),
-            'provider_attributes' => Yii::t('user', 'Provider Attributes'),
-            'create_time' => Yii::t('user', 'Created at'),
-            'update_time' => Yii::t('user', 'Update Time'),
+            'id' => Yii::t('auth', 'ID'),
+            'user_id' => Yii::t('auth', 'User ID'),
+            'provider' => Yii::t('auth', 'Provider'),
+            'provider_id' => Yii::t('auth', 'Provider ID'),
+            'provider_attributes' => Yii::t('auth', 'Provider attributes'),
+            'create_time' => Yii::t('auth', 'Created at'),
+            'update_time' => Yii::t('auth', 'Updated at')
         ];
     }
 
@@ -70,40 +70,6 @@ class Auth extends ActiveRecord
     }
 
     /**
-     * Set user id
-     *
-     * @param int $userId
-     * @return static
-     */
-    public function setUser($userId)
-    {
-        $this->user_id = $userId;
-        return $this;
-    }
-
-    /**
-     * Set provider attributes
-     *
-     * @param array $attributes
-     * @return static
-     */
-    public function setProviderAttributes($attributes)
-    {
-        $this->provider_attributes = json_encode($attributes);
-        return $this;
-    }
-
-    /**
-     * Get provider attributes
-     *
-     * @return array
-     */
-    public function getProviderAttributes()
-    {
-        return json_decode($this->provider_attributes, true);
-    }
-
-    /**
      * Finds auth by client.
      *
      * @param ClientInterface $client
@@ -112,8 +78,24 @@ class Auth extends ActiveRecord
     public static function findByClient(ClientInterface $client)
     {
         return static::find()->where([
-            'provider'  => $client->getId(),
-            'client_id' => $client->getUserAttributes()['id'],
+            'provider' => $client->getId(),
+            'provider_id' => $client->getUserAttributes()['id']
         ])->one();
+    }
+
+    /**
+     * Creates auth instance by from client.
+     *
+     * @param ClientInterface $client
+     * @return static
+     */
+    public static function getInstance(ClientInterface $client)
+    {
+        return  Yii::createObject([
+            'class' => static::className(),
+            'provider' => $client->getId(),
+            'provider_id' => $client->getUserAttributes()['id'],
+            'provider_attributes' => json_encode($client->getUserAttributes())
+        ]);
     }
 }

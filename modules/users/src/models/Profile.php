@@ -26,6 +26,11 @@ class Profile extends ActiveRecord implements ProfileInterface
     const SCENARIO_REGISTER = 'register';
 
     /**
+     * @var string the name of the connect scenario.
+     */
+    const SCENARIO_CONNECT = 'connect';
+
+    /**
      * @inheritdoc
      */
     public static function tableName()
@@ -72,10 +77,22 @@ class Profile extends ActiveRecord implements ProfileInterface
     }
 
     /**
+     * Returns full name.
+     *
      * @return string
      */
     public function getFullName()
     {
         return $this->first_name . ' ' . $this->last_name;
+    }
+
+    /**
+     * Sets full name.
+     *
+     * @param string $fullName
+     */
+    public function setFullName($fullName)
+    {
+        list($this->first_name, $this->last_name) = explode(' ', $fullName);
     }
 }

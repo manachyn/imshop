@@ -70,9 +70,29 @@ class m150708_151440_create_users_tables extends Migration
 
         // Foreign Keys
         $this->addForeignKey('FK_tokens_user_id', '{{%tokens}}', 'user_id', '{{%users}}', 'id', 'CASCADE', 'CASCADE');
+        // Indexes
         $this->createIndex('token', '{{%tokens}}', 'token');
         $this->createIndex('type', '{{%tokens}}', 'type');
         $this->createIndex('expire_at', '{{%tokens}}', 'expire_at');
+
+        // Users tokens table
+        $this->createTable(
+            '{{%auth}}',
+            [
+                'id' => Schema::TYPE_PK,
+                'user_id' => Schema::TYPE_INTEGER,
+                'provider' => Schema::TYPE_STRING . ' NOT NULL',
+                'provider_id' => Schema::TYPE_STRING . ' NOT NULL',
+                'provider_attributes' => Schema::TYPE_TEXT,
+                'created_at' => Schema::TYPE_INTEGER,
+                'expire_at' => Schema::TYPE_INTEGER,
+            ],
+            $tableOptions
+        );
+
+        // Foreign Keys
+        $this->addForeignKey('FK_auth_user_id', '{{%auth}}', 'user_id', '{{%users}}', 'id', 'CASCADE', 'CASCADE');
+        $this->createIndex('provider_provider_id', '{{%auth}}', ['provider', 'provider_id']);
 
         // Add super-administrator
         $this->execute($this->getUserSql());
@@ -100,6 +120,7 @@ class m150708_151440_create_users_tables extends Migration
 
     public function safeDown()
     {
+        $this->dropTable('{{%auth}}');
         $this->dropTable('{{%tokens}}');
         $this->dropTable('{{%profiles}}');
         $this->dropTable('{{%users}}');

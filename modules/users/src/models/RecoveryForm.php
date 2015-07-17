@@ -73,7 +73,7 @@ class RecoveryForm extends Model
         if ($this->_user === null) {
             /** @var User $userClass */
             $userClass = $this->module->userModel;
-            $this->_user = $userClass::findOne(['email' => $this->email]) ?: $userClass::findOne(['username' => $this->email]);
+            $this->_user = $userClass::findByEmail($this->email) ?: $userClass::findByUsername($this->email);
         }
 
         return $this->_user;

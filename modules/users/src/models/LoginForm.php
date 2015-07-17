@@ -100,7 +100,7 @@ class LoginForm extends Model
         if ($this->_user === null) {
             /** @var User $userClass */
             $userClass = $this->module->userModel;
-            $this->_user = $userClass::findOne(['username' => $this->username]) ?: $userClass::findOne(['email' => $this->username]);
+            $this->_user = $userClass::findByUsername($this->username) ?: $userClass::findByEmail($this->username);
         }
 
         return $this->_user;
