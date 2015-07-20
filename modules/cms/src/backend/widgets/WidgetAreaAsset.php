@@ -6,7 +6,7 @@ use yii\web\AssetBundle;
 
 class WidgetAreaAsset extends AssetBundle
 {
-    public $sourcePath = '@app/modules/cms/assets';
+    public $sourcePath = '@im/cms/assets';
 
     public $js = [
         'widgetArea.js',

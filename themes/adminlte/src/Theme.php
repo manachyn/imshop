@@ -15,8 +15,8 @@ class Theme extends \yii\base\Theme
      * @inheritdoc
      */
     public $pathMap = [
-        '@app/views' => '@app/themes/adminlte/views',
-        '@app/modules' => '@app/themes/adminlte/modules'
+        '@app/views' => '@im/adminlte/views',
+        '@app/modules' => '@im/adminlte/modules'
     ];
 
 //    /**

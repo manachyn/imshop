@@ -9,7 +9,7 @@ class ThemeAsset extends AssetBundle
     /**
      * @inheritdoc
      */
-    public $sourcePath = '@app/themes/adminlte/assets';
+    public $sourcePath = '@im/adminlte/assets';
 
     /**
      * @inheritdoc

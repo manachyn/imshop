@@ -7,7 +7,7 @@ use yii\web\AssetBundle;
 class ToolbarAsset extends AssetBundle
 {
 
-    public $sourcePath = '@app/modules/base/assets';
+    public $sourcePath = '@im/base/assets';
 
     public $js = [
         'im.toolbar.js',

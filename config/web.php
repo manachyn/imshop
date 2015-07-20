@@ -7,7 +7,10 @@ $config = [
     'basePath' => dirname(__DIR__),
     'bootstrap' => [
         'log',
-        'im\users\Bootstrap'
+        'im\base\Bootstrap',
+        'im\users\Bootstrap',
+        'im\eav\Bootstrap',
+        'im\catalog\Bootstrap',
     ],
     'modules' => [
         'users' => [
@@ -15,6 +18,9 @@ $config = [
         ],
         'cms' => [
             'class' => 'im\cms\Module'
+        ],
+        'catalog' => [
+            'class' => 'im\catalog\Module'
         ],
     ],
     'components' => [
@@ -54,7 +60,22 @@ $config = [
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
-            'cache' => false
+            'cache' => false,
+//            'rules' => [
+//                [
+//                    'class' => 'im\base\routing\ModelUrlRule',
+//                    'pattern' => '<url:.+>',
+//                    'route' => 'site/index',
+//                    'modelClass' => 'im\cms\models\Page'
+//                ]
+//            ]
+        ],
+        'core' => [
+            'class' => 'im\base\components\Core',
+//            'entityTypes' => [
+//                'page' => 'app\modules\cms\models\Page',
+//                'product' => 'app\modules\catalog\models\Product'
+//            ]
         ],
         'backendTheme' => 'im\adminlte\Theme',
         'authClientCollection' => [

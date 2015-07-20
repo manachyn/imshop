@@ -11,7 +11,7 @@ $this->params['noTitle'] = true; ?>
 
 <section id="main-slider" class="no-margin center">
     <div class="well">
-        <p><img src="<?= $this->assetManager->publish('@app/themes/site/assets/images/slider/bg2.png')[1] ?>" alt="Yii 2" /></p>
+        <p><img src="<?= $this->assetManager->publish('@im/site/assets/images/slider/bg2.png')[1] ?>" alt="Yii 2" /></p>
         <p>A fast and easy way to start an Yii 2 project, with flexible functionality and structure.</p>
         <a href="https://github.com/vova07/yii2-start" class="btn btn-primary btn-lg" target="_blank">Github</a>
     </div>

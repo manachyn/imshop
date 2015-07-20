@@ -22,7 +22,7 @@ class Bootstrap implements BootstrapInterface
 
 
         if ($module) {
-            $this->registerTranslations();
+//            $this->registerTranslations();
 //            if ($app instanceof ConsoleApplication) {
 //                $module->controllerNamespace = 'im\user\commands';
 //            } else {
@@ -47,21 +47,21 @@ class Bootstrap implements BootstrapInterface
         }
     }
 
-    /**
-     * Register module translations.
-     */
-    public function registerTranslations()
-    {
-        Yii::$app->i18n->translations['modules/users/*'] = [
-            'class' => 'yii\i18n\PhpMessageSource',
-            'sourceLanguage' => 'en-US',
-            'basePath' => '@app/modules/users/src/messages',
-            'fileMap' => [
-                'modules/users/module' => 'module.php',
-                'modules/users/user' => 'user.php'
-            ]
-        ];
-    }
+//    /**
+//     * Register module translations.
+//     */
+//    public function registerTranslations()
+//    {
+//        Yii::$app->i18n->translations['modules/users/*'] = [
+//            'class' => 'yii\i18n\PhpMessageSource',
+//            'sourceLanguage' => 'en-US',
+//            'basePath' => '@im/users/src/messages',
+//            'fileMap' => [
+//                'modules/users/module' => 'module.php',
+//                'modules/users/user' => 'user.php'
+//            ]
+//        ];
+//    }
 
     /**
      * Adds module rules.

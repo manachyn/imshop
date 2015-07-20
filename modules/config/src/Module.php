@@ -1,6 +1,7 @@
 <?php
 namespace im\config;
 
+use im\base\traits\ModuleTranslateTrait;
 use Yii;
 
 /**
@@ -10,6 +11,13 @@ use Yii;
  */
 class Module extends \yii\base\Module
 {
+    use ModuleTranslateTrait;
+
+    /**
+     * @var string module messages category.
+     */
+    public static $messagesCategory = 'config';
+
     /**
      * @inheritdoc
      */
@@ -29,12 +37,12 @@ class Module extends \yii\base\Module
      */
     public function registerTranslations()
     {
-        Yii::$app->i18n->translations['modules/config'] = [
+        Yii::$app->i18n->translations[static::$messagesCategory . '/*'] = [
             'class' => 'yii\i18n\PhpMessageSource',
             'sourceLanguage' => 'en-US',
-            'basePath' => '@app/modules/config/messages',
+            'basePath' => '@im/config/messages',
             'fileMap' => [
-                'modules/config' => 'config.php'
+                static::$messagesCategory => 'module.php'
             ]
         ];
     }

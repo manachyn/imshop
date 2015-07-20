@@ -10,10 +10,7 @@ class Module extends \yii\base\Module
     public function init()
     {
         parent::init();
-
-        // custom initialization code goes here
         $this->registerTranslations();
-
         $this->modules = [
             'backend' => [
                 'class' => 'app\modules\users\backend\Module'
@@ -26,7 +23,7 @@ class Module extends \yii\base\Module
         Yii::$app->i18n->translations['modules/users/*'] = [
             'class' => 'yii\i18n\PhpMessageSource',
             'sourceLanguage' => 'en-US',
-            'basePath' => '@app/modules/users/messages',
+            'basePath' => '@im/users/messages',
             'fileMap' => [
                 'modules/users/module' => 'module.php',
                 'modules/users/user' => 'user.php',

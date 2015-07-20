@@ -55,7 +55,7 @@ class ContentWidget extends Widget
      */
     public function getEditView()
     {
-        return '@app/modules/cms/backend/views/widget/content-widget/_form';
+        return '@im/cms/backend/views/widget/content-widget/_form';
     }
 
     /**

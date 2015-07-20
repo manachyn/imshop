@@ -30,7 +30,7 @@ class WidgetAreaEditor extends Widget
     /**
      * @var string widget view in the format of 'path/to/view'
      */
-    public $widgetView = '@app/modules/cms/backend/views/widget/_selected_widget';
+    public $widgetView = '@im/cms/backend/views/widget/_selected_widget';
 
     /**
      * @var string css class for placeholder

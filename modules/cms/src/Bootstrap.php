@@ -29,14 +29,14 @@ class Bootstrap implements BootstrapInterface
      */
     public function registerTranslations()
     {
-        Yii::$app->i18n->translations['modules/cms/*'] = [
+        Yii::$app->i18n->translations[Module::$messagesCategory . '/*'] = [
             'class' => 'yii\i18n\PhpMessageSource',
             'sourceLanguage' => 'en-US',
-            'basePath' => '@app/modules/cms/messages',
+            'basePath' => '@im/cms/messages',
             'fileMap' => [
-                'modules/cms/module' => 'module.php',
-                'modules/cms/page' => 'page.php',
-                'modules/cms/menu' => 'menu.php'
+                Module::$messagesCategory => 'module.php',
+                Module::$messagesCategory . '/page' => 'page.php',
+                Module::$messagesCategory . '/menu' => 'menu.php'
             ]
         ];
     }

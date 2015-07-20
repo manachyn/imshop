@@ -1,0 +1,15 @@
+{
+    "name": "im/adminlte",
+    "description": "AdminLTE2 theme for Yii2",
+    "authors": [
+        {
+            "name": "Ivan Manachyn",
+            "email": "manachyn@gmail.com"
+        }
+    ],
+    "require": {
+        "almasaeed2010/adminlte": "*",
+        "components/font-awesome": "*",
+        "driftyco/ionicons": "*"
+    }
+}

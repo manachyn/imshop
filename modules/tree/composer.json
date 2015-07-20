@@ -1,0 +1,14 @@
+{
+    "name": "im/tree",
+    "description": "IM Tree module",
+    "authors": [
+        {
+            "name": "Ivan Manachyn",
+            "email": "manachyn@gmail.com"
+        }
+    ],
+    "require": {
+        "creocoder/yii2-nested-sets": "*",
+        "bower-asset/jstree": "*"
+    }
+}
