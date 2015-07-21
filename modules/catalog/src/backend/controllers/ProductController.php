@@ -38,34 +38,6 @@ class ProductController extends CrudController
         parent::init();
     }
 
-    public function actionAddAttributes()
-    {
-        if ((($attributes = Yii::$app->request->post('attributes')) || ($type = Yii::$app->request->post('type')))
-            && ($formConfig = Yii::$app->request->post('form'))) {
-            if ($attributes) {
-                $attributes = Attribute::findAll(['id' => $attributes]);
-            } elseif (isset($type)) {
-                /** @var ProductTypeInterface $type */
-                $type = ProductType::findOne($type);
-                $attributes = $type->getEAttributes();
-            }
-            if ($attributes) {
-                $values = [];
-                foreach ($attributes as $attribute) {
-                    $value = Product::getAttributeValueInstance();
-                    $value->setEAttribute($attribute);
-                    $values[$attribute->getName()] = $value;
-                }
-                if (Yii::$app->request->isAjax) {
-                    return $this->renderAjax('_add_attributes', [
-                        'attributes' => $values,
-                        'formConfig' => $formConfig
-                    ]);
-                }
-            }
-        }
-    }
-
     /**
      * @inheritdoc
      */

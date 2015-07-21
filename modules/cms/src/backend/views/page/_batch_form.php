@@ -1,6 +1,6 @@
 <?php
 
-use app\modules\base\widgets\Block;
+use im\base\widgets\Block;
 use im\cms\Module;
 use yii\bootstrap\Tabs;
 use yii\helpers\Html;
@@ -9,7 +9,6 @@ use yii\widgets\ActiveForm;
 /* @var $this yii\web\View */
 /* @var $page im\cms\models\Page */
 /* @var $pageMeta im\cms\models\PageMeta */
-/* @var $openGraph im\cms\models\OpenGraph */
 /* @var $form yii\widgets\ActiveForm */
 
 $tabs = [];

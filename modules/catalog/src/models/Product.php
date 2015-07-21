@@ -9,7 +9,7 @@ use im\catalog\components\ProductInterface;
 use im\catalog\components\ProductTypeInterface;
 use im\catalog\components\VariableProductTrait;
 use im\catalog\Module;
-use im\filesystem\components\UploadBehavior;
+use im\filesystem\components\FilesBehavior;
 use Yii;
 use yii\behaviors\SluggableBehavior;
 use yii\behaviors\TimestampBehavior;
@@ -39,11 +39,6 @@ class Product extends ActiveRecord implements ProductInterface
 
     const DEFAULT_STATUS = self::STATUS_ACTIVE;
 
-//    /**
-//     * @var UploadedFile image attribute
-//     */
-//    public $image;
-
     /**
      * @inheritdoc
      */
@@ -66,29 +61,21 @@ class Product extends ActiveRecord implements ProductInterface
     public function behaviors()
     {
         return [
-            [
+            'sluggable' => [
                 'class' => SluggableBehavior::className(),
                 'attribute' => 'title',
                 'ensureUnique' => true
             ],
-            TimestampBehavior::className(),
-            [
+            'timestamp' => TimestampBehavior::className(),
+            'relations' => [
                 'class' => RelationsBehavior::className(),
                 'settings' => ['relatedEAttributes' => ['deleteOnUnlink' => true]]
             ],
-            [
-                'class' => UploadBehavior::className(),
+            'files' => [
+                'class' => FilesBehavior::className(),
                 'attributes' => [
-                    // 'image' => ['path' => '@webroot/uploads/products', 'fileName' => '{model.id}.{file.extension}'],
-//                    'image' => ['path' => '@webroot/uploads/products', 'fileName' => function ($filePath, $model) {
-//                            /** @var Product $model */
-//                            return Inflector::slug($model->getTitle()) . '.{file.extension}';
-//                        }],
-                    //'image' => ['path' => '@webroot/uploads/products', 'fileName' => '{model.slug}.{file.extension}'],
-                    //'images' => ['multiple' => true, 'path' => '@webroot/uploads/files', 'fileName' => '{model.slug}-{file.index}.{file.extension}'],
-                    //'images' => ['multiple' => true, 'filesystem' => 'localFs', 'fileName' => '{model.slug}-{file.index}.{file.extension}'],
-                    'images' => ['filesystem' => 'local', 'path' => '/products', 'fileName' => '{model.slug}-{file.index}.{file.extension}', 'multiple' => true],
-                    'video' => ['filesystem' => 'dropbox', 'path' => '/uploads', 'fileName' => '{model.id}-{file.index}.{file.extension}']
+                    'images' => ['filesystem' => 'local', 'path' => '/products/images', 'fileName' => '{model.slug}-{file.index}.{file.extension}', 'multiple' => true],
+                    'video' => ['filesystem' => 'local', 'path' => '/products/videos', 'fileName' => '{model.slug}-{file.index}.{file.extension}']
                 ]
             ]
         ];
@@ -104,7 +91,7 @@ class Product extends ActiveRecord implements ProductInterface
             //[['image'], 'file', 'skipOnEmpty' => false],
             ['price', 'default', 'value' => 0],
             [['sku', 'slug', 'description', 'quantity', 'price', 'status', 'brand_id', 'type_id', 'eAttributes', 'categories'], 'safe'],
-            [['eAttributes'], '\app\modules\base\validators\RelationValidator']
+            [['eAttributes'], 'im\base\validators\RelationValidator']
         ];
     }
 

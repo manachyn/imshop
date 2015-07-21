@@ -2,7 +2,7 @@
 
 namespace im\cms;
 
-use app\modules\config\models\ComponentConfig;
+use im\config\models\ComponentConfig;
 
 class Config extends ComponentConfig
 {

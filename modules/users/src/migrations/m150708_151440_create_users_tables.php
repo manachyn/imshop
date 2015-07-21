@@ -85,7 +85,7 @@ class m150708_151440_create_users_tables extends Migration
                 'provider_id' => Schema::TYPE_STRING . ' NOT NULL',
                 'provider_attributes' => Schema::TYPE_TEXT,
                 'created_at' => Schema::TYPE_INTEGER,
-                'expire_at' => Schema::TYPE_INTEGER,
+                'expire_at' => Schema::TYPE_BOOLEAN,
             ],
             $tableOptions
         );

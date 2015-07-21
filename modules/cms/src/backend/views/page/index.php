@@ -1,11 +1,10 @@
 <?php
 
-use app\modules\base\widgets\Toolbar;
+use im\base\widgets\Toolbar;
 use im\cms\models\Page;
 use im\cms\Module;
 use app\themes\admin\widgets\Box;
 use kartik\popover\PopoverX;
-use yii\bootstrap\ButtonDropdown;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\helpers\Url;

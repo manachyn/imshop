@@ -1,0 +1,13 @@
+{
+    "name": "im/filesystem",
+    "description": "IM Filesystem module",
+    "authors": [
+        {
+            "name": "Ivan Manachyn",
+            "email": "manachyn@gmail.com"
+        }
+    ],
+    "require": {
+        "creocoder/yii2-flysystem": "*"
+    }
+}

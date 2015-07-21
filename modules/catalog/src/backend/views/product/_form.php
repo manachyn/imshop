@@ -49,6 +49,9 @@ use yii\widgets\ActiveForm;
                     'attributesMap' => ['id' => 'id', 'text' => 'name', 'children' => 'hasChildren', 'str' => 'string']
                 ]
             ])
+        ]),
+        new Tab('images', Module::t('product', 'Images'), [
+            $form->field($model, 'images[]', ['enableClientValidation' => false])->fileInput(['multiple' => true, 'accept' => 'image/*'])
         ])
     ])
 ]) ?>

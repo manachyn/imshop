@@ -2,12 +2,25 @@
 
 namespace im\seo;
 
-use Yii;
+use im\base\traits\ModuleTranslateTrait;
 
 class Module extends \yii\base\Module
 {
-    public $controllerNamespace = 'app\modules\seo\controllers';
+    use ModuleTranslateTrait;
 
+    /**
+     * @var string module messages category.
+     */
+    public static $messagesCategory = 'seo';
+
+    /**
+     * @inheritdoc
+     */
+    public $controllerNamespace = 'im\seo\controllers';
+
+    /**
+     * @inheritdoc
+     */
     public function init()
     {
         parent::init();

@@ -6,6 +6,7 @@ use creocoder\nestedsets\NestedSetsBehavior;
 use im\base\interfaces\ModelBehaviorInterface;
 use im\catalog\components\CategoryPageTrait;
 use im\catalog\Module;
+use im\filesystem\components\UploadBehavior;
 use im\tree\models\Tree;
 use yii\behaviors\SluggableBehavior;
 use yii\behaviors\TimestampBehavior;
@@ -56,6 +57,12 @@ class Category extends Tree
             'tree' => [
                 'class' => NestedSetsBehavior::className(),
                 'treeAttribute' => 'tree'
+            ],
+            'upload' => [
+                'class' => UploadBehavior::className(),
+                'attributes' => [
+                    'images' => ['filesystem' => 'local', 'path' => '/categories', 'fileName' => '{model.slug}-{file.index}.{file.extension}', 'multiple' => true]
+                ]
             ]
         ];
     }

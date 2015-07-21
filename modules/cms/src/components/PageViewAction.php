@@ -2,7 +2,7 @@
 
 namespace im\cms\components;
 
-use app\modules\base\actions\ModelViewAction;
+use im\base\actions\ModelViewAction;
 use im\cms\components\layout\Layout;
 use im\cms\models\Page;
 use yii\base\InvalidConfigException;

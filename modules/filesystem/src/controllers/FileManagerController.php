@@ -2,9 +2,9 @@
 
 namespace im\filesystem\controllers;
 
-use app\modules\backend\components\Controller;
+use im\base\controllers\BackendController;
 
-class FileManagerController extends Controller
+class FileManagerController extends BackendController
 {
     public function actionIndex()
     {

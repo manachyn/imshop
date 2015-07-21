@@ -50,7 +50,7 @@ class AttributeValue extends ActiveRecord implements AttributeValueInterface
     {
         return array_merge([
             [['value'], 'safe'],
-            [['eAttribute'], '\app\modules\base\validators\RequiredRelationValidator'],
+            [['eAttribute'], 'im\base\validators\RequiredRelationValidator'],
             [['entity'], 'required']
         ], $this->attributeRules());
     }

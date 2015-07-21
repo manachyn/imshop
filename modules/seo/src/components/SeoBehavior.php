@@ -3,8 +3,12 @@
 namespace im\seo\components;
 
 use im\base\interfaces\ModelBehaviorInterface;
+use im\forms\components\ContentBlock;
 use im\forms\components\FieldSet;
+use im\forms\components\FieldSetEvent;
+use im\forms\components\Tab;
 use im\seo\models\Meta;
+use im\seo\Module;
 use yii\base\Behavior;
 use yii\db\ActiveRecord;
 use Yii;
@@ -47,7 +51,7 @@ class SeoBehavior extends Behavior implements ModelBehaviorInterface
             $this->ownerType = $owner::className();
         }
         $validators = $this->owner->getValidators();
-        $validator = Validator::createValidator('\app\modules\base\validators\RelationValidator', $this->owner, ['meta']);
+        $validator = Validator::createValidator('im\base\validators\RelationValidator', $this->owner, ['meta']);
         $validators->append($validator);
     }
 

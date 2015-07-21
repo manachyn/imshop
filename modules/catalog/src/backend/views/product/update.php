@@ -5,11 +5,12 @@ use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 /* @var $model im\catalog\models\Product */
-/* @var $meta im\catalog\models\ProductMeta */
 
 $this->title = Module::t('product', 'Products');
 $this->params['subtitle'] = Module::t('product', 'Product updating');
 $this->params['breadcrumbs'] = [['label' => $this->title, 'url' => ['index']], $this->params['subtitle']];
+print_r($model->images);
+exit();
 ?>
 
 <div class="box box-success">

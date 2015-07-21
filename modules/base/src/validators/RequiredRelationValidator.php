@@ -4,7 +4,6 @@ namespace im\base\validators;
 
 use SplObjectStorage;
 use yii\base\Model;
-use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\validators\RequiredValidator;
 use Yii;

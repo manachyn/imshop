@@ -1,8 +1,8 @@
 <?php
 
 /* @var $this yii\web\View */
-/* @var $model app\modules\seo\models\Meta */
 /* @var $form yii\widgets\ActiveForm */
+/* @var $model im\seo\models\Meta */
 
 ?>
 

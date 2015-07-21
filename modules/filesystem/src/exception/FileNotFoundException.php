@@ -1,4 +1,5 @@
 <?php
+
 namespace im\filesystem\exception;
 
 class FileNotFoundException extends \RuntimeException

@@ -44,7 +44,7 @@ class EavBehavior extends Behavior
      */
     public function canGetProperty($name, $checkVars = true)
     {
-        if (parent::canSetProperty($name, $checkVars)) {
+        if (parent::canGetProperty($name, $checkVars)) {
             return true;
         } else {
             return $this->hasAttribute($name);

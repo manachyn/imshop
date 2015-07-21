@@ -10,6 +10,7 @@ $config = [
         'im\base\Bootstrap',
         'im\users\Bootstrap',
         'im\eav\Bootstrap',
+        'im\seo\Bootstrap',
         'im\catalog\Bootstrap',
     ],
     'modules' => [
@@ -70,12 +71,33 @@ $config = [
 //                ]
 //            ]
         ],
+
+
         'core' => [
             'class' => 'im\base\components\Core',
 //            'entityTypes' => [
 //                'page' => 'app\modules\cms\models\Page',
 //                'product' => 'app\modules\catalog\models\Product'
 //            ]
+        ],
+        'filesystem' => [
+            'class' => 'im\filesystem\components\FilesystemComponent',
+            'filesystems' => require(__DIR__ . '/filesystems.php')
+        ],
+        'seo' => [
+            'class' => 'im\seo\components\Seo',
+            'seoModels' => [
+                'im\catalog\models\Category',
+                'im\catalog\models\Product'
+            ],
+//            'metaTypes' => [
+//                'page_meta' => 'app\modules\seo\models\PageMeta',
+//                'category_meta' => 'app\modules\catalog\models\ProductMeta',
+//                'product_meta' => 'app\modules\catalog\models\ProductMeta'
+//            ],
+            'metaTypeSocialMetaTypes' => [
+//                'product_meta' => ['open_graph']
+            ]
         ],
         'backendTheme' => 'im\adminlte\Theme',
         'authClientCollection' => [

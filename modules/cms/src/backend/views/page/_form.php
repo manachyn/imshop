@@ -1,15 +1,12 @@
 <?php
 
-use app\modules\base\widgets\Block;
 use im\cms\Module;
-use app\modules\formBuilder\components\FieldSet;
-use app\modules\formBuilder\components\Tab;
-use app\modules\formBuilder\components\TabSet;
-use yii\bootstrap\Tabs;
+use im\forms\components\FieldSet;
+use im\forms\components\Tab;
+use im\forms\components\TabSet;
 use yii\helpers\Html;
 use vova07\imperavi\Widget as Imperavi;
 use yii\widgets\ActiveForm;
-use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
 /* @var $model im\cms\models\Page */

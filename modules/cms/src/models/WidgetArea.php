@@ -2,7 +2,7 @@
 
 namespace im\cms\models;
 
-use app\modules\base\behaviors\RelationsBehavior;
+use im\base\behaviors\RelationsBehavior;
 use im\cms\Module;
 use Yii;
 use yii\behaviors\TimestampBehavior;
@@ -48,8 +48,8 @@ class WidgetArea extends ActiveRecord
     public function behaviors()
     {
         return [
-            TimestampBehavior::className(),
-            [
+            'timestamp' => TimestampBehavior::className(),
+            'relations' => [
                 'class' => RelationsBehavior::className(),
                 'settings' => [
                     'widgets' => ['deleteOnUnlink' => true]

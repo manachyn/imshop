@@ -2,8 +2,10 @@
 
 namespace im\seo\models;
 
+use im\base\behaviors\RelationsBehavior;
 use im\base\interfaces\TypeableEntityInterface;
 use im\seo\components\MetaInterface;
+use im\seo\Module;
 use Yii;
 use yii\db\ActiveRecord;
 use yii\web\View;
@@ -39,7 +41,7 @@ class Meta extends ActiveRecord implements MetaInterface, TypeableEntityInterfac
     public function behaviors()
     {
         return [
-            RelationsBehavior::className()
+            'relations' => RelationsBehavior::className()
         ];
     }
 
@@ -62,7 +64,7 @@ class Meta extends ActiveRecord implements MetaInterface, TypeableEntityInterfac
             [['meta_title'], 'string', 'max' => 70],
             [['meta_description'], 'string', 'max' => 160],
             [['meta_robots'], 'safe'],
-            [['socialMeta'], '\app\modules\base\validators\RelationValidator']
+            [['socialMeta'], 'im\base\validators\RelationValidator']
         ];
     }
 
@@ -109,8 +111,8 @@ class Meta extends ActiveRecord implements MetaInterface, TypeableEntityInterfac
     public function getEnabledSocialMeta()
     {
         $socialMeta = [];
-        foreach (Yii::$app->seo->getSocialMetaTypes($this->getEntityType()) as $socialMetaType) {
-            $socialMeta[] = Yii::createObject(Yii::$app->seo->getSocialMetaClass($socialMetaType));
+        foreach (Yii::$app->get('seo')->getSocialMetaTypes($this->getEntityType()) as $socialMetaType) {
+            $socialMeta[] = Yii::createObject(Yii::$app->get('seo')->getSocialMetaClass($socialMetaType));
         }
 
         return $socialMeta;
@@ -161,8 +163,8 @@ class Meta extends ActiveRecord implements MetaInterface, TypeableEntityInterfac
             $view->params['customMeta'] = isset($view->params['customMeta'])
                 ? $view->params['customMeta'] .= "\n" . $this->custom_meta : "\n" . $this->custom_meta;
         }
-        if ($this->openGraph !== null)
-            $this->openGraph->applyTo($view);
+//        if ($this->openGraph !== null)
+//            $this->openGraph->applyTo($view);
 
     }
 

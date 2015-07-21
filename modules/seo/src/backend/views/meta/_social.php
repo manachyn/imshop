@@ -5,8 +5,8 @@ use yii\bootstrap\Tabs;
 use yii\helpers\Inflector;
 
 /* @var $this yii\web\View */
-/* @var $model im\seo\models\Meta */
 /* @var $form yii\widgets\ActiveForm */
+/* @var $model im\seo\models\Meta */
 
 $socialMeta = $model->socialMeta ? $model->socialMeta : $model->getEnabledSocialMeta();
 foreach ($socialMeta as $meta) {

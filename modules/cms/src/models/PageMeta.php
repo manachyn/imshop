@@ -2,7 +2,7 @@
 
 namespace im\cms\models;
 
-use app\modules\seo\models\Meta;
+use im\seo\models\Meta;
 
 /**
  * Page meta model class.

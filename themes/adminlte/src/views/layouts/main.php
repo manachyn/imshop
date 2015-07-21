@@ -2,7 +2,6 @@
 /**
  * Theme main layout.
  */
-use app\modules\base\widgets\RemotePjaxModal;
 
 /* @var $this \yii\web\View */
 /* @var $content string */

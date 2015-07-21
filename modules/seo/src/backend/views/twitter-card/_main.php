@@ -1,7 +1,7 @@
 <?php
 
 /* @var $this yii\web\View */
-/* @var $model app\modules\seo\models\TwitterCard */
+/* @var $model im\seo\models\TwitterCard */
 /* @var $form yii\widgets\ActiveForm */
 
 ?>

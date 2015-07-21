@@ -1,5 +1,6 @@
 <?php
 
+use im\seo\Module;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 

@@ -2,8 +2,7 @@
 
 namespace im\cms\models;
 
-use app\modules\base\behaviors\RelationsBehavior;
-use app\modules\base\interfaces\ModelBehaviorInterface;
+use im\base\interfaces\ModelBehaviorInterface;
 use im\cms\components\layout\LayoutBehavior;
 use im\cms\Module;
 use Yii;
@@ -41,7 +40,7 @@ class Page extends ActiveRecord
     public static function instantiate($row)
     {
         try {
-            $class = Yii::$app->cms->getPageClass($row['type']);
+            $class = Yii::$app->get('cms')->getPageClass($row['type']);
             return Yii::createObject($class);
         } catch (\Exception $e) {
             return Yii::createObject(static::className());

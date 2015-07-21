@@ -1,7 +1,7 @@
 <?php
 
 /* @var $this yii\web\View */
-/* @var $model app\modules\seo\models\OpenGraph */
+/* @var $model im\seo\models\OpenGraph */
 /* @var $form yii\widgets\ActiveForm */
 
 ?>

@@ -17,7 +17,8 @@ class FilesystemComponent extends Component
     public $filesystems = [];
 
     /**
-     * Returns filesystem by name
+     * Returns filesystem by name.
+     *
      * @param string $filesystem name
      * @return null|Filesystem
      */
@@ -26,6 +27,8 @@ class FilesystemComponent extends Component
         if (isset($this->filesystems[$filesystem])) {
             if (!$this->filesystems[$filesystem] instanceof Filesystem) {
                 return $this->filesystems[$filesystem] = Instance::ensure($this->filesystems[$filesystem], Filesystem::className());
+            } else {
+                return $this->filesystems[$filesystem];
             }
         } else {
             return null;

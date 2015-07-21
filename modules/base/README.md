@@ -29,6 +29,7 @@ php yii migrate --migrationPath=@app/modules/forms/src/migrations
 php yii migrate --migrationPath=@app/modules/eav/src/migrations
 php yii migrate --migrationPath=@app/modules/variation/src/migrations
 php yii migrate --migrationPath=@app/modules/seo/src/migrations
+php yii migrate --migrationPath=@app/modules/filesystem/src/migrations
 php yii migrate --migrationPath=@app/modules/catalog/src/migrations
 
 /home/ubuntu/.composer/vendor/bin/codecept build

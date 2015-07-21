@@ -2,14 +2,13 @@
 
 namespace im\cms\backend\widgets;
 
-use app\modules\formBuilder\components\DynamicActiveForm;
+use im\forms\components\DynamicActiveForm;
 use yii\base\InvalidConfigException;
 use yii\helpers\Html;
 use yii\helpers\Json;
 use yii\helpers\Url;
 use yii\jui\Widget;
 use yii\web\JsExpression;
-use yii\widgets\ActiveField;
 use yii\widgets\ActiveForm;
 use im\cms\models\WidgetArea as WidgetAreaModel;
 

@@ -8,7 +8,7 @@ use yii\db\ActiveRecord;
 use yii\web\UploadedFile;
 use Yii;
 
-class UploadBehavior extends Behavior
+class FilesBehavior extends Behavior
 {
     /**
      * @var ActiveRecord
@@ -46,6 +46,7 @@ class UploadBehavior extends Behavior
             ActiveRecord::EVENT_BEFORE_UPDATE => 'beforeSave',
             ActiveRecord::EVENT_AFTER_INSERT => 'afterInsert',
             ActiveRecord::EVENT_AFTER_UPDATE => 'afterUpdate',
+            ActiveRecord::EVENT_AFTER_FIND => 'afterFind',
 //            ActiveRecord::EVENT_BEFORE_DELETE => 'beforeDelete',
         ];
     }
@@ -130,6 +131,21 @@ class UploadBehavior extends Behavior
                     $this->owner->updateAttributes([$attribute => json_encode($paths)]);
                 }
             }
+        }
+    }
+
+    /**
+     * After insert event.
+     */
+    public function afterFind()
+    {
+        $this->normalizeAttributes();
+        foreach ($this->attributes as $attribute => $uploadConfig) {
+            $value = $this->owner->$attribute;
+            if ($uploadConfig->multiple && is_string($value)) {
+                $value = json_decode($value);
+            }
+//            if (is_array($))
         }
     }
 

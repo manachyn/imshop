@@ -18,8 +18,8 @@ class Seo extends Component
      * @var array social meta types
      */
     public $socialMetaTypes = [
-        'open_graph' => 'app\modules\seo\models\OpenGraph',
-        'twitter_card' => 'app\modules\seo\models\TwitterCard'
+        'open_graph' => 'im\seo\models\OpenGraph',
+        'twitter_card' => 'im\seo\models\TwitterCard'
     ];
 
     public $metaTypeSocialMetaTypes = [];
