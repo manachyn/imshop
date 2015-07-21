@@ -2,42 +2,23 @@
 
 namespace im\filesystem\models;
 
-use im\filesystem\Module;
-use yii\behaviors\TimestampBehavior;
-use yii\db\ActiveRecord;
+use creocoder\flysystem\Filesystem;
+use im\filesystem\components\FileInterface;
+use im\filesystem\exception\FileNotFoundException;
+use yii\base\Model;
+use Yii;
 
-/**
- * Class File
- *
- * @property integer $id
- * @property string $filesystem
- * @property string $path
- * @property integer $size
- * @property string $mime_type
- * @property integer $created_at
- * @property integer $updated_at
- *
- * @package im\filesystem\exception
- */
-class File extends ActiveRecord
+class File extends Model implements FileInterface
 {
     /**
-     * @inheritdoc
+     * @var Filesystem|string the filesystem object or the application component ID of the filesystem object.
      */
-    public static function tableName()
-    {
-        return '{{%files}}';
-    }
+    private $_filesystem;
 
     /**
-     * @inheritdoc
+     * @var string file path in the filesystem
      */
-    public function behaviors()
-    {
-        return [
-            'timestamp' => TimestampBehavior::className()
-        ];
-    }
+    public $path;
 
     /**
      * @inheritdoc
@@ -45,24 +26,69 @@ class File extends ActiveRecord
     public function rules()
     {
         return [
-            ['path', 'required'],
-            [['filesystem', 'size', 'mime_type'], 'safe'],
+            ['path', 'required']
         ];
     }
 
     /**
-     * @inheritdoc
+     * @param Filesystem|string $filesystem
      */
-    public function attributeLabels()
+    public function setFilesystem($filesystem)
     {
-        return [
-            'id' => Module::t('file', 'ID'),
-            'filesystem' => Module::t('file', 'Filesystem'),
-            'path' => Module::t('file', 'Path'),
-            'size' => Module::t('file', 'Size'),
-            'mime_type' => Module::t('file', 'Mime type'),
-            'created_at' => Module::t('user', 'Created at'),
-            'updated_at' => Module::t('user', 'Updated at')
-        ];
+        $this->_filesystem = $filesystem;
     }
+
+    /**
+     * @return Filesystem|null
+     */
+    public function getFilesystem()
+    {
+        if (!$this->_filesystem instanceof Filesystem) {
+            $this->_filesystem = Yii::$app->get('filesystem')->get($this->_filesystem);
+        }
+
+        return $this->_filesystem;
+    }
+
+
+
+
+//    /**
+//     * Constructs a new file from the given path.
+//     *
+//     * @param string $path the path to the file
+//     * @param boolean $checkPath whether to check the path or not
+//     * @throws FileNotFoundException If the given path is not a file
+//     */
+//    public function __construct($path, $checkPath = true)
+//    {
+//        if ($checkPath && !is_file($path)) {
+//            throw new FileNotFoundException($path);
+//        }
+//        parent::__construct($path);
+//    }
+//
+//    /**
+//     * Returns the mime type of the file.
+//     *
+//     * It uses finfo(), mime_content_type() and the system binary "file" (in this order),
+//     * depending on which of those are available.
+//     *
+//     * @return string|null
+//     */
+//    public function getMimeType()
+//    {
+//        if (function_exists('finfo_open')) {
+//            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+//            $mimeType = finfo_file($finfo, $this->getRealPath());
+//            finfo_close($finfo);
+//            return $mimeType;
+//        } elseif (function_exists('mime_content_type')) {
+//            return $mimeType = mime_content_type($this->getRealPath());
+//        } elseif (function_exists('exif_imagetype')) {
+//            return $mimeType = image_type_to_mime_type(exif_imagetype($this->getRealPath()));
+//        }
+//
+//        return null;
+//    }
 }

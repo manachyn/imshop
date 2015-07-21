@@ -5,23 +5,17 @@ namespace im\filesystem\components;
 use Closure;
 use creocoder\flysystem\Filesystem;
 use League\Flysystem\AdapterInterface;
-use yii\base\Configurable;
-use Yii;
+use yii\base\Object;
 use yii\web\UploadedFile;
+use Yii;
 
-class UploadConfig implements Configurable
+class StorageConfig extends Object
 {
     /**
      * @var string|callable path or alias to the directory in which to save files
      * or anonymous function returns directory path
      */
     public $path = '@webroot/uploads';
-
-    /**
-     * @var Filesystem|string the filesystem object or the application component ID of the filesystem object.
-     */
-    public $filesystem;
-
     /**
      * @var string|callable path or alias to the directory in which to save files
      * or anonymous function returns directory path
@@ -29,26 +23,56 @@ class UploadConfig implements Configurable
     public $url = '/uploads';
 
     /**
-     * @var string|callable new file name (template)
+     * @var string|callable new file name (template).
      * Uses original name by default
      */
     public $fileName = '{file.basename}';
 
+    /**
+     * @var bool
+     */
     public $multiple = false;
+
+    /**
+     * @var bool whether to save files as active record instances.
+     */
+    public $dbInstance = false;
 
     public $visibility = AdapterInterface::VISIBILITY_PUBLIC;
 
-    public function __construct($config = [])
+    /**
+     * @var Filesystem|string the filesystem object or the application component ID of the filesystem object.
+     */
+    private $_filesystem;
+
+    /**
+     * @param Filesystem|string $filesystem
+     */
+    public function setFilesystem($filesystem)
     {
-        if (!empty($config)) {
-            Yii::configure($this, $config);
+        $this->_filesystem = $filesystem;
+    }
+
+    /**
+     * @return Filesystem|string
+     */
+    public function getFilesystem()
+    {
+        return $this->_filesystem;
+    }
+
+    /**
+     * Returns filesystem.
+     *
+     * @return Filesystem|null
+     */
+    public function getFilesystemInstance()
+    {
+        if (!$this->_filesystem instanceof Filesystem) {
+            $this->_filesystem = Yii::$app->get('filesystem')->get($this->_filesystem);
         }
-        if (is_string($this->filesystem)) {
-            $filesystem = Yii::$app->get('filesystem', false);
-            if ($filesystem instanceof FilesystemComponent) {
-                $this->filesystem = $filesystem->get($this->filesystem);
-            }
-        }
+
+        return $this->_filesystem;
     }
 
     public function getFilePath(UploadedFile $file)

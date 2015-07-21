@@ -75,7 +75,7 @@ class Product extends ActiveRecord implements ProductInterface
                 'class' => FilesBehavior::className(),
                 'attributes' => [
                     'images' => ['filesystem' => 'local', 'path' => '/products/images', 'fileName' => '{model.slug}-{file.index}.{file.extension}', 'multiple' => true],
-                    'video' => ['filesystem' => 'local', 'path' => '/products/videos', 'fileName' => '{model.slug}-{file.index}.{file.extension}']
+                    //'video' => ['filesystem' => 'local', 'path' => '/products/videos', 'fileName' => '{model.slug}-{file.index}.{file.extension}']
                 ]
             ]
         ];

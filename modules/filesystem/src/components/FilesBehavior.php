@@ -2,8 +2,8 @@
 
 namespace im\filesystem\components;
 
+use im\filesystem\models\File;
 use yii\base\Behavior;
-use yii\base\Exception;
 use yii\db\ActiveRecord;
 use yii\web\UploadedFile;
 use Yii;
@@ -16,19 +16,19 @@ class FilesBehavior extends Behavior
     public $owner;
 
     /**
-     * @var UploadConfig[]
+     * @var StorageConfig[]
      */
     public $attributes = [];
 
     /**
-     * @var string default upload config class
+     * @var string default storage config class
      */
-    public $uploadConfigClass = 'im\filesystem\components\UploadConfig';
+    public $storageConfigClass = 'im\filesystem\components\StorageConfig';
 
     /**
-     * @var UploadConfig default upload config for all attributes
+     * @var StorageConfig default upload config for all attributes
      */
-    public $uploadConfig;
+    public $storageConfig;
 
     /**
      * @var UploadedFile[]
@@ -57,11 +57,11 @@ class FilesBehavior extends Behavior
     public function beforeValidate()
     {
         $this->normalizeAttributes();
-        foreach ($this->attributes as $attribute => $uploadConfig) {
-            $this->_files[$attribute] = $uploadConfig->multiple ? UploadedFile::getInstances($this->owner, $attribute)
+        foreach ($this->attributes as $attribute => $storageConfig) {
+            $this->_files[$attribute] = $storageConfig->multiple ? UploadedFile::getInstances($this->owner, $attribute)
                 : UploadedFile::getInstance($this->owner, $attribute);
             if (empty($this->_files[$attribute])) {
-                $this->_files[$attribute] = $uploadConfig->multiple ? UploadedFile::getInstancesByName($attribute)
+                $this->_files[$attribute] = $storageConfig->multiple ? UploadedFile::getInstancesByName($attribute)
                     : UploadedFile::getInstanceByName($attribute);
             }
             if ($this->_files[$attribute] instanceof UploadedFile) {
@@ -79,17 +79,17 @@ class FilesBehavior extends Behavior
      */
     public function beforeSave()
     {
-        foreach ($this->attributes as $attribute => $uploadConfig) {
+        foreach ($this->attributes as $attribute => $storageConfig) {
             if (!empty($this->_files[$attribute] )) {
                 if (!$this->owner->isNewRecord) {
-                    $this->deleteFiles($attribute, $uploadConfig);
+                    $this->deleteFiles($attribute, $storageConfig);
                 }
                 if ($this->_files[$attribute] instanceof UploadedFile) {
-                    $this->owner->$attribute = pathinfo($uploadConfig->resolveFileName($this->_files[$attribute]->name, $this->owner), PATHINFO_BASENAME);
+                    $this->owner->$attribute = pathinfo($storageConfig->resolveFileName($this->_files[$attribute]->name, $this->owner), PATHINFO_BASENAME);
                 } elseif (is_array($this->_files[$attribute])) {
                     $files = $this->_files[$attribute];
-                    $this->owner->$attribute = json_encode(array_map(function($index) use ($files, $uploadConfig) {
-                        return pathinfo($uploadConfig->resolveFileName($files[$index], $this->owner, $index + 1), PATHINFO_BASENAME);
+                    $this->owner->$attribute = json_encode(array_map(function($index) use ($files, $storageConfig) {
+                        return pathinfo($storageConfig->resolveFileName($files[$index], $this->owner, $index + 1), PATHINFO_BASENAME);
                     }, array_keys((array) $files)));
                 }
             }
@@ -101,12 +101,12 @@ class FilesBehavior extends Behavior
      */
     public function afterUpdate()
     {
-        foreach ($this->attributes as $attribute => $uploadConfig) {
+        foreach ($this->attributes as $attribute => $storageConfig) {
             if (!empty($this->_files[$attribute] )) {
                 if ($this->_files[$attribute] instanceof UploadedFile) {
-                    $this->saveFile($this->_files[$attribute], $uploadConfig);
+                    $this->saveFile($this->_files[$attribute], $storageConfig);
                 } elseif (is_array($this->_files[$attribute]) && !empty($this->_files[$attribute])) {
-                    $this->saveFiles((array) $this->_files[$attribute], $uploadConfig);
+                    $this->saveFiles((array) $this->_files[$attribute], $storageConfig);
                 }
             }
         }
@@ -117,13 +117,13 @@ class FilesBehavior extends Behavior
      */
     public function afterInsert()
     {
-        foreach ($this->attributes as $attribute => $uploadConfig) {
+        foreach ($this->attributes as $attribute => $storageConfig) {
             if ($this->_files[$attribute] instanceof UploadedFile) {
-                if ($filePath = $this->saveFile($this->_files[$attribute], $uploadConfig)) {
+                if ($filePath = $this->saveFile($this->_files[$attribute], $storageConfig)) {
                     $this->owner->updateAttributes([$attribute => pathinfo($filePath, PATHINFO_BASENAME)]);
                 }
             } elseif (is_array($this->_files[$attribute]) && !empty($this->_files[$attribute])) {
-                $paths = $this->saveFiles((array) $this->_files[$attribute], $uploadConfig);
+                $paths = $this->saveFiles((array) $this->_files[$attribute], $storageConfig);
                 if ($paths) {
                     foreach ($paths as $key => $path) {
                         $paths[$key] = pathinfo($path, PATHINFO_BASENAME);
@@ -140,29 +140,37 @@ class FilesBehavior extends Behavior
     public function afterFind()
     {
         $this->normalizeAttributes();
-        foreach ($this->attributes as $attribute => $uploadConfig) {
+        foreach ($this->attributes as $attribute => $storageConfig) {
             $value = $this->owner->$attribute;
-            if ($uploadConfig->multiple && is_string($value)) {
+            if ($storageConfig->multiple && is_string($value)) {
                 $value = json_decode($value);
             }
-//            if (is_array($))
+            if (is_array($value)) {
+                foreach ($value as $key => $item) {
+                    if (!$item instanceof FileInterface) {
+                        $value[$key] = new File(['filesystem' => $storageConfig->getFilesystem(), 'path' => $item]);
+                    }
+                }
+            }
+            $this->owner->$attribute = $value;
         }
+        $a = 1;
     }
 
     /**
      * @param UploadedFile $file
-     * @param UploadConfig $config
+     * @param StorageConfig $config
      * @param int $index
      * @throws \Exception
      * @return bool|string
      */
-    public function saveFile(UploadedFile $file, UploadConfig $config, $index = 1)
+    public function saveFile(UploadedFile $file, StorageConfig $config, $index = 1)
     {
-        if (!empty($config->filesystem)) {
+        if ($filesystem = $config->getFilesystemInstance()) {
             if ($file->error == UPLOAD_ERR_OK && is_uploaded_file($file->tempName)) {
                 $filePath = $config->resolveFilePath($file->name, $this->owner, $index);
                 $stream = fopen($file->tempName, 'r+');
-                if ($config->filesystem->writeStream($filePath, $stream, [
+                if ($filesystem->writeStream($filePath, $stream, [
                     'visibility' => $config->visibility
                 ])) {
                     return $filePath;
@@ -186,11 +194,11 @@ class FilesBehavior extends Behavior
 
     /**
      * @param UploadedFile[] $files
-     * @param UploadConfig $config
+     * @param StorageConfig $config
      * @return array
      * @throws \Exception
      */
-    public function saveFiles($files, UploadConfig $config)
+    public function saveFiles($files, StorageConfig $config)
     {
         $saved = [];
         foreach ($files as $index => $file) {
@@ -200,19 +208,19 @@ class FilesBehavior extends Behavior
         return $saved;
     }
 
-    public function deleteFile($file, UploadConfig $config)
+    public function deleteFile($file, StorageConfig $config)
     {
-        $filePath  = rtrim($config->resolvePath($this->owner), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $file;
-        if (!empty($config->filesystem)) {
-            if ($config->filesystem->has($filePath)) {
-                $config->filesystem->delete($filePath);
+        $filePath = rtrim($config->resolvePath($this->owner), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $file;
+        if ($filesystem = $config->getFilesystemInstance()) {
+            if ($filesystem->has($filePath)) {
+                $filesystem->delete($filePath);
             }
         } else {
             @unlink($filePath);
         }
     }
 
-    public function deleteFiles($attribute, UploadConfig $config)
+    public function deleteFiles($attribute, StorageConfig $config)
     {
         if ($oldFiles = json_decode($this->owner->getOldAttribute($attribute))) {
             $oldFiles = (array) $oldFiles;
@@ -256,17 +264,14 @@ class FilesBehavior extends Behavior
 
     protected function normalizeAttributes()
     {
-        foreach ($this->attributes as $attribute => $uploadConfig) {
+        foreach ($this->attributes as $attribute => $storageConfig) {
             if (is_numeric($attribute)) {
                 unset($this->attributes[$attribute]);
-                $attribute = $uploadConfig;
-                $uploadConfig = [];
+                $attribute = $storageConfig;
+                $storageConfig = [];
             }
-            $uploadConfig = (array) $uploadConfig;
-            if (empty($uploadConfig['class'])) {
-                $uploadConfig['class'] = $this->uploadConfigClass;
-            }
-            $this->attributes[$attribute] = Yii::createObject($uploadConfig);
+            $storageConfig = (array) $storageConfig;
+            $this->attributes[$attribute] = new $this->storageConfigClass($storageConfig);
         }
     }
 }
