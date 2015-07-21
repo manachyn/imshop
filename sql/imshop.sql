@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Хост: localhost
--- Время создания: Июл 20 2015 г., 19:13
+-- Время создания: Июл 21 2015 г., 19:21
 -- Версия сервера: 5.5.43-0ubuntu0.14.04.1
 -- Версия PHP: 5.5.9-1ubuntu4.11
 
@@ -128,6 +128,46 @@ CREATE TABLE IF NOT EXISTS `tbl_category_meta` (
 -- --------------------------------------------------------
 
 --
+-- Структура таблицы `tbl_entity_files`
+--
+
+CREATE TABLE IF NOT EXISTS `tbl_entity_files` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `entity_id` int(11) NOT NULL,
+  `entity_type` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `attribute` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
+  `file_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `entity_id_entity_type` (`entity_id`,`entity_type`),
+  KEY `attribute` (`attribute`),
+  KEY `FK_entity_files_file_id` (`file_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `tbl_files`
+--
+
+CREATE TABLE IF NOT EXISTS `tbl_files` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `filesystem` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
+  `path` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `title` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `size` int(11) DEFAULT NULL,
+  `mime_type` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `created_at` int(11) DEFAULT NULL,
+  `updated_at` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `filesystem` (`filesystem`),
+  KEY `path` (`path`),
+  KEY `created_at` (`created_at`),
+  KEY `updated_at` (`updated_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
 -- Структура таблицы `tbl_forms`
 --
 
@@ -179,7 +219,8 @@ INSERT INTO `tbl_migration` (`version`, `apply_time`) VALUES
 ('m150208_114635_create_variation_tables', 1437398926),
 ('m150208_123637_create_catalog_tables', 1437398986),
 ('m150415_113756_create_seo_tables', 1437398936),
-('m150427_145906_create_form_builder_tables', 1437398893);
+('m150427_145906_create_form_builder_tables', 1437398893),
+('m150721_121000_create_filesystem_tables', 1437484206);
 
 -- --------------------------------------------------------
 
@@ -228,10 +269,18 @@ CREATE TABLE IF NOT EXISTS `tbl_products` (
   `available_on` int(11) NOT NULL,
   `created_at` int(11) NOT NULL,
   `updated_at` int(11) NOT NULL,
+  `images` text COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_products_brand_id` (`brand_id`),
   KEY `FK_products_type_id` (`type_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=2 ;
+
+--
+-- Дамп данных таблицы `tbl_products`
+--
+
+INSERT INTO `tbl_products` (`id`, `sku`, `title`, `slug`, `description`, `quantity`, `price`, `status`, `brand_id`, `type_id`, `available_on`, `created_at`, `updated_at`, `images`) VALUES
+(1, 'fgdfg', 'dfgdfgdfgdfg', 'dfgdfgdfgdfg', '', '', 0, 1, NULL, NULL, 0, 1437487473, 1437487473, '["dfgdfgdfgdfg-1.png","dfgdfgdfgdfg-2.png"]');
 
 -- --------------------------------------------------------
 
@@ -349,7 +398,14 @@ CREATE TABLE IF NOT EXISTS `tbl_product_meta` (
   `custom_meta` text COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_product_meta_entity_id` (`entity_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=2 ;
+
+--
+-- Дамп данных таблицы `tbl_product_meta`
+--
+
+INSERT INTO `tbl_product_meta` (`id`, `entity_id`, `meta_title`, `meta_description`, `meta_robots`, `custom_meta`) VALUES
+(1, 1, '', '', '', '');
 
 -- --------------------------------------------------------
 
@@ -498,7 +554,15 @@ CREATE TABLE IF NOT EXISTS `tbl_social_meta` (
   KEY `meta_id` (`meta_id`),
   KEY `meta_type` (`meta_type`),
   KEY `social_type` (`social_type`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=3 ;
+
+--
+-- Дамп данных таблицы `tbl_social_meta`
+--
+
+INSERT INTO `tbl_social_meta` (`id`, `meta_id`, `meta_type`, `social_type`, `title`, `type`, `url`, `image`, `description`, `site_name`, `video`, `card`, `site`, `creator`) VALUES
+(1, 1, 'product_meta', 'open_graph', '', '', '', '', '', '', '', '', '', ''),
+(2, 1, 'product_meta', 'twitter_card', '', '', '', '', '', '', '', '', '', '');
 
 -- --------------------------------------------------------
 
@@ -550,6 +614,12 @@ ALTER TABLE `tbl_category_meta`
   ADD CONSTRAINT `FK_category_meta_entity_id` FOREIGN KEY (`entity_id`) REFERENCES `tbl_categories` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
+-- Ограничения внешнего ключа таблицы `tbl_entity_files`
+--
+ALTER TABLE `tbl_entity_files`
+  ADD CONSTRAINT `FK_entity_files_file_id` FOREIGN KEY (`file_id`) REFERENCES `tbl_files` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- Ограничения внешнего ключа таблицы `tbl_form_fields`
 --
 ALTER TABLE `tbl_form_fields`
@@ -565,8 +635,8 @@ ALTER TABLE `tbl_option_values`
 -- Ограничения внешнего ключа таблицы `tbl_products`
 --
 ALTER TABLE `tbl_products`
-  ADD CONSTRAINT `FK_products_type_id` FOREIGN KEY (`type_id`) REFERENCES `tbl_product_types` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
-  ADD CONSTRAINT `FK_products_brand_id` FOREIGN KEY (`brand_id`) REFERENCES `tbl_brands` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+  ADD CONSTRAINT `FK_products_brand_id` FOREIGN KEY (`brand_id`) REFERENCES `tbl_brands` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `FK_products_type_id` FOREIGN KEY (`type_id`) REFERENCES `tbl_product_types` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 --
 -- Ограничения внешнего ключа таблицы `tbl_products_categories`
