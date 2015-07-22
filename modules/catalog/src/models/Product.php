@@ -74,7 +74,7 @@ class Product extends ActiveRecord implements ProductInterface
                 'attributes' => [
                     'images' => ['filesystem' => 'local', 'path' => '/products/images', 'fileName' => '{model.id}-{model.slug}-{file.index}.{file.extension}', 'multiple' => true],
                     'dimages' => ['filesystem' => 'local', 'path' => '/products/images', 'fileName' => 'd-{model.slug}-{file.index}.{file.extension}', 'multiple' => true, 'dbInstance' => true],
-                    'video' => ['filesystem' => 'local', 'path' => '/products/videos', 'fileName' => '{model.id}-{model.slug}-{file.index}.{file.extension}'],
+                    'video' => ['filesystem' => 'local', 'path' => '/products/videos', 'fileName' => '{model.id}-{model.slug}.{file.extension}'],
                     'dvideo' => ['filesystem' => 'local', 'path' => '/products/videos', 'fileName' => 'd-{model.slug}-{file.index}.{file.extension}', 'dbInstance' => true],
                 ]
             ],

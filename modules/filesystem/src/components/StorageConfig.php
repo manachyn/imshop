@@ -12,10 +12,16 @@ use Yii;
 class StorageConfig extends Object
 {
     /**
+     * @var string filesystem name.
+     */
+    public $filesystem;
+
+    /**
      * @var string|callable path or alias to the directory in which to save files
      * or anonymous function returns directory path
      */
     public $path = '@webroot/uploads';
+
     /**
      * @var string|callable path or alias to the directory in which to save files
      * or anonymous function returns directory path
@@ -46,46 +52,6 @@ class StorageConfig extends Object
 
     public $visibility = AdapterInterface::VISIBILITY_PUBLIC;
 
-    /**
-     * @var Filesystem|string the filesystem object or the application component ID of the filesystem object.
-     */
-    private $_filesystem;
-
-    /**
-     * @param Filesystem|string $filesystem
-     */
-    public function setFilesystem($filesystem)
-    {
-        $this->_filesystem = $filesystem;
-    }
-
-    /**
-     * @return Filesystem|string
-     */
-    public function getFilesystem()
-    {
-        return $this->_filesystem;
-    }
-
-    /**
-     * Returns filesystem.
-     *
-     * @return Filesystem|null
-     */
-    public function getFilesystemInstance()
-    {
-        if (!$this->_filesystem instanceof Filesystem) {
-            $this->_filesystem = Yii::$app->get('filesystem')->get($this->_filesystem);
-        }
-
-        return $this->_filesystem;
-    }
-
-    public function getFilePath(UploadedFile $file)
-    {
-        //$path = Yii::getAlias($this->path) . DIRECTORY_SEPARATOR . ;
-    }
-
     public function resolvePath($model)
     {
         $path = Yii::getAlias($this->path instanceof Closure ? call_user_func($this->path, $model, $this) : $this->path);
@@ -111,15 +77,6 @@ class StorageConfig extends Object
         return rtrim($this->resolvePath($model), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $this->resolveFileName($fileName, $model, $fileIndex);
     }
 
-//    public function resolveFileName($fileName, $model)
-//    {
-//        $file = pathinfo($fileName);
-//        return preg_replace_callback('|{(.*?)}|', function ($matches) use ($file, $model) {
-//            $value = $this->evaluateExpression($matches[1], ['file' => $file, 'model' => $model]);
-//            return $value ? $value : $matches[0];
-//        }, $this->fileName);
-//    }
-
     private function evaluateExpression($expression, $parameters)
     {
         $parts = explode('.', $expression);
@@ -136,6 +93,7 @@ class StorageConfig extends Object
                 $value = $this->evaluateExpression($expression, ['obj' => $value]);
             }
         }
+
         return $value;
     }
 }

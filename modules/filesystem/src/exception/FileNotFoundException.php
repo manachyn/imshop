@@ -2,7 +2,7 @@
 
 namespace im\filesystem\exception;
 
-class FileNotFoundException extends \RuntimeException
+class FileNotFoundException extends FilesystemException
 {
     public function __construct($path)
     {

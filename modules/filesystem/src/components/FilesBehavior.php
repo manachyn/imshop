@@ -9,13 +9,14 @@ use yii\db\ActiveRecord;
 use yii\web\UploadedFile;
 use Yii;
 
+/**
+ * Class FilesBehavior adds possibility to handle file uploads and link them to the model.
+ *
+ * @property ActiveRecord $owner
+ * @package im\filesystem\components
+ */
 class FilesBehavior extends Behavior
 {
-    /**
-     * @var ActiveRecord
-     */
-    public $owner;
-
     /**
      * @var StorageConfig[]
      */
@@ -27,14 +28,14 @@ class FilesBehavior extends Behavior
     public $storageConfigClass = 'im\filesystem\components\StorageConfig';
 
     /**
-     * @var StorageConfig default upload config for all attributes
-     */
-    public $storageConfig;
-
-    /**
      * @var UploadedFile[]
      */
-    private $_files;
+    private $_uploadedFiles = [];
+
+    /**
+     * @var FileInterface
+     */
+    private $_files = [];
 
     /**
      * @inheritdoc
@@ -52,219 +53,201 @@ class FilesBehavior extends Behavior
     }
 
     /**
-     * Before validate event.
+     * Handles before validate event of owner.
+     * Creates instances of uploaded files and sets them to owner's attributes for validation.
      */
     public function beforeValidate()
     {
-        $this->normalizeAttributes();
-        foreach ($this->attributes as $attribute => $storageConfig) {
-            $this->_files[$attribute] = $storageConfig->multiple ? UploadedFile::getInstances($this->owner, $attribute)
-                : UploadedFile::getInstance($this->owner, $attribute);
-            if (empty($this->_files[$attribute])) {
-                $this->_files[$attribute] = $storageConfig->multiple ? UploadedFile::getInstancesByName($attribute)
-                    : UploadedFile::getInstanceByName($attribute);
-            }
-            if ($this->_files[$attribute] instanceof UploadedFile) {
-                $this->owner->$attribute = $this->_files[$attribute];
-            } elseif (is_array($this->_files[$attribute]) && !empty($this->_files[$attribute])) {
-                $this->owner->$attribute = array_filter((array) $this->_files[$attribute], function($file) {
-                    return $file instanceof UploadedFile;
-                });
-            }
+        if ($this->hasUploadedFiles()) {
+            $this->normalizeAttributes();
+            $this->getUploadedFileInstances();
+            $this->setFileAttributes();
         }
     }
 
     /**
-     * Before save event.
+     * Handles before save event of owner.
+     * Deletes old related files, creates file instances for uploaded files and sets them to owner's attributes before saving.
      */
     public function beforeSave()
     {
-        foreach ($this->attributes as $attribute => $storageConfig) {
-            if (!empty($this->_files[$attribute] )) {
-                if (!$this->owner->isNewRecord) {
-                    $this->deleteFiles($attribute, $storageConfig);
-                }
-                /** @var DbFile|File $fileClass */
-                $fileClass = $storageConfig->dbInstance ? DbFile::className() : File::className();
-                if ($this->_files[$attribute] instanceof UploadedFile) {
-                    $this->owner->$attribute = $fileClass::getInstance([
-                        'filesystem' => $storageConfig->getFilesystem(),
-                        'path' => $storageConfig->resolveFilePath($this->_files[$attribute]->name, $this->owner),
-                        'mimeType' => $this->_files[$attribute]->type,
-                        'size' => $this->_files[$attribute]->size
-                    ]);
-                } elseif (is_array($this->_files[$attribute])) {
-                    $files = $this->_files[$attribute];
-                    $this->owner->$attribute = array_map(function($index) use ($files, $storageConfig, $fileClass) {
-                        return $fileClass::getInstance([
-                            'filesystem' => $storageConfig->getFilesystem(),
-                            'path' => $storageConfig->resolveFilePath($files[$index], $this->owner, $index + 1),
-                            'mimeType' => $files[$index]->type,
-                            'size' => $files[$index]->size
-                        ]);
-                    }, array_keys((array) $files));
-                }
-            }
+        if ($this->hasUploadedFiles()) {
+            $this->deleteRelatedFiles();
+            $this->getFileInstances();
         }
     }
 
     /**
-     * After update event.
+     * Handles after update event of owner.
+     * Saves uploaded files to filesystem.
      */
     public function afterUpdate()
     {
-        foreach ($this->attributes as $attribute => $storageConfig) {
-            if (!empty($this->_files[$attribute] )) {
-                if ($this->_files[$attribute] instanceof UploadedFile) {
-                    $this->saveFile($this->_files[$attribute], $storageConfig);
-                } elseif (is_array($this->_files[$attribute]) && !empty($this->_files[$attribute])) {
-                    $this->saveFiles((array) $this->_files[$attribute], $storageConfig);
-                }
-            }
-        }
+        //$this->saveUploadedFiles();
     }
 
     /**
-     * After insert event.
+     * Handles after insert event of owner.
+     * Updates related files for in case where file name contains owner primary key.
      */
     public function afterInsert()
     {
-        $this->owner->save(false);
+        $this->saveUploadedFiles();
+//        $update = false;
 //        foreach ($this->attributes as $attribute => $storageConfig) {
-//            if ($this->_files[$attribute] instanceof UploadedFile) {
-//                if ($filePath = $this->saveFile($this->_files[$attribute], $storageConfig)) {
-//                    $this->owner->updateAttributes([$attribute => pathinfo($filePath, PATHINFO_BASENAME)]);
-//                }
-//            } elseif (is_array($this->_files[$attribute]) && !empty($this->_files[$attribute])) {
-//                $paths = $this->saveFiles((array) $this->_files[$attribute], $storageConfig);
-//                if ($paths) {
-//                    foreach ($paths as $key => $path) {
-//                        $paths[$key] = pathinfo($path, PATHINFO_BASENAME);
+//            if ($this->_uploadedFiles[$attribute] && $storageConfig->updateAfterCreation) {
+//                $value = $this->owner->$attribute;
+//                if ($this->_uploadedFiles[$attribute] instanceof UploadedFile) {
+//                    /** @var FileInterface $value */
+//                    $value->setPath($storageConfig->resolveFilePath($value->getPath(), $this->owner));
+//                } elseif (is_array($this->_uploadedFiles[$attribute])) {
+//                    /** @var FileInterface[] $value */
+//                    foreach ($value as $item) {
+//                        $item->setPath($storageConfig->resolveFilePath($item->getPath(), $this->owner));
 //                    }
-//                    $this->owner->updateAttributes([$attribute => json_encode($paths)]);
 //                }
+//                $this->owner->$attribute = $value;
+//                $update = true;
 //            }
 //        }
+//
+//        if ($update) {
+//            $this->owner->update();
+//        }
     }
 
     /**
+     * Creates uploaded file instances.
+     */
+    protected function getUploadedFileInstances()
+    {
+        foreach ($this->attributes as $attribute => $storageConfig) {
+            $this->_uploadedFiles[$attribute] = $storageConfig->multiple
+                ? UploadedFile::getInstances($this->owner, $attribute)
+                : UploadedFile::getInstance($this->owner, $attribute);
+            if (empty($this->_uploadedFiles[$attribute])) {
+                $this->_uploadedFiles[$attribute] = $storageConfig->multiple
+                    ? UploadedFile::getInstancesByName($attribute)
+                    : UploadedFile::getInstanceByName($attribute);
+            }
+        }
+    }
+
+    /**
+     * Sets file attributes of the owner.
+     */
+    protected function setFileAttributes()
+    {
+        if ($this->_uploadedFiles) {
+            foreach ($this->attributes as $attribute => $storageConfig) {
+                if ($this->_uploadedFiles[$attribute]) {
+                    if ($this->_uploadedFiles[$attribute] instanceof UploadedFile) {
+                        $this->owner->$attribute = $this->_uploadedFiles[$attribute];
+                    } elseif (is_array($this->_uploadedFiles[$attribute])) {
+                        $this->owner->$attribute = array_filter((array)$this->_uploadedFiles[$attribute], function ($file) {
+                            return $file instanceof UploadedFile;
+                        });
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Deletes owner related files if new ones were uploaded.
+     */
+    protected function deleteRelatedFiles()
+    {
+        foreach ($this->attributes as $attribute => $storageConfig) {
+            if (!$this->owner->isNewRecord && !empty($this->_uploadedFiles[$attribute])) {
+                //$this->deleteFiles($attribute, $storageConfig);
+            }
+        }
+    }
+
+    /**
+     * Creates file instances for uploaded files and sets them to owner's attributes.
+     */
+    protected function getFileInstances()
+    {
+        if ($this->_uploadedFiles) {
+            foreach ($this->attributes as $attribute => $storageConfig) {
+                if ($this->_uploadedFiles[$attribute]) {
+                    if ($this->_uploadedFiles[$attribute] instanceof UploadedFile) {
+                        $file = $this->createFileInstance($this->_uploadedFiles[$attribute], $storageConfig);
+                        $this->_files[$attribute][$file->getPath()] = $this->owner->$attribute = $file;
+                    } elseif (is_array($this->_uploadedFiles[$attribute])) {
+                        $files = [];
+                        foreach ($this->_uploadedFiles[$attribute] as $item) {
+                            $file = $this->createFileInstance($item, $storageConfig);
+                            $this->_files[$attribute][$file->getPath()] = $files[] = $file;
+                        }
+                        $this->owner->$attribute = $files;
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Creates file instance.
+     *
      * @param UploadedFile $file
      * @param StorageConfig $config
-     * @param int $index
-     * @throws \Exception
-     * @return bool|string
+     * @param int $fileIndex
+     * @return FileInterface
      */
-    public function saveFile(UploadedFile $file, StorageConfig $config, $index = 1)
+    protected function createFileInstance(UploadedFile $file, StorageConfig $config, $fileIndex = 1)
     {
-        if ($filesystem = $config->getFilesystemInstance()) {
-            if ($file->error == UPLOAD_ERR_OK && is_uploaded_file($file->tempName)) {
-                $filePath = $config->resolveFilePath($file->name, $this->owner, $index);
-                $stream = fopen($file->tempName, 'r+');
-                if ($filesystem->writeStream($filePath, $stream, [
-                    'visibility' => $config->visibility
-                ])) {
-                    return $filePath;
-                }
-            }
-        } else {
-            $filePath = $config->resolveFilePath($file->name, $this->owner, $index);
-            $dir = pathinfo($filePath, PATHINFO_DIRNAME);
-            if (!is_dir($dir)) {
-                if(!mkdir($dir, 0755, true)) {
-                    throw new \Exception("Can't create the directory '$dir'");
-                }
-            }
-            if ($file->saveAs($filePath)) {
-                return $filePath;
-            }
-        }
+        /** @var DbFile|File $fileClass */
+        $fileClass = $config->dbInstance ? DbFile::className() : File::className();
 
-        return false;
+        return $fileClass::getInstance([
+            'filesystem' => $config->filesystem,
+            'path' => $config->resolveFilePath($file->name, $this->owner, $fileIndex),
+            'mimeType' => $file->type,
+            'size' => $file->size
+        ]);
     }
 
     /**
-     * @param UploadedFile[] $files
-     * @param StorageConfig $config
-     * @return array
-     * @throws \Exception
+     * Saves uploaded files.
      */
-    public function saveFiles($files, StorageConfig $config)
+    protected function saveUploadedFiles()
     {
-        $saved = [];
-        foreach ($files as $index => $file) {
-            $this->saveFile($file, $config, $index + 1);
-        }
-
-        return $saved;
-    }
-
-    public function deleteFile($file, StorageConfig $config)
-    {
-        $filePath = rtrim($config->resolvePath($this->owner), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $file;
-        if ($filesystem = $config->getFilesystemInstance()) {
-            if ($filesystem->has($filePath)) {
-                $filesystem->delete($filePath);
-            }
-        } else {
-            @unlink($filePath);
-        }
-    }
-
-    public function deleteFiles($attribute, StorageConfig $config)
-    {
-        $oldFiles = $config->multiple ? json_decode($this->owner->getOldAttribute($attribute)) : $this->owner->getOldAttribute($attribute);
-        if ($oldFiles) {
-            $oldFiles = (array) $oldFiles;
-            foreach ($oldFiles as $file) {
-                $this->deleteFile($file, $config);
+        if ($this->_uploadedFiles) {
+            /** @var FilesystemComponent $filesystemComponent */
+            $filesystemComponent = Yii::$app->get('filesystem');
+            foreach ($this->attributes as $attribute => $storageConfig) {
+                if ($this->_uploadedFiles[$attribute]) {
+                    if ($this->_uploadedFiles[$attribute] instanceof UploadedFile) {
+                        $path = $storageConfig->resolveFilePath($this->_uploadedFiles[$attribute]->name, $this->owner);
+                        $filesystemComponent->saveUploadedFile($this->_uploadedFiles[$attribute], $path, $storageConfig);
+                    } elseif (is_array($this->_uploadedFiles[$attribute])) {
+                        foreach ($this->_uploadedFiles[$attribute] as $index => $item) {
+                            $path = $storageConfig->resolveFilePath($item->name, $this->owner, $index + 1);
+                            $filesystemComponent->saveUploadedFile($item, $path, $storageConfig);
+                        }
+                    }
+                }
             }
         }
     }
-
-//    /**
-//     * @inheritdoc
-//     */
-//    public function canGetProperty($name, $checkVars = true)
-//    {
-//        if (parent::canGetProperty($name, $checkVars)) {
-//            return true;
-//        } else {
-//            return $this->hasAttribute($name);
-//        }
-//    }
-//
-//    /**
-//     * @inheritdoc
-//     */
-//    public function __get($name)
-//    {
-//        try { return parent::__get($name); }
-//        catch (\Exception $e) {
-//            return [];
-//        }
-//    }
 
     /**
-     * @param string $name
-     * @return bool
+     * Creates storage config objects from config array of attributes.
      */
-    protected function hasAttribute($name)
-    {
-        return isset($this->attributes[$name]);
-    }
-
     protected function normalizeAttributes()
     {
         foreach ($this->attributes as $attribute => $storageConfig) {
             if (!$storageConfig instanceof $this->storageConfigClass) {
-                if (is_numeric($attribute)) {
-                    unset($this->attributes[$attribute]);
-                    $attribute = $storageConfig;
-                    $storageConfig = [];
-                }
-                $storageConfig = (array)$storageConfig;
                 $this->attributes[$attribute] = new $this->storageConfigClass($storageConfig);
             }
         }
+    }
+
+    protected function hasUploadedFiles()
+    {
+        return !empty($_FILES);
     }
 }
