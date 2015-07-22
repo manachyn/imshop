@@ -2,6 +2,7 @@
 
 namespace im\filesystem\components;
 
+use im\filesystem\models\DbFile;
 use im\filesystem\models\File;
 use yii\base\Behavior;
 use yii\db\ActiveRecord;
@@ -46,7 +47,6 @@ class FilesBehavior extends Behavior
             ActiveRecord::EVENT_BEFORE_UPDATE => 'beforeSave',
             ActiveRecord::EVENT_AFTER_INSERT => 'afterInsert',
             ActiveRecord::EVENT_AFTER_UPDATE => 'afterUpdate',
-            ActiveRecord::EVENT_AFTER_FIND => 'afterFind',
 //            ActiveRecord::EVENT_BEFORE_DELETE => 'beforeDelete',
         ];
     }
@@ -84,13 +84,25 @@ class FilesBehavior extends Behavior
                 if (!$this->owner->isNewRecord) {
                     $this->deleteFiles($attribute, $storageConfig);
                 }
+                /** @var DbFile|File $fileClass */
+                $fileClass = $storageConfig->dbInstance ? DbFile::className() : File::className();
                 if ($this->_files[$attribute] instanceof UploadedFile) {
-                    $this->owner->$attribute = pathinfo($storageConfig->resolveFileName($this->_files[$attribute]->name, $this->owner), PATHINFO_BASENAME);
+                    $this->owner->$attribute = $fileClass::getInstance([
+                        'filesystem' => $storageConfig->getFilesystem(),
+                        'path' => $storageConfig->resolveFilePath($this->_files[$attribute]->name, $this->owner),
+                        'mimeType' => $this->_files[$attribute]->type,
+                        'size' => $this->_files[$attribute]->size
+                    ]);
                 } elseif (is_array($this->_files[$attribute])) {
                     $files = $this->_files[$attribute];
-                    $this->owner->$attribute = json_encode(array_map(function($index) use ($files, $storageConfig) {
-                        return pathinfo($storageConfig->resolveFileName($files[$index], $this->owner, $index + 1), PATHINFO_BASENAME);
-                    }, array_keys((array) $files)));
+                    $this->owner->$attribute = array_map(function($index) use ($files, $storageConfig, $fileClass) {
+                        return $fileClass::getInstance([
+                            'filesystem' => $storageConfig->getFilesystem(),
+                            'path' => $storageConfig->resolveFilePath($files[$index], $this->owner, $index + 1),
+                            'mimeType' => $files[$index]->type,
+                            'size' => $files[$index]->size
+                        ]);
+                    }, array_keys((array) $files));
                 }
             }
         }
@@ -117,44 +129,22 @@ class FilesBehavior extends Behavior
      */
     public function afterInsert()
     {
-        foreach ($this->attributes as $attribute => $storageConfig) {
-            if ($this->_files[$attribute] instanceof UploadedFile) {
-                if ($filePath = $this->saveFile($this->_files[$attribute], $storageConfig)) {
-                    $this->owner->updateAttributes([$attribute => pathinfo($filePath, PATHINFO_BASENAME)]);
-                }
-            } elseif (is_array($this->_files[$attribute]) && !empty($this->_files[$attribute])) {
-                $paths = $this->saveFiles((array) $this->_files[$attribute], $storageConfig);
-                if ($paths) {
-                    foreach ($paths as $key => $path) {
-                        $paths[$key] = pathinfo($path, PATHINFO_BASENAME);
-                    }
-                    $this->owner->updateAttributes([$attribute => json_encode($paths)]);
-                }
-            }
-        }
-    }
-
-    /**
-     * After insert event.
-     */
-    public function afterFind()
-    {
-        $this->normalizeAttributes();
-        foreach ($this->attributes as $attribute => $storageConfig) {
-            $value = $this->owner->$attribute;
-            if ($storageConfig->multiple && is_string($value)) {
-                $value = json_decode($value);
-            }
-            if (is_array($value)) {
-                foreach ($value as $key => $item) {
-                    if (!$item instanceof FileInterface) {
-                        $value[$key] = new File(['filesystem' => $storageConfig->getFilesystem(), 'path' => $item]);
-                    }
-                }
-            }
-            $this->owner->$attribute = $value;
-        }
-        $a = 1;
+        $this->owner->save(false);
+//        foreach ($this->attributes as $attribute => $storageConfig) {
+//            if ($this->_files[$attribute] instanceof UploadedFile) {
+//                if ($filePath = $this->saveFile($this->_files[$attribute], $storageConfig)) {
+//                    $this->owner->updateAttributes([$attribute => pathinfo($filePath, PATHINFO_BASENAME)]);
+//                }
+//            } elseif (is_array($this->_files[$attribute]) && !empty($this->_files[$attribute])) {
+//                $paths = $this->saveFiles((array) $this->_files[$attribute], $storageConfig);
+//                if ($paths) {
+//                    foreach ($paths as $key => $path) {
+//                        $paths[$key] = pathinfo($path, PATHINFO_BASENAME);
+//                    }
+//                    $this->owner->updateAttributes([$attribute => json_encode($paths)]);
+//                }
+//            }
+//        }
     }
 
     /**
@@ -222,7 +212,8 @@ class FilesBehavior extends Behavior
 
     public function deleteFiles($attribute, StorageConfig $config)
     {
-        if ($oldFiles = json_decode($this->owner->getOldAttribute($attribute))) {
+        $oldFiles = $config->multiple ? json_decode($this->owner->getOldAttribute($attribute)) : $this->owner->getOldAttribute($attribute);
+        if ($oldFiles) {
             $oldFiles = (array) $oldFiles;
             foreach ($oldFiles as $file) {
                 $this->deleteFile($file, $config);
@@ -230,28 +221,28 @@ class FilesBehavior extends Behavior
         }
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function canGetProperty($name, $checkVars = true)
-    {
-        if (parent::canGetProperty($name, $checkVars)) {
-            return true;
-        } else {
-            return $this->hasAttribute($name);
-        }
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function __get($name)
-    {
-        try { return parent::__get($name); }
-        catch (\Exception $e) {
-            return [];
-        }
-    }
+//    /**
+//     * @inheritdoc
+//     */
+//    public function canGetProperty($name, $checkVars = true)
+//    {
+//        if (parent::canGetProperty($name, $checkVars)) {
+//            return true;
+//        } else {
+//            return $this->hasAttribute($name);
+//        }
+//    }
+//
+//    /**
+//     * @inheritdoc
+//     */
+//    public function __get($name)
+//    {
+//        try { return parent::__get($name); }
+//        catch (\Exception $e) {
+//            return [];
+//        }
+//    }
 
     /**
      * @param string $name
@@ -265,13 +256,15 @@ class FilesBehavior extends Behavior
     protected function normalizeAttributes()
     {
         foreach ($this->attributes as $attribute => $storageConfig) {
-            if (is_numeric($attribute)) {
-                unset($this->attributes[$attribute]);
-                $attribute = $storageConfig;
-                $storageConfig = [];
+            if (!$storageConfig instanceof $this->storageConfigClass) {
+                if (is_numeric($attribute)) {
+                    unset($this->attributes[$attribute]);
+                    $attribute = $storageConfig;
+                    $storageConfig = [];
+                }
+                $storageConfig = (array)$storageConfig;
+                $this->attributes[$attribute] = new $this->storageConfigClass($storageConfig);
             }
-            $storageConfig = (array) $storageConfig;
-            $this->attributes[$attribute] = new $this->storageConfigClass($storageConfig);
         }
     }
 }

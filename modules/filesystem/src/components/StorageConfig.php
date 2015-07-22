@@ -38,6 +38,12 @@ class StorageConfig extends Object
      */
     public $dbInstance = false;
 
+    /**
+     * @var bool whether to update file names after owner was saved first time.
+     * It is used in cases if the file name should contain owner primary key.
+     */
+    public $updateAfterCreation = false;
+
     public $visibility = AdapterInterface::VISIBILITY_PUBLIC;
 
     /**

@@ -11,6 +11,7 @@ $config = [
         'im\users\Bootstrap',
         'im\eav\Bootstrap',
         'im\seo\Bootstrap',
+        'im\filesystem\Bootstrap',
         'im\catalog\Bootstrap',
     ],
     'modules' => [

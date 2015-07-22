@@ -20,6 +20,10 @@ class File extends Model implements FileInterface
      */
     public $path;
 
+    public $mimeType;
+
+    public $size;
+
     /**
      * @inheritdoc
      */
@@ -50,6 +54,54 @@ class File extends Model implements FileInterface
         return $this->_filesystem;
     }
 
+    /**
+     * Creates file instances from array of data.
+     *
+     * @param array $data
+     * @return static[]
+     */
+    public static function getInstances($data)
+    {
+        foreach ($data as $key => $item) {
+            $data[$key] = static::getInstance($item);
+        }
+
+        return $data;
+    }
+
+    /**
+     * Creates file instance from data.
+     *
+     * @param array $data
+     * @return static
+     */
+    public static function getInstance($data)
+    {
+        return new static($data);
+    }
+
+    public function __sleep()
+    {
+        return array('path', '_filesystem');
+    }
+
+    public function setPath($path)
+    {
+        $this->path = $path;
+    }
+
+    public function __toString()
+    {
+        return $this->path;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPath()
+    {
+        return $this->path;
+    }
 
 
 

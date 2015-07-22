@@ -10,6 +10,8 @@ use im\catalog\components\ProductTypeInterface;
 use im\catalog\components\VariableProductTrait;
 use im\catalog\Module;
 use im\filesystem\components\FilesBehavior;
+use im\filesystem\models\DbFile;
+use im\filesystem\models\EntityFile;
 use Yii;
 use yii\behaviors\SluggableBehavior;
 use yii\behaviors\TimestampBehavior;
@@ -67,17 +69,19 @@ class Product extends ActiveRecord implements ProductInterface
                 'ensureUnique' => true
             ],
             'timestamp' => TimestampBehavior::className(),
-            'relations' => [
-                'class' => RelationsBehavior::className(),
-                'settings' => ['relatedEAttributes' => ['deleteOnUnlink' => true]]
-            ],
             'files' => [
                 'class' => FilesBehavior::className(),
                 'attributes' => [
-                    'images' => ['filesystem' => 'local', 'path' => '/products/images', 'fileName' => '{model.slug}-{file.index}.{file.extension}', 'multiple' => true],
-                    //'video' => ['filesystem' => 'local', 'path' => '/products/videos', 'fileName' => '{model.slug}-{file.index}.{file.extension}']
+                    'images' => ['filesystem' => 'local', 'path' => '/products/images', 'fileName' => '{model.id}-{model.slug}-{file.index}.{file.extension}', 'multiple' => true],
+                    'dimages' => ['filesystem' => 'local', 'path' => '/products/images', 'fileName' => 'd-{model.slug}-{file.index}.{file.extension}', 'multiple' => true, 'dbInstance' => true],
+                    'video' => ['filesystem' => 'local', 'path' => '/products/videos', 'fileName' => '{model.id}-{model.slug}-{file.index}.{file.extension}'],
+                    'dvideo' => ['filesystem' => 'local', 'path' => '/products/videos', 'fileName' => 'd-{model.slug}-{file.index}.{file.extension}', 'dbInstance' => true],
                 ]
-            ]
+            ],
+            'relations' => [
+                'class' => RelationsBehavior::className(),
+                'settings' => ['relatedEAttributes' => ['deleteOnUnlink' => true], 'dimages' => ['deleteOnUnlink' => true], 'dvideo' => ['deleteOnUnlink' => true]]
+            ],
         ];
     }
 
@@ -88,10 +92,10 @@ class Product extends ActiveRecord implements ProductInterface
     {
         return [
             [['title'], 'required'],
-            //[['image'], 'file', 'skipOnEmpty' => false],
             ['price', 'default', 'value' => 0],
             [['sku', 'slug', 'description', 'quantity', 'price', 'status', 'brand_id', 'type_id', 'eAttributes', 'categories'], 'safe'],
-            [['eAttributes'], 'im\base\validators\RelationValidator']
+            [['eAttributes'], 'im\base\validators\RelationValidator'],
+//            [['images'], 'file', 'skipOnEmpty' => false, 'extensions' => 'png, jpg', 'maxFiles' => 4],
         ];
     }
 
@@ -355,4 +359,49 @@ class Product extends ActiveRecord implements ProductInterface
 
         return $loaded;
     }
+
+    public function getImages()
+    {
+        return unserialize($this->images_data);
+    }
+
+    public function getVideo()
+    {
+        return unserialize($this->video_data);
+    }
+
+    public function setImages($images)
+    {
+        $this->images_data = serialize($images);
+    }
+
+    public function setVideo($video)
+    {
+        $this->video_data = serialize($video);
+    }
+
+    public function getEntityFilesRelation()
+    {
+        return $this->hasMany(EntityFile::className(), ['entity_id' => 'id'])->where(['entity_type' => 'product']);
+    }
+
+    public function getDimagesRelation()
+    {
+        return $this->hasMany(DbFile::className(), ['id' => 'file_id'])->via('entityFilesRelation');
+    }
+
+    public function getDvideoRelation()
+    {
+        return $this->hasOne(DbFile::className(), ['id' => 'dvideo_id']);
+    }
+
+//    public function setDimages($images)
+//    {
+//        $this->populateRelation('')
+//    }
+//
+//    public function setDvideo($video)
+//    {
+//        $this->video_data = serialize($video);
+//    }
 }
