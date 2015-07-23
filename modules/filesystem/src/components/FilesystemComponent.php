@@ -3,6 +3,7 @@
 namespace im\filesystem\components;
 
 use creocoder\flysystem\Filesystem;
+use im\filesystem\components\flysystem\plugins\UrlPlugin;
 use im\filesystem\events\FilesystemEvent;
 use im\filesystem\exception\FilesystemException;
 use im\filesystem\models\File;
@@ -114,9 +115,9 @@ class FilesystemComponent extends Component
     public function getUrl(FileInterface $file, $filesystem)
     {
         $filesystem = $this->get($filesystem);
-        //$filesystem->get
+        $filesystem->addPlugin(new UrlPlugin());
 
-        return false;
+        return $filesystem->getUrl($file->getPath());
     }
 
     /**

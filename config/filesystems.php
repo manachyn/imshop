@@ -2,7 +2,7 @@
 
 return [
     'local' => [
-        'class' => 'creocoder\flysystem\LocalFilesystem',
+        'class' => 'im\filesystem\components\flysystem\LocalFilesystem',
         'path' => '@webroot/files'
     ]
 ];

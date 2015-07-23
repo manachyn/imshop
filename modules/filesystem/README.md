@@ -37,3 +37,5 @@ Flysystem public url
 https://github.com/SmartestEdu/FlysystemPublicUrlPlugin
 http://return-true.com/uploading-directly-to-amazon-s3-from-your-laravel-5-application/
 http://code.htmlasks.com/laravel_5_use_storage_facade_to_get_file_path
+http://laravelcoding.com/blog/laravel-5-beauty-upload-manager
+http://cgit.drupalcode.org/flysystem_dropbox/tree/src/Flysystem/Dropbox.php?h=8.x-1.x

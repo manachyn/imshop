@@ -1,6 +1,6 @@
 <?php
 
-namespace im\filesystem\controllers;
+namespace im\filesystem\actions;
 
 use im\filesystem\components\FileInterface;
 use im\filesystem\components\FilesystemComponent;
@@ -37,7 +37,7 @@ class UploadAction extends Action
     /**
      * @var string
      */
-    public $fileParam = 'file';
+    public $fileParam = 'files';
 
     /**
      * @var bool
@@ -67,7 +67,8 @@ class UploadAction extends Action
         'type' => 'type',
         'size' => 'size',
         'url' => 'url',
-        'deleteUrl' => 'deleteUrl'
+        'deleteUrl' => 'deleteUrl',
+        'error' => 'error'
     ];
 
     /**
@@ -80,11 +81,12 @@ class UploadAction extends Action
      */
     public function init()
     {
-
+        Yii::$app->response->format = $this->responseFormat;
     }
 
     public function run()
     {
+        $response = [];
         $uploadedFiles = UploadedFile::getInstancesByName($this->fileParam);
         foreach ($uploadedFiles as $uploadedFile) {
 
@@ -93,27 +95,34 @@ class UploadAction extends Action
             $responseFile->{$this->responseParamsMap['type']} = $uploadedFile->type;
             $responseFile->{$this->responseParamsMap['size']} = $uploadedFile->size;
 
-            if ($uploadedFile->error == UPLOAD_ERR_OK && is_uploaded_file($uploadedFile->tempName)) {
+            if (!$uploadedFile->hasError) {
                 $model = DynamicModel::validateData(['file' => $uploadedFile], $this->validationRules);
                 if (!$model->hasErrors()) {
                     $filesystemComponent = $this->getFilesystemComponent();
                     $filesystem = $this->getFilesystem();
                     /** @var FileInterface $fileClass */
-                    $fileClass = $this->$fileClass;
+                    $fileClass = $this->fileClass;
                     $file = $fileClass::getInstanceFromUploadedFile($uploadedFile);
-                    $path = $filesystemComponent->saveFile($file, $filesystem);
+                    $path = $filesystemComponent->saveFile($file, $filesystem, $uploadedFile->name);
                     if ($path) {
-                        $responseFile->{$this->responseParamsMap['name']} = $file->getFilename();
-                        $responseFile->{$this->responseParamsMap['url']} = $file->getFilename();
+                        $file->setPath($path);
+                        $responseFile->{$this->responseParamsMap['name']} = $path;
+                        $responseFile->{$this->responseParamsMap['url']} = $filesystemComponent->getUrl($file, $filesystem);
                         $responseFile->{$this->responseParamsMap['deleteUrl']} = Url::to([$this->deleteRoute, 'path' => $path]);
+                    } else {
+                        $responseFile->{$this->responseParamsMap['error']} = 'Saving error';
                     }
                 } else {
-
+                    $responseFile->{$this->responseParamsMap['error']} = $model->errors;
                 }
+            } else {
+                $responseFile->{$this->responseParamsMap['error']} = $uploadedFile->error;
             }
 
-            $result['files'][] = $responseFile;
+            $response['files'][] = $responseFile;
         }
+
+        return $this->multiple ? $response : array_shift($response);
     }
 
     /**
