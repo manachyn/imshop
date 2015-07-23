@@ -3,8 +3,10 @@
 namespace im\forms\components;
 
 use yii\base\Model;
+use yii\base\Widget;
 use yii\widgets\ActiveField;
 use yii\widgets\ActiveForm;
+use yii\widgets\InputWidget;
 
 /**
  * Class FieldSet the set for form fields.
@@ -175,6 +177,8 @@ class FieldSet extends Set
             }
             if ($item instanceof ActiveField) {
                 $output .= $item;
+            } elseif ($item instanceof Widget) {
+                $output .= $item->run();
             } else {
                 /** @var SetItemInterface $item */
                 $output .= $item->render($params);
@@ -199,7 +203,7 @@ class FieldSet extends Set
      */
     protected function getItemName($item)
     {
-        if ($item instanceof ActiveField) {
+        if ($item instanceof ActiveField || $item instanceof InputWidget) {
             $name = $item->attribute;
         } elseif ($item instanceof SetItemInterface) {
             $name = $item->getName();

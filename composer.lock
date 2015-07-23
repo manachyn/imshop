@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "3a9a9ea73e9422b03f694f768b4073f2",
+    "hash": "222c55106530a29c7229ea29f94b1474",
     "packages": [
         {
             "name": "2amigos/yii2-file-upload-widget",
-            "version": "1.0.2",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/2amigos/yii2-file-upload-widget.git",
-                "reference": "2ecf63e5f47e429e95ab598391399e0ed03e716f"
+                "reference": "ad8a40965b5c92eeae07c78bbc6124afe43f7eb1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/2amigos/yii2-file-upload-widget/zipball/2ecf63e5f47e429e95ab598391399e0ed03e716f",
-                "reference": "2ecf63e5f47e429e95ab598391399e0ed03e716f",
+                "url": "https://api.github.com/repos/2amigos/yii2-file-upload-widget/zipball/ad8a40965b5c92eeae07c78bbc6124afe43f7eb1",
+                "reference": "ad8a40965b5c92eeae07c78bbc6124afe43f7eb1",
                 "shasum": ""
             },
             "require": {
@@ -71,7 +71,7 @@
                 "yii 2",
                 "yii2"
             ],
-            "time": "2015-04-14 19:11:24"
+            "time": "2015-05-14 15:34:04"
         },
         {
             "name": "2amigos/yii2-gallery-widget",
@@ -1099,16 +1099,16 @@
         },
         {
             "name": "league/flysystem",
-            "version": "1.0.9",
+            "version": "1.0.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem.git",
-                "reference": "c42bed650525ec9ea1a83b715e37f4fc690f99aa"
+                "reference": "3475ce0b1b5cab41f012905c4c58ad645088f7c9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/c42bed650525ec9ea1a83b715e37f4fc690f99aa",
-                "reference": "c42bed650525ec9ea1a83b715e37f4fc690f99aa",
+                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/3475ce0b1b5cab41f012905c4c58ad645088f7c9",
+                "reference": "3475ce0b1b5cab41f012905c4c58ad645088f7c9",
                 "shasum": ""
             },
             "require": {
@@ -1176,7 +1176,7 @@
                 "sftp",
                 "storage"
             ],
-            "time": "2015-07-13 09:25:28"
+            "time": "2015-07-21 19:35:53"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -1874,7 +1874,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "2amigos/yii2-file-upload-widget": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

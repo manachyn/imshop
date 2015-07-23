@@ -24,6 +24,9 @@ $config = [
         'catalog' => [
             'class' => 'im\catalog\Module'
         ],
+        'filesystem' => [
+            'class' => 'im\filesystem\Module'
+        ],
     ],
     'components' => [
         'request' => [

@@ -5,8 +5,10 @@ namespace im\filesystem\models;
 use creocoder\flysystem\Filesystem;
 use im\filesystem\components\FileInterface;
 use im\filesystem\exception\FileNotFoundException;
+use im\filesystem\exception\UploadException;
 use yii\base\Model;
 use Yii;
+use yii\web\UploadedFile;
 
 class File extends Model implements FileInterface
 {
@@ -15,14 +17,11 @@ class File extends Model implements FileInterface
      */
     private $_filesystem;
 
-    /**
-     * @var string file path in the filesystem
-     */
-    public $path;
+    protected $path;
 
-    public $mimeType;
+    protected $mimeType;
 
-    public $size;
+    protected $size;
 
     /**
      * @inheritdoc
@@ -80,14 +79,25 @@ class File extends Model implements FileInterface
         return new static($data);
     }
 
+    /**
+     * @inheritdoc
+     */
+    public static function getInstanceFromUploadedFile(UploadedFile $uploadedFile)
+    {
+        if ($uploadedFile->hasError) {
+            throw new UploadException("File upload error '{$uploadedFile->error}'");
+        }
+
+        return new static([
+            'path' => $uploadedFile->tempName,
+            'mimeType' => $uploadedFile->type,
+            'size' => $uploadedFile->size
+        ]);
+    }
+
     public function __sleep()
     {
         return array('path', '_filesystem');
-    }
-
-    public function setPath($path)
-    {
-        $this->path = $path;
     }
 
     public function __toString()
@@ -96,12 +106,54 @@ class File extends Model implements FileInterface
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
     public function getPath()
     {
         return $this->path;
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function setPath($path)
+    {
+        $this->path = $path;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getMimeType()
+    {
+        return $this->mimeType;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setMimeType($mimeType)
+    {
+        $this->mimeType = $mimeType;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getSize()
+    {
+        return $this->size;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setSize($size)
+    {
+        $this->size = $size;
+    }
+
+
 
 
 
@@ -143,4 +195,44 @@ class File extends Model implements FileInterface
 //
 //        return null;
 //    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setFilename($filename)
+    {
+        // TODO: Implement
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getFilename()
+    {
+        return pathinfo($this->path, PATHINFO_FILENAME);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getExtension()
+    {
+        return pathinfo($this->path, PATHINFO_EXTENSION);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setBasename($basename)
+    {
+        // TODO: Implement setBasename() method.
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getBasename($suffix = null)
+    {
+        return pathinfo($this->path, PATHINFO_BASENAME);
+    }
 }

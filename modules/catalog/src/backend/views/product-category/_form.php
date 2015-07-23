@@ -1,6 +1,9 @@
 <?php
 
+use dosamigos\fileupload\FileUpload;
+use dosamigos\fileupload\FileUploadUI;
 use im\catalog\Module;
+use im\forms\components\ContentBlock;
 use im\forms\components\FieldSet;
 use im\forms\components\Tab;
 use im\forms\components\TabSet;
@@ -21,7 +24,29 @@ use yii\widgets\ActiveForm;
             $form->field($model, 'name')->textInput(['maxlength' => true]),
             $form->field($model, 'slug')->textInput(['maxlength' => true]),
             $form->field($model, 'description')->textarea(),
-            $form->field($model, 'status')->dropDownList($model::getStatusesList())
+            $form->field($model, 'status')->dropDownList($model::getStatusesList()),
+        ]),
+        new Tab('images', Module::t('category', 'Images'), [
+            new ContentBlock('image-uploader', FileUploadUI::widget([
+                'model' => $model,
+                'attribute' => 'image',
+                'url' => ['/filesystem/uploads/upload', 'id' => $model->id],
+                'fieldOptions' => [
+                    'accept' => 'image/*'
+                ],
+                'clientOptions' => [
+                    'maxFileSize' => 2000000
+                ],
+            ])),
+//            new ContentBlock('image-uploader', FileUpload::widget([
+//                'model' => $model,
+//                'attribute' => 'image',
+//                'url' => ['/filesystem/uploads/upload', 'id' => $model->id],
+//                'options' => ['accept' => 'image/*'],
+//                'clientOptions' => [
+//                    'maxFileSize' => 2000000
+//                ]
+//            ]))
         ])
     ])
 ]) ?>

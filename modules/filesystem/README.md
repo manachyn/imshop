@@ -28,3 +28,12 @@ public function behaviors()
         ]
     ];
 }
+
+
+https://github.com/trntv/yii2-file-kit
+
+
+Flysystem public url
+https://github.com/SmartestEdu/FlysystemPublicUrlPlugin
+http://return-true.com/uploading-directly-to-amazon-s3-from-your-laravel-5-application/
+http://code.htmlasks.com/laravel_5_use_storage_facade_to_get_file_path
