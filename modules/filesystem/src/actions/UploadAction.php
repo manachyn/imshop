@@ -35,6 +35,11 @@ class UploadAction extends Action
     public $filesystem = 'local';
 
     /**
+     * @var string path
+     */
+    public $path = 'uploads';
+
+    /**
      * @var string
      */
     public $fileParam = 'files';
@@ -66,7 +71,10 @@ class UploadAction extends Action
         'name' => 'name',
         'type' => 'type',
         'size' => 'size',
+        'path' => 'path',
+        'filesystem' => 'filesystem',
         'url' => 'url',
+        'thumbnailUrl' => 'thumbnailUrl',
         'deleteUrl' => 'deleteUrl',
         'error' => 'error'
     ];
@@ -82,6 +90,9 @@ class UploadAction extends Action
     public function init()
     {
         Yii::$app->response->format = $this->responseFormat;
+        if ($fileParam = Yii::$app->request->get('fileparam')) {
+            $this->fileParam = $fileParam;
+        }
     }
 
     public function run()
@@ -103,10 +114,14 @@ class UploadAction extends Action
                     /** @var FileInterface $fileClass */
                     $fileClass = $this->fileClass;
                     $file = $fileClass::getInstanceFromUploadedFile($uploadedFile);
-                    $path = $filesystemComponent->saveFile($file, $filesystem, $uploadedFile->name);
+                    //$path = $this->path . DIRECTORY_SEPARATOR . $uploadedFile->name;
+                    $path = $this->path . DIRECTORY_SEPARATOR . date('dmYHis') . '-' . $file->getBasename() . '.' . $uploadedFile->extension;
+                    $path = $filesystemComponent->saveFile($file, $filesystem, $path);
                     if ($path) {
                         $file->setPath($path);
-                        $responseFile->{$this->responseParamsMap['name']} = $path;
+                        $responseFile->{$this->responseParamsMap['filesystem']} = $filesystem;
+                        $responseFile->{$this->responseParamsMap['path']} = $path;
+                        $responseFile->{$this->responseParamsMap['name']} = $uploadedFile->name;
                         $responseFile->{$this->responseParamsMap['url']} = $filesystemComponent->getUrl($file, $filesystem);
                         $responseFile->{$this->responseParamsMap['deleteUrl']} = Url::to([$this->deleteRoute, 'path' => $path]);
                     } else {

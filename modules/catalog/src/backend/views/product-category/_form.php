@@ -14,6 +14,8 @@ use yii\widgets\ActiveForm;
 /* @var $model im\catalog\models\ProductCategory */
 /* @var $form yii\widgets\ActiveForm */
 
+\yii\jui\JuiAsset::register($this);
+
 ?>
 
 <?php $form = ActiveForm::begin(['id' => 'category-form', 'options' => ['enctype' => 'multipart/form-data']]); ?>
@@ -38,6 +40,17 @@ use yii\widgets\ActiveForm;
                     'maxFileSize' => 2000000
                 ],
             ])),
+//            $form->field($model, 'image')->widget(
+//                '\trntv\filekit\widget\Upload',
+//                [
+//                    'url' => ['/filesystem/uploads/upload', 'id' => $model->id],
+//                    'sortable'=>true,
+//                    'fileuploadOptions'=>[
+//                        'maxFileSize'=>10000000, // 10 MiB
+//                        'maxNumberOfFiles'=>3
+//                    ]
+//                ]
+//            )
 //            new ContentBlock('image-uploader', FileUpload::widget([
 //                'model' => $model,
 //                'attribute' => 'image',

@@ -8,6 +8,7 @@
         }
     ],
     "require": {
-        "creocoder/yii2-flysystem": "*"
+        "creocoder/yii2-flysystem": "*",
+        "trntv/yii2-file-kit": "*"
     }
 }

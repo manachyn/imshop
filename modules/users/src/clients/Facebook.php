@@ -9,6 +9,11 @@ class Facebook extends BaseFacebook implements ClientInterface
     /**
      * @inheritdoc
      */
+    public $scope = 'public_profile email';
+
+    /**
+     * @inheritdoc
+     */
     public function getEmail()
     {
         return isset($this->getUserAttributes()['email']) ? $this->getUserAttributes()['email'] : null;
