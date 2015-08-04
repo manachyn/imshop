@@ -3,9 +3,11 @@
 namespace im\filesystem\models;
 
 use im\filesystem\components\FileInterface;
+use im\filesystem\exception\UploadException;
 use im\filesystem\Module;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
+use yii\web\UploadedFile;
 
 /**
  * Class File
@@ -67,6 +69,115 @@ class DbFile extends ActiveRecord implements FileInterface
         ];
     }
 
+    public function __toString()
+    {
+        return $this->path;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setFilesystemName($filesystemName)
+    {
+        $this->filesystem = $filesystemName;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getFilesystemName()
+    {
+        return $this->filesystem;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setPath($path)
+    {
+        $this->path = $path;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getPath()
+    {
+        return $this->path;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setFilename($filename)
+    {
+        // TODO: Implement setFilename() method.
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getFilename()
+    {
+        return pathinfo($this->path, PATHINFO_FILENAME);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getExtension()
+    {
+        return pathinfo($this->path, PATHINFO_EXTENSION);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setBasename($basename)
+    {
+        // TODO: Implement setBasename() method.
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getBasename($suffix = null)
+    {
+        return pathinfo($this->path, PATHINFO_BASENAME);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setMimeType($mimeType)
+    {
+        $this->mime_type = $mimeType;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getMimeType()
+    {
+        return $this->mime_type;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setSize($size)
+    {
+        $this->size = $size;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getSize()
+    {
+        return $this->size;
+    }
+
     /**
      * Creates file instances from array of data.
      *
@@ -94,36 +205,18 @@ class DbFile extends ActiveRecord implements FileInterface
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
-    public function getMimeType()
+    public static function getInstanceFromUploadedFile(UploadedFile $uploadedFile)
     {
-        return $this->mime_type;
-    }
+        if ($uploadedFile->hasError) {
+            throw new UploadException("File upload error '{$uploadedFile->error}'");
+        }
 
-    /**
-     * @param string $mime_type
-     */
-    public function setMimeType($mime_type)
-    {
-        $this->mime_type = $mime_type;
-    }
-
-    public function __toString()
-    {
-        return $this->path;
-    }
-
-    public function setPath($path)
-    {
-        $this->path = $path;
-    }
-
-    /**
-     * @return string
-     */
-    public function getPath()
-    {
-        return $this->path;
+        return new static([
+            'path' => $uploadedFile->tempName,
+            'mime_type' => $uploadedFile->type,
+            'size' => $uploadedFile->size
+        ]);
     }
 }

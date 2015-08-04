@@ -1,5 +1,6 @@
 <?php
 
+use dosamigos\fileinput\FileInput;
 use dosamigos\fileupload\FileUpload;
 use dosamigos\fileupload\FileUploadUI;
 use im\catalog\Module;
@@ -29,17 +30,26 @@ use yii\widgets\ActiveForm;
             $form->field($model, 'status')->dropDownList($model::getStatusesList()),
         ]),
         new Tab('images', Module::t('category', 'Images'), [
-            new ContentBlock('image-uploader', FileUploadUI::widget([
-                'model' => $model,
-                'attribute' => 'image',
-                'url' => ['/filesystem/uploads/upload', 'id' => $model->id],
-                'fieldOptions' => [
-                    'accept' => 'image/*'
-                ],
-                'clientOptions' => [
-                    'maxFileSize' => 2000000
-                ],
-            ])),
+//            new ContentBlock('image-uploader', FileInput::widget([
+//                'model' => $model,
+//                'attribute' => 'image', // image is the attribute
+//                // using STYLE_IMAGE allows me to display an image. Cool to display previously
+//                // uploaded images
+////                'thumbnail' => $model->getAvatarImage(),
+//                'style' => FileInput::STYLE_IMAGE
+//            ])),
+//            new ContentBlock('image-uploader', FileUploadUI::widget([
+//                'model' => $model,
+//                'attribute' => 'image',
+//                'url' => ['/filesystem/uploads/upload', 'id' => $model->id],
+//                'fieldOptions' => [
+//                    'accept' => 'image/*'
+//                ],
+//                'clientOptions' => [
+//                    'maxFileSize' => 2000000
+//                ],
+//            ])),
+            $form->field($model, 'image', ['enableClientValidation' => false])->fileInput(['accept' => 'image/*']),
 //            $form->field($model, 'image')->widget(
 //                '\trntv\filekit\widget\Upload',
 //                [

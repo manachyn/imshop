@@ -3,10 +3,14 @@
 namespace im\catalog\models;
 
 use creocoder\nestedsets\NestedSetsBehavior;
+use im\base\behaviors\RelationsBehavior;
 use im\base\interfaces\ModelBehaviorInterface;
 use im\catalog\components\CategoryPageTrait;
 use im\catalog\Module;
+use im\filesystem\components\FilesBehavior;
 use im\filesystem\components\UploadBehavior;
+use im\filesystem\models\DbFile;
+use im\filesystem\models\EntityFile;
 use im\tree\models\Tree;
 use yii\behaviors\SluggableBehavior;
 use yii\behaviors\TimestampBehavior;
@@ -58,12 +62,42 @@ class Category extends Tree
                 'class' => NestedSetsBehavior::className(),
                 'treeAttribute' => 'tree'
             ],
-            'upload' => [
-                'class' => UploadBehavior::className(),
+            'files' => [
+                'class' => FilesBehavior::className(),
                 'attributes' => [
-                    'images' => ['filesystem' => 'local', 'path' => '/categories', 'fileName' => '{model.slug}-{file.index}.{file.extension}', 'multiple' => true]
+                    'image' => [
+                        'filesystem' => 'local',
+                        'path' => '/categories',
+                        'fileName' => '{model.slug}.{file.extension}',
+                        'relation' => $this->hasOne(DbFile::className(), ['id' => 'image_id'])
+                    ],
+                    'images' => [
+                        'filesystem' => 'local',
+                        'path' => '/categories',
+                        'fileName' => '{model.slug}-{file.index}.{file.extension}',
+                        'relation' => $this->hasOne(DbFile::className(), ['id' => 'image_id'])
+                    ],
+                    'video' => [
+                        'filesystem' => 'local',
+                        'path' => '/categories/videos',
+                        'fileName' => '{model.slug}.{file.extension}'
+                    ],
+                    'videos' => [
+                        'filesystem' => 'local',
+                        'path' => '/categories/videos',
+                        'fileName' => '{model.slug}-{file.index}.{file.extension}'
+                    ]
+                ],
+                'relations' => [
+                    'image' => $this->hasOne(DbFile::className(), ['id' => 'image_id']),
+                    'entityFiles' => $this->hasMany(EntityFile::className(), ['entity_id' => 'id'])->where(['entity_type' => 'product']),
+                    'images' => $this->hasMany(DbFile::className(), ['id' => 'file_id'])->via('entityFiles')
                 ]
-            ]
+            ],
+//            'relations' => [
+//                'class' => RelationsBehavior::className(),
+//                'settings' => ['image' => ['deleteOnUnlink' => true]]
+//            ],
         ];
     }
 
@@ -75,6 +109,7 @@ class Category extends Tree
         return [
             [['name'], 'required'],
             [['name', 'slug', 'description'], 'string', 'max' => 255],
+            [['image'], 'image', 'skipOnEmpty' => false],
             [['status'], 'safe']
         ];
     }
@@ -132,4 +167,9 @@ class Category extends Tree
 
         return $loaded;
     }
+
+//    public function getImageRelation()
+//    {
+//        return $this->hasOne(DbFile::className(), ['id' => 'image_id']);
+//    }
 }

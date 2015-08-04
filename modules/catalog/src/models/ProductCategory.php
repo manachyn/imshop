@@ -32,7 +32,8 @@ class ProductCategory extends Category
             ],
             'tree' => [
                 'class' => NestedSetsBehavior::className(),
-                'treeAttribute' => false
+                //'treeAttribute' => false
+                'treeAttribute' => 'tree'
             ]
         ]);
     }

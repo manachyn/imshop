@@ -7,6 +7,20 @@ use yii\web\UploadedFile;
 interface FileInterface
 {
     /**
+     * Sets filesystem name.
+     *
+     * @param string $filesystemName
+     */
+    public function setFilesystemName($filesystemName);
+
+    /**
+     * Gets filesystem name.
+     *
+     * @return string
+     */
+    public function getFilesystemName();
+
+    /**
      * Sets the file path.
      *
      * @param string $path
@@ -59,9 +73,9 @@ interface FileInterface
     /**
      * Sets the file mime type.
      *
-     * @param string $mineType
+     * @param string $mimeType
      */
-    public function setMimeType($mineType);
+    public function setMimeType($mimeType);
 
     /**
      * Gets the file mime type.

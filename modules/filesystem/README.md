@@ -29,6 +29,9 @@ public function behaviors()
     ];
 }
 
+Widgets
+https://github.com/2amigos/yii2-file-upload-widget
+https://github.com/2amigos/yii2-file-input-widget
 
 https://github.com/trntv/yii2-file-kit
 

@@ -12,10 +12,12 @@ use yii\web\UploadedFile;
 
 class File extends Model implements FileInterface
 {
-    /**
-     * @var Filesystem|string the filesystem object or the application component ID of the filesystem object.
-     */
-    private $_filesystem;
+//    /**
+//     * @var Filesystem|string the filesystem object or the application component ID of the filesystem object.
+//     */
+//    private $_filesystem;
+
+    private $_filesystemName;
 
     protected $path;
 
@@ -33,25 +35,25 @@ class File extends Model implements FileInterface
         ];
     }
 
-    /**
-     * @param Filesystem|string $filesystem
-     */
-    public function setFilesystem($filesystem)
-    {
-        $this->_filesystem = $filesystem;
-    }
-
-    /**
-     * @return Filesystem|null
-     */
-    public function getFilesystem()
-    {
-        if (!$this->_filesystem instanceof Filesystem) {
-            $this->_filesystem = Yii::$app->get('filesystem')->get($this->_filesystem);
-        }
-
-        return $this->_filesystem;
-    }
+//    /**
+//     * @param Filesystem|string $filesystem
+//     */
+//    public function setFilesystem($filesystem)
+//    {
+//        $this->_filesystem = $filesystem;
+//    }
+//
+//    /**
+//     * @return Filesystem|null
+//     */
+//    public function getFilesystem()
+//    {
+//        if (!$this->_filesystem instanceof Filesystem) {
+//            $this->_filesystem = Yii::$app->get('filesystem')->get($this->_filesystem);
+//        }
+//
+//        return $this->_filesystem;
+//    }
 
     /**
      * Creates file instances from array of data.
@@ -103,6 +105,22 @@ class File extends Model implements FileInterface
     public function __toString()
     {
         return $this->path;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setFilesystemName($filesystemName)
+    {
+        $this->_filesystemName = $filesystemName;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getFilesystemName()
+    {
+        return $this->_filesystemName;
     }
 
     /**

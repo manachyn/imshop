@@ -6,6 +6,7 @@ use Closure;
 use creocoder\flysystem\Filesystem;
 use League\Flysystem\AdapterInterface;
 use yii\base\Object;
+use yii\db\ActiveQuery;
 use yii\web\UploadedFile;
 use Yii;
 
@@ -40,9 +41,9 @@ class StorageConfig extends Object
     public $multiple = false;
 
     /**
-     * @var bool whether to save files as active record instances.
+     * @var ActiveQuery
      */
-    public $dbInstance = false;
+    public $relation;
 
     /**
      * @var bool whether to update file names after owner was saved first time.
