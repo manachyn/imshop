@@ -15,6 +15,7 @@ use yii\web\UploadedFile;
  * @property integer $id
  * @property string $filesystem
  * @property string $path
+ * @property string $title
  * @property integer $size
  * @property string $mime_type
  * @property integer $created_at
@@ -48,8 +49,8 @@ class DbFile extends ActiveRecord implements FileInterface
     public function rules()
     {
         return [
-            ['path', 'required'],
-            [['filesystem', 'size', 'mime_type'], 'safe'],
+            [['path', 'title'], 'required'],
+            [['title', 'filesystem', 'size', 'mime_type'], 'safe'],
         ];
     }
 

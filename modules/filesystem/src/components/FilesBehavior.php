@@ -2,11 +2,13 @@
 
 namespace im\filesystem\components;
 
+use im\base\interfaces\ModelBehaviorInterface;
 use im\filesystem\models\DbFile;
-use im\filesystem\models\File;
 use yii\base\Behavior;
 use yii\base\UnknownMethodException;
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
+use yii\validators\Validator;
 use yii\web\UploadedFile;
 use Yii;
 
@@ -16,12 +18,17 @@ use Yii;
  * @property ActiveRecord $owner
  * @package im\filesystem\components
  */
-class FilesBehavior extends Behavior
+class FilesBehavior extends Behavior implements ModelBehaviorInterface
 {
     /**
      * @var StorageConfig[]
      */
     public $attributes = [];
+
+    /**
+     * @var ActiveQuery[]
+     */
+    public $relations = [];
 
     /**
      * @var string default storage config class
@@ -34,6 +41,11 @@ class FilesBehavior extends Behavior
     private $_uploadedFiles = [];
 
     /**
+     * @var UploadedFile[]
+     */
+    private $_relatedFiles = [];
+
+    /**
      * @var FileInterface[]
      */
     private $_files = [];
@@ -42,6 +54,17 @@ class FilesBehavior extends Behavior
      * @var FilesystemComponent
      */
     private $_filesystemComponent;
+
+    /**
+     * @inheritdoc
+     */
+    public function attach($owner)
+    {
+        parent::attach($owner);
+        $validators = $this->owner->getValidators();
+        $validator = Validator::createValidator('im\base\validators\RelationValidator', $this->owner, ['images']);
+        $validators->append($validator);
+    }
 
     /**
      * @inheritdoc
@@ -74,7 +97,8 @@ class FilesBehavior extends Behavior
      */
     public function afterSave()
     {
-        $this->saveUploadedFiles();
+        //$this->saveUploadedFiles();
+        $this->saveRelatedFiles();
     }
 
     /**
@@ -85,6 +109,9 @@ class FilesBehavior extends Behavior
         if (parent::canSetProperty($name, $checkVars)) {
             return true;
         } else {
+            if (strncmp($name, 'uploaded', 8) === 0) {
+                $name = strtolower(substr($name, 8));
+            }
             return $this->hasAttribute($name);
         }
     }
@@ -96,7 +123,10 @@ class FilesBehavior extends Behavior
     {
         try { parent::__set($name, $value); }
         catch (\Exception $e) {
-            $this->setAttribute($name, $value);
+            if (strncmp($name, 'uploaded', 8 === 0)) {
+                $name = strtolower(substr($name, 8));
+                $this->_uploadedFiles[$name] = $value;
+            }
         }
     }
 
@@ -108,6 +138,9 @@ class FilesBehavior extends Behavior
         if (parent::canGetProperty($name, $checkVars)) {
             return true;
         } else {
+            if (strncmp($name, 'uploaded', 8) === 0) {
+                $name = strtolower(substr($name, 8));
+            }
             return $this->hasAttribute($name);
         }
     }
@@ -119,7 +152,16 @@ class FilesBehavior extends Behavior
     {
         try { return parent::__get($name); }
         catch (\Exception $e) {
-            return isset($this->_uploadedFiles[$name]) ? $this->_uploadedFiles[$name] : null;
+            if (strncmp($name, 'uploaded', 8 === 0)) {
+                $name = strtolower(substr($name, 8));
+                if (isset($this->_uploadedFiles[$name])) {
+                    return $this->_uploadedFiles[$name];
+                }
+            } elseif ($this->hasRelation($name)) {
+                return $this->getRelation($name);
+            }
+
+            return null;
         }
     }
 
@@ -134,7 +176,7 @@ class FilesBehavior extends Behavior
             if (strncmp($name, 'get', 3) === 0) {
                 $name = substr($name, 3);
             }
-            return $this->getRelation($name);
+            return $this->hasRelation($name);
         }
     }
 
@@ -222,6 +264,20 @@ class FilesBehavior extends Behavior
         }
     }
 
+    protected function saveRelatedFiles()
+    {
+        if ($this->_relatedFiles) {
+            foreach ($this->attributes as $attribute => $storageConfig) {
+                if (isset($this->_relatedFiles[$attribute])) {
+                    $this->owner->unlinkAll($attribute, true);
+                    foreach ($this->_relatedFiles[$attribute]['models'] as $i => $model) {
+                        $this->owner->link($attribute, $model, isset($this->_relatedFiles[$attribute]['extraColumns'][$i]) ? $this->_relatedFiles[$attribute]['extraColumns'][$i] : []);
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * @param UploadedFile $uploadedFile
      * @param StorageConfig $config
@@ -231,7 +287,9 @@ class FilesBehavior extends Behavior
     protected function saveUploadedFile(UploadedFile $uploadedFile, StorageConfig $config, $fileIndex = 1)
     {
         $filesystemComponent = $this->getFilesystemComponent();
-        $file = $this->createFileInstance($uploadedFile, $config);
+        /** @var FileInterface $fileClass */
+        $fileClass = $config->fileClass;
+        $file = $fileClass::getInstanceFromUploadedFile($uploadedFile);
         $path = $config->resolveFilePath($uploadedFile->name, $this->owner, $fileIndex);
         if ($path = $filesystemComponent->saveFile($file, $config->filesystem, $path, true)) {
             $file->setPath($path);
@@ -258,21 +316,6 @@ class FilesBehavior extends Behavior
     protected function linkFile(FileInterface $file, StorageConfig $config)
     {
 
-    }
-
-    /**
-     * Creates file instance.
-     *
-     * @param UploadedFile $file
-     * @param StorageConfig $config
-     * @return FileInterface
-     */
-    protected function createFileInstance(UploadedFile $file, StorageConfig $config)
-    {
-        /** @var FileInterface $fileClass */
-        $fileClass = $config->relation ? DbFile::className() : File::className();
-
-        return $fileClass::getInstanceFromUploadedFile($file);
     }
 
     /**
@@ -306,28 +349,57 @@ class FilesBehavior extends Behavior
         return isset($this->attributes[$name]);
     }
 
-    protected function setAttribute($name, $value)
+    protected function hasRelation($name)
     {
-        if ($value instanceof UploadedFile) {
-            $this->_uploadedFiles[$name] = $value;
-//            if ($this->hasRelation($name)) {
-//                $this->owner->populateRelation($name, $value);
-//            }
-        } elseif ($value instanceof FileInterface) {
-            $this->_uploadedFiles[$name] = $value;
-//            if ($this->hasRelation($name)) {
-//                $this->owner->populateRelation($name, $value);
-//            }
-        }
+        return isset($this->relations[$name]);
     }
 
     protected function getRelation($name)
     {
-        if ($this->hasAttribute($name)) {
-            $this->normalizeAttribute($name);
-            return $this->attributes[$name]->relation;
-        } else {
-            return null;
+        $relation = $this->relations[$name];
+        if ($relation instanceof \Closure) {
+            $relation = call_user_func($relation);
         }
+
+        return $relation;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function load($data)
+    {
+        $this->normalizeAttributes();
+        foreach ($this->attributes as $attribute => $storageConfig) {
+            if (isset($data[$attribute])) {
+                /** @var ActiveRecord $modelClass */
+                $modelClass = $storageConfig->fileClass;
+                $pks = array_keys($data[$attribute]);
+                $models = $modelClass::find()->where(['id' => $pks])->indexBy('id')->all();
+                foreach ($models as $i => $model) {
+                    if (!empty($data[$attribute][$i])) {
+                        $model->load($data[$attribute][$i], '');
+                        $this->_relatedFiles[$attribute]['models'][$i] = $model;
+                        $extraColumns = array_diff(array_keys($data[$attribute][$i]), $model->safeAttributes());
+                        if ($extraColumns) {
+                            $this->_relatedFiles[$attribute]['extraColumns'][$i] = array_intersect_key($data[$attribute][$i], array_flip($extraColumns));
+                        }
+                    }
+                }
+//                if ($modelClass::loadMultiple($models, $data[$attribute], '')) {
+//                    $this->owner->populateRelation($attribute, $models);
+//                    $this->_relatedFiles[$attribute]['models'] = $models;
+//                    $this->_relatedFiles[$attribute]['extraColumns'] = $models;
+//                    $extraColumns = array_diff(reset($data[$attribute]), )
+//                }
+            }
+        }
+
+        return true;
+    }
+
+    protected function getFileItemsToUpdate()
+    {
+
     }
 }

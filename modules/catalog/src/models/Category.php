@@ -5,6 +5,7 @@ namespace im\catalog\models;
 use creocoder\nestedsets\NestedSetsBehavior;
 use im\base\behaviors\RelationsBehavior;
 use im\base\interfaces\ModelBehaviorInterface;
+use im\base\traits\ModelBehaviorTrait;
 use im\catalog\components\CategoryPageTrait;
 use im\catalog\Module;
 use im\filesystem\components\FilesBehavior;
@@ -26,6 +27,7 @@ use yii\behaviors\TimestampBehavior;
 class Category extends Tree
 {
     use CategoryPageTrait;
+    use ModelBehaviorTrait;
 
     const STATUS_ACTIVE = 1;
     const STATUS_INACTIVE = 0;
@@ -69,35 +71,29 @@ class Category extends Tree
                         'filesystem' => 'local',
                         'path' => '/categories',
                         'fileName' => '{model.slug}.{file.extension}',
-                        'relation' => $this->hasOne(DbFile::className(), ['id' => 'image_id'])
                     ],
                     'images' => [
                         'filesystem' => 'local',
                         'path' => '/categories',
                         'fileName' => '{model.slug}-{file.index}.{file.extension}',
-                        'relation' => $this->hasOne(DbFile::className(), ['id' => 'image_id'])
-                    ],
-                    'video' => [
-                        'filesystem' => 'local',
-                        'path' => '/categories/videos',
-                        'fileName' => '{model.slug}.{file.extension}'
-                    ],
-                    'videos' => [
-                        'filesystem' => 'local',
-                        'path' => '/categories/videos',
-                        'fileName' => '{model.slug}-{file.index}.{file.extension}'
+                        'multiple' => true
                     ]
                 ],
                 'relations' => [
-                    'image' => $this->hasOne(DbFile::className(), ['id' => 'image_id']),
-                    'entityFiles' => $this->hasMany(EntityFile::className(), ['entity_id' => 'id'])->where(['entity_type' => 'product']),
-                    'images' => $this->hasMany(DbFile::className(), ['id' => 'file_id'])->via('entityFiles')
+                    'image' => function () {
+                        return $this->hasOne(DbFile::className(), ['id' => 'image_id']);
+                    },
+                    'entityFiles' => function () {
+                        return $this->hasMany(EntityFile::className(), ['entity_id' => 'id'])/*->where(['entity_type' => 'product'])*/;
+                    },
+                    'images' => function () {
+                        return $this->hasMany(DbFile::className(), ['id' => 'file_id'])->via('entityFiles');
+                    },
+                    'imagesRelation' => function () {
+                        return $this->hasMany(DbFile::className(), ['id' => 'file_id'])->via('entityFiles');
+                    }
                 ]
-            ],
-//            'relations' => [
-//                'class' => RelationsBehavior::className(),
-//                'settings' => ['image' => ['deleteOnUnlink' => true]]
-//            ],
+            ]
         ];
     }
 
@@ -109,7 +105,8 @@ class Category extends Tree
         return [
             [['name'], 'required'],
             [['name', 'slug', 'description'], 'string', 'max' => 255],
-            [['image'], 'image', 'skipOnEmpty' => false],
+//            [['uploadedImage'], 'file', 'skipOnEmpty' => false],
+//            [['uploadedImages'], 'file', 'skipOnEmpty' => false, 'maxFiles' => 4],
             [['status'], 'safe']
         ];
     }
@@ -140,36 +137,4 @@ class Category extends Tree
             self::STATUS_INACTIVE => Module::t('category', 'Inactive')
         ];
     }
-
-    /**
-     * @inheritdoc
-     */
-    public function load($data, $formName = null)
-    {
-        return parent::load($data, $formName) && $this->loadBehaviors($data);
-    }
-
-    /**
-     * Populates the model behaviors with the data from end user.
-     * @param array $data the data array.
-     * @return boolean whether the model behaviors is successfully populated with some data.
-     */
-    public function loadBehaviors($data)
-    {
-        $loaded = true;
-        foreach ($this->getBehaviors() as $behavior) {
-            if ($behavior instanceof ModelBehaviorInterface) {
-                if (!$behavior->load($data)) {
-                    $loaded = false;
-                }
-            }
-        }
-
-        return $loaded;
-    }
-
-//    public function getImageRelation()
-//    {
-//        return $this->hasOne(DbFile::className(), ['id' => 'image_id']);
-//    }
 }

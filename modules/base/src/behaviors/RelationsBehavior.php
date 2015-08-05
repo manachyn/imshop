@@ -22,6 +22,11 @@ class RelationsBehavior extends Behavior
      */
     public $owner;
 
+    /**
+     * @var array
+     */
+    public $relations = [];
+
     public $settings = [];
 
     protected $relatedData = [];

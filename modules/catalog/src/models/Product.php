@@ -4,6 +4,7 @@ namespace im\catalog\models;
 
 use im\base\behaviors\RelationsBehavior;
 use im\base\interfaces\ModelBehaviorInterface;
+use im\base\traits\ModelBehaviorTrait;
 use im\catalog\components\ProductEavTrait;
 use im\catalog\components\ProductInterface;
 use im\catalog\components\ProductTypeInterface;
@@ -32,7 +33,7 @@ use yii\db\ActiveRecord;
  */
 class Product extends ActiveRecord implements ProductInterface
 {
-    use ProductEavTrait, VariableProductTrait;
+    use ProductEavTrait, VariableProductTrait, ModelBehaviorTrait;
 
     const ENTITY_TYPE = 'product';
 
@@ -72,15 +73,27 @@ class Product extends ActiveRecord implements ProductInterface
             'files' => [
                 'class' => FilesBehavior::className(),
                 'attributes' => [
-                    'images' => ['filesystem' => 'local', 'path' => '/products/images', 'fileName' => '{model.id}-{model.slug}-{file.index}.{file.extension}', 'multiple' => true],
-                    'dimages' => ['filesystem' => 'local', 'path' => '/products/images', 'fileName' => 'd-{model.slug}-{file.index}.{file.extension}', 'multiple' => true, 'dbInstance' => true],
-                    'video' => ['filesystem' => 'local', 'path' => '/products/videos', 'fileName' => '{model.id}-{model.slug}.{file.extension}'],
-                    'dvideo' => ['filesystem' => 'local', 'path' => '/products/videos', 'fileName' => 'd-{model.slug}-{file.index}.{file.extension}', 'dbInstance' => true],
-                ]
+                    'images' => [
+                        'filesystem' => 'local',
+                        'path' => '/products',
+                        'fileName' => '{model.slug}-{file.index}.{file.extension}',
+                        'multiple' => true
+                    ]
+                ],
+//                'relations' => [
+//                    'images' => function () {
+//                        return $this->hasMany(ProductFile::className(), ['product_id' => 'id']);
+//                    }
+//                ]
             ],
             'relations' => [
                 'class' => RelationsBehavior::className(),
-                'settings' => ['relatedEAttributes' => ['deleteOnUnlink' => true], 'dimages' => ['deleteOnUnlink' => true], 'dvideo' => ['deleteOnUnlink' => true]]
+                'settings' => ['relatedEAttributes' => ['deleteOnUnlink' => true]],
+                'relations' => [
+                    'images' => function () {
+                        return $this->hasMany(ProductFile::className(), ['product_id' => 'id']);
+                    }
+                ]
             ],
         ];
     }
@@ -95,7 +108,6 @@ class Product extends ActiveRecord implements ProductInterface
             ['price', 'default', 'value' => 0],
             [['sku', 'slug', 'description', 'quantity', 'price', 'status', 'brand_id', 'type_id', 'eAttributes', 'categories'], 'safe'],
             [['eAttributes'], 'im\base\validators\RelationValidator'],
-//            [['images'], 'file', 'skipOnEmpty' => false, 'extensions' => 'png, jpg', 'maxFiles' => 4],
         ];
     }
 
@@ -340,68 +352,4 @@ class Product extends ActiveRecord implements ProductInterface
     {
         return parent::load($data, $formName) && $this->loadBehaviors($data) && $this->loadEAttributes($data);
     }
-
-    /**
-     * Populates the model behaviors with the data from end user.
-     * @param array $data the data array.
-     * @return boolean whether the model behaviors is successfully populated with some data.
-     */
-    public function loadBehaviors($data)
-    {
-        $loaded = true;
-        foreach ($this->getBehaviors() as $behavior) {
-            if ($behavior instanceof ModelBehaviorInterface) {
-                if (!$behavior->load($data)) {
-                    $loaded = false;
-                }
-            }
-        }
-
-        return $loaded;
-    }
-
-    public function getImages()
-    {
-        return unserialize($this->images_data);
-    }
-
-    public function getVideo()
-    {
-        return unserialize($this->video_data);
-    }
-
-    public function setImages($images)
-    {
-        $this->images_data = serialize($images);
-    }
-
-    public function setVideo($video)
-    {
-        $this->video_data = serialize($video);
-    }
-
-    public function getEntityFilesRelation()
-    {
-        return $this->hasMany(EntityFile::className(), ['entity_id' => 'id'])->where(['entity_type' => 'product']);
-    }
-
-    public function getDimagesRelation()
-    {
-        return $this->hasMany(DbFile::className(), ['id' => 'file_id'])->via('entityFilesRelation');
-    }
-
-    public function getDvideoRelation()
-    {
-        return $this->hasOne(DbFile::className(), ['id' => 'dvideo_id']);
-    }
-
-//    public function setDimages($images)
-//    {
-//        $this->populateRelation('')
-//    }
-//
-//    public function setDvideo($video)
-//    {
-//        $this->video_data = serialize($video);
-//    }
 }
