@@ -49,7 +49,7 @@ class DbFile extends ActiveRecord implements FileInterface
     public function rules()
     {
         return [
-            [['path', 'title'], 'required'],
+            [['path'], 'required'],
             [['title', 'filesystem', 'size', 'mime_type'], 'safe'],
         ];
     }

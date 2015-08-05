@@ -73,11 +73,12 @@ class Product extends ActiveRecord implements ProductInterface
             'files' => [
                 'class' => FilesBehavior::className(),
                 'attributes' => [
-                    'images' => [
+                    'uploadedImages' => [
                         'filesystem' => 'local',
                         'path' => '/products',
                         'fileName' => '{model.slug}-{file.index}.{file.extension}',
-                        'multiple' => true
+                        'multiple' => true,
+                        'relation' => 'images'
                     ]
                 ],
 //                'relations' => [
@@ -88,11 +89,9 @@ class Product extends ActiveRecord implements ProductInterface
             ],
             'relations' => [
                 'class' => RelationsBehavior::className(),
-                'settings' => ['relatedEAttributes' => ['deleteOnUnlink' => true]],
+                'settings' => ['relatedEAttributes' => ['deleteOnUnlink' => true], 'images' => ['deleteOnUnlink' => true]],
                 'relations' => [
-                    'images' => function () {
-                        return $this->hasMany(ProductFile::className(), ['product_id' => 'id']);
-                    }
+                    'imagesRelation' => $this->hasMany(ProductFile::className(), ['product_id' => 'id'])
                 ]
             ],
         ];
@@ -108,6 +107,7 @@ class Product extends ActiveRecord implements ProductInterface
             ['price', 'default', 'value' => 0],
             [['sku', 'slug', 'description', 'quantity', 'price', 'status', 'brand_id', 'type_id', 'eAttributes', 'categories'], 'safe'],
             [['eAttributes'], 'im\base\validators\RelationValidator'],
+            [['uploadedImages'], 'file', 'skipOnEmpty' => false, 'maxFiles' => 4],
         ];
     }
 

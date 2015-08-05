@@ -51,10 +51,7 @@ use yii\widgets\ActiveForm;
             ])
         ]),
         new Tab('images', Module::t('product', 'Images'), [
-            $form->field($model, 'images[]', ['enableClientValidation' => false])->fileInput(['multiple' => true, 'accept' => 'image/*']),
-            //$form->field($model, 'dimages[]', ['enableClientValidation' => false])->fileInput(['multiple' => true, 'accept' => 'image/*']),
-            $form->field($model, 'video')->fileInput(),
-            //$form->field($model, 'dvideo')->fileInput(),
+            $form->field($model, 'uploadedImages[]', ['enableClientValidation' => false])->fileInput(['multiple' => true, 'accept' => 'image/*'])
         ])
     ])
 ]) ?>

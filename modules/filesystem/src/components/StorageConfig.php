@@ -40,10 +40,8 @@ class StorageConfig extends Object
      */
     public $multiple = false;
 
-    public $fileClass = 'im\filesystem\models\DbFile';
-
     /**
-     * @var ActiveQuery
+     * @var string
      */
     public $relation;
 

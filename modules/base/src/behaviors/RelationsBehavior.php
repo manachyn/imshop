@@ -5,6 +5,7 @@ namespace im\base\behaviors;
 use yii\base\Behavior;
 use yii\base\InvalidCallException;
 use yii\base\ModelEvent;
+use yii\base\UnknownMethodException;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\db\ActiveRecordInterface;
@@ -38,7 +39,7 @@ class RelationsBehavior extends Behavior
     /**
      * @var array relations cache
      */
-    private $_relations = [];
+    private $_ownerRelations = [];
 
     /**
      * @var array primary keys cache
@@ -74,7 +75,7 @@ class RelationsBehavior extends Behavior
     public function beforeSave()
     {
         foreach (array_keys($this->relatedData) as $name) {
-            $relation = $this->getRelation($name);
+            $relation = $this->getOwnerRelation($name);
             if (!$relation->multiple) {
                 $this->saveOne($name);
                 unset($this->relatedData[$name]);
@@ -88,7 +89,7 @@ class RelationsBehavior extends Behavior
     public function afterSave()
     {
         foreach (array_keys($this->relatedData) as $name) {
-            $relation = $this->getRelation($name);
+            $relation = $this->getOwnerRelation($name);
             if ($relation->multiple) {
                 $this->saveMany($name);
                 $this->owner->populateRelation($name, $this->relatedModels[$name]);
@@ -105,7 +106,7 @@ class RelationsBehavior extends Behavior
         if (parent::canSetProperty($name, $checkVars)) {
             return true;
         } else {
-            return $this->hasRelation($name);
+            return $this->hasOwnerRelation($name);
         }
     }
 
@@ -117,7 +118,7 @@ class RelationsBehavior extends Behavior
         if (parent::canGetProperty($name, $checkVars)) {
             return true;
         } else {
-            return $this->hasRelation($name);
+            return $this->hasOwnerRelation($name);
         }
     }
 
@@ -149,6 +150,36 @@ class RelationsBehavior extends Behavior
     }
 
     /**
+     * @inheritdoc
+     */
+    public function hasMethod($name)
+    {
+        if (parent::hasMethod($name)) {
+            return true;
+        } else {
+            if (strncmp($name, 'get', 3) === 0) {
+                $name = substr($name, 3);
+            }
+            return $this->hasRelation($this->getRelationName($this->normalizeName($name)));
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function __call($name, $params)
+    {
+        if (strncmp($name, 'get', 3) === 0) {
+            $name = substr($name, 3);
+        }
+        if ($relation = $this->getRelation($this->getRelationName($this->normalizeName($name)))) {
+            return $relation;
+        }
+
+        throw new UnknownMethodException('Calling unknown method: ' . get_class($this) . "::$name()");
+    }
+
+    /**
      * @param string $name
      * @return string
      */
@@ -159,6 +190,9 @@ class RelationsBehavior extends Behavior
         }
         if (substr_compare($name, 'Data', -4, 4) == 0) {
             $name = substr($name, 0, -4);
+        }
+        if (substr_compare($name, 'Relation', -8, 8) == 0) {
+            $name = substr($name, 0, -8);
         }
 
         return lcfirst(trim($name));
@@ -192,13 +226,36 @@ class RelationsBehavior extends Behavior
      * @param string $name
      * @return ActiveQuery
      */
-    protected function getRelation($name)
+    protected function getOwnerRelation($name)
     {
-        if (!isset($this->_relations[$name])) {
-            $this->_relations[$name] = $this->owner->getRelation($this->getRelationName($name));
+        if (!isset($this->_ownerRelations[$name])) {
+            $this->_ownerRelations[$name] = $this->owner->getRelation($this->getRelationName($name));
         }
 
-        return $this->_relations[$name];
+        return $this->_ownerRelations[$name];
+    }
+
+    /**
+     * @param string $name
+     * @return ActiveQuery
+     */
+    protected function getRelation($name)
+    {
+        $relation = $this->relations[$name];
+        if ($relation instanceof \Closure) {
+            $relation = call_user_func($relation);
+        }
+
+        return $relation;
+    }
+
+    /**
+     * @param string $name
+     * @return bool
+     */
+    protected function hasOwnerRelation($name)
+    {
+        return isset($this->_ownerRelations[$name]) || $this->owner->getRelation($this->getRelationName($name), false) !== null;
     }
 
     /**
@@ -207,7 +264,7 @@ class RelationsBehavior extends Behavior
      */
     protected function hasRelation($name)
     {
-        return isset($this->_relations[$name]) || $this->owner->getRelation($this->getRelationName($name), false) !== null;
+        return isset($this->relations[$name]);
     }
 
     /**
@@ -236,7 +293,7 @@ class RelationsBehavior extends Behavior
                 unset($this->owner->$name);
                 unset($this->relatedModels[$name]);
             }
-            $relation = $this->getRelation($name);
+            $relation = $this->getOwnerRelation($name);
             if ($relation->multiple) {
                 $this->setMany($name, $value);
             } else {
@@ -263,7 +320,7 @@ class RelationsBehavior extends Behavior
                 }
             } else {
                 $this->relatedData[$name] = $value;
-                $relation = $this->getRelation($name);
+                $relation = $this->getOwnerRelation($name);
                 if ($this->isModel($relation, $value)) {
                     $this->owner->populateRelation($name, $value);
                 }
@@ -305,7 +362,7 @@ class RelationsBehavior extends Behavior
         if (array_key_exists($name, $this->relatedModels)) {
             return $this->relatedModels[$name];
         } else {
-            return $this->getRelation($name);
+            return $this->getOwnerRelation($name);
         }
     }
 
@@ -313,7 +370,7 @@ class RelationsBehavior extends Behavior
     {
         $loaded = true;
         if ($this->relatedData[$name] !== null) {
-            $relation = $this->getRelation($name);
+            $relation = $this->getOwnerRelation($name);
             $modelClass = $relation->modelClass;
             if ($relation->multiple) {
                 foreach ($this->relatedData[$name] as $item) {
@@ -333,7 +390,7 @@ class RelationsBehavior extends Behavior
     protected function loadRelation($name)
     {
         if (isset($this->relatedData[$name])) {
-            $relation = $this->getRelation($name);
+            $relation = $this->getOwnerRelation($name);
             if ($relation->multiple) {
                 $this->loadMany($name);
             } else {
@@ -353,7 +410,7 @@ class RelationsBehavior extends Behavior
         if ($this->relatedData[$name] === null) {
             $this->relatedModels[$name] = null;
         } else {
-            $relation = $this->getRelation($name);
+            $relation = $this->getOwnerRelation($name);
             if ($this->isModel($relation, $this->relatedData[$name])) {
                 // Load instantiated model
                 $this->relatedModels[$name] = $this->relatedData[$name];
@@ -382,7 +439,7 @@ class RelationsBehavior extends Behavior
         if ($this->relatedData[$name] === null) {
             $this->relatedModels[$name] = [];
         } else {
-            $relation = $this->getRelation($name);
+            $relation = $this->getOwnerRelation($name);
             list($pks, $data) = $this->getNotLoadedItems($name);
             // Load models by primary keys
             if ($pks) {
@@ -418,7 +475,7 @@ class RelationsBehavior extends Behavior
         if ($this->relatedData[$name] === null) {
             $this->unlinkOne($name, $this->getSetting($name, 'deleteOnUnlink', false));
         } else {
-            $relation = $this->getRelation($name);
+            $relation = $this->getOwnerRelation($name);
             if ($this->isModel($relation, $this->relatedData[$name])) {
                 $model = $this->relatedData[$name];
             } elseif ($this->isLoaded($name)) {
@@ -465,7 +522,7 @@ class RelationsBehavior extends Behavior
         if (!$this->isLoaded($name)) {
             $this->loadRelation($name);
         }
-        $relation = $this->getRelation($name);
+        $relation = $this->getOwnerRelation($name);
         if ($relation->via !== null) {
             $except = [];
             $delete = !is_array($relation->via) ? true : $this->getSetting($name, 'deleteOnUnlink', false);
@@ -508,7 +565,7 @@ class RelationsBehavior extends Behavior
      */
     protected function findByPrimaryKeys($name, $pks)
     {
-        $relation = $this->getRelation($name);
+        $relation = $this->getOwnerRelation($name);
         /* @var $modelClass ActiveRecord */
         $modelClass = $relation->modelClass;
         $query = $modelClass::find();
@@ -522,7 +579,7 @@ class RelationsBehavior extends Behavior
         $pks = [];
         $data = [];
         if ($this->relatedData[$name] !== null) {
-            $relation = $this->getRelation($name);
+            $relation = $this->getOwnerRelation($name);
             $relatedData = $relation->multiple ? $this->relatedData[$name] : [$this->relatedData[$name]];
             foreach ($relatedData as $key => $item) {
                 if ($this->isPrimaryKey($relation, $item)) {
@@ -573,7 +630,7 @@ class RelationsBehavior extends Behavior
      */
     public function link($name, $model, $extraColumns = [])
     {
-        $relation = $this->getRelation($name);
+        $relation = $this->getOwnerRelation($name);
 
         if ($relation->via !== null) {
             if ($this->owner->getIsNewRecord() || $model->getIsNewRecord()) {
@@ -647,7 +704,7 @@ class RelationsBehavior extends Behavior
 
     protected function unlinkMany($name, $except = [], $delete = false)
     {
-        $relation = $this->getRelation($name);
+        $relation = $this->getOwnerRelation($name);
 
         if ($relation->via !== null) {
             if (is_array($relation->via)) {
@@ -725,7 +782,7 @@ class RelationsBehavior extends Behavior
 
     protected function unlinkOne($name, $delete = false)
     {
-        $relation = $this->getRelation($name);
+        $relation = $this->getOwnerRelation($name);
         /* @var $relatedModel ActiveRecordInterface */
         $relatedModel = $relation->modelClass;
         $condition = [];

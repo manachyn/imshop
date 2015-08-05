@@ -18,12 +18,17 @@ use Yii;
  * @property ActiveRecord $owner
  * @package im\filesystem\components
  */
-class FilesBehavior extends Behavior implements ModelBehaviorInterface
+class FilesBehaviorOlddd extends Behavior implements ModelBehaviorInterface
 {
     /**
      * @var StorageConfig[]
      */
     public $attributes = [];
+
+    /**
+     * @var ActiveQuery[]
+     */
+    public $relations = [];
 
     /**
      * @var string default storage config class
@@ -41,9 +46,25 @@ class FilesBehavior extends Behavior implements ModelBehaviorInterface
     private $_relatedFiles = [];
 
     /**
+     * @var FileInterface[]
+     */
+    private $_files = [];
+
+    /**
      * @var FilesystemComponent
      */
     private $_filesystemComponent;
+
+    /**
+     * @inheritdoc
+     */
+    public function attach($owner)
+    {
+        parent::attach($owner);
+        $validators = $this->owner->getValidators();
+        $validator = Validator::createValidator('im\base\validators\RelationValidator', $this->owner, ['images']);
+        $validators->append($validator);
+    }
 
     /**
      * @inheritdoc
@@ -71,43 +92,13 @@ class FilesBehavior extends Behavior implements ModelBehaviorInterface
     }
 
     /**
-     * Handles before save event of owner.
-     * Deletes old related files, creates file instances for uploaded files and sets them to owner's attributes before saving.
-     */
-    public function beforeSave()
-    {
-//        if ($this->hasUploadedFiles()) {
-//            $this->deleteRelatedFiles();
-//            $this->getFileInstances();
-//        }
-    }
-
-    /**
      * Handles after update event of owner.
      * Saves uploaded files to filesystem.
      */
     public function afterSave()
     {
-        $this->saveUploadedFiles();
-        $this->linkRelatedFiles();
-    }
-
-    /**
-     * Handles after update event of owner.
-     * Saves uploaded files to filesystem.
-     */
-    public function afterUpdate()
-    {
-
-    }
-
-    /**
-     * Handles after insert event of owner.
-     * Updates related files for in case where file name contains owner primary key.
-     */
-    public function afterInsert()
-    {
-
+        //$this->saveUploadedFiles();
+        $this->saveRelatedFiles();
     }
 
     /**
@@ -118,6 +109,9 @@ class FilesBehavior extends Behavior implements ModelBehaviorInterface
         if (parent::canSetProperty($name, $checkVars)) {
             return true;
         } else {
+            if (strncmp($name, 'uploaded', 8) === 0) {
+                $name = strtolower(substr($name, 8));
+            }
             return $this->hasAttribute($name);
         }
     }
@@ -127,10 +121,12 @@ class FilesBehavior extends Behavior implements ModelBehaviorInterface
      */
     public function __set($name, $value)
     {
-        try {
-            parent::__set($name, $value);
-        } catch (\Exception $e) {
-            $this->_uploadedFiles[$name] = $value;
+        try { parent::__set($name, $value); }
+        catch (\Exception $e) {
+            if (strncmp($name, 'uploaded', 8 === 0)) {
+                $name = strtolower(substr($name, 8));
+                $this->_uploadedFiles[$name] = $value;
+            }
         }
     }
 
@@ -142,6 +138,9 @@ class FilesBehavior extends Behavior implements ModelBehaviorInterface
         if (parent::canGetProperty($name, $checkVars)) {
             return true;
         } else {
+            if (strncmp($name, 'uploaded', 8) === 0) {
+                $name = strtolower(substr($name, 8));
+            }
             return $this->hasAttribute($name);
         }
     }
@@ -151,11 +150,49 @@ class FilesBehavior extends Behavior implements ModelBehaviorInterface
      */
     public function __get($name)
     {
-        try {
-            return parent::__get($name);
-        } catch (\Exception $e) {
-            return isset($this->_uploadedFiles[$name]) ? $this->_uploadedFiles[$name] : null;
+        try { return parent::__get($name); }
+        catch (\Exception $e) {
+            if (strncmp($name, 'uploaded', 8 === 0)) {
+                $name = strtolower(substr($name, 8));
+                if (isset($this->_uploadedFiles[$name])) {
+                    return $this->_uploadedFiles[$name];
+                }
+            } elseif ($this->hasRelation($name)) {
+                return $this->getRelation($name);
+            }
+
+            return null;
         }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function hasMethod($name)
+    {
+        if (parent::hasMethod($name)) {
+            return true;
+        } else {
+            if (strncmp($name, 'get', 3) === 0) {
+                $name = substr($name, 3);
+            }
+            return $this->hasRelation($name);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function __call($name, $params)
+    {
+        if (strncmp($name, 'get', 3) === 0) {
+            $name = substr($name, 3);
+        }
+        if ($relation = $this->getRelation($name)) {
+            return $relation;
+        }
+
+        throw new UnknownMethodException('Calling unknown method: ' . get_class($this) . "::$name()");
     }
 
     /**
@@ -191,51 +228,68 @@ class FilesBehavior extends Behavior implements ModelBehaviorInterface
         if ($this->_uploadedFiles) {
             foreach ($this->attributes as $attribute => $storageConfig) {
                 if ($this->_uploadedFiles[$attribute]) {
-                    $relation = $this->owner->getRelation($storageConfig->relation);
-                    /** @var FileInterface $modelClass */
-                    $modelClass = $relation->modelClass;
                     if ($this->_uploadedFiles[$attribute] instanceof UploadedFile) {
-                        $model = $modelClass::getInstanceFromUploadedFile($this->_uploadedFiles[$attribute]);
-                        if ($model = $this->saveUploadedFile($this->_uploadedFiles[$attribute], $model, $storageConfig)) {
-                            $this->_relatedFiles[$attribute]['models'][] = $model;
-                        }
-                    } elseif (is_array($this->_uploadedFiles[$attribute])) {
-                        foreach ($this->_uploadedFiles[$attribute] as $index => $file) {
-                            $model = $modelClass::getInstanceFromUploadedFile($file);
-                            if ($model = $this->saveUploadedFile($file, $model, $storageConfig, $index + 1)) {
-                                $this->_relatedFiles[$attribute]['models'][] = $model;
+                        if ($file = $this->saveUploadedFile($this->_uploadedFiles[$attribute], $storageConfig)) {
+                            $this->_files[$attribute] = $file;
+                            unset($this->_uploadedFiles[$attribute]);
+                            if ($storageConfig->relation) {
+                                /** @var DbFile $file */
+                                if ($file->save()) {
+                                    $this->owner->link($attribute, $file);
+                                }
+                            } else {
+                                $this->owner->{$attribute . '_data'} = serialize($file);
                             }
                         }
+                    } elseif (is_array($this->_uploadedFiles[$attribute])) {
+                        foreach ($this->_uploadedFiles[$attribute] as $index => $item) {
+                            if ($file = $this->saveUploadedFile($item, $storageConfig)) {
+                                $this->_files[$attribute][] = $file;
+                            }
+                        }
+                        unset($this->_uploadedFiles[$attribute]);
+                        if ($storageConfig->relation) {
+                            foreach ($this->_files[$attribute] as $file) {
+                                /** @var DbFile $file */
+                                if ($file->save()) {
+                                    $this->owner->link($attribute, $file);
+                                }
+                            }
+                        } else {
+                            $this->owner->{$attribute . '_data'} = serialize($this->_files[$attribute]);
+                        }
                     }
-                    unset($this->_uploadedFiles[$attribute]);
                 }
             }
         }
     }
 
-    protected function linkRelatedFiles()
+    protected function saveRelatedFiles()
     {
         if ($this->_relatedFiles) {
             foreach ($this->attributes as $attribute => $storageConfig) {
                 if (isset($this->_relatedFiles[$attribute])) {
-                    $this->owner->{$storageConfig->relation} = $this->_relatedFiles[$attribute]['models'];
-                    unset($this->_relatedFiles[$attribute]);
+                    $this->owner->unlinkAll($attribute, true);
+                    foreach ($this->_relatedFiles[$attribute]['models'] as $i => $model) {
+                        $this->owner->link($attribute, $model, isset($this->_relatedFiles[$attribute]['extraColumns'][$i]) ? $this->_relatedFiles[$attribute]['extraColumns'][$i] : []);
+                    }
                 }
             }
-            $this->owner->save(false);
         }
     }
 
     /**
      * @param UploadedFile $uploadedFile
-     * @param FileInterface $file
      * @param StorageConfig $config
      * @param int $fileIndex
      * @return FileInterface|null
      */
-    protected function saveUploadedFile(UploadedFile $uploadedFile, FileInterface $file, StorageConfig $config, $fileIndex = 1)
+    protected function saveUploadedFile(UploadedFile $uploadedFile, StorageConfig $config, $fileIndex = 1)
     {
         $filesystemComponent = $this->getFilesystemComponent();
+        /** @var FileInterface $fileClass */
+        $fileClass = $config->fileClass;
+        $file = $fileClass::getInstanceFromUploadedFile($uploadedFile);
         $path = $config->resolveFilePath($uploadedFile->name, $this->owner, $fileIndex);
         if ($path = $filesystemComponent->saveFile($file, $config->filesystem, $path, true)) {
             $file->setPath($path);
@@ -257,6 +311,11 @@ class FilesBehavior extends Behavior implements ModelBehaviorInterface
         }
 
         return $this->_filesystemComponent;
+    }
+
+    protected function linkFile(FileInterface $file, StorageConfig $config)
+    {
+
     }
 
     /**
@@ -288,6 +347,21 @@ class FilesBehavior extends Behavior implements ModelBehaviorInterface
     protected function hasAttribute($name)
     {
         return isset($this->attributes[$name]);
+    }
+
+    protected function hasRelation($name)
+    {
+        return isset($this->relations[$name]);
+    }
+
+    protected function getRelation($name)
+    {
+        $relation = $this->relations[$name];
+        if ($relation instanceof \Closure) {
+            $relation = call_user_func($relation);
+        }
+
+        return $relation;
     }
 
     /**

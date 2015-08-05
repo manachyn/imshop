@@ -9,8 +9,6 @@ use yii\helpers\Html;
 $this->title = Module::t('product', 'Products');
 $this->params['subtitle'] = Module::t('product', 'Product updating');
 $this->params['breadcrumbs'] = [['label' => $this->title, 'url' => ['index']], $this->params['subtitle']];
-$video = $model->video;
-$a = 1;
 ?>
 
 <div class="box box-success">
