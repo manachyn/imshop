@@ -15,25 +15,10 @@ class Bootstrap implements BootstrapInterface
      */
     public function bootstrap($app)
     {
-//        $this->registerTranslations($app);
+        $this->registerTranslations($app);
         $this->addRules($app);
         $this->registerDefinitions();
     }
-
-//    public function registerTranslations()
-//    {
-//        Yii::$app->i18n->translations['modules/catalog/*'] = [
-//            'class' => 'yii\i18n\PhpMessageSource',
-//            'sourceLanguage' => 'en-US',
-//            'basePath' => '@app/modules/catalog/messages',
-//            'fileMap' => [
-//                'modules/catalog/module' => 'module.php',
-//                'modules/catalog/category' => 'category.php',
-//                'modules/catalog/product' => 'product.php',
-//                'modules/catalog/attribute' => 'attribute.php'
-//            ]
-//        ];
-//    }
 
     /**
      * Adds module rules.
@@ -68,6 +53,24 @@ class Bootstrap implements BootstrapInterface
                 'controller' => ['product-types' => 'catalog/rest/product-type']
             ]
         ], false);
+    }
+
+    /**
+     * Registers module translations.
+     * @param \yii\base\Application $app
+     */
+    public function registerTranslations($app)
+    {
+        $app->i18n->translations[Module::$messagesCategory . '/*'] = [
+            'class' => 'yii\i18n\PhpMessageSource',
+            'sourceLanguage' => 'en-US',
+            'basePath' => '@im/catalog/messages',
+            'fileMap' => [
+                Module::$messagesCategory => 'module.php',
+                Module::$messagesCategory . '/product' => 'product.php',
+                Module::$messagesCategory . '/attribute' => 'attribute.php'
+            ]
+        ];
     }
 
     /**

@@ -56,7 +56,7 @@ class Template extends ActiveRecord
      */
     public function getLayout()
     {
-        return Yii::$app->layoutManager->getLayout($this->layout_id);
+        return Yii::$app->get('layoutManager')->getLayout($this->layout_id);
     }
 
     /**
@@ -73,8 +73,8 @@ class Template extends ActiveRecord
      */
     public function getLayoutsList()
     {
-        $layouts = ArrayHelper::map(Yii::$app->layoutManager->getLayouts(), 'id', 'name');
-        $defaultLayout = Yii::$app->layoutManager->getDefaultLayout();
+        $layouts = ArrayHelper::map(Yii::$app->get('layoutManager')->getLayouts(), 'id', 'name');
+        $defaultLayout = Yii::$app->get('layoutManager')->getDefaultLayout();
         unset($layouts[$defaultLayout->id]);
         return $layouts;
     }
@@ -85,7 +85,7 @@ class Template extends ActiveRecord
      */
     public function getDefaultLayout()
     {
-        return Yii::$app->layoutManager->getDefaultLayout();
+        return Yii::$app->get('layoutManager')->getDefaultLayout();
     }
 
     /**

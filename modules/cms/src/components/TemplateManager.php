@@ -66,7 +66,7 @@ class TemplateManager extends Component
         $loaded = [];
         if (!empty($data[$formName])) {
             /** @var LayoutManager $layoutManager */
-            $layoutManager = \Yii::$app->layoutManager;
+            $layoutManager = \Yii::$app->get('layoutManager');
             foreach ($data[$formName] as $area => $areaWidgets) {
                 foreach ($areaWidgets as $key => $widgetData) {
                     $widget = null;
@@ -156,7 +156,7 @@ class TemplateManager extends Component
         $widgets = [];
         if (!empty($data[$formName])) {
             /** @var LayoutManager $layoutManager */
-            $layoutManager = \Yii::$app->layoutManager;
+            $layoutManager = \Yii::$app->get('layoutManager');
             $pks = [];
             foreach ($data[$formName] as $area => $areaWidgets) {
                 foreach ($areaWidgets as $sort => $widgetData) {

@@ -5,6 +5,7 @@ namespace im\catalog\backend\controllers;
 use im\base\controllers\BackendController;
 use im\catalog\models\ProductType;
 use im\catalog\models\ProductTypeSearch;
+use im\catalog\Module;
 use Yii;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -63,6 +64,7 @@ class ProductTypeController extends BackendController
         $model = new ProductType();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            Yii::$app->session->setFlash('success', Module::t('product/productType', 'Product type has been successfully created.'));
             return $this->redirect(['index']);
         } else {
             return $this->render('create', [
@@ -82,6 +84,7 @@ class ProductTypeController extends BackendController
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            Yii::$app->session->setFlash('success', Module::t('product/productType', 'Product type has been successfully saved.'));
             return $this->redirect(['index']);
         } else {
             return $this->render('update', [
@@ -99,6 +102,7 @@ class ProductTypeController extends BackendController
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
+        Yii::$app->session->setFlash('success', Module::t('product/productType', 'Product type has been successfully deleted.'));
 
         return $this->redirect(['index']);
     }

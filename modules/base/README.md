@@ -11,6 +11,7 @@
 'im\\variation\\' => array($baseDir . '/modules/variation/src'),
 'im\\seo\\' => array($baseDir . '/modules/seo/src'),
 'im\\filesystem\\' => array($baseDir . '/modules/filesystem/src'),
+'im\\search\\' => array($baseDir . '/modules/search/src'),
 
 
 'im\\elfinder\\' => array($baseDir . '/modules/elfinder/src'),

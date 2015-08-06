@@ -680,16 +680,16 @@
         },
         {
             "name": "bower-asset/jstree",
-            "version": "3.1.1",
+            "version": "3.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/vakata/jstree.git",
-                "reference": "5bece5844889b6eec71ae794824578aac2136461"
+                "reference": "92ac4c8de570c7098a606de25a1520e84cf3f838"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vakata/jstree/zipball/5bece5844889b6eec71ae794824578aac2136461",
-                "reference": "5bece5844889b6eec71ae794824578aac2136461",
+                "url": "https://api.github.com/repos/vakata/jstree/zipball/92ac4c8de570c7098a606de25a1520e84cf3f838",
+                "reference": "92ac4c8de570c7098a606de25a1520e84cf3f838",
                 "shasum": ""
             },
             "require": {
@@ -1448,16 +1448,16 @@
         },
         {
             "name": "yiisoft/yii2",
-            "version": "2.0.5",
+            "version": "2.0.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/yiisoft/yii2-framework.git",
-                "reference": "ea8c13b9f5cd437bd7bf73cad8a3457a155f3727"
+                "reference": "f42b2eb80f61992438661b01d0d74c6738e2ff38"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/yii2-framework/zipball/ea8c13b9f5cd437bd7bf73cad8a3457a155f3727",
-                "reference": "ea8c13b9f5cd437bd7bf73cad8a3457a155f3727",
+                "url": "https://api.github.com/repos/yiisoft/yii2-framework/zipball/f42b2eb80f61992438661b01d0d74c6738e2ff38",
+                "reference": "f42b2eb80f61992438661b01d0d74c6738e2ff38",
                 "shasum": ""
             },
             "require": {
@@ -1532,7 +1532,7 @@
                 "framework",
                 "yii2"
             ],
-            "time": "2015-07-11 02:37:59"
+            "time": "2015-08-05 22:00:30"
         },
         {
             "name": "yiisoft/yii2-authclient",

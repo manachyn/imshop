@@ -1,16 +1,16 @@
 <?php
 
-use im\catalog\Module;
+use im\search\backend\Module;
 use yii\helpers\Html;
 
-/* @var $this yii\web\View */
-/* @var $model im\catalog\models\ProductOption */
 
-$this->title = Module::t('option', 'Product options');
-$this->params['subtitle'] = Module::t('option', 'Product option creation');
+/* @var $this yii\web\View */
+/* @var $model im\search\models\Index */
+
+$this->title = Module::t('index', 'Indexes');
+$this->params['subtitle'] = Module::t('index', 'Index creation');
 $this->params['breadcrumbs'] = [['label' => $this->title, 'url' => ['index']], $this->params['subtitle']];
 ?>
-
 <div class="box box-primary">
     <div class="box-header with-border">
         <h3 class="box-title"><?= $this->params['subtitle'] ?></h3>

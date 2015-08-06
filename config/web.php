@@ -27,6 +27,9 @@ $config = [
         'filesystem' => [
             'class' => 'im\filesystem\Module'
         ],
+        'search' => [
+            'class' => 'im\search\backend\Module'
+        ]
     ],
     'components' => [
         'request' => [
@@ -84,6 +87,12 @@ $config = [
 //                'product' => 'app\modules\catalog\models\Product'
 //            ]
         ],
+        'typesRegister' => [
+            'class' => 'im\base\components\EntityTypesRegister',
+            'entityTypes' => [
+                'product' => 'im\catalog\models\Product'
+            ]
+        ],
         'filesystem' => [
             'class' => 'im\filesystem\components\FilesystemComponent',
             'filesystems' => require(__DIR__ . '/filesystems.php')
@@ -123,7 +132,8 @@ $config = [
 //                    'clientSecret' => 'vkontakte_client_secret',
 //                ]
             ],
-        ]
+        ],
+        'search' => 'im\search\components\Search'
     ],
     'params' => $params,
 ];
