@@ -119,7 +119,7 @@ class ProductType extends ActiveRecord implements ProductTypeInterface
      */
     public function setEAttributes($attributes)
     {
-        $this->relatedEAttributes = $attributes;
+        $this->relatedEAttributes = $attributes ?: null;
     }
 
     /**

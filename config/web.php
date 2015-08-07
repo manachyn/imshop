@@ -29,6 +29,9 @@ $config = [
         ],
         'search' => [
             'class' => 'im\search\backend\Module'
+        ],
+        'eav' => [
+            'class' => 'im\eav\Module'
         ]
     ],
     'components' => [

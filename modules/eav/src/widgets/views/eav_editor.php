@@ -13,7 +13,7 @@ use yii\widgets\ActiveForm;
 ?>
 
 <div data-cont="fields">
-    <?= $this->render('@im/eav/views/attributes/_fields', ['attributes' => $attributes, 'form' => $form]) ?>
+    <?= $this->render('@im/eav/backend/views/attribute/_fields', ['attributes' => $attributes, 'form' => $form]) ?>
 </div>
 
 <div class="form-inline">

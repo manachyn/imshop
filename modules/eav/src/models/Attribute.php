@@ -11,7 +11,7 @@ use yii\db\ActiveRecord;
 use yii\helpers\Inflector;
 
 /**
- * This is the model class for table "{{%attributes}}".
+ * Attribute model class.
  *
  * @property integer $id
  * @property string $name
@@ -26,6 +26,8 @@ class Attribute extends ActiveRecord implements AttributeInterface
 {
     const DEFAULT_TYPE = AttributeTypes::STRING_TYPE;
     const DEFAULT_FIELD = AttributeTypes::TEXT_INPUT_FIELD;
+
+    public $predefinedValues = false;
 
     /**
      * @inheritdoc
@@ -46,7 +48,7 @@ class Attribute extends ActiveRecord implements AttributeInterface
      */
     public static function tableName()
     {
-        return '{{%attributes}}';
+        return '{{%eav_attributes}}';
     }
 
     /**

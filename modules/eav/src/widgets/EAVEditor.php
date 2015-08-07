@@ -5,6 +5,7 @@ namespace im\eav\widgets;
 use im\eav\models\AttributeValue;
 use yii\base\InvalidConfigException;
 use yii\base\Widget;
+use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Json;
@@ -32,6 +33,11 @@ class EAVEditor extends Widget
      * @var ActiveForm
      */
     public $form;
+
+    /**
+     * @var ActiveRecord
+     */
+    public $model;
 
     /**
      * @inheritdoc
@@ -78,7 +84,8 @@ class EAVEditor extends Widget
         }
         $this->clientOptions = ArrayHelper::merge([
             'form' => $this->form,
-            'fieldsUrl' => Url::to(['/eav/attributes/fields'])
+            'fieldsUrl' => Url::to(['/eav/backend/attribute/fields']),
+            'modelClass' => $this->model ? $this->model->className() : ''
         ], $this->clientOptions);
     }
 } 

@@ -1,6 +1,6 @@
 <?php
 
-namespace im\catalog\backend;
+namespace im\eav\backend;
 
 /**
  * Catalog backend module.
@@ -12,5 +12,5 @@ class Module extends \yii\base\Module
     /**
      * @inheritdoc
      */
-    public $controllerNamespace = 'im\catalog\backend\controllers';
+    public $controllerNamespace = 'im\eav\backend\controllers';
 }

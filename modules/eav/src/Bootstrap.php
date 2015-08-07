@@ -26,7 +26,8 @@ class Bootstrap implements BootstrapInterface
             'basePath' => '@im/eav/messages',
             'fileMap' => [
                 Module::$messagesCategory => 'module.php',
-                Module::$messagesCategory . '/attribute' => 'attribute.php'
+                Module::$messagesCategory . '/attribute' => 'attribute.php',
+                Module::$messagesCategory . '/value' => 'value.php'
             ]
         ];
     }

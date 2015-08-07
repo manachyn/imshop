@@ -19,7 +19,7 @@ if (!$attributes) {
     ['prompt' => '']
 ) ?>
 
-<?= EAVEditor::widget(['attributes' => $attributes, 'form' => $form, 'options' => ['id' => 'eav-editor']]) ?>
+<?= EAVEditor::widget(['attributes' => $attributes, 'form' => $form, 'model' => $model, 'options' => ['id' => 'eav-editor']]) ?>
 
 <?php
 $script = <<<JS
@@ -35,7 +35,9 @@ $script = <<<JS
                 var attributes = $.map(data, function(attr) {
                     return attr.id;
                 });
-                editor.setAttributes(attributes);
+                if (attributes.length > 0) {
+                    editor.setAttributes(attributes);
+                }
             }
         });
     });

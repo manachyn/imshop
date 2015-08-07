@@ -19,7 +19,17 @@ class ProductAttributeValue extends AttributeValue implements ProductAttributeVa
      */
     public static function tableName()
     {
-        return '{{%product_attribute_values}}';
+        return '{{%eav_product_values}}';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return array_merge(parent::attributeLabels(), [
+            'product_id' => Yii::t('app', 'Product ID'),
+        ]);
     }
 
     /**

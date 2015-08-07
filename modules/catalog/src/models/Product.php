@@ -107,7 +107,7 @@ class Product extends ActiveRecord implements ProductInterface
             ['price', 'default', 'value' => 0],
             [['sku', 'slug', 'description', 'quantity', 'price', 'status', 'brand_id', 'type_id', 'eAttributes', 'categories'], 'safe'],
             [['eAttributes'], 'im\base\validators\RelationValidator'],
-            [['uploadedImages'], 'file', 'skipOnEmpty' => false, 'maxFiles' => 4],
+            //[['uploadedImages'], 'file', 'skipOnEmpty' => false, 'maxFiles' => 4],
         ];
     }
 

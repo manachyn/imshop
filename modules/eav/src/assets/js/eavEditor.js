@@ -47,7 +47,7 @@
             url: this.options.fieldsUrl,
             push: false,
             container: add ? temp : fields,
-            data: {attributes: attributes, form: this.options.form}
+            data: {attributes: attributes, form: this.options.form, modelClass: this.options.modelClass}
         };
         $.pjax(settings);
     };

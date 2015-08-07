@@ -42,12 +42,12 @@ class AttributeTypes
 
     public static function getChoices()
     {
-        $types = \Yii::$app->get('core')->entityTypes;
-        array_walk($types,  function(&$value, $key){
+        $types = \Yii::$app->get('typesRegister')->entityTypes;
+        array_walk($types, function(&$value, $key){
             $value = Inflector::titleize($key);
         });
         return array_merge(array(
-            self::STRING_TYPE       => Module::t('attribute', 'Text'),
+            self::STRING_TYPE => Module::t('attribute', 'Text'),
         ), $types);
     }
 
@@ -78,7 +78,7 @@ class AttributeTypes
 
     public static function isActiveRecordType($type)
     {
-        $class = \Yii::$app->get('core')->getEntityClass($type);
+        $class = \Yii::$app->get('typesRegister')->getEntityClass($type);
         return is_subclass_of($class, ActiveRecord::className());
     }
 

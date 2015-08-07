@@ -126,7 +126,7 @@ class m150208_123637_create_catalog_tables extends Migration
         );
         //$this->addPrimaryKey('PK_product_type_attributes', '{{%product_type_attributes}}', 'product_type_id, attribute_id');
         $this->addForeignKey('FK_product_type_attributes_product_type_id', '{{%product_type_attributes}}', 'product_type_id', '{{%product_types}}', 'id', 'CASCADE', 'CASCADE');
-        $this->addForeignKey('FK_product_type_attributes_attribute_id', '{{%product_type_attributes}}', 'attribute_id', '{{%attributes}}', 'id', 'CASCADE', 'CASCADE');
+        $this->addForeignKey('FK_product_type_attributes_attribute_id', '{{%product_type_attributes}}', 'attribute_id', '{{%eav_attributes}}', 'id', 'CASCADE', 'CASCADE');
 
         // Product type - Option junction table
         $this->createTable(
@@ -195,7 +195,7 @@ class m150208_123637_create_catalog_tables extends Migration
 
         // Product attribute values
         $this->createTable(
-            '{{%product_attribute_values}}',
+            '{{%eav_product_values}}',
             [
                 'id' => Schema::TYPE_PK,
                 'entity_id' => Schema::TYPE_INTEGER . ' NOT NULL',
@@ -203,15 +203,15 @@ class m150208_123637_create_catalog_tables extends Migration
                 'attribute_name' => Schema::TYPE_STRING . '(100) NOT NULL', // Denormalization for performance
                 'attribute_type' => Schema::TYPE_STRING . '(100) NOT NULL', // Denormalization for performance
                 'string_value' => Schema::TYPE_STRING . '(255) NOT NULL',
-                'integer_value' => Schema::TYPE_INTEGER . ' DEFAULT NULL'
+                'value_entity_id' => Schema::TYPE_INTEGER . ' DEFAULT NULL'
             ],
             $tableOptions
         );
-        $this->addForeignKey('FK_product_attribute_values_entity_id', '{{%product_attribute_values}}', 'entity_id', '{{%products}}', 'id', 'CASCADE', 'CASCADE');
-        $this->addForeignKey('FK_product_attribute_values_attribute_id', '{{%product_attribute_values}}', 'attribute_id', '{{%attributes}}', 'id', 'CASCADE', 'CASCADE');
-        $this->createIndex('attribute_name', '{{%product_attribute_values}}', 'attribute_name');
-        $this->createIndex('string_value', '{{%product_attribute_values}}', 'string_value');
-        $this->createIndex('integer_value', '{{%product_attribute_values}}', 'integer_value');
+        $this->addForeignKey('FK_eav_product_values_entity_id', '{{%eav_product_values}}', 'entity_id', '{{%products}}', 'id', 'CASCADE', 'CASCADE');
+        $this->addForeignKey('FK_eav_product_values_attribute_id', '{{%eav_product_values}}', 'attribute_id', '{{%eav_attributes}}', 'id', 'CASCADE', 'CASCADE');
+        $this->createIndex('attribute_name', '{{%eav_product_values}}', 'attribute_name');
+        $this->createIndex('string_value', '{{%eav_product_values}}', 'string_value');
+        $this->createIndex('value_entity_id', '{{%eav_product_values}}', 'value_entity_id');
 
         // Product option values
         $this->createTable(
@@ -272,7 +272,7 @@ class m150208_123637_create_catalog_tables extends Migration
         $this->dropTable('{{%products}}');
         $this->dropTable('{{%product_meta}}');
         $this->dropTable('{{%products_categories}}');
-        $this->dropTable('{{%product_attribute_values}}');
+        $this->dropTable('{{%eav_product_values}}');
         $this->dropTable('{{%product_option_values}}');
         $this->dropTable('{{%product_variants}}');
         $this->dropTable('{{%product_variant_option_values}}');
