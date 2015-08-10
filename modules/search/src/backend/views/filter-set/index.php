@@ -6,11 +6,11 @@ use yii\grid\GridView;
 use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
-/* @var $searchModel im\search\models\IndexSearch */
+/* @var $searchModel im\search\models\FilterSet */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Module::t('index', 'Indexes');
-$this->params['subtitle'] = Module::t('index', 'Indexes list');
+$this->title = Module::t('filterSet', 'Filter sets');
+$this->params['subtitle'] = Module::t('filterSet', 'Filter sets list');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="box">
@@ -28,7 +28,6 @@ $this->params['breadcrumbs'][] = $this->title;
             'filterModel' => $searchModel,
             'columns' => [
                 'name',
-                'status',
                 ['class' => 'yii\grid\ActionColumn', 'template' => '{update} {delete}']
             ],
         ]); ?>
