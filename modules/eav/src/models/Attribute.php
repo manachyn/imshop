@@ -27,7 +27,7 @@ class Attribute extends ActiveRecord implements AttributeInterface
     const DEFAULT_TYPE = AttributeTypes::STRING_TYPE;
     const DEFAULT_FIELD = AttributeTypes::TEXT_INPUT_FIELD;
 
-    public $predefinedValues = false;
+    public $predefinedValues = true;
 
     /**
      * @inheritdoc
