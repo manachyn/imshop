@@ -6,6 +6,8 @@ use Yii;
 use yii\base\Component;
 use yii\base\InvalidParamException;
 use yii\di\Instance;
+use yii\helpers\ArrayHelper;
+use yii\helpers\Inflector;
 
 class Search extends Component
 {
@@ -68,5 +70,28 @@ class Search extends Component
         }
 
         throw new InvalidParamException("Searchable item with type '$type' is not registered");
+    }
+
+    /**
+     * @return array
+     */
+    public function getSearchableAttributes()
+    {
+        $attributes = [];
+        foreach ($this->searchableItems as $item) {
+            $attributes[$item->entityType] = $item->getSearchProvider()->getSearchableAttributes();
+        }
+
+        return $attributes;
+    }
+
+    /**
+     * @return array
+     */
+    public function getSearchableEntityTypes()
+    {
+        return ArrayHelper::map($this->searchableItems, 'entityType', function (SearchableItem $item) {
+            return Inflector::camel2words($item->entityType);
+        });
     }
 }

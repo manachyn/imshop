@@ -6,7 +6,7 @@ use im\search\backend\Module;
 use yii\db\ActiveRecord;
 
 /**
- * Filters set model class.
+ * Filter model class.
  *
  * @property integer $id
  * @property string $name

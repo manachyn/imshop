@@ -23,7 +23,7 @@ class SearchProvider extends Object implements SearchProviderInterface
      */
     public function getSearchableAttributes()
     {
-
+        return $this->getIndexAttributes();
     }
 
     /**

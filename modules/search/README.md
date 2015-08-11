@@ -13,3 +13,7 @@ PrestaShop
 http://www.templatemonster.com/help/ru/prestashop-1-6-x-how-to-manage-the-layered-navigation-module.html
 
 https://www.youtube.com/watch?v=XJ_THN5bQQ0
+
+
+Faceting
+https://cwiki.apache.org/confluence/display/solr/Overview+of+Searching+in+Solr
