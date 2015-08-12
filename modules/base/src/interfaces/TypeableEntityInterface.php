@@ -9,5 +9,5 @@ interface TypeableEntityInterface
      *
      * @return string
      */
-    public function getEntityType();
+    public static function getEntityType();
 } 

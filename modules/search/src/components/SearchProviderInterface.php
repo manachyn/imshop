@@ -14,11 +14,4 @@ interface SearchProviderInterface
      * @return array
      */
     public function getSearchableAttributes();
-
-    /**
-     * Returns search index attributes of entity.
-     *
-     * @return array
-     */
-    public function getIndexAttributes();
 }

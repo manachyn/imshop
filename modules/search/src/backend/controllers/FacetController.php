@@ -7,6 +7,7 @@ use im\search\backend\Module;
 use im\search\models\Facet;
 use im\search\models\FacetSearch;
 use Yii;
+use yii\helpers\Html;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
@@ -105,6 +106,19 @@ class FacetController extends BackendController
         Yii::$app->session->setFlash('success', Module::t('facet', 'Facet has been successfully deleted.'));
 
         return $this->redirect(['index']);
+    }
+
+    /**
+     * Return rendered options for attribute select
+     * @param $entityType
+     * @return string
+     */
+    public function actionAttributes($entityType)
+    {
+        $attributes = Facet::getSearchableAttributes($entityType);
+        $options = ['prompt' => ''];
+
+        return Html::renderSelectOptions(null, $attributes, $options);
     }
 
     /**

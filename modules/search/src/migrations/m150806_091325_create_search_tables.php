@@ -12,22 +12,25 @@ class m150806_091325_create_search_tables extends Migration
             $tableOptions = 'CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB';
         }
 
-//        // Indexes
-//        $this->createTable('{{%indexes}}', [
-//            'id' => $this->primaryKey(),
-//            'name' => $this->string(100)->notNull(),
-//            'entity_type' => $this->string()->notNull(),
-//            'server' => $this->string(100)->notNull(),
-//            'status' => $this->boolean()->defaultValue(1)
-//        ], $tableOptions);
-//
-//        // Index attributes
-//        $this->createTable('{{%index_attributes}}', [
-//            'id' => $this->primaryKey(),
-//            'name' => $this->string(100)->notNull(),
-//            'type' => $this->string(100)->notNull(),
-//            'entity_type' => $this->string()->notNull(),
-//        ], $tableOptions);
+        // Indexes
+        $this->createTable('{{%indexes}}', [
+            'id' => $this->primaryKey(),
+            'name' => $this->string(100)->notNull(),
+            'entity_type' => $this->string()->notNull(),
+            'server' => $this->string(100)->notNull(),
+            'status' => $this->boolean()->defaultValue(1)
+        ], $tableOptions);
+
+        // Index attributes
+        $this->createTable('{{%index_attributes}}', [
+            'id' => $this->primaryKey(),
+            'entity_type' => $this->string(100)->notNull(),
+            'attribute_id' => $this->integer()->defaultValue(null),
+            'attribute_name' => $this->string(100)->notNull(),
+            'type' => $this->string(100)->notNull(),
+        ], $tableOptions);
+
+        $this->addForeignKey('FK_index_attributes_attribute_id', '{{%index_attributes}}', 'attribute_id', '{{%eav_attributes}}', 'id', 'CASCADE', 'CASCADE');
 //
 //        // Filter sets
 //        $this->createTable('{{%filter_sets}}', [
@@ -60,16 +63,19 @@ class m150806_091325_create_search_tables extends Migration
         $this->createTable('{{%facets}}', [
             'id' => $this->primaryKey(),
             'name' => $this->string()->notNull(),
+            'entity_type' => $this->string(100)->notNull(),
             'attribute_id' => $this->integer()->defaultValue(null),
             'attribute_name' => $this->string(100)->notNull(),
             'type' => $this->string(100)->notNull(),
         ], $tableOptions);
+
+        $this->addForeignKey('FK_facets_attribute_id', '{{%facets}}', 'attribute_id', '{{%eav_attributes}}', 'id', 'CASCADE', 'CASCADE');
     }
 
     public function down()
     {
-//        $this->dropTable('{{%indexes}}');
-//        $this->dropTable('{{%index_attributes}}');
+        $this->dropTable('{{%indexes}}');
+        $this->dropTable('{{%index_attributes}}');
 //        $this->dropTable('{{%filter_set_filters}}');
 //        $this->dropTable('{{%filter_sets}}');
 //        $this->dropTable('{{%filters}}');

@@ -17,6 +17,7 @@ use yii\helpers\Inflector;
  * @property string $name
  * @property string $presentation
  * @property string $type
+ * @property string $entity_type
  * @property string $field_config_data
  * @property string $rules_config_data
  *
@@ -161,6 +162,23 @@ class Attribute extends ActiveRecord implements AttributeInterface
     {
         //$rules = array_map(function($rule) { return [$this->getName(), $rule]; }, $this->getRulesConfig());
         return $this->getRulesConfig();
+    }
+
+    /**
+     * Returns attributes by entity type.
+     *
+     * @param $entityType
+     * @param string|array $orderBy
+     * @return static[]
+     */
+    public static function findByEntityType($entityType, $orderBy = null)
+    {
+        $query = static::find()->where(['entity_type' => $entityType]);
+        if ($orderBy) {
+            $query->orderBy($orderBy);
+        }
+
+        return $query->all();
     }
 
     /**

@@ -10,6 +10,7 @@ use Yii;
 use im\search\models\Index;
 use im\search\models\IndexSearch;
 use yii\data\ArrayDataProvider;
+use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
@@ -112,27 +113,20 @@ class IndexController extends BackendController
 
     public function actionAttributes($id)
     {
-        $model = $this->findModel($id);
         /** @var \im\search\components\Search $search */
         $search = Yii::$app->get('search');
-        $searchProvider = $search->getSearchProvider($model->entity_type);
-        $availableAttributes = $searchProvider->getIndexAttributes();
-        $indexAttributes = IndexAttribute::find()->where(['entity_type' => $model->entity_type])->indexBy('name')->all();
-        $attributes = [];
-        foreach ($availableAttributes as $attribute) {
-            if (isset($indexAttributes[$attribute['name']])) {
-                /** @var IndexAttribute $indexAttribute */
-                $indexAttribute = $indexAttributes[$attribute['name']];
-                $indexAttribute->enabled = true;
-                $attributes[] = $indexAttribute;
-            } else {
-                $attributes[] = new IndexAttribute($attribute);
-            }
-        }
+        $model = $this->findModel($id);
+        $attributes = $search->getIndexAttributes($model->entity_type);
+        $dataProvider = new ArrayDataProvider([
+            'allModels' => $attributes,
+            'sort' => [
+                'attributes' => ['name', 'label', 'indexable']
+            ]
+        ]);
 
         return $this->render('attributes', [
             'model' => $model,
-            'attributes' => $attributes
+            'dataProvider' => $dataProvider
         ]);
     }
 

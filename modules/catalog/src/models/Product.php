@@ -164,7 +164,7 @@ class Product extends ActiveRecord implements ProductInterface
     /**
      * @inheritdoc
      */
-    public function getEntityType()
+    public static function getEntityType()
     {
         return static::ENTITY_TYPE;
     }

@@ -1,12 +1,15 @@
 <?php
 
 use im\search\backend\Module;
+use im\search\models\IndexAttribute;
+use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
 /* @var $model im\search\models\Index */
 /* @var $attributes im\search\models\IndexAttribute[] */
+/* @var $dataProvider yii\data\ArrayDataProvider */
 
 $this->title = Module::t('index', 'Indexes');
 $this->params['subtitle'] = Module::t('index', 'Index attributes');
@@ -22,30 +25,20 @@ $this->params['breadcrumbs'] = [['label' => $this->title, 'url' => ['index']], $
     <div class="box-body">
         <?php $form = ActiveForm::begin(); ?>
 
-        <table class="table table-striped table-bordered">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Label</th>
-                    <th>Indexable</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach($attributes as $index => $item): ?>
-                <tr>
-                    <td>
-                        <?= $item->name ?>
-                    </td>
-                    <td>
-                        <?= $item->label ?>
-                    </td>
-                    <td>
-                        <?= $form->field($item, "[$item->id]enabled")->checkbox([], false)->label(false); ?>
-                    </td>
-                </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
+        <?= GridView::widget([
+            'dataProvider' => $dataProvider,
+            'columns' => [
+                'name',
+                'label',
+                [
+                    'attribute' => 'indexable',
+                    'format' => 'raw',
+                    'value' => function (IndexAttribute $attribute) use ($form) {
+                        return $form->field($attribute, "[$attribute->name]indexable")->checkbox([], false)->label(false);
+                    },
+                ]
+            ],
+        ]); ?>
 
         <?= Html::submitButton($model->isNewRecord ? Module::t('module', 'Create') : Module::t('module', 'Update'),
             ['class' => $model->isNewRecord ? 'btn btn-primary' : 'btn btn-success']) ?>

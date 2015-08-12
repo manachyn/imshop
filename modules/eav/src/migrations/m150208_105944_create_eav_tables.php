@@ -17,12 +17,16 @@ class m150208_105944_create_eav_tables extends Migration
                 'name' => Schema::TYPE_STRING . '(100) NOT NULL',
                 'presentation' => Schema::TYPE_STRING . ' NOT NULL',
                 'type' => Schema::TYPE_STRING . '(100) NOT NULL',
+                'entity_type' => Schema::TYPE_STRING . '(100) NOT NULL',
                 'field_config_data' => Schema::TYPE_TEXT . ' NOT NULL',
                 'rules_config_data' => Schema::TYPE_TEXT . ' NOT NULL',
                 //'form_field_id' => Schema::TYPE_INTEGER . ' DEFAULT NULL',
             ],
             $tableOptions
         );
+
+        $this->createIndex('name', '{{%eav_attributes}}', 'name');
+        $this->createIndex('entity_type', '{{%eav_attributes}}', 'entity_type');
 
         // Values
         $this->createTable(

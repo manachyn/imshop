@@ -2,6 +2,8 @@
 
 namespace im\search\components;
 
+use im\search\models\EntityAttribute;
+use im\search\models\IndexAttribute;
 use Yii;
 use yii\base\Component;
 use yii\base\InvalidParamException;
@@ -73,13 +75,20 @@ class Search extends Component
     }
 
     /**
-     * @return array
+     * @param string $entityType
+     * @return EntityAttribute[]
      */
-    public function getSearchableAttributes()
+    public function getSearchableAttributes($entityType = null)
     {
         $attributes = [];
         foreach ($this->searchableItems as $item) {
-            $attributes[$item->entityType] = $item->getSearchProvider()->getSearchableAttributes();
+            $itemAttributes = $item->getSearchProvider()->getSearchableAttributes();
+            if ($entityType && $item->entityType === $entityType) {
+                $attributes = $itemAttributes;
+                break;
+            } else {
+                $attributes = array_merge($attributes, $itemAttributes);
+            }
         }
 
         return $attributes;
@@ -93,5 +102,43 @@ class Search extends Component
         return ArrayHelper::map($this->searchableItems, 'entityType', function (SearchableItem $item) {
             return Inflector::camel2words($item->entityType);
         });
+    }
+
+    /**
+     * @param string $entityType
+     * @return IndexAttribute[]
+     */
+    public function getIndexAttributes($entityType = null)
+    {
+        $searchableAttributes = $this->getSearchableAttributes($entityType);
+        $indexAttributes = IndexAttribute::findByEntityType($entityType);
+        $attributes = [];
+        foreach ($searchableAttributes as $searchableAttribute) {
+            /** @var IndexAttribute $indexAttribute */
+            $indexAttribute = null;
+            foreach ($indexAttributes as $attribute) {
+                if ($attribute->entity_type === $searchableAttribute->entity_type
+                    && (($attribute->attribute_id && $attribute->attribute_id === $searchableAttribute->attribute_id)
+                    || $attribute->attribute_name === $searchableAttribute->name)) {
+                    $indexAttribute = $attribute;
+                    break;
+                }
+            }
+            if ($indexAttribute) {
+                $indexAttribute->indexable = true;
+                $indexAttribute->name = $searchableAttribute->name;
+                $indexAttribute->label =$searchableAttribute->label;
+            } else {
+                $indexAttribute = new IndexAttribute([
+                    'entity_type' => $searchableAttribute->entity_type,
+                    'attribute_id' => $searchableAttribute->attribute_id,
+                    'name' => $searchableAttribute->name,
+                    'label' => $searchableAttribute->label,
+                ]);
+            }
+            $attributes[] = $indexAttribute;
+        }
+
+        return $attributes;
     }
 }

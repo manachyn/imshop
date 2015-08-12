@@ -17,3 +17,7 @@ https://www.youtube.com/watch?v=XJ_THN5bQQ0
 
 Faceting
 https://cwiki.apache.org/confluence/display/solr/Overview+of+Searching+in+Solr
+http://www.slideshare.net/lucenerevolution/seeley-solr-facetseurocon2011
+Ranges
+https://www.drupal.org/project/facetapi_ranges
+http://www.webwash.net/tutorials/using-search-api-ranges-module-drupal-7

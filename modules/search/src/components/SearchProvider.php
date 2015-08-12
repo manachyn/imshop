@@ -2,6 +2,8 @@
 
 namespace im\search\components;
 
+use im\eav\models\Attribute;
+use im\search\models\EntityAttribute;
 use Yii;
 use yii\base\Model;
 use yii\base\Object;
@@ -23,24 +25,36 @@ class SearchProvider extends Object implements SearchProviderInterface
      */
     public function getSearchableAttributes()
     {
-        return $this->getIndexAttributes();
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getIndexAttributes()
-    {
         $model = $this->getModel();
+        /** @var \im\base\components\EntityTypesRegister $typesRegister */
+        $typesRegister = Yii::$app->get('typesRegister');
+        $entityType = $typesRegister->getEntityType($model);
+
         $attributes = $model->attributes();
         $labels = $model->attributeLabels();
-        $indexAttributes = [];
-        foreach ($attributes as $key => $attribute) {
-            $indexAttributes[$key]['name'] = $attribute;
-            $indexAttributes[$key]['label'] = isset($labels[$attribute]) ? $labels[$attribute] : $model->generateAttributeLabel($attribute);
+        $searchableAttributes = [];
+        $key = 0;
+        foreach ($attributes as $attribute) {
+            $searchableAttributes[$key] = new EntityAttribute([
+                'entity_type' => $entityType,
+                'name' => $attribute,
+                'label' => isset($labels[$attribute]) ? $labels[$attribute] : $model->generateAttributeLabel($attribute)
+            ]);
+            $key++;
         }
 
-        return $indexAttributes;
+        $eavAttributes = Attribute::findByEntityType($entityType);
+        foreach ($eavAttributes as $attribute) {
+            $searchableAttributes[$key] = new EntityAttribute([
+                'entity_type' => $entityType,
+                'attribute_id' => $attribute->id,
+                'name' => $attribute->getName(),
+                'label' => $attribute->getPresentation()
+            ]);
+            $key++;
+        }
+
+        return $searchableAttributes;
     }
 
     /**

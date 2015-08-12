@@ -2,6 +2,7 @@
 
 use im\search\backend\Module;
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
@@ -15,9 +16,14 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'attribute_id')->dropDownList(
-        $model::getSearchableAttributes(),
-        ['prompt' => '', 'groups' => $model::getSearchableAttributesGroups()]
+    <?= $form->field($model, 'entity_type')->dropDownList(
+        $model::getEntityTypesList(),
+        ['prompt' => '']
+    ) ?>
+
+    <?= $form->field($model, 'searchableAttribute')->dropDownList(
+        $model::getSearchableAttributes($model->entity_type),
+        ['prompt' => '']
     ) ?>
 
     <?= $form->field($model, 'type')->dropDownList($model::getTypesList()) ?>
@@ -28,3 +34,19 @@ use yii\widgets\ActiveForm;
     <?php ActiveForm::end(); ?>
 
 </div>
+
+<?php
+$script = <<<JS
+    var type = $('[name="Facet[entity_type]"]');
+    var attribute = $('[name="Facet[searchableAttribute]"]');
+    type.on('change', function() {
+        $.ajax({
+            url: 'attributes?entityType=' + $(this).val()
+        })
+        .done(function(data) {
+            attribute.html(data);
+        });
+    });
+JS;
+$this->registerJs($script);
+?>
