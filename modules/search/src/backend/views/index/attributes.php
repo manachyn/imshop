@@ -33,8 +33,12 @@ $this->params['breadcrumbs'] = [['label' => $this->title, 'url' => ['index']], $
                 [
                     'attribute' => 'indexable',
                     'format' => 'raw',
-                    'value' => function (IndexAttribute $attribute) use ($form) {
-                        return $form->field($attribute, "[$attribute->name]indexable")->checkbox([], false)->label(false);
+                    'value' => function (IndexAttribute $attribute, $key) use ($form) {
+                        $fields = $form->field($attribute, "[$key]entity_type")->hiddenInput()->label(false);
+                        $fields .= $form->field($attribute, "[$key]attribute_id")->hiddenInput()->label(false);
+                        $fields .= $form->field($attribute, "[$key]attribute_name")->hiddenInput()->label(false);
+                        $fields .= $form->field($attribute, "[$key]indexable")->checkbox([], false)->label(false);
+                        return $fields;
                     },
                 ]
             ],

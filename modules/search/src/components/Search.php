@@ -132,6 +132,7 @@ class Search extends Component
                 $indexAttribute = new IndexAttribute([
                     'entity_type' => $searchableAttribute->entity_type,
                     'attribute_id' => $searchableAttribute->attribute_id,
+                    'attribute_name' => $searchableAttribute->attribute_id ? '' : $searchableAttribute->name,
                     'name' => $searchableAttribute->name,
                     'label' => $searchableAttribute->label,
                 ]);

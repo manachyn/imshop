@@ -113,6 +113,43 @@ class IndexController extends BackendController
 
     public function actionAttributes($id)
     {
+        $condition = [];
+        $deleteCondition = ['or'];
+        $toDelete = [];
+        $data = Yii::$app->request->post('IndexAttribute', []);
+        if ($data) {
+            foreach ($data as $item) {
+                if ($item['indexable']) {
+                    $condition = ['or', $condition, [
+                        'entity_type' => $item['entity_type'],
+                        'attribute_id' => $item['attribute_id'] ?: null,
+                        'attribute_name' => $item['attribute_name'] ?: ''
+                    ]];
+                    $toDelete[] = [
+                        'entity_type' => $item['entity_type'],
+                        'attribute_id' => $item['attribute_id'] ?: null,
+                        'attribute_name' => $item['attribute_name'] ?: ''
+                    ];
+                }
+                $deleteCondition[] = [
+                    'entity_type' => $item['entity_type'],
+                    'attribute_id' => $item['attribute_id'] ?: null,
+                    'attribute_name' => $item['attribute_name'] ?: ''
+                ];
+
+            }
+            //$deleteCondition = ['and', $deleteCondition, ['not in', ['entity_type', 'attribute_id', 'attribute_name'], $toDelete]];
+
+
+
+            $inbd = IndexAttribute::find()->where($condition)->indexBy('id')->all();
+
+            $deleteCondition = ['and', $deleteCondition, ['not in', 'id', array_keys($inbd)]];
+
+            IndexAttribute::deleteAll($deleteCondition);
+        }
+
+
         /** @var \im\search\components\Search $search */
         $search = Yii::$app->get('search');
         $model = $this->findModel($id);
@@ -144,5 +181,10 @@ class IndexController extends BackendController
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    protected function getIndexableAttributes($data)
+    {
+
     }
 }
