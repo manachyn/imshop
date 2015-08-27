@@ -13,6 +13,7 @@ $config = [
         'im\seo\Bootstrap',
         'im\filesystem\Bootstrap',
         'im\catalog\Bootstrap',
+        'im\cms\Bootstrap',
     ],
     'modules' => [
         'users' => [
@@ -136,7 +137,42 @@ $config = [
 //                ]
             ],
         ],
-        'search' => 'im\search\components\Search'
+        'search' => 'im\search\components\SearchManager',
+        'layoutManager' => [
+            'class' => 'im\cms\components\layout\LayoutManager',
+            'layouts' => [
+                [
+                    'class' => 'im\cms\components\layout\Layout',
+                    'id' => 'main',
+                    'name' => 'Main layout',
+                    'default' => true,
+                    'availableWidgetAreas' => [
+                        ['class' => 'im\cms\components\layout\WidgetAreaDescriptor', 'code' => 'sidebar', 'title' => 'Sidebar'],
+                        ['class' => 'im\cms\components\layout\WidgetAreaDescriptor', 'code' => 'footer', 'title' => 'Footer']
+                    ]
+                ],
+                [
+                    'class' => 'im\cms\components\layout\Layout',
+                    'id' => 'home',
+                    'name' => 'Home',
+                    'availableWidgetAreas' => [
+                        ['class' => 'im\cms\components\layout\WidgetAreaDescriptor', 'code' => 'footer', 'title' => 'Footer']
+                    ]
+                ],
+                [
+                    'class' => 'im\cms\components\layout\Layout',
+                    'id' => 'adaptive',
+                    'name' => 'Adaptive layout',
+                    'availableWidgetAreas' => [
+                        ['class' => 'im\cms\components\layout\WidgetAreaDescriptor', 'code' => 'sidebar', 'title' => 'Sidebar'],
+                        ['class' => 'im\cms\components\layout\WidgetAreaDescriptor', 'code' => 'footer', 'title' => 'Footer']
+                    ]
+                ]
+            ]
+        ],
+        'templateManager' => [
+            'class' => 'im\cms\components\TemplateManager'
+        ],
     ],
     'params' => $params,
 ];

@@ -18,7 +18,7 @@ class Bootstrap implements BootstrapInterface
         $layoutManager->registerWidgetClass('im\cms\models\ContentWidget');
         $layoutManager->registerWidgetClass('im\cms\models\BannerWidget');
         $layoutManager->registerOwnerClass('im\cms\models\Page', 'page');
-        $layoutManager->registerConfigurableComponent($this);
+        //$layoutManager->registerConfigurableComponent($this);
         $this->registerTranslations();
         $this->addRules($app);
         $this->registerDefinitions();

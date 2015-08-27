@@ -1,10 +1,10 @@
 <?php
 
-namespace im\search\models;
+namespace im\search\components\searchable;
 
 use yii\base\Object;
 
-class EntityAttribute extends Object
+class AttributeDescriptor extends Object
 {
     /**
      * @var string
@@ -25,4 +25,9 @@ class EntityAttribute extends Object
      * @var string
      */
     public $label;
+
+    /**
+     * @var mixed
+     */
+    public $value;
 }

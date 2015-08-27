@@ -12,6 +12,7 @@
 'im\\seo\\' => array($baseDir . '/modules/seo/src'),
 'im\\filesystem\\' => array($baseDir . '/modules/filesystem/src'),
 'im\\search\\' => array($baseDir . '/modules/search/src'),
+'im\\elasticsearch\\' => array($baseDir . '/modules/elasticsearch/src'),
 
 
 'im\\elfinder\\' => array($baseDir . '/modules/elfinder/src'),
@@ -33,6 +34,11 @@ php yii migrate --migrationPath=@app/modules/seo/src/migrations
 php yii migrate --migrationPath=@app/modules/filesystem/src/migrations
 php yii migrate --migrationPath=@app/modules/catalog/src/migrations
 php yii migrate --migrationPath=@app/modules/search/src/migrations
+php yii migrate --migrationPath=@app/modules/cms/src/migrations
 
 /home/ubuntu/.composer/vendor/bin/codecept build
 /home/ubuntu/.composer/vendor/bin/codecept run
+
+
+Dynamic relations
+https://github.com/synatree/yii2-dynamic-relations

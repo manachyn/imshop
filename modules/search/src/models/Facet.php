@@ -3,6 +3,7 @@
 namespace im\search\models;
 
 use im\search\backend\Module;
+use im\search\components\searchable\AttributeDescriptor;
 use Yii;
 use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
@@ -108,10 +109,10 @@ class Facet extends ActiveRecord
     public static function getSearchableAttributes($entityType)
     {
         if ($entityType) {
-            /** @var \im\search\components\Search $search */
+            /** @var \im\search\components\SearchManager $search */
             $search = Yii::$app->get('search');
-            return ArrayHelper::map($search->getSearchableAttributes($entityType), function ($attribute) {
-                return isset($attribute['id']) ? $attribute['id'] : $attribute['name'];
+            return ArrayHelper::map($search->getSearchableAttributes($entityType), function (AttributeDescriptor $attribute) {
+                return $attribute->name;
             }, 'label');
         } else {
             return [];
@@ -124,11 +125,17 @@ class Facet extends ActiveRecord
      */
     public static function getEntityTypesList()
     {
-        /** @var \im\search\components\Search $search */
+        /** @var \im\search\components\SearchManager $search */
         $search = Yii::$app->get('search');
 
-        return $search->getSearchableEntityTypes();
+        return $search->getSearchableTypeNames();
     }
 
-
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getRanges()
+    {
+        return $this->hasMany(FacetRange::className(), ['facet_id' => 'id']);
+    }
 }

@@ -1,7 +1,5 @@
 <?php
 
-use im\cms\backend\widgets\AvailableWidget;
-use im\cms\backend\widgets\WidgetArea;
 use im\cms\Module;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -12,7 +10,7 @@ use yii\widgets\Pjax;
 /* @var $model im\cms\models\Template */
 /* @var $form yii\widgets\ActiveForm */
 
-$layoutManager = Yii::$app->layoutManager;
+$layoutManager = Yii::$app->get('layoutManager');
 if ($model->widgetAreas) {
     $model->layout->widgetAreas = $model->widgetAreas;
 }
@@ -20,7 +18,7 @@ if ($model->widgetAreas) {
 
 <div class="template-form">
 
-    <?php $form = ActiveForm::begin(['enableClientValidation' => false, 'fieldClass' => 'app\modules\formBuilder\widgets\ActiveField']); ?>
+    <?php $form = ActiveForm::begin([/*'enableClientValidation' => false, */'fieldClass' => 'im\forms\widgets\ActiveField']); ?>
 
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
@@ -30,7 +28,7 @@ if ($model->widgetAreas) {
 
     <?php
         Pjax::begin(['id' => 'layout-editor', 'enablePushState' => false]);
-        echo $this->render('/layout/_layout_editor', [
+        echo $this->render('/layout/edit', [
             'layout' => $model->layout,
             'form' => $form
         ]);

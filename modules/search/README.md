@@ -21,3 +21,13 @@ http://www.slideshare.net/lucenerevolution/seeley-solr-facetseurocon2011
 Ranges
 https://www.drupal.org/project/facetapi_ranges
 http://www.webwash.net/tutorials/using-search-api-ranges-module-drupal-7
+
+http://localhost:9200/_search
+
+Relevance
+http://blog.qbox.io/optimizing-search-results-in-elasticsearch-with-scoring-and-boosting
+https://www.elastic.co/guide/en/elasticsearch/reference/current/search-request-scroll.html#scroll-scan
+
+
+Elasticsearch
+http://www.sitepoint.com/introduction-to-elasticsearch-in-php/

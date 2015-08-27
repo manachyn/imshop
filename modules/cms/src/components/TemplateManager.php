@@ -9,6 +9,11 @@ use im\cms\models\WidgetArea;
 use yii\base\Component;
 use yii\base\Model;
 
+/**
+ * Class TemplateManager manages saving templates, widget areas and widgets.
+ *
+ * @package im\cms\components
+ */
 class TemplateManager extends Component
 {
     /**
@@ -41,6 +46,8 @@ class TemplateManager extends Component
     }
 
     /**
+     * Loads widget areas from data array.
+     *
      * @param array $data
      * @param string $formName
      * @return WidgetArea[]
@@ -56,6 +63,8 @@ class TemplateManager extends Component
     }
 
     /**
+     * Loads widgets from data array.
+     *
      * @param array $data
      * @param string $formName
      * @return Widget[]
@@ -87,6 +96,8 @@ class TemplateManager extends Component
     }
 
     /**
+     * Link widgets with widget areas.
+     *
      * @param WidgetArea[] $areas
      * @param Widget[] $widgets
      */
@@ -104,6 +115,8 @@ class TemplateManager extends Component
     }
 
     /**
+     * Sets widgets to widget areas.
+     *
      * @param WidgetArea $area
      * @param Widget[] $widgets
      */
@@ -119,6 +132,8 @@ class TemplateManager extends Component
     }
 
     /**
+     * Gets widgets areas from data array.
+     *
      * @param array $data
      * @param string $formName
      * @return WidgetArea[]
@@ -147,6 +162,8 @@ class TemplateManager extends Component
     }
 
     /**
+     * Gets widgets from data array.
+     *
      * @param array $data
      * @param string $formName
      * @return Widget[]

@@ -12,9 +12,8 @@ use yii\helpers\Inflector;
  * Index attribute model class.
  *
  * @property integer $id
- * @property string $entity_type
- * @property integer $attribute_id
- * @property string $attribute_name
+ * @property string $index_type
+ * @property string $name
  * @property string $type
  *
  */
@@ -24,11 +23,6 @@ class IndexAttribute extends ActiveRecord
      * @var string
      */
     public $label;
-
-    /**
-     * @var string
-     */
-    public $name;
 
     /**
      * @var boolean
@@ -49,9 +43,8 @@ class IndexAttribute extends ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'type', 'entity_type'], 'required'],
-            [['name', 'type'], 'string', 'max' => 100],
-            [['entity_type'], 'string', 'max' => 255]
+            [['index_type', 'name'], 'required'],
+            [['index_type', 'name', 'type'], 'string', 'max' => 100]
         ];
     }
 
@@ -64,7 +57,7 @@ class IndexAttribute extends ActiveRecord
             'id' => Module::t('indexAttribute', 'ID'),
             'name' => Module::t('indexAttribute', 'Name'),
             'type' => Module::t('indexAttribute', 'Type'),
-            'entity_type' => Module::t('indexAttribute', 'Entity Type'),
+            'index_type' => Module::t('indexAttribute', 'Index type'),
             'label' => Module::t('indexAttribute', 'Label'),
             'indexable' => Module::t('indexAttribute', 'Indexable')
         ];
@@ -73,15 +66,15 @@ class IndexAttribute extends ActiveRecord
     /**
      * Returns attributes by entity type.
      *
-     * @param string $entityType
+     * @param string $indexType
      * @param string|array $orderBy
      * @return static[]
      */
-    public static function findByEntityType($entityType = null, $orderBy = null)
+    public static function findByIndexType($indexType = null, $orderBy = null)
     {
         $query = static::find();
-        if ($entityType) {
-            $query->where(['entity_type' => $entityType]);
+        if ($indexType) {
+            $query->where(['index_type' => $indexType]);
         }
         if ($orderBy) {
             $query->orderBy($orderBy);

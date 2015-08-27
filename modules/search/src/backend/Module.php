@@ -4,6 +4,7 @@ namespace im\search\backend;
 
 use im\base\traits\ModuleTranslateTrait;
 use Yii;
+use yii\console\Application;
 
 /**
  * Search backend module.
@@ -30,6 +31,9 @@ class Module extends \yii\base\Module
     public function init()
     {
         parent::init();
+        if (Yii::$app instanceof Application) {
+            $this->controllerNamespace = 'im\search\commands';
+        }
         $this->registerTranslations();
     }
 

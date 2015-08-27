@@ -12,7 +12,7 @@ use yii\widgets\ActiveForm;
 
 <div class="index-form">
 
-    <?php $form = ActiveForm::begin(); ?>
+    <?php $form = ActiveForm::begin(['fieldClass' => 'im\forms\widgets\ActiveField']); ?>
 
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
@@ -27,6 +27,14 @@ use yii\widgets\ActiveForm;
     ) ?>
 
     <?= $form->field($model, 'type')->dropDownList($model::getTypesList()) ?>
+
+    <?= \im\base\widgets\RelationWidget::widget([
+        'relation' => $model->getRanges(),
+        'itemClass' => 'im\search\models\FacetRange',
+        'itemView' => '/facet-range/_form',
+        'form' => $form,
+        'sortable' => true
+    ]); ?>
 
     <?= Html::submitButton($model->isNewRecord ? Module::t('module', 'Create') : Module::t('module', 'Update'),
         ['class' => $model->isNewRecord ? 'btn btn-primary' : 'btn btn-success']) ?>

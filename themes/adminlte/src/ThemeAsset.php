@@ -31,4 +31,11 @@ class ThemeAsset extends AssetBundle
     public $depends = [
         'im\adminlte\AdminLteAsset'
     ];
+
+    /**
+     * @inheritdoc
+     */
+    public $publishOptions = [
+        'forceCopy' => true
+    ];
 }

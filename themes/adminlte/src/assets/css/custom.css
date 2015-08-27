@@ -51,3 +51,18 @@
 .box.box-solid.box-primary > .box-header a.btn-primary {
     color: #FFF;
 }
+
+.list-item {
+    border: 1px solid #C2C2C2;
+    margin-bottom: 15px;
+    padding: 10px;
+    background: #FFF;
+}
+
+.list-item-left {
+    vertical-align: middle;
+}
+
+.ui-sortable-handle {
+    cursor: move;
+}

@@ -3,6 +3,7 @@
 namespace im\search\components;
 
 use im\eav\models\Attribute;
+use im\search\components\searchable\AttributeDescriptor;
 use im\search\models\EntityAttribute;
 use Yii;
 use yii\base\Model;
@@ -35,7 +36,7 @@ class SearchProvider extends Object implements SearchProviderInterface
         $searchableAttributes = [];
         $key = 0;
         foreach ($attributes as $attribute) {
-            $searchableAttributes[$key] = new EntityAttribute([
+            $searchableAttributes[$key] = new AttributeDescriptor([
                 'entity_type' => $entityType,
                 'name' => $attribute,
                 'label' => isset($labels[$attribute]) ? $labels[$attribute] : $model->generateAttributeLabel($attribute)
@@ -45,7 +46,7 @@ class SearchProvider extends Object implements SearchProviderInterface
 
         $eavAttributes = Attribute::findByEntityType($entityType);
         foreach ($eavAttributes as $attribute) {
-            $searchableAttributes[$key] = new EntityAttribute([
+            $searchableAttributes[$key] = new AttributeDescriptor([
                 'entity_type' => $entityType,
                 'attribute_id' => $attribute->id,
                 'name' => $attribute->getName(),

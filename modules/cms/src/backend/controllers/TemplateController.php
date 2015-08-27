@@ -2,11 +2,11 @@
 
 namespace im\cms\backend\controllers;
 
+use im\base\controllers\BackendController;
 use im\cms\components\TemplateManager;
 use im\cms\models\Widget;
 use im\cms\models\WidgetArea;
 use im\cms\Module;
-use im\controllers\BackendController;
 use im\cms\models\Template;
 use im\cms\models\TemplateSearch;
 use Yii;
@@ -131,42 +131,5 @@ class TemplateController extends BackendController
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
-    }
-
-    /**
-     * @param WidgetArea[] $areas
-     * @param boolean $runValidation
-     * @return boolean
-     */
-    protected function saveWidgetAreas($areas, $runValidation = true)
-    {
-        $saved = true;
-        foreach ($areas as $area) {
-            if (!$area->save($runValidation)) {
-                $saved = false;
-            }
-        }
-
-        return $saved;
-    }
-
-    /**
-     * @param Widget[] $widgets
-     * @param boolean $runValidation
-     * @return boolean
-     */
-    protected function saveWidgets($widgets, $runValidation = true)
-    {
-        $saved = true;
-        foreach ($widgets as $area) {
-            foreach ($area as $widget) {
-                /** @var Widget $widget */
-                if (!$widget->save($runValidation)) {
-                    $saved = false;
-                }
-            }
-        }
-
-        return $saved;
     }
 }

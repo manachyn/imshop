@@ -4,13 +4,11 @@ namespace im\search\backend\controllers;
 
 use im\base\controllers\BackendController;
 use im\search\backend\Module;
-use im\search\components\SearchProvider;
 use im\search\models\IndexAttribute;
 use Yii;
 use im\search\models\Index;
 use im\search\models\IndexSearch;
 use yii\data\ArrayDataProvider;
-use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
@@ -113,44 +111,10 @@ class IndexController extends BackendController
 
     public function actionAttributes($id)
     {
-        $condition = [];
-        $deleteCondition = ['or'];
-        $toDelete = [];
-        $data = Yii::$app->request->post('IndexAttribute', []);
-        if ($data) {
-            foreach ($data as $item) {
-                if ($item['indexable']) {
-                    $condition = ['or', $condition, [
-                        'entity_type' => $item['entity_type'],
-                        'attribute_id' => $item['attribute_id'] ?: null,
-                        'attribute_name' => $item['attribute_name'] ?: ''
-                    ]];
-                    $toDelete[] = [
-                        'entity_type' => $item['entity_type'],
-                        'attribute_id' => $item['attribute_id'] ?: null,
-                        'attribute_name' => $item['attribute_name'] ?: ''
-                    ];
-                }
-                $deleteCondition[] = [
-                    'entity_type' => $item['entity_type'],
-                    'attribute_id' => $item['attribute_id'] ?: null,
-                    'attribute_name' => $item['attribute_name'] ?: ''
-                ];
-
-            }
-            //$deleteCondition = ['and', $deleteCondition, ['not in', ['entity_type', 'attribute_id', 'attribute_name'], $toDelete]];
-
-
-
-            $inbd = IndexAttribute::find()->where($condition)->indexBy('id')->all();
-
-            $deleteCondition = ['and', $deleteCondition, ['not in', 'id', array_keys($inbd)]];
-
-            IndexAttribute::deleteAll($deleteCondition);
+        if ($data = Yii::$app->request->post('IndexAttribute', [])) {
+            $this->saveIndexableAttributes($data);
         }
-
-
-        /** @var \im\search\components\Search $search */
+        /** @var \im\search\components\SearchManager $search */
         $search = Yii::$app->get('search');
         $model = $this->findModel($id);
         $attributes = $search->getIndexAttributes($model->entity_type);
@@ -183,8 +147,70 @@ class IndexController extends BackendController
         }
     }
 
-    protected function getIndexableAttributes($data)
+    /**
+     * Saves indexable attributes from data array.
+     *
+     * @param $data
+     * @return bool whether the attributes were saved
+     */
+    public function saveIndexableAttributes($data)
     {
+        list($indexableCondition, $deleteCondition) = $this->getConditions($data);
+        $indexableAttributes = IndexAttribute::find()->where($indexableCondition)->all();
+        foreach ($data as $item) {
+            if ($item['indexable']) {
+                $item['attribute_id'] = $item['attribute_id'] ? (int) $item['attribute_id'] : null;
+                $indexable = false;
+                foreach ($indexableAttributes as $indexableItem) {
+                    if ($item['entity_type'] === $indexableItem['entity_type']
+                        && $item['attribute_id'] === $indexableItem['attribute_id']
+                        && $item['attribute_name'] === $indexableItem['attribute_name']) {
+                        $indexableItem->load($item);
+                        $indexable = true;
+                        break;
+                    }
+                }
+                if (!$indexable) {
+                    $indexableAttributes[] = new IndexAttribute($item);
+                }
+            }
+        }
+        $saved = true;
+        foreach ($indexableAttributes as $item) {
+            if (!$item->save()) {
+                $saved = false;
+            }
+        }
+        if ($saved) {
+            IndexAttribute::deleteAll($deleteCondition);
+        }
 
+        return $saved;
+    }
+
+    /**
+     * Returns conditions from data array for searching and deleting indexable attributes.
+     *
+     * @param array $data
+     * @return array
+     */
+    private function getConditions($data)
+    {
+        $indexableCondition = ['or'];
+        $deleteCondition = ['or'];
+        foreach ($data as $item) {
+            $condition = [
+                'entity_type' => $item['entity_type'],
+                'attribute_id' => $item['attribute_id'] ?: null,
+                'attribute_name' => $item['attribute_name'] ?: ''
+            ];
+            if ($item['indexable']) {
+                $indexableCondition[] = $condition;
+            } else {
+                $deleteCondition[] = $condition;
+            }
+        }
+
+        return [$indexableCondition, $deleteCondition];
     }
 }

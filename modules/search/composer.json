@@ -1,0 +1,14 @@
+{
+    "name": "im/search",
+    "description": "IM Search module",
+    "authors": [
+        {
+            "name": "Ivan Manachyn",
+            "email": "manachyn@gmail.com"
+        }
+    ],
+    "require": {
+        "friendsofsymfony/elastica-bundle": "^3.1",
+        "yiisoft/yii2-elasticsearch": "^2.0"
+    }
+}

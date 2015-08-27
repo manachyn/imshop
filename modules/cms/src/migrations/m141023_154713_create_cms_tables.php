@@ -157,6 +157,7 @@ class m141023_154713_create_cms_tables extends Migration
         $this->execute('SET FOREIGN_KEY_CHECKS = 0');
         $this->dropTable('{{%widgets}}');
         $this->dropTable('{{%widget_areas}}');
+        $this->dropTable('{{%templates}}');
         $this->dropTable('{{%banner_widgets}}');
         $this->dropTable('{{%content_widgets}}');
         $this->dropTable('{{%menus_items}}');
