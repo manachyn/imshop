@@ -12,6 +12,7 @@ use Yii;
  * Base class for all page widgets.
  *
  * @property integer $id
+ * @property string $widget_type
  * @property string $type
  *
  * @property Page[] $pages
@@ -30,7 +31,7 @@ abstract class Widget extends ActiveRecord
      */
     public static function instantiate($row)
     {
-        return Yii::$app->layoutManager->getWidgetInstance($row['widget_type']);
+        return Yii::$app->get('layoutManager')->getWidgetInstance($row['widget_type']);
     }
 
     /**
@@ -91,7 +92,7 @@ abstract class Widget extends ActiveRecord
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
-        Yii::$app->layoutManager->invalidateWidgetAreasCache();
+        Yii::$app->get('layoutManager')->invalidateWidgetAreasCache();
     }
 
     private $_view;

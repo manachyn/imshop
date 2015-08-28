@@ -23,20 +23,21 @@ class RelationWidget extends Widget
     /**
      * @var string
      */
-    public $itemClass;
+    public $modelClass;
 
     /**
      * @var string
      */
-    public $itemView;
+    public $modelView;
 
     /**
      * @var \yii\widgets\ActiveForm|\im\forms\components\DynamicActiveForm
      */
     public $form;
 
-    public $sortField = 'sort';
-
+    /**
+     * @var bool
+     */
     public $sortable = false;
 
     /**
@@ -76,10 +77,10 @@ class RelationWidget extends Widget
     {
         $this->clientOptions = array_merge([
             'sortable' => $this->sortable,
-            'addUrl' => Url::to(['relation-widget/add']),
+            'addUrl' => Url::to(['/base/relation/add']),
             'form' => $this->form,
-            'itemClass' => $this->itemClass,
-            'itemView' => $this->itemView,
+            'modelClass' => $this->modelClass,
+            'modelView' => $this->modelView,
             // Sortable
             'items' => '.list-item',
             'placeholder' => 'sortable-placeholder',

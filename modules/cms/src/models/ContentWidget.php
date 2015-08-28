@@ -5,7 +5,7 @@ namespace im\cms\models;
 use im\cms\Module;
 
 /**
- * This is the model class for table "{{%content_widgets}}".
+ * Content widget model class.
  *
  * @property string $content
  */

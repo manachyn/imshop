@@ -16,6 +16,9 @@ $config = [
         'im\cms\Bootstrap',
     ],
     'modules' => [
+        'base' => [
+            'class' => 'im\base\Module'
+        ],
         'users' => [
             'class' => 'im\users\Module'
         ],

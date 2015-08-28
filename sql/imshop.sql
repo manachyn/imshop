@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Хост: localhost
--- Время создания: Авг 27 2015 г., 19:17
+-- Время создания: Авг 28 2015 г., 18:55
 -- Версия сервера: 5.5.44-0ubuntu0.14.04.1
 -- Версия PHP: 5.5.9-1ubuntu4.11
 
@@ -19,18 +19,6 @@ SET time_zone = "+00:00";
 --
 -- База данных: `imshop`
 --
-
--- --------------------------------------------------------
-
---
--- Структура таблицы `tbl_banner_widgets`
---
-
-CREATE TABLE IF NOT EXISTS `tbl_banner_widgets` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `banner_id` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -88,18 +76,6 @@ CREATE TABLE IF NOT EXISTS `tbl_category_meta` (
   `custom_meta` text COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_category_meta_entity_id` (`entity_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
-
---
--- Структура таблицы `tbl_content_widgets`
---
-
-CREATE TABLE IF NOT EXISTS `tbl_content_widgets` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `content` text COLLATE utf8_unicode_ci NOT NULL,
-  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
@@ -435,9 +411,9 @@ CREATE TABLE IF NOT EXISTS `tbl_menus_items` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `menu_id` int(11) DEFAULT NULL,
   `label` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
-  `url` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
+  `url` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `page_id` int(11) DEFAULT NULL,
-  `status` tinyint(1) NOT NULL DEFAULT '0',
+  `status` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `status` (`status`),
   KEY `FK_menu_item_page` (`page_id`),
@@ -462,7 +438,7 @@ CREATE TABLE IF NOT EXISTS `tbl_migration` (
 
 INSERT INTO `tbl_migration` (`version`, `apply_time`) VALUES
 ('m000000_000000_base', 1437398890),
-('m141023_154713_create_cms_tables', 1440689667),
+('m141023_154713_create_cms_tables', 1440749395),
 ('m150208_105944_create_eav_tables', 1437398915),
 ('m150208_114635_create_variation_tables', 1437398926),
 ('m150208_123637_create_catalog_tables', 1437398986),
@@ -510,13 +486,14 @@ CREATE TABLE IF NOT EXISTS `tbl_pages` (
   `title` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
   `slug` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
   `content` text COLLATE utf8_unicode_ci NOT NULL,
-  `status` tinyint(1) NOT NULL DEFAULT '0',
+  `status` tinyint(1) DEFAULT '0',
   `created_at` int(11) NOT NULL,
   `updated_at` int(11) NOT NULL,
   `layout_id` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   KEY `type` (`type`),
   KEY `slug` (`slug`),
+  KEY `status` (`status`),
   KEY `created_at` (`created_at`),
   KEY `updated_at` (`updated_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
@@ -989,7 +966,14 @@ CREATE TABLE IF NOT EXISTS `tbl_templates` (
   `layout_id` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   KEY `layout_id` (`layout_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=2 ;
+
+--
+-- Дамп данных таблицы `tbl_templates`
+--
+
+INSERT INTO `tbl_templates` (`id`, `name`, `layout_id`) VALUES
+(1, 'Main templ', '');
 
 -- --------------------------------------------------------
 
@@ -1032,16 +1016,21 @@ CREATE TABLE IF NOT EXISTS `tbl_variant_option_values` (
 
 CREATE TABLE IF NOT EXISTS `tbl_widgets` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `widget_id` int(11) NOT NULL,
-  `widget_type` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
-  `owner_id` int(11) NOT NULL,
-  `owner_type` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
-  `widget_area_id` int(11) NOT NULL,
-  `sort` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `widget_id` (`widget_id`),
-  KEY `widget_type` (`widget_type`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
+  `widget_type` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
+  `content` text COLLATE utf8_unicode_ci NOT NULL,
+  `banner_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=5 ;
+
+--
+-- Дамп данных таблицы `tbl_widgets`
+--
+
+INSERT INTO `tbl_widgets` (`id`, `widget_type`, `content`, `banner_id`) VALUES
+(1, 'content', 'fdsgdfgdfgdfg', 0),
+(2, 'banner', '', 0),
+(3, 'banner', '', 0),
+(4, 'content', 'gffdgdfgdfg', 0);
 
 -- --------------------------------------------------------
 
@@ -1052,18 +1041,27 @@ CREATE TABLE IF NOT EXISTS `tbl_widgets` (
 CREATE TABLE IF NOT EXISTS `tbl_widget_areas` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `code` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
-  `template_id` int(11) NOT NULL DEFAULT '0',
-  `owner_id` int(11) NOT NULL DEFAULT '0',
-  `owner_type` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
-  `display` tinyint(1) NOT NULL DEFAULT '1',
+  `template_id` int(11) NOT NULL,
+  `owner_id` int(11) DEFAULT NULL,
+  `owner_type` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
+  `display` tinyint(1) DEFAULT '1',
   `created_at` int(11) NOT NULL,
   `updated_at` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_widget_areas_template_id` (`template_id`),
   KEY `code` (`code`),
   KEY `owner_id` (`owner_id`),
+  KEY `owner_type` (`owner_type`),
   KEY `updated_at` (`updated_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=3 ;
+
+--
+-- Дамп данных таблицы `tbl_widget_areas`
+--
+
+INSERT INTO `tbl_widget_areas` (`id`, `code`, `template_id`, `owner_id`, `owner_type`, `display`, `created_at`, `updated_at`) VALUES
+(1, 'sidebar', 1, NULL, '', 3, 1440749938, 1440761771),
+(2, 'footer', 1, NULL, '', 3, 1440749939, 1440761772);
 
 -- --------------------------------------------------------
 
@@ -1074,15 +1072,25 @@ CREATE TABLE IF NOT EXISTS `tbl_widget_areas` (
 CREATE TABLE IF NOT EXISTS `tbl_widget_area_widgets` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `widget_id` int(11) NOT NULL,
-  `widget_type` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
-  `owner_id` int(11) NOT NULL,
-  `owner_type` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
   `widget_area_id` int(11) NOT NULL,
+  `owner_id` int(11) DEFAULT NULL,
+  `owner_type` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
   `sort` int(11) NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `widget_id` (`widget_id`),
-  KEY `widget_type` (`widget_type`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
+  KEY `FK_widget_area_widgets_widget_id` (`widget_id`),
+  KEY `FK_widget_area_widgets_widget_area_id` (`widget_area_id`),
+  KEY `sort` (`sort`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=35 ;
+
+--
+-- Дамп данных таблицы `tbl_widget_area_widgets`
+--
+
+INSERT INTO `tbl_widget_area_widgets` (`id`, `widget_id`, `widget_area_id`, `owner_id`, `owner_type`, `sort`) VALUES
+(31, 1, 1, NULL, '', 1),
+(32, 3, 1, NULL, '', 2),
+(33, 2, 2, NULL, '', 1),
+(34, 4, 2, NULL, '', 2);
 
 --
 -- Ограничения внешнего ключа сохраненных таблиц
@@ -1227,6 +1235,13 @@ ALTER TABLE `tbl_variant_option_values`
 --
 ALTER TABLE `tbl_widget_areas`
   ADD CONSTRAINT `FK_widget_areas_template_id` FOREIGN KEY (`template_id`) REFERENCES `tbl_templates` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Ограничения внешнего ключа таблицы `tbl_widget_area_widgets`
+--
+ALTER TABLE `tbl_widget_area_widgets`
+  ADD CONSTRAINT `FK_widget_area_widgets_widget_area_id` FOREIGN KEY (`widget_area_id`) REFERENCES `tbl_widget_areas` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `FK_widget_area_widgets_widget_id` FOREIGN KEY (`widget_id`) REFERENCES `tbl_widgets` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

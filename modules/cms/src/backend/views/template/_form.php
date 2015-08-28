@@ -18,7 +18,7 @@ if ($model->widgetAreas) {
 
 <div class="template-form">
 
-    <?php $form = ActiveForm::begin([/*'enableClientValidation' => false, */'fieldClass' => 'im\forms\widgets\ActiveField']); ?>
+    <?php $form = ActiveForm::begin(['enableClientValidation' => false, 'fieldClass' => 'im\forms\widgets\ActiveField']); ?>
 
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 

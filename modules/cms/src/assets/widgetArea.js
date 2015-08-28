@@ -9,6 +9,7 @@
 
     function WidgetArea(element, options) {
         this.options = options;
+        delete this.options.form.attributes;
         this.$element = $(element);
         this.$dropArea = this.$element.find(dropArea);
         this.$placeholder = this.$element.find(placeholder);

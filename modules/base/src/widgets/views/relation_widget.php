@@ -19,7 +19,7 @@ $models = $widget->relation->all();
         </div>
         <?php endif ?>
         <div class="list-item-body media-body">
-            <?= $this->render($widget->itemView, ['model' => $model, 'form' => $widget->form, 'fieldConfig' => ['tabularIndex' => $index + 1]]) ?>
+            <?= $this->render($widget->modelView, ['model' => $model, 'form' => $widget->form, 'fieldConfig' => ['tabularIndex' => $index + 1]]) ?>
         </div>
     </div>
 <?php endforeach ?>

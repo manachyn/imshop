@@ -30,8 +30,8 @@ use yii\widgets\ActiveForm;
 
     <?= \im\base\widgets\RelationWidget::widget([
         'relation' => $model->getRanges(),
-        'itemClass' => 'im\search\models\FacetRange',
-        'itemView' => '/facet-range/_form',
+        'modelClass' => 'im\search\models\FacetRange',
+        'modelView' => '@im/search/backend/views/facet-range/_form',
         'form' => $form,
         'sortable' => true
     ]); ?>

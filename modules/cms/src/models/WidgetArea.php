@@ -9,7 +9,7 @@ use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 
 /**
- * This is the model class for table "{{%widget_area}}".
+ * Widget area model class.
  *
  * @property integer $id
  * @property string $code
@@ -97,37 +97,38 @@ class WidgetArea extends ActiveRecord
         ];
     }
 
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getWidgetAreaItems()
     {
         return $this->hasMany(WidgetAreaItem::className(), ['widget_area_id' => 'id']);
     }
 
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getWidgetsRelation()
     {
         return $this->hasMany(Widget::className(), ['id' => 'widget_id'])->via('widgetAreaItems');
     }
 
-//    public function getWidgets()
-//    {
-//        return $this->hasMany(Widget::className(), ['id' => 'widget_id'])
-//            ->via('productImages')
-//            ->joinWith('productImages')
-//            ->orderBy(['product_images.sort' => SORT_ASC]);
-//        ->andWhere(["product_images.product_id" => $this->id]);
-//
-//
-//    }
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getWidgets()
+    {
+        /** @var \yii\db\ActiveQuery $query */
+        $query = Widget::find()
+            ->select([
+                '{{%widgets}}.*',
+                '{{%widget_area_widgets}}.sort AS sort'
+            ])
+            ->innerJoin('{{%widget_area_widgets}}', '{{%widgets}}.id = {{%widget_area_widgets}}.widget_id AND {{%widget_area_widgets}}.widget_area_id = :id', ['id' => $this->id])
+            ->orderBy(['{{%widget_area_widgets}}.sort' => SORT_ASC]);
 
-//    /**
-//     * @return Widget[]
-//     */
-//    public function getWidgets()
-//    {
-//        $widgets = [];
-//        if (!$this->isNewRecord){
-//            $widgets = Yii::$app->layoutManager->getWidgets(['widget_area_id' => $this->id], 'sort');
-//            $this->populateRelation('widgets', $widgets);
-//        }
-//        return $widgets;
-//    }
+        $query->multiple = true;
+
+        return $query;
+    }
 }

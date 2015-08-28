@@ -1,6 +1,6 @@
 <?php
 
-namespace im\base\widgets;
+namespace im\cms\backend\widgets;
 
 use yii\web\AssetBundle;
 

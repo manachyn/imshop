@@ -8,6 +8,7 @@
 
     function RelationWidget(element, options) {
         this.options = options;
+        delete this.options.form.attributes;
         this.$element = $(element);
         this.$element.on('click', add, $.proxy(this.onAdd, this));
         this.$element.on('click', remove, $.proxy(this.onRemove, this));
@@ -15,6 +16,7 @@
             this.sortable = this.$element.sortable('instance');
             this.sortable.element.on('sortupdate', $.proxy(this.onSortUpdate, this));
         }
+        this.$element.on('pjax:success', temp, $.proxy(this.onResponse, this));
     }
 
     RelationWidget.DEFAULTS = {};
@@ -28,8 +30,8 @@
             container: temp,
             data: {
                 form: this.options.form,
-                itemClass: this.options.itemClass,
-                itemView: this.options.itemView,
+                modelClass: this.options.modelClass,
+                modelView: this.options.modelView,
                 index: this.getItemsCount() + 1
             }
         };
@@ -55,6 +57,11 @@
 
     RelationWidget.prototype.getItemsCount = function () {
         return this.$element.find(this.options.items).length;
+    };
+
+    EAVEditor.prototype.onResponse = function () {
+        this.$fields.append(this.$temp.html());
+        this.$temp.html('');
     };
 
     function Plugin(option) {

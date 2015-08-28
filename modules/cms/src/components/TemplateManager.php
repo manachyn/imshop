@@ -92,6 +92,7 @@ class TemplateManager extends Component
                 }
             }
         }
+
         return $loaded;
     }
 
