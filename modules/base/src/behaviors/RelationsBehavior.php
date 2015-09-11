@@ -13,15 +13,13 @@ use yii\db\Command;
 use yii\helpers\ArrayHelper;
 
 /**
- * Class RelationsBehavior
+ * Class RelationsBehavior.
+ *
+ * @property ActiveRecord $owner
  * @package im\base\behaviors
  */
 class RelationsBehavior extends Behavior
 {
-    /**
-     * @var ActiveRecord
-     */
-    public $owner;
 
     /**
      * @var array
@@ -217,7 +215,7 @@ class RelationsBehavior extends Behavior
         return $this->normalizeName($name) . 'Data' == $name;
     }
 
-    protected function getSetting($relation, $name, $default = null)
+    public function getRelationSetting($relation, $name, $default = null)
     {
         return isset($this->settings[$relation][$name]) ? $this->settings[$relation][$name] : $default;
     }
@@ -473,7 +471,7 @@ class RelationsBehavior extends Behavior
     protected function saveOne($name)
     {
         if ($this->relatedData[$name] === null) {
-            $this->unlinkOne($name, $this->getSetting($name, 'deleteOnUnlink', false));
+            $this->unlinkOne($name, $this->getRelationSetting($name, 'deleteOnUnlink', false));
         } else {
             $relation = $this->getOwnerRelation($name);
             if ($this->isModel($relation, $this->relatedData[$name])) {
@@ -507,7 +505,7 @@ class RelationsBehavior extends Behavior
                     }
                 }
                 $extraColumns = !empty($this->extraColumns[$name]) ? $this->extraColumns[$name] : [];
-                $extraColumns = array_merge($this->getSetting($name, 'extraColumns', []), $extraColumns);
+                $extraColumns = array_merge($this->getRelationSetting($name, 'extraColumns', []), $extraColumns);
                 if ($extraColumns) {
                     foreach ($extraColumns as $name => $value) {
                         $this->owner->$name = $value;
@@ -525,16 +523,16 @@ class RelationsBehavior extends Behavior
         $relation = $this->getOwnerRelation($name);
         if ($relation->via !== null) {
             $except = [];
-            $delete = !is_array($relation->via) ? true : $this->getSetting($name, 'deleteOnUnlink', false);
+            $delete = !is_array($relation->via) ? true : $this->getRelationSetting($name, 'deleteOnUnlink', false);
         } else {
             $except = $this->relatedModels[$name];
-            $delete = $this->getSetting($name, 'deleteOnUnlink', false);
+            $delete = $this->getRelationSetting($name, 'deleteOnUnlink', false);
         }
         $this->unlinkMany($name, $except, $delete);
         foreach ($this->relatedModels[$name] as $key => $model) {
             /** @var ActiveRecord $model */
             $extraColumns = !empty($this->extraColumns[$name][$key]) ? $this->extraColumns[$name][$key] : [];
-            $extraColumns = array_merge($this->getSetting($name, 'extraColumns', []), $extraColumns);
+            $extraColumns = array_merge($this->getRelationSetting($name, 'extraColumns', []), $extraColumns);
             if ($relation->via !== null) {
                 if ($model->getIsNewRecord() && !$model->save() && $model->getIsNewRecord()) {
                     unset($this->relatedModels[$name][$key], $this->relatedData[$name][$key]);
@@ -542,6 +540,9 @@ class RelationsBehavior extends Behavior
                 }
                 $this->link($name, $model, $extraColumns);
             } else {
+                foreach ($extraColumns as $attr => $value) {
+                    $model->$attr = $value;
+                }
                 $this->link($name, $model, $extraColumns);
                 if(!$model->save()) {
                     unset($this->relatedModels[$name][$key], $this->relatedData[$name][$key]);

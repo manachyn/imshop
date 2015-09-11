@@ -28,14 +28,14 @@ class ActiveField extends \yii\widgets\ActiveField
 
         if ($this->namePrefix) {
             $this->inputOptions['name'] = $this->namePrefix;
-            if ($this->tabularIndex) {
+            if (isset($this->tabularIndex)) {
                 $this->inputOptions['name'] .= "[$this->tabularIndex]" . "[$this->attribute]";
             } else {
                 $this->inputOptions['name'] .= $this->attribute;
             }
         }
 
-        if ($this->tabularIndex) {
+        if (isset($this->tabularIndex)) {
             $this->attribute = "[$this->tabularIndex]" . $this->attribute;
         }
     }

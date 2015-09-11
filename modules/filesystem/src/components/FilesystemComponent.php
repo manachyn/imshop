@@ -5,13 +5,11 @@ namespace im\filesystem\components;
 use creocoder\flysystem\Filesystem;
 use im\filesystem\components\flysystem\plugins\UrlPlugin;
 use im\filesystem\events\FilesystemEvent;
-use im\filesystem\exception\FilesystemException;
-use im\filesystem\models\File;
+use Yii;
 use yii\base\Component;
 use yii\base\InvalidParamException;
 use yii\di\Instance;
 use yii\helpers\FileHelper;
-use yii\web\UploadedFile;
 
 /**
  * Filesystem component class
@@ -27,6 +25,16 @@ class FilesystemComponent extends Component
      * @event FilesystemEvent an event that is triggered after file was saved.
      */
     const EVENT_AFTER_SAVE = 'afterSave';
+
+    /**
+     * @event FilesystemEvent an event that is triggered before file deleting.
+     */
+    const EVENT_BEFORE_DELETE = 'beforeDelete';
+
+    /**
+     * @event FilesystemEvent an event that is triggered after file was deleted.
+     */
+    const EVENT_AFTER_DELETE = 'afterDelete';
 
     /**
      * @var array of available filesystems
@@ -80,12 +88,36 @@ class FilesystemComponent extends Component
 //        return false;
 //    }
 
-    public function saveFile(FileInterface $file, $filesystem = null, $path = null, $overwrite = false)
+    /**
+     * Save file to specified filesystem or path.
+     *
+     * @param FileInterface $file
+     * @param Filesystem|string $filesystem
+     * @param string $path
+     * @param bool $overwrite
+     * @param bool $resolveNameConflict
+     * @return bool|string
+     */
+    public function saveFile(FileInterface $file, $filesystem = null, $path = null, $overwrite = false, $resolveNameConflict = false)
     {
         $saved = false;
-        if ($filesystem && $filesystem = $this->get($filesystem)) {
+        if ($filesystem && !$filesystem instanceof Filesystem) {
+            $filesystem = $this->get($filesystem);
+        }
+        if ($filesystem) {
             $this->beforeSave($file, $filesystem, $path);
             $path = $path ?: $file->getPath();
+            if ($resolveNameConflict) {
+                $i = 0;
+                $newPath = $path;
+                $pathParts = pathinfo($path);
+                while ($filesystem->has($newPath)) {
+                    $i++;
+                    $filename = $pathParts['filename'] . '-' . $i;
+                    $newPath = $pathParts['dirname'] . DIRECTORY_SEPARATOR . $filename . '.' . $pathParts['extension'];
+                }
+                $path = $newPath;
+            }
             $stream = fopen($file->getPath(), 'r+');
             if ($overwrite) {
                 $saved = $filesystem->putStream($path, $stream);
@@ -112,10 +144,67 @@ class FilesystemComponent extends Component
         return false;
     }
 
-    public function getUrl(FileInterface $file, $filesystem)
+    /**
+     * Deletes file.
+     *
+     * @param FileInterface $file
+     * @return bool
+     */
+    public function deleteFile(FileInterface $file)
+    {
+        $filesystem = $file->getFilesystemName();
+        if ($filesystem && $filesystem = $this->get($filesystem)) {
+            $this->beforeDelete($file, $filesystem);
+            $deleted = $filesystem->delete($file->getPath());
+        } else {
+            $this->beforeDelete($file);
+            $deleted = unlink($file->getPath());
+        }
+
+        if ($deleted) {
+            $this->afterDelete($file, $filesystem);
+        }
+
+        return $deleted;
+    }
+
+    /**
+     * @param string $path
+     * @param Filesystem|string $filesystem
+     * @return bool
+     */
+    public function deleteDirectory($path, $filesystem = null)
+    {
+        if ($filesystem && !$filesystem instanceof Filesystem) {
+            $filesystem = $this->get($filesystem);
+        }
+        if ($filesystem) {
+            return $filesystem->deleteDir($path);
+        } else {
+            FileHelper::removeDirectory($path);
+        }
+    }
+
+
+
+    /**
+     * Returns file public url.
+     *
+     * @param FileInterface $file
+     * @param string $filesystem
+     * @param array $params
+     * @return string
+     */
+    public function getUrl(FileInterface $file, $filesystem, $params = [])
     {
         $filesystem = $this->get($filesystem);
         $filesystem->addPlugin(new UrlPlugin());
+        if ($params) {
+            return Yii::$app->get('glide')->createSignedUrl(array_merge([
+                'glide/index',
+                'path' => $file->getPath()
+            ], $params), true);
+        }
 
         return $filesystem->getUrl($file->getPath());
     }
@@ -127,7 +216,7 @@ class FilesystemComponent extends Component
      * @param Filesystem $filesystem
      * @param string $path
      */
-    protected function beforeSave(FileInterface $file, Filesystem $filesystem, $path = null)
+    protected function beforeSave(FileInterface $file, Filesystem $filesystem = null, $path = null)
     {
         $event = new FilesystemEvent(['file' => $file, 'filesystem' => $filesystem, 'path' => $path]);
         $this->trigger(self::EVENT_BEFORE_SAVE, $event);
@@ -140,9 +229,33 @@ class FilesystemComponent extends Component
      * @param Filesystem $filesystem
      * @param string $path
      */
-    protected function afterSave(FileInterface $file, Filesystem $filesystem, $path = null)
+    protected function afterSave(FileInterface $file, Filesystem $filesystem = null, $path = null)
     {
         $event = new FilesystemEvent(['file' => $file, 'filesystem' => $filesystem, 'path' => $path]);
         $this->trigger(self::EVENT_AFTER_SAVE, $event);
+    }
+
+    /**
+     * Called before file deleting.
+     *
+     * @param FileInterface $file
+     * @param Filesystem $filesystem
+     */
+    protected function beforeDelete(FileInterface $file, Filesystem $filesystem = null)
+    {
+        $event = new FilesystemEvent(['file' => $file, 'filesystem' => $filesystem]);
+        $this->trigger(self::EVENT_BEFORE_DELETE, $event);
+    }
+
+    /**
+     * Called after file deleting.
+     *
+     * @param FileInterface $file
+     * @param Filesystem $filesystem
+     */
+    protected function afterDelete(FileInterface $file, Filesystem $filesystem = null)
+    {
+        $event = new FilesystemEvent(['file' => $file, 'filesystem' => $filesystem]);
+        $this->trigger(self::EVENT_AFTER_DELETE, $event);
     }
 } 

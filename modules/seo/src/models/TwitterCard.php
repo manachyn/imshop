@@ -23,7 +23,7 @@ class TwitterCard extends SocialMeta
     /**
      * @inheritdoc
      */
-    public function getEntityType()
+    public static function getEntityType()
     {
         return static::ENTITY_TYPE;
     }

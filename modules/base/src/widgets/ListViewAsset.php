@@ -4,12 +4,12 @@ namespace im\base\widgets;
 
 use yii\web\AssetBundle;
 
-class RelationWidgetAsset extends AssetBundle
+class ListViewAsset extends AssetBundle
 {
     public $sourcePath = '@im/base/assets';
 
     public $js = [
-        'relationWidget.js',
+        'listView.js',
     ];
 
     public $depends = [

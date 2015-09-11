@@ -5,7 +5,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model im\search\models\FacetRange */
+/* @var $model im\search\models\FacetTerm */
 /* @var $form yii\widgets\ActiveForm|im\forms\components\DynamicActiveForm */
 /* @var $fieldConfig array */
 
@@ -15,20 +15,7 @@ $fieldConfig = isset($fieldConfig) ? $fieldConfig : [];
 <?php if (!isset($form)) { $form = ActiveForm::begin(); } ?>
 
 <div class="form-inline">
-
-    <?= $form->field($model, 'from', array_merge($fieldConfig, [
-        'template' => "{label}\n<div class=\"input-group\"><span class=\"input-group-addon\">" . $form->field($model, 'from_include', array_merge($fieldConfig, [
-                'template' => "{input}"
-            ]))->checkbox(['label' => false]) . "</span>{input}</div>\n{hint}\n{error}"
-    ]))->textInput(['maxlength' => true])->label(false) ?>
-
-    <span><strong>to</strong></span>
-
-    <?= $form->field($model, 'to', array_merge($fieldConfig, [
-        'template' => "{label}\n<div class=\"input-group\">{input}\n<span class=\"input-group-addon\">" . $form->field($model, 'to_include', array_merge($fieldConfig, [
-                'template' => "{input}"
-            ]))->checkbox(['label' => false]) . "</span></div>\n{hint}\n{error}"
-    ]))->textInput(['maxlength' => true])->label(false) ?>
+    <?= $form->field($model, 'term', $fieldConfig)->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'display', $fieldConfig)->textInput(['maxlength' => true]) ?>
 

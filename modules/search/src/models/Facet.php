@@ -25,6 +25,18 @@ class Facet extends ActiveRecord
     const TYPE_RANGE = 'range';
     const TYPE_INTERVAL = 'interval';
 
+    const TYPE_DEFAULT = self::TYPE_TERMS;
+
+    const TYPE = self::TYPE_DEFAULT;
+
+    /**
+     * @inheritdoc
+     */
+    public static function instantiate($row)
+    {
+        return self::getInstance($row['type']);
+    }
+
     /**
      * @inheritdoc
      */
@@ -64,6 +76,10 @@ class Facet extends ActiveRecord
             'attribute_id' => Module::t('facet', 'Attribute ID'),
             'attribute_name' => Module::t('facet', 'Attribute name'),
             'searchableAttribute' => Module::t('facet', 'Attribute'),
+            'type' => Module::t('facet', 'Type'),
+            'from' => Module::t('facet', 'From'),
+            'to' => Module::t('facet', 'To'),
+            'interval' => Module::t('facet', 'Interval')
         ];
     }
 
@@ -132,10 +148,35 @@ class Facet extends ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @inheritdoc
      */
-    public function getRanges()
+    public function beforeSave($insert)
     {
-        return $this->hasMany(FacetRange::className(), ['facet_id' => 'id']);
+        if (!$this->type) {
+            $this->type = static::TYPE;
+        }
+
+        return parent::beforeSave($insert);
+    }
+
+    /**
+     * @param string $type
+     * @return Facet|IntervalFacet|RangeFacet|TermsFacet
+     */
+    public static function getInstance($type = null)
+    {
+        if (!$type) {
+            $type = self::TYPE_DEFAULT;
+        }
+        switch ($type) {
+            case self::TYPE_TERMS:
+                return new TermsFacet();
+            case self::TYPE_RANGE:
+                return new RangeFacet();
+            case self::TYPE_INTERVAL:
+                return new IntervalFacet();
+            default:
+                return new self;
+        }
     }
 }

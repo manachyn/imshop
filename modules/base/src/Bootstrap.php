@@ -25,5 +25,23 @@ class Bootstrap implements BootstrapInterface
         Yii::setAlias('@im/tree', $vendorDir . '/modules/tree/src');
         Yii::setAlias('@im/users', $vendorDir . '/modules/users/src');
         Yii::setAlias('@im/search', $vendorDir . '/modules/search/src');
+
+        $this->registerTranslations();
+    }
+
+    /**
+     * Register module translations.
+     */
+    public function registerTranslations()
+    {
+        Yii::$app->i18n->translations[Module::$messagesCategory . '/*'] = [
+            'class' => 'yii\i18n\PhpMessageSource',
+            'sourceLanguage' => 'en-US',
+            'basePath' => '@im/base/messages',
+            'fileMap' => [
+                Module::$messagesCategory => 'module.php',
+                Module::$messagesCategory . '/relation-widget' => 'relation-widget.php'
+            ]
+        ];
     }
 }

@@ -109,15 +109,21 @@ class IndexController extends BackendController
         return $this->redirect(['index']);
     }
 
+    /**
+     * List index attributes.
+     *
+     * @param integer $id
+     * @return mixed
+     */
     public function actionAttributes($id)
     {
         if ($data = Yii::$app->request->post('IndexAttribute', [])) {
-            $this->saveIndexableAttributes($data);
+            IndexAttribute::saveFromData($data);
         }
         /** @var \im\search\components\SearchManager $search */
         $search = Yii::$app->get('search');
         $model = $this->findModel($id);
-        $attributes = $search->getIndexAttributes($model->entity_type);
+        $attributes = $search->getIndexAttributes($model->type);
         $dataProvider = new ArrayDataProvider([
             'allModels' => $attributes,
             'sort' => [

@@ -256,6 +256,75 @@ class m150208_123637_create_catalog_tables extends Migration
         //$this->addPrimaryKey('PK_product_variant_option_values', '{{%product_variant_option_values}}', 'product_variant_id, option_value_id');
         $this->addForeignKey('FK_product_variant_option_values_product_variant_id', '{{%product_variant_option_values}}', 'product_variant_id', '{{%product_variants}}', 'id', 'CASCADE', 'CASCADE');
         $this->addForeignKey('FK_product_variant_option_values_option_value_id', '{{%product_variant_option_values}}', 'option_value_id', '{{%product_option_values}}', 'id', 'CASCADE', 'CASCADE');
+
+        // Product files
+        $this->createTable(
+            '{{%product_files}}',
+            [
+                'id' => Schema::TYPE_PK,
+                'product_id' => Schema::TYPE_INTEGER,
+                'attribute' => Schema::TYPE_STRING . '(100) NOT NULL',
+                'filesystem' => Schema::TYPE_STRING . '(100) NOT NULL',
+                'path' => Schema::TYPE_STRING . ' NOT NULL',
+                'title' => Schema::TYPE_STRING . ' NOT NULL',
+                'size' => Schema::TYPE_INTEGER,
+                'mime_type' => Schema::TYPE_STRING . ' NOT NULL',
+                'created_at' => Schema::TYPE_INTEGER,
+                'updated_at' => Schema::TYPE_INTEGER,
+                'sort' => Schema::TYPE_INTEGER
+            ],
+            $tableOptions
+        );
+
+        $this->addForeignKey('FK_product_files_product_id', '{{%product_files}}', 'product_id', '{{%products}}', 'id', 'CASCADE', 'CASCADE');
+        $this->createIndex('attribute', '{{%product_files}}', 'attribute');
+        $this->createIndex('sort', '{{%product_files}}', 'sort');
+
+        // Category files
+        $this->createTable(
+            '{{%category_files}}',
+            [
+                'id' => Schema::TYPE_PK,
+                'category_id' => Schema::TYPE_INTEGER,
+                'attribute' => Schema::TYPE_STRING . '(100) NOT NULL',
+                'filesystem' => Schema::TYPE_STRING . '(100) NOT NULL',
+                'path' => Schema::TYPE_STRING . ' NOT NULL',
+                'title' => Schema::TYPE_STRING . ' NOT NULL',
+                'size' => Schema::TYPE_INTEGER,
+                'mime_type' => Schema::TYPE_STRING . ' NOT NULL',
+                'created_at' => Schema::TYPE_INTEGER,
+                'updated_at' => Schema::TYPE_INTEGER,
+                'sort' => Schema::TYPE_INTEGER
+            ],
+            $tableOptions
+        );
+
+        $this->addForeignKey('FK_category_files_category_id', '{{%category_files}}', 'category_id', '{{%categories}}', 'id', 'CASCADE', 'CASCADE');
+        $this->createIndex('attribute', '{{%category_files}}', 'attribute');
+        $this->createIndex('sort', '{{%category_files}}', 'sort');
+
+        // Product category files
+        $this->createTable(
+            '{{%product_category_files}}',
+            [
+                'id' => Schema::TYPE_PK,
+                'category_id' => Schema::TYPE_INTEGER,
+                'attribute' => Schema::TYPE_STRING . '(100) NOT NULL',
+                'filesystem' => Schema::TYPE_STRING . '(100) NOT NULL',
+                'path' => Schema::TYPE_STRING . ' NOT NULL',
+                'title' => Schema::TYPE_STRING . ' NOT NULL',
+                'size' => Schema::TYPE_INTEGER,
+                'mime_type' => Schema::TYPE_STRING . ' NOT NULL',
+                'created_at' => Schema::TYPE_INTEGER,
+                'updated_at' => Schema::TYPE_INTEGER,
+                'sort' => Schema::TYPE_INTEGER
+            ],
+            $tableOptions
+        );
+
+        $this->addForeignKey('FK_product_category_files_category_id', '{{%product_category_files}}', 'category_id', '{{%product_categories}}', 'id', 'CASCADE', 'CASCADE');
+        $this->createIndex('attribute', '{{%product_category_files}}', 'attribute');
+        $this->createIndex('sort', '{{%product_category_files}}', 'sort');
     }
 
     public function safeDown()
@@ -276,6 +345,7 @@ class m150208_123637_create_catalog_tables extends Migration
         $this->dropTable('{{%product_option_values}}');
         $this->dropTable('{{%product_variants}}');
         $this->dropTable('{{%product_variant_option_values}}');
+        $this->dropTable('{{%product_files}}');
         $this->execute('SET FOREIGN_KEY_CHECKS = 1');
     }
 }

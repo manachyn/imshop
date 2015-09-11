@@ -4,8 +4,7 @@ namespace im\search\models;
 
 use im\search\backend\Module;
 use im\search\components\index\IndexInterface;
-use im\search\components\SearchableItem;
-use im\search\components\SearchServiceInterface;
+use im\search\components\service\SearchServiceInterface;
 use Yii;
 use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
@@ -69,15 +68,13 @@ class Index extends ActiveRecord implements IndexInterface
     }
 
     /**
-     * Returns array of available search services.
+     * Returns array of available searchable types.
      *
      * @return array
      */
     public static function getTypesList()
     {
-        return ArrayHelper::map(Yii::$app->get('search')->searchableItems, 'entityType', function (SearchableItem $item) {
-            return Inflector::camel2words($item->entityType);
-        });
+        return Yii::$app->get('search')->getSearchableTypeNames();
     }
 
     /**
@@ -87,7 +84,7 @@ class Index extends ActiveRecord implements IndexInterface
      */
     public static function getServicesList()
     {
-        $services = Yii::$app->get('search')->services;
+        $services = Yii::$app->get('search')->searchServices;
 
         return array_combine(array_keys($services), ArrayHelper::getColumn($services, 'name'));
     }

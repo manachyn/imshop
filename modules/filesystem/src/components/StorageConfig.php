@@ -46,12 +46,37 @@ class StorageConfig extends Object
     public $relation;
 
     /**
+     * @var bool
+     */
+    public $deleteOnUnlink = false;
+
+    /**
+     * @var array
+     */
+    public $extraColumns = [];
+
+    /**
+     * @var array
+     */
+    public $events = [];
+
+    /**
      * @var bool whether to update file names after owner was saved first time.
      * It is used in cases if the file name should contain owner primary key.
      */
     public $updateAfterCreation = false;
 
     public $visibility = AdapterInterface::VISIBILITY_PUBLIC;
+
+    public function __set($name, $value)
+    {
+        if (strncmp($name, 'on ', 3) === 0) {
+            $this->events[trim(substr($name, 3))] = $value;
+            return;
+        } else {
+            parent::__set($name, $value);
+        }
+    }
 
     public function resolvePath($model)
     {
@@ -62,20 +87,19 @@ class StorageConfig extends Object
         }, $path);
     }
 
-    public function resolveFileName($fileName, $model, $fileIndex = 1)
+    public function resolveFileName($fileName, $model)
     {
         $name = $this->fileName instanceof Closure ? call_user_func($this->fileName, $fileName, $model, $this) : $this->fileName;
         $file = pathinfo($fileName);
-        $file['index'] = $fileIndex;
         return preg_replace_callback('|{(.*?)}|', function ($matches) use ($file, $model) {
             $value = $this->evaluateExpression($matches[1], ['file' => $file, 'model' => $model]);
             return $value !== null ? $value : $matches[0];
         }, $name);
     }
 
-    public function resolveFilePath($fileName, $model, $fileIndex = 1)
+    public function resolveFilePath($fileName, $model)
     {
-        return rtrim($this->resolvePath($model), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $this->resolveFileName($fileName, $model, $fileIndex);
+        return rtrim($this->resolvePath($model), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $this->resolveFileName($fileName, $model);
     }
 
     private function evaluateExpression($expression, $parameters)

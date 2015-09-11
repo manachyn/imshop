@@ -31,6 +31,11 @@ class RelationWidget extends Widget
     public $modelView;
 
     /**
+     * @var string
+     */
+    public $itemView = '@im/base/widgets/views/relation_widget_item';
+
+    /**
      * @var \yii\widgets\ActiveForm|\im\forms\components\DynamicActiveForm
      */
     public $form;
@@ -39,6 +44,8 @@ class RelationWidget extends Widget
      * @var bool
      */
     public $sortable = false;
+
+    public $addLabel;
 
     /**
      * @inheritdoc
@@ -59,10 +66,6 @@ class RelationWidget extends Widget
         echo $this->render('relation_widget', ['widget' => $this]);
         echo Html::endTag('div') . "\n";
         $this->registerWidget('sortable', $id);
-        $options = [
-            'sortable' => $this->sortable,
-            'addUrl' => Url::to(['relation-widget/add'])
-        ];
         $options = Json::encode($this->clientOptions);
         $view = $this->getView();
         RelationWidgetAsset::register($view);
@@ -81,6 +84,7 @@ class RelationWidget extends Widget
             'form' => $this->form,
             'modelClass' => $this->modelClass,
             'modelView' => $this->modelView,
+            'itemView' => $this->itemView,
             // Sortable
             'items' => '.list-item',
             'placeholder' => 'sortable-placeholder',

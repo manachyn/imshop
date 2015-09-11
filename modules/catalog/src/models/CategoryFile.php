@@ -5,19 +5,19 @@ namespace im\catalog\models;
 use im\filesystem\models\DbFile;
 
 /**
- * Product file model class.
+ * Category file model class.
  *
- * @property integer $product_id
+ * @property integer $category_id
  * @property string $attribute
  */
-class ProductFile extends DbFile
+class CategoryFile extends DbFile
 {
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return '{{%product_files}}';
+        return '{{%category_files}}';
     }
 
     /**

@@ -8,11 +8,14 @@ use im\base\interfaces\ModelBehaviorInterface;
 use im\base\traits\ModelBehaviorTrait;
 use im\catalog\components\CategoryPageTrait;
 use im\catalog\Module;
+use im\filesystem\components\FileInterface;
 use im\filesystem\components\FilesBehavior;
 use im\filesystem\components\UploadBehavior;
 use im\filesystem\models\DbFile;
 use im\filesystem\models\EntityFile;
 use im\tree\models\Tree;
+use Intervention\Image\Constraint;
+use Intervention\Image\ImageManagerStatic;
 use yii\behaviors\SluggableBehavior;
 use yii\behaviors\TimestampBehavior;
 
@@ -67,31 +70,22 @@ class Category extends Tree
             'files' => [
                 'class' => FilesBehavior::className(),
                 'attributes' => [
-                    'image' => [
+                    'uploadedImage' => [
                         'filesystem' => 'local',
                         'path' => '/categories',
                         'fileName' => '{model.slug}.{file.extension}',
-                    ],
-                    'images' => [
-                        'filesystem' => 'local',
-                        'path' => '/categories',
-                        'fileName' => '{model.slug}-{file.index}.{file.extension}',
-                        'multiple' => true
+                        'relation' => 'image',
+                        'deleteOnUnlink' => true,
+                        'extraColumns' => ['attribute' => 'image'],
+                        'on beforeSave' => function (FileInterface $file) {
+                            $image = ImageManagerStatic::make($file->getPath());
+                            $image->resize(300, null, function (Constraint $constraint) {
+                                $constraint->aspectRatio();
+                                $constraint->upsize();
+                            });
+                            $image->save($file->getPath(), 100);
+                        }
                     ]
-                ],
-                'relations' => [
-                    'image' => function () {
-                        return $this->hasOne(DbFile::className(), ['id' => 'image_id']);
-                    },
-                    'entityFiles' => function () {
-                        return $this->hasMany(EntityFile::className(), ['entity_id' => 'id'])/*->where(['entity_type' => 'product'])*/;
-                    },
-                    'images' => function () {
-                        return $this->hasMany(DbFile::className(), ['id' => 'file_id'])->via('entityFiles');
-                    },
-                    'imagesRelation' => function () {
-                        return $this->hasMany(DbFile::className(), ['id' => 'file_id'])->via('entityFiles');
-                    }
                 ]
             ]
         ];
@@ -136,5 +130,13 @@ class Category extends Tree
             self::STATUS_ACTIVE => Module::t('category', 'Active'),
             self::STATUS_INACTIVE => Module::t('category', 'Inactive')
         ];
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getImage()
+    {
+        return $this->hasOne(CategoryFile::className(), ['category_id' => 'id'])->where(['attribute' => 'image']);
     }
 }

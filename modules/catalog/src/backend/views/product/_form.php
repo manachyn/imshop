@@ -18,7 +18,7 @@ use yii\widgets\ActiveForm;
 
 ?>
 
-<?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
+<?php $form = ActiveForm::begin(['fieldClass' => 'im\forms\widgets\ActiveField', 'options' => ['enctype' => 'multipart/form-data']]); ?>
 
 <?= new FieldSet('product', [
     new TabSet('tabs', [
@@ -51,7 +51,11 @@ use yii\widgets\ActiveForm;
             ])
         ]),
         new Tab('images', Module::t('product', 'Images'), [
-            $form->field($model, 'uploadedImages[]', ['enableClientValidation' => false])->fileInput(['multiple' => true, 'accept' => 'image/*'])
+            $form->field($model, 'uploadedImages[]', ['enableClientValidation' => false])->fileInput(['multiple' => true, 'accept' => 'image/*']),
+            new ContentBlock('images_list', $this->render('_images', [
+                'model' => $model,
+                'form' => $form
+            ]))
         ])
     ])
 ]) ?>

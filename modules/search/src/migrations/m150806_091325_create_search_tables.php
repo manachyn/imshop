@@ -58,18 +58,22 @@ class m150806_091325_create_search_tables extends Migration
 ////        $this->addForeignKey('FK_filter_set_filters_filter_id', '{{%filter_set_filters}}', 'filter_id', '{{%filters}}', 'id', 'CASCADE', 'CASCADE');
 //
 //
-//        // Facets
-//        $this->createTable('{{%facets}}', [
-//            'id' => $this->primaryKey(),
-//            'name' => $this->string()->notNull(),
-//            'entity_type' => $this->string(100)->notNull(),
-//            'attribute_id' => $this->integer()->defaultValue(null),
-//            'attribute_name' => $this->string(100)->notNull(),
-//            'type' => $this->string(100)->notNull(),
-//        ], $tableOptions);
-//
-//        $this->addForeignKey('FK_facets_attribute_id', '{{%facets}}', 'attribute_id', '{{%eav_attributes}}', 'id', 'CASCADE', 'CASCADE');
+        // Facets
+        $this->createTable('{{%facets}}', [
+            'id' => $this->primaryKey(),
+            'name' => $this->string()->notNull(),
+            'entity_type' => $this->string(100)->notNull(),
+            'attribute_id' => $this->integer()->defaultValue(null),
+            'attribute_name' => $this->string(100)->notNull(),
+            'from' => $this->string(100)->notNull(),
+            'to' => $this->string(100)->notNull(),
+            'interval' => $this->string(100)->notNull(),
+            'type' => $this->string(100)->notNull()
+        ], $tableOptions);
 
+        $this->addForeignKey('FK_facets_attribute_id', '{{%facets}}', 'attribute_id', '{{%eav_attributes}}', 'id', 'CASCADE', 'CASCADE');
+
+        // Facet ranges
         $this->createTable('{{%facet_ranges}}', [
             'id' => $this->primaryKey(),
             'facet_id' => $this->integer()->notNull(),
@@ -77,7 +81,19 @@ class m150806_091325_create_search_tables extends Migration
             'to' => $this->string()->notNull(),
             'from_include' => $this->boolean()->defaultValue(1),
             'to_include' => $this->boolean()->defaultValue(0),
-            'display' => $this->string()->notNull()
+            'display' => $this->string()->notNull(),
+            'sort' => $this->integer()->defaultValue(null)
+        ], $tableOptions);
+
+        $this->addForeignKey('FK_facet_ranges_facet_id', '{{%facet_ranges}}', 'facet_id', '{{%facets}}', 'id', 'CASCADE', 'CASCADE');
+
+        // Facet terms
+        $this->createTable('{{%facet_terms}}', [
+            'id' => $this->primaryKey(),
+            'facet_id' => $this->integer()->notNull(),
+            'term' => $this->string()->notNull(),
+            'display' => $this->string()->notNull(),
+            'sort' => $this->integer()->defaultValue(null)
         ], $tableOptions);
 
         $this->addForeignKey('FK_facet_ranges_facet_id', '{{%facet_ranges}}', 'facet_id', '{{%facets}}', 'id', 'CASCADE', 'CASCADE');

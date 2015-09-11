@@ -58,11 +58,12 @@ class FacetController extends BackendController
     /**
      * Creates a new Facet model.
      * If creation is successful, the browser will be redirected to the 'index' page.
+     * @param string $type
      * @return mixed
      */
-    public function actionCreate()
+    public function actionCreate($type = '')
     {
-        $model = new Facet();
+        $model = Facet::getInstance($type);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             Yii::$app->session->setFlash('success', Module::t('facet', 'Facet has been successfully created.'));

@@ -3,12 +3,9 @@
 namespace im\filesystem\components;
 
 use im\base\interfaces\ModelBehaviorInterface;
-use im\filesystem\models\DbFile;
 use yii\base\Behavior;
-use yii\base\UnknownMethodException;
-use yii\db\ActiveQuery;
+use yii\base\Model;
 use yii\db\ActiveRecord;
-use yii\validators\Validator;
 use yii\web\UploadedFile;
 use Yii;
 
@@ -54,7 +51,7 @@ class FilesBehavior extends Behavior implements ModelBehaviorInterface
             ActiveRecord::EVENT_BEFORE_VALIDATE => 'beforeValidate',
             ActiveRecord::EVENT_AFTER_INSERT => 'afterSave',
             ActiveRecord::EVENT_AFTER_UPDATE => 'afterSave',
-//            ActiveRecord::EVENT_BEFORE_DELETE => 'beforeDelete',
+            ActiveRecord::EVENT_BEFORE_DELETE => 'beforeDelete',
         ];
     }
 
@@ -71,18 +68,6 @@ class FilesBehavior extends Behavior implements ModelBehaviorInterface
     }
 
     /**
-     * Handles before save event of owner.
-     * Deletes old related files, creates file instances for uploaded files and sets them to owner's attributes before saving.
-     */
-    public function beforeSave()
-    {
-//        if ($this->hasUploadedFiles()) {
-//            $this->deleteRelatedFiles();
-//            $this->getFileInstances();
-//        }
-    }
-
-    /**
      * Handles after update event of owner.
      * Saves uploaded files to filesystem.
      */
@@ -93,21 +78,11 @@ class FilesBehavior extends Behavior implements ModelBehaviorInterface
     }
 
     /**
-     * Handles after update event of owner.
-     * Saves uploaded files to filesystem.
+     * Handles before delete event of owner.
      */
-    public function afterUpdate()
+    public function beforeDelete()
     {
-
-    }
-
-    /**
-     * Handles after insert event of owner.
-     * Updates related files for in case where file name contains owner primary key.
-     */
-    public function afterInsert()
-    {
-
+        $this->deleteRelatedFiles();
     }
 
     /**
@@ -159,6 +134,32 @@ class FilesBehavior extends Behavior implements ModelBehaviorInterface
     }
 
     /**
+     * @inheritdoc
+     */
+    public function load($data)
+    {
+        $this->normalizeAttributes();
+        foreach ($this->attributes as $attribute => $storageConfig) {
+            $relation = $this->owner->getRelation($storageConfig->relation);
+            if (isset($data[$attribute])) {
+                if ($data[$attribute]) {
+                    $models = $this->getFileItemsToUpdate($data[$attribute], $relation->modelClass);
+                    Model::loadMultiple($models, $data[$attribute], '');
+                    $this->_relatedFiles[$attribute]['models'] = isset($this->_relatedFiles[$attribute]['models'])
+                        ? array_merge($this->_relatedFiles[$attribute]['models'], $models) : $models;
+                    $extraColumns = array_merge($storageConfig->extraColumns, $this->getExtraColumns($models, $data[$attribute]));
+                    $this->_relatedFiles[$attribute]['extraColumns'] = isset($this->_relatedFiles[$attribute]['extraColumns'])
+                        ? array_merge($this->_relatedFiles[$attribute]['extraColumns'], $extraColumns) : $extraColumns;
+                } else {
+                    $this->_relatedFiles[$attribute]['models'] = null;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Creates uploaded file instances.
      */
     protected function getUploadedFileInstances()
@@ -180,7 +181,20 @@ class FilesBehavior extends Behavior implements ModelBehaviorInterface
      */
     protected function deleteRelatedFiles()
     {
-
+        $this->normalizeAttributes();
+        foreach ($this->attributes as $attribute => $storageConfig) {
+            $delete = $storageConfig->deleteOnUnlink || $this->owner->getRelationSetting($storageConfig->relation, 'deleteOnUnlink');
+            $filesystemComponent = $this->getFilesystemComponent();
+            /** @var FileInterface[] $files */
+            $files = $this->owner->getRelation($storageConfig->relation)->all();
+            foreach ($files as $file) {
+                $filesystemComponent->deleteFile($file);
+            }
+            $this->owner->unlinkAll($storageConfig->relation, $delete);
+            if (isset($storageConfig->events['afterDeleteAll']) && $storageConfig->events['afterDeleteAll'] instanceof \Closure) {
+                call_user_func($storageConfig->events['afterDeleteAll'], $storageConfig, $filesystemComponent);
+            }
+        }
     }
 
     /**
@@ -190,19 +204,14 @@ class FilesBehavior extends Behavior implements ModelBehaviorInterface
     {
         if ($this->_uploadedFiles) {
             foreach ($this->attributes as $attribute => $storageConfig) {
-                if ($this->_uploadedFiles[$attribute]) {
-                    $relation = $this->owner->getRelation($storageConfig->relation);
-                    /** @var FileInterface $modelClass */
-                    $modelClass = $relation->modelClass;
+                if (isset($this->_uploadedFiles[$attribute])) {
                     if ($this->_uploadedFiles[$attribute] instanceof UploadedFile) {
-                        $model = $modelClass::getInstanceFromUploadedFile($this->_uploadedFiles[$attribute]);
-                        if ($model = $this->saveUploadedFile($this->_uploadedFiles[$attribute], $model, $storageConfig)) {
+                        if ($model = $this->saveUploadedFile($this->_uploadedFiles[$attribute], $storageConfig)) {
                             $this->_relatedFiles[$attribute]['models'][] = $model;
                         }
                     } elseif (is_array($this->_uploadedFiles[$attribute])) {
-                        foreach ($this->_uploadedFiles[$attribute] as $index => $file) {
-                            $model = $modelClass::getInstanceFromUploadedFile($file);
-                            if ($model = $this->saveUploadedFile($file, $model, $storageConfig, $index + 1)) {
+                        foreach ($this->_uploadedFiles[$attribute] as $file) {
+                            if ($model = $this->saveUploadedFile($file, $storageConfig)) {
                                 $this->_relatedFiles[$attribute]['models'][] = $model;
                             }
                         }
@@ -217,8 +226,24 @@ class FilesBehavior extends Behavior implements ModelBehaviorInterface
     {
         if ($this->_relatedFiles) {
             foreach ($this->attributes as $attribute => $storageConfig) {
-                if (isset($this->_relatedFiles[$attribute])) {
-                    $this->owner->{$storageConfig->relation} = $this->_relatedFiles[$attribute]['models'];
+                if (array_key_exists($attribute, $this->_relatedFiles)) {
+
+                    $extraColumns = $storageConfig->extraColumns || $this->owner->getRelationSetting($storageConfig->relation, 'extraColumns');
+                    $extraColumns = $extraColumns ?: [];
+                    $relation = $this->owner->getRelation($storageConfig->relation);
+                    if ($extraColumns && $relation->via === null) {
+                        foreach ($this->_relatedFiles[$attribute]['models'] as $model) {
+                            foreach ($extraColumns as $attr => $value) {
+                                $model->$attr = $value;
+                            }
+                        }
+                    }
+                    foreach ($this->_relatedFiles[$attribute]['models'] as $model) {
+                        $this->owner->link($storageConfig->relation, $model, $extraColumns);
+                    }
+
+                    //$this->owner->{$storageConfig->relation} = $this->_relatedFiles[$attribute]['models'];
+
                     unset($this->_relatedFiles[$attribute]);
                 }
             }
@@ -228,16 +253,21 @@ class FilesBehavior extends Behavior implements ModelBehaviorInterface
 
     /**
      * @param UploadedFile $uploadedFile
-     * @param FileInterface $file
      * @param StorageConfig $config
-     * @param int $fileIndex
      * @return FileInterface|null
      */
-    protected function saveUploadedFile(UploadedFile $uploadedFile, FileInterface $file, StorageConfig $config, $fileIndex = 1)
+    protected function saveUploadedFile(UploadedFile $uploadedFile, StorageConfig $config)
     {
+        $relation = $this->owner->getRelation($config->relation);
+        /** @var FileInterface $fileClass */
+        $fileClass = $relation->modelClass;
+        $file = $fileClass::getInstanceFromUploadedFile($uploadedFile);
         $filesystemComponent = $this->getFilesystemComponent();
-        $path = $config->resolveFilePath($uploadedFile->name, $this->owner, $fileIndex);
-        if ($path = $filesystemComponent->saveFile($file, $config->filesystem, $path, true)) {
+        $path = $config->resolveFilePath($uploadedFile->name, $this->owner);
+        if (isset($config->events['beforeSave']) && $config->events['beforeSave'] instanceof \Closure) {
+            call_user_func($config->events['beforeSave'], $file, $path, $config->filesystem);
+        }
+        if ($path = $filesystemComponent->saveFile($file, $config->filesystem, $path, false, true)) {
             $file->setPath($path);
             $file->setFilesystemName($config->filesystem);
             return $file;
@@ -269,6 +299,9 @@ class FilesBehavior extends Behavior implements ModelBehaviorInterface
         }
     }
 
+    /**
+     * @param string $name
+     */
     protected function normalizeAttribute($name)
     {
         if (!$this->attributes[$name] instanceof $this->storageConfigClass) {
@@ -276,6 +309,9 @@ class FilesBehavior extends Behavior implements ModelBehaviorInterface
         }
     }
 
+    /**
+     * @return bool
+     */
     protected function hasUploadedFiles()
     {
         return !empty($_FILES);
@@ -291,41 +327,70 @@ class FilesBehavior extends Behavior implements ModelBehaviorInterface
     }
 
     /**
-     * @inheritdoc
+     * @param $data
+     * @param string $modelClass
+     * @return array
      */
-    public function load($data)
+    protected function getFileItemsToUpdate($data, $modelClass)
     {
-        $this->normalizeAttributes();
-        foreach ($this->attributes as $attribute => $storageConfig) {
-            if (isset($data[$attribute])) {
-                /** @var ActiveRecord $modelClass */
-                $modelClass = $storageConfig->fileClass;
-                $pks = array_keys($data[$attribute]);
-                $models = $modelClass::find()->where(['id' => $pks])->indexBy('id')->all();
-                foreach ($models as $i => $model) {
-                    if (!empty($data[$attribute][$i])) {
-                        $model->load($data[$attribute][$i], '');
-                        $this->_relatedFiles[$attribute]['models'][$i] = $model;
-                        $extraColumns = array_diff(array_keys($data[$attribute][$i]), $model->safeAttributes());
-                        if ($extraColumns) {
-                            $this->_relatedFiles[$attribute]['extraColumns'][$i] = array_intersect_key($data[$attribute][$i], array_flip($extraColumns));
-                        }
-                    }
+        /** @var ActiveRecord $modelClass */
+        $items = [];
+        $keys = [];
+        $existingItems = [];
+        $pks = $modelClass::primaryKey();
+        if (count($pks) === 1) {
+            $pk = $pks[0];
+            foreach ($data as $key => $item) {
+                $keys[$key] = $item[$pk];
+            }
+        } else {
+            foreach ($data as $key => $item) {
+                $kk = [];
+                foreach ($pks as $pk) {
+                    $kk[$pk] = $item[$pk];
                 }
-//                if ($modelClass::loadMultiple($models, $data[$attribute], '')) {
-//                    $this->owner->populateRelation($attribute, $models);
-//                    $this->_relatedFiles[$attribute]['models'] = $models;
-//                    $this->_relatedFiles[$attribute]['extraColumns'] = $models;
-//                    $extraColumns = array_diff(reset($data[$attribute]), )
-//                }
+                $keys[$key] = $kk;
+            }
+        }
+        if ($keys) {
+            $existingItems = $modelClass::find()->where(['in', $pks, $keys])->all();
+        }
+        foreach ($data as $key => $itemData) {
+            $exists = false;
+            foreach ($existingItems as $existingItem) {
+                if ($existingItem->getPrimaryKey() == $keys[$key]) {
+                    $items[$key] = $existingItem;
+                    $exists = true;
+                    break;
+                }
+            }
+            if (!$exists) {
+                $items[$key] = new $modelClass($itemData);
             }
         }
 
-        return true;
+        return $items;
     }
 
-    protected function getFileItemsToUpdate()
+    /**
+     * Returns extra columns for models from data array.
+     *
+     * @param Model[] $models
+     * @param array $data
+     * @return array
+     */
+    protected function getExtraColumns($models, $data)
     {
+        $extraColumns = [];
+        foreach ($models as $key => $model) {
+            if (!empty($data[$key])) {
+                $extra = array_diff(array_keys($data[$key]), $model->safeAttributes());
+                if ($extra) {
+                    $extraColumns[$key] = array_intersect_key($data[$key], array_flip($extra));
+                }
+            }
+        }
 
+        return $extraColumns;
     }
 }

@@ -48,7 +48,7 @@ class Meta extends ActiveRecord implements MetaInterface, TypeableEntityInterfac
     /**
      * @inheritdoc
      */
-    public function getEntityType()
+    public static function getEntityType()
     {
         return static::ENTITY_TYPE;
     }

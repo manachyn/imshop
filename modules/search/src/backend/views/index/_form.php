@@ -16,13 +16,13 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'server')->dropDownList(
-        $model::getServersList(),
+    <?= $form->field($model, 'type')->dropDownList(
+        $model::getTypesList(),
         ['prompt' => '']
     ) ?>
 
-    <?= $form->field($model, 'entity_type')->dropDownList(
-        $model::getEntityTypesList(),
+    <?= $form->field($model, 'service')->dropDownList(
+        $model::getServicesList(),
         ['prompt' => '']
     ) ?>
 

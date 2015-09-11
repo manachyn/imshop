@@ -10,31 +10,20 @@ use yii\db\ActiveRecord;
  *
  * @property integer $id
  * @property integer $facet_id
- * @property string $from
- * @property string $to
- * @property integer $from_include
- * @property integer $to_include
+ * @property string $term
  * @property string $display
  * @property integer $sort
  *
  * @property Facet $facet
  */
-class FacetRange extends ActiveRecord
+class FacetTerm extends ActiveRecord
 {
-    /**
-     * @inheritdoc
-     */
-    public function init()
-    {
-        $this->from_include = true;
-    }
-
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return '{{%facet_ranges}}';
+        return '{{%facet_terms}}';
     }
 
     /**
@@ -43,9 +32,9 @@ class FacetRange extends ActiveRecord
     public function rules()
     {
         return [
-            [['facet_id'], 'required'],
-            [['facet_id', 'from_include', 'to_include', 'sort'], 'integer'],
-            [['from', 'to', 'display'], 'string', 'max' => 255]
+            [['facet_id', 'term'], 'required'],
+            [['facet_id', 'sort'], 'integer'],
+            [['term', 'display'], 'string', 'max' => 255]
         ];
     }
 
@@ -57,10 +46,7 @@ class FacetRange extends ActiveRecord
         return [
             'id' => Yii::t('app', 'ID'),
             'facet_id' => Yii::t('app', 'Facet ID'),
-            'from' => Yii::t('app', 'From'),
-            'to' => Yii::t('app', 'To'),
-            'from_include' => Yii::t('app', 'Include from value'),
-            'to_include' => Yii::t('app', 'Include to value'),
+            'term' => Yii::t('app', 'Term'),
             'display' => Yii::t('app', 'Display'),
             'sort' => Yii::t('app', 'Sort')
         ];

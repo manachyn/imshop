@@ -3,16 +3,18 @@
 namespace im\catalog\models;
 
 use im\base\behaviors\RelationsBehavior;
-use im\base\interfaces\ModelBehaviorInterface;
 use im\base\traits\ModelBehaviorTrait;
 use im\catalog\components\ProductEavTrait;
 use im\catalog\components\ProductInterface;
 use im\catalog\components\ProductTypeInterface;
 use im\catalog\components\VariableProductTrait;
 use im\catalog\Module;
+use im\filesystem\components\FileInterface;
 use im\filesystem\components\FilesBehavior;
-use im\filesystem\models\DbFile;
-use im\filesystem\models\EntityFile;
+use im\filesystem\components\FilesystemComponent;
+use im\filesystem\components\StorageConfig;
+use Intervention\Image\Constraint;
+use Intervention\Image\ImageManagerStatic;
 use Yii;
 use yii\behaviors\SluggableBehavior;
 use yii\behaviors\TimestampBehavior;
@@ -75,23 +77,33 @@ class Product extends ActiveRecord implements ProductInterface
                 'attributes' => [
                     'uploadedImages' => [
                         'filesystem' => 'local',
-                        'path' => '/products',
-                        'fileName' => '{model.slug}-{file.index}.{file.extension}',
+                        'path' => '/products/{model.id}',
+                        'fileName' => '{model.slug}.{file.extension}',
                         'multiple' => true,
-                        'relation' => 'images'
+                        'relation' => 'images',
+                        'on beforeSave' => function (FileInterface $file) {
+                            $image = ImageManagerStatic::make($file->getPath());
+                            $image->resize(1000, null, function (Constraint $constraint) {
+                                $constraint->aspectRatio();
+                                $constraint->upsize();
+                            });
+                            $image->save($file->getPath(), 100);
+                        },
+                        'on afterDeleteAll' => function(StorageConfig $config, FilesystemComponent $filesystemComponent) {
+                            $path = $config->resolvePath($this);
+                            $filesystemComponent->deleteDirectory($path, $config->filesystem);
+                        }
                     ]
-                ],
-//                'relations' => [
-//                    'images' => function () {
-//                        return $this->hasMany(ProductFile::className(), ['product_id' => 'id']);
-//                    }
-//                ]
+                ]
             ],
             'relations' => [
                 'class' => RelationsBehavior::className(),
-                'settings' => ['relatedEAttributes' => ['deleteOnUnlink' => true], 'images' => ['deleteOnUnlink' => true]],
+                'settings' => [
+                    'relatedEAttributes' => ['deleteOnUnlink' => true],
+                    'images' => ['deleteOnUnlink' => true, 'extraColumns' => ['attribute' => 'images']]
+                ],
                 'relations' => [
-                    'imagesRelation' => $this->hasMany(ProductFile::className(), ['product_id' => 'id'])
+                    'imagesRelation' => $this->hasMany(ProductFile::className(), ['product_id' => 'id'])->where(['attribute' => 'images'])
                 ]
             ],
         ];

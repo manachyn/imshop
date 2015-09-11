@@ -4,12 +4,14 @@
 
     var add = '[data-action="add"]',
         remove = '[data-action="remove"]',
-        temp = '[data-cont="temp"]',
+        temp = '[data-cont="list-temp"]',
         list = '[data-cont="list"]';
 
-    function RelationWidget(element, options) {
+    function ListView(element, options) {
         this.options = options;
-        delete this.options.form.attributes;
+        if (this.options.viewParams.form !== undefined) {
+            delete this.options.viewParams.form.attributes;
+        }
         this.$element = $(element);
         this.$temp = this.$element.find(temp);
         this.$list = this.$element.find(list);
@@ -20,11 +22,12 @@
             this.sortable.element.on('sortupdate', $.proxy(this.onSortUpdate, this));
         }
         this.$element.on('pjax:success', temp, $.proxy(this.onResponse, this));
+        //this.adjustItemsHeight();
     }
 
-    RelationWidget.DEFAULTS = {};
+    ListView.DEFAULTS = {};
 
-    RelationWidget.prototype.onAdd = function (event) {
+    ListView.prototype.onAdd = function (event) {
         event.preventDefault();
         var settings = {
             type: 'POST',
@@ -32,52 +35,63 @@
             push: false,
             container: temp,
             data: {
-                modelClass: this.options.modelClass,
-                view: this.options.itemView,
-                viewParams: {
-                    modelView: this.options.modelView,
-                    form: this.options.form,
-                    index: this.getItemsCount() + 1,
-                    sortable: this.options.sortable
-                }
+                itemClass: this.options.itemClass,
+                itemView: this.options.itemView,
+                viewParams: this.options.viewParams,
+                itemContainerView: this.options.itemContainerView
             }
         };
+        settings.data.viewParams.fieldConfig = settings.data.viewParams.fieldConfig || {};
+        settings.data.viewParams.fieldConfig.tabularIndex = this.getItemsCount() + 1;
         $.pjax(settings);
     };
 
-    RelationWidget.prototype.onRemove = function (event) {
+    ListView.prototype.onRemove = function (event) {
         event.preventDefault();
         $(event.target).closest(this.options.items).slideUp().remove();
     };
 
-    RelationWidget.prototype.onSortUpdate = function (event, ui) {
+    ListView.prototype.onSortUpdate = function (event, ui) {
         this.updateSort();
     };
 
-    RelationWidget.prototype.updateSort = function () {
+    ListView.prototype.updateSort = function () {
         $(this.options.items, this.$element).each(function(index) {
             $(this).find('input[data-field="sort"]').val(index + 1);
         });
     };
 
-    RelationWidget.prototype.getItemsCount = function () {
+    ListView.prototype.getItemsCount = function () {
         return this.$element.find(this.options.items).length;
     };
 
-    RelationWidget.prototype.onResponse = function () {
+    ListView.prototype.onResponse = function () {
         this.$list.append(this.$temp.html());
         this.$temp.html('');
         this.updateSort();
     };
 
+    //ListView.prototype.adjustItemsHeight = function () {
+    //    var $items = $(this.options.items, this.$element),
+    //        max = 0,
+    //        height;
+    //    $items.each(function() {
+    //        height = $(this).height();
+    //        if (height > max) {
+    //            max = height;
+    //        }
+    //    });
+    //    $items.height(max);
+    //};
+
     function Plugin(option) {
         var args = arguments;
         return this.each(function () {
             var $this = $(this);
-            var data = $this.data('relationWidget');
-            var options = $.extend({}, RelationWidget.DEFAULTS, $this.data(), typeof option === 'object' && option);
+            var data = $this.data('listView');
+            var options = $.extend({}, ListView.DEFAULTS, $this.data(), typeof option === 'object' && option);
             if (!data) {
-                $this.data('relationWidget', (data = new RelationWidget(this, options)));
+                $this.data('listView', (data = new ListView(this, options)));
             }
             if (typeof option === 'string' && typeof data[option] === 'function') {
                 data[option].apply(data, Array.prototype.slice.call(args, 1));
@@ -85,7 +99,7 @@
         });
     }
 
-    $.fn.relationWidget = Plugin;
-    $.fn.relationWidget.Constructor = RelationWidget;
+    $.fn.listView = Plugin;
+    $.fn.listView.Constructor = ListView;
 
 })(jQuery);

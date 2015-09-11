@@ -5,7 +5,6 @@ namespace im\search\models;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use im\search\models\Index;
 
 /**
  * IndexSearch represents the model behind the search form about `im\search\models\Index`.
@@ -19,7 +18,7 @@ class IndexSearch extends Index
     {
         return [
             [['id', 'status'], 'integer'],
-            [['name', 'entity_type', 'server'], 'safe'],
+            [['name', 'type', 'service'], 'safe'],
         ];
     }
 
@@ -61,8 +60,8 @@ class IndexSearch extends Index
         ]);
 
         $query->andFilterWhere(['like', 'name', $this->name])
-            ->andFilterWhere(['like', 'entity_type', $this->entity_type])
-            ->andFilterWhere(['like', 'server', $this->server]);
+            ->andFilterWhere(['like', 'entity_type', $this->type])
+            ->andFilterWhere(['like', 'service', $this->service]);
 
         return $dataProvider;
     }

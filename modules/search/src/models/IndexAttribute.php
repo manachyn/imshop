@@ -82,4 +82,67 @@ class IndexAttribute extends ActiveRecord
 
         return $query->all();
     }
+
+    /**
+     * Saves indexable attributes from data array.
+     *
+     * @param array $data
+     * @return bool whether the attributes were saved
+     */
+    public static function saveFromData($data)
+    {
+        list($indexableCondition, $deleteCondition) = self::getConditions($data);
+        $indexableAttributes = IndexAttribute::find()->where($indexableCondition)->all();
+        foreach ($data as $item) {
+            if ($item['indexable']) {
+                $indexable = false;
+                foreach ($indexableAttributes as $indexableItem) {
+                    if ($item['index_type'] === $indexableItem['index_type'] && $item['name'] === $indexableItem['name']) {
+                        $indexableItem->load($item);
+                        $indexable = true;
+                        break;
+                    }
+                }
+                if (!$indexable) {
+                    $indexableAttributes[] = new IndexAttribute($item);
+                }
+            }
+        }
+        $saved = true;
+        foreach ($indexableAttributes as $item) {
+            if (!$item->save()) {
+                $saved = false;
+            }
+        }
+        if ($saved) {
+            IndexAttribute::deleteAll($deleteCondition);
+        }
+
+        return $saved;
+    }
+
+    /**
+     * Returns conditions from data array for searching and deleting indexable attributes.
+     *
+     * @param array $data
+     * @return array
+     */
+    private static function getConditions($data)
+    {
+        $indexableCondition = ['or'];
+        $deleteCondition = ['or'];
+        foreach ($data as $item) {
+            $condition = [
+                'index_type' => $item['index_type'],
+                'name' => $item['name'] ?: ''
+            ];
+            if ($item['indexable']) {
+                $indexableCondition[] = $condition;
+            } else {
+                $deleteCondition[] = $condition;
+            }
+        }
+
+        return [$indexableCondition, $deleteCondition];
+    }
 }

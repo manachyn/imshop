@@ -35,6 +35,14 @@ interface FileInterface
     public function getPath();
 
     /**
+     * Gets the file url.
+     *
+     * @param array $params file manipulation params
+     * @return string the file url.
+     */
+    public function getUrl($params = []);
+
+    /**
      * Sets the file name.
      *
      * @param string $filename

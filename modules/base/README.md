@@ -13,6 +13,7 @@
 'im\\filesystem\\' => array($baseDir . '/modules/filesystem/src'),
 'im\\search\\' => array($baseDir . '/modules/search/src'),
 'im\\elasticsearch\\' => array($baseDir . '/modules/elasticsearch/src'),
+'im\\image\\' => array($baseDir . '/modules/image/src'),
 
 
 'im\\elfinder\\' => array($baseDir . '/modules/elfinder/src'),

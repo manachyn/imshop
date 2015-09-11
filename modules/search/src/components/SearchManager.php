@@ -5,6 +5,7 @@ namespace im\search\components;
 use im\search\components\index\IndexManager;
 use im\search\components\searchable\AttributeDescriptor;
 use im\search\components\searchable\SearchableInterface;
+use im\search\components\service\SearchServiceInterface;
 use im\search\models\EntityAttribute;
 use im\search\models\IndexAttribute;
 use Yii;
@@ -26,6 +27,9 @@ class SearchManager extends Component
         ]
     ];
 
+    /**
+     * @var SearchServiceInterface[]
+     */
     public $searchServices = [
         'elastic' => [
             'class' => 'im\elasticsearch\components\SearchService',
@@ -36,6 +40,8 @@ class SearchManager extends Component
     public $_indexManager = 'im\search\components\index\IndexManager';
 
     /**
+     * Returns registered searchable types.
+     *
      * @return SearchableInterface[]
      */
     public function getSearchableTypes()
@@ -55,6 +61,24 @@ class SearchManager extends Component
     public function setSearchableTypes($searchableTypes)
     {
         $this->_searchableTypes = $searchableTypes;
+    }
+
+    /**
+     * Returns searchable type.
+     *
+     * @param string $type
+     * @return SearchableInterface
+     */
+    public function getSearchableType($type)
+    {
+        if (!isset($this->_searchableTypes[$type])) {
+            throw new InvalidParamException("Searchable type '$type' is not registered");
+        }
+        if (!$this->_searchableTypes[$type] instanceof SearchableInterface) {
+            $this->_searchableTypes[$type] = Yii::createObject($this->_searchableTypes[$type]);
+        }
+
+        return $this->_searchableTypes[$type];
     }
 
     public function getSearchableTypeNames()
@@ -86,21 +110,81 @@ class SearchManager extends Component
         return $attributes;
     }
 
+    /**
+     * @param string $type
+     * @return IndexAttribute[]
+     */
+    public function getIndexAttributes($type = null)
+    {
+        $searchableAttributes = $this->getSearchableAttributes($type);
+        $indexAttributes = IndexAttribute::findByIndexType($type);
+        $attributes = [];
+        foreach ($searchableAttributes as $searchableAttribute) {
+            /** @var IndexAttribute $indexAttribute */
+            $indexAttribute = null;
+            foreach ($indexAttributes as $attribute) {
+                if ($attribute->index_type === $searchableAttribute->entity_type && $attribute->name === $searchableAttribute->name) {
+                    $indexAttribute = $attribute;
+                    break;
+                }
+            }
+            if ($indexAttribute) {
+                $indexAttribute->indexable = true;
+                $indexAttribute->label = $searchableAttribute->label;
+            } else {
+                $indexAttribute = new IndexAttribute([
+                    'index_type' => $searchableAttribute->entity_type,
+                    'name' => $searchableAttribute->name,
+                    'label' => $searchableAttribute->label
+                ]);
+            }
+            $attributes[] = $indexAttribute;
+        }
 
-//    /**
-//     * Returns searchable type.
-//     *
-//     * @param string $type
-//     * @return SearchableInterface
-//     */
-//    public function getSearchableType($type)
-//    {
-//        if (!isset($this->searchableTypes[$type])) {
-//            throw new InvalidParamException("Searchable type '$type' is not registered");
-//        }
-//
-//        return $this->searchableTypes[$type] = $this->normalizeSearchableType($this->searchableTypes[$type]);
-//    }
+        return $attributes;
+    }
+
+    /**
+     * Returns index manager.
+     *
+     * @return IndexManager
+     */
+    public function getIndexManager()
+    {
+        return $this->_indexManager = Instance::ensure($this->_indexManager, IndexManager::className());
+    }
+
+    /**
+     * Sets index manager instance or config.
+     *
+     * @param string|array|IndexManager $indexManager
+     */
+    public function setIndexManager($indexManager)
+    {
+        $this->_indexManager = $indexManager;
+    }
+
+    /**
+     * Returns search service by id.
+     *
+     * @param string $id
+     * @return SearchServiceInterface
+     * @throws \yii\base\InvalidConfigException
+     */
+    public function getSearchService($id)
+    {
+        if (!isset($this->searchServices[$id])) {
+            throw new InvalidParamException("The search service '$id' is not registered");
+        }
+        if (!$this->searchServices[$id] instanceof SearchServiceInterface) {
+            $this->searchServices[$id] = Yii::createObject($this->searchServices[$id]);
+        }
+
+        return $this->searchServices[$id];
+    }
+
+
+
 //
 //    /**
 //     * @param string $entityType

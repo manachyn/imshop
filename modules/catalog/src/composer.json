@@ -17,6 +17,7 @@
       "im/variation": "*",
       "im/seo": "*",
       "im/filesystem": "*",
+      "im/image": "*",
       "creocoder/yii2-nested-sets": "*",
       "kartik-v/yii2-widget-select2": "*"
     }

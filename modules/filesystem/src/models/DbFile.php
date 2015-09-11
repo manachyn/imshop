@@ -3,14 +3,16 @@
 namespace im\filesystem\models;
 
 use im\filesystem\components\FileInterface;
+use im\filesystem\components\FilesystemComponent;
 use im\filesystem\exception\UploadException;
 use im\filesystem\Module;
+use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\web\UploadedFile;
 
 /**
- * Class File
+ * File model class.
  *
  * @property integer $id
  * @property string $filesystem
@@ -20,11 +22,14 @@ use yii\web\UploadedFile;
  * @property string $mime_type
  * @property integer $created_at
  * @property integer $updated_at
- *
- * @package im\filesystem\exception
  */
 class DbFile extends ActiveRecord implements FileInterface
 {
+    /**
+     * @var FilesystemComponent
+     */
+    protected $filesystemComponent;
+
     /**
      * @inheritdoc
      */
@@ -50,7 +55,7 @@ class DbFile extends ActiveRecord implements FileInterface
     {
         return [
             [['path'], 'required'],
-            [['title', 'filesystem', 'size', 'mime_type'], 'safe'],
+            [['id', 'title', 'filesystem', 'size', 'mime_type', 'filename', 'basename'], 'safe'],
         ];
     }
 
@@ -65,14 +70,14 @@ class DbFile extends ActiveRecord implements FileInterface
             'path' => Module::t('file', 'Path'),
             'size' => Module::t('file', 'Size'),
             'mime_type' => Module::t('file', 'Mime type'),
-            'created_at' => Module::t('user', 'Created at'),
-            'updated_at' => Module::t('user', 'Updated at')
+            'created_at' => Module::t('file', 'Created at'),
+            'updated_at' => Module::t('file', 'Updated at')
         ];
     }
 
     public function __toString()
     {
-        return $this->path;
+        return $this->getUrl();
     }
 
     /**
@@ -110,9 +115,25 @@ class DbFile extends ActiveRecord implements FileInterface
     /**
      * @inheritdoc
      */
+    public function getUrl($params = [])
+    {
+        if ($this->getFilesystemName()) {
+            return $this->getFilesystemComponent()->getUrl($this, $this->getFilesystemName(), $params);
+        } else {
+            return '';
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function setFilename($filename)
     {
-        // TODO: Implement setFilename() method.
+        $pathParts = pathinfo($this->getPath());
+        if ($pathParts['filename'] !== $filename) {
+            $pathParts['filename'] = $filename;
+            $this->setPath($pathParts['dirname'] . DIRECTORY_SEPARATOR . $pathParts['filename'] . '.' . $pathParts['extension']);
+        }
     }
 
     /**
@@ -136,7 +157,11 @@ class DbFile extends ActiveRecord implements FileInterface
      */
     public function setBasename($basename)
     {
-        // TODO: Implement setBasename() method.
+        $pathParts = pathinfo($this->getPath());
+        if ($pathParts['basename'] !== $basename) {
+            $pathParts['basename'] = $basename;
+            $this->setPath($pathParts['dirname'] . DIRECTORY_SEPARATOR . $pathParts['basename']);
+        }
     }
 
     /**
@@ -219,5 +244,25 @@ class DbFile extends ActiveRecord implements FileInterface
             'mime_type' => $uploadedFile->type,
             'size' => $uploadedFile->size
         ]);
+    }
+
+    public function beforeSave($insert)
+    {
+        if ($this->isAttributeChanged('path') && $oldPath = $this->getOldAttribute('path')) {
+            $this->getFilesystemComponent()->get($this->getFilesystemName())->rename($oldPath, $this->getPath());
+        }
+        return parent::beforeSave($insert);
+    }
+
+    /**
+     * @return FilesystemComponent
+     */
+    protected function getFilesystemComponent()
+    {
+        if ($this->filesystemComponent) {
+            return $this->filesystemComponent;
+        } else {
+            return $this->filesystemComponent = Yii::$app->get('filesystem');
+        }
     }
 }

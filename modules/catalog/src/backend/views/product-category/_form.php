@@ -19,12 +19,7 @@ use yii\widgets\ActiveForm;
 
 ?>
 
-<?php $form = ActiveForm::begin(['id' => 'category-form', 'enableClientValidation' => false, 'options' => ['enctype' => 'multipart/form-data']]); ?>
-
-<?php foreach($model->images as $index => $item): ?>
-    <?= $form->field($item, "[$item->id]title")->textInput(['name' => "images[$item->id][title]"]); ?>
-    <?= $form->field($item, "[$item->id]sort")->hiddenInput(['name' => "images[$item->id][sort]", 'value' => $index + 1])->label(false); ?>
-<?php endforeach; ?>
+<?php $form = ActiveForm::begin(['id' => 'category-form', 'options' => ['enctype' => 'multipart/form-data']]); ?>
 
 <?= new FieldSet('category', [
     new TabSet('tabs', [
@@ -54,8 +49,7 @@ use yii\widgets\ActiveForm;
 //                    'maxFileSize' => 2000000
 //                ],
 //            ])),
-            $form->field($model, 'uploadedImage', ['enableClientValidation' => false])->fileInput(['accept' => 'image/*']),
-            $form->field($model, 'uploadedImages[]', ['enableClientValidation' => false])->fileInput(['multiple' => true, 'accept' => 'image/*'])
+            $form->field($model, 'uploadedImage')->fileInput(['accept' => 'image/*']),
 //            $form->field($model, 'image')->widget(
 //                '\trntv\filekit\widget\Upload',
 //                [

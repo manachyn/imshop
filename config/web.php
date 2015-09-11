@@ -76,14 +76,15 @@ $config = [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'cache' => false,
-//            'rules' => [
+            'rules' => [
+                ['pattern' => 'storage/<path:(.*)>', 'route' => 'glide/index', 'encodeParams' => false]
 //                [
 //                    'class' => 'im\base\routing\ModelUrlRule',
 //                    'pattern' => '<url:.+>',
 //                    'route' => 'site/index',
 //                    'modelClass' => 'im\cms\models\Page'
 //                ]
-//            ]
+            ]
         ],
 
 
@@ -176,6 +177,17 @@ $config = [
         'templateManager' => [
             'class' => 'im\cms\components\TemplateManager'
         ],
+        'glide' => [
+            'class' => 'trntv\glide\components\Glide',
+            'sourcePath' => '@app/web/files',
+            'cachePath' => '@app/runtime/cache/glide',
+            'urlManager' => 'urlManager',
+            'maxImageSize' => 4000000,
+            'signKey' => 'kmsTmQPdwm'
+        ],
+    ],
+    'controllerMap' => [
+        'glide' => '\trntv\glide\controllers\GlideController'
     ],
     'params' => $params,
 ];
