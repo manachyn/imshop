@@ -107,15 +107,6 @@ $config = [
         ],
         'seo' => [
             'class' => 'im\seo\components\Seo',
-            'seoModels' => [
-                'im\catalog\models\Category',
-                'im\catalog\models\Product'
-            ],
-//            'metaTypes' => [
-//                'page_meta' => 'app\modules\seo\models\PageMeta',
-//                'category_meta' => 'app\modules\catalog\models\ProductMeta',
-//                'product_meta' => 'app\modules\catalog\models\ProductMeta'
-//            ],
             'metaTypeSocialMetaTypes' => [
 //                'product_meta' => ['open_graph']
             ]

@@ -228,21 +228,21 @@ class FilesBehavior extends Behavior implements ModelBehaviorInterface
             foreach ($this->attributes as $attribute => $storageConfig) {
                 if (array_key_exists($attribute, $this->_relatedFiles)) {
 
-                    $extraColumns = $storageConfig->extraColumns || $this->owner->getRelationSetting($storageConfig->relation, 'extraColumns');
-                    $extraColumns = $extraColumns ?: [];
-                    $relation = $this->owner->getRelation($storageConfig->relation);
-                    if ($extraColumns && $relation->via === null) {
-                        foreach ($this->_relatedFiles[$attribute]['models'] as $model) {
-                            foreach ($extraColumns as $attr => $value) {
-                                $model->$attr = $value;
-                            }
-                        }
-                    }
-                    foreach ($this->_relatedFiles[$attribute]['models'] as $model) {
-                        $this->owner->link($storageConfig->relation, $model, $extraColumns);
-                    }
+//                    $extraColumns = $storageConfig->extraColumns || $this->owner->getRelationSetting($storageConfig->relation, 'extraColumns');
+//                    $extraColumns = $extraColumns ?: [];
+//                    $relation = $this->owner->getRelation($storageConfig->relation);
+//                    if ($extraColumns && $relation->via === null) {
+//                        foreach ($this->_relatedFiles[$attribute]['models'] as $model) {
+//                            foreach ($extraColumns as $attr => $value) {
+//                                $model->$attr = $value;
+//                            }
+//                        }
+//                    }
+//                    foreach ($this->_relatedFiles[$attribute]['models'] as $model) {
+//                        $this->owner->link($storageConfig->relation, $model, $extraColumns);
+//                    }
 
-                    //$this->owner->{$storageConfig->relation} = $this->_relatedFiles[$attribute]['models'];
+                    $this->owner->{$storageConfig->relation} = $this->_relatedFiles[$attribute]['models'];
 
                     unset($this->_relatedFiles[$attribute]);
                 }

@@ -3,11 +3,13 @@
 use dosamigos\fileinput\FileInput;
 use dosamigos\fileupload\FileUpload;
 use dosamigos\fileupload\FileUploadUI;
+use im\base\widgets\ListView;
 use im\catalog\Module;
 use im\forms\components\ContentBlock;
 use im\forms\components\FieldSet;
 use im\forms\components\Tab;
 use im\forms\components\TabSet;
+use yii\data\ActiveDataProvider;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -16,10 +18,12 @@ use yii\widgets\ActiveForm;
 /* @var $form yii\widgets\ActiveForm */
 
 \yii\jui\JuiAsset::register($this);
-
+$dataProvider = new ActiveDataProvider([
+    'query' => $model->imageRelation()
+]);
 ?>
 
-<?php $form = ActiveForm::begin(['id' => 'category-form', 'options' => ['enctype' => 'multipart/form-data']]); ?>
+<?php $form = ActiveForm::begin(['id' => 'category-form', 'fieldClass' => 'im\forms\widgets\ActiveField', 'options' => ['enctype' => 'multipart/form-data']]); ?>
 
 <?= new FieldSet('category', [
     new TabSet('tabs', [
@@ -50,6 +54,10 @@ use yii\widgets\ActiveForm;
 //                ],
 //            ])),
             $form->field($model, 'uploadedImage')->fileInput(['accept' => 'image/*']),
+            new ContentBlock('image', $this->render('_image', [
+                'model' => $model,
+                'form' => $form
+            ]))
 //            $form->field($model, 'image')->widget(
 //                '\trntv\filekit\widget\Upload',
 //                [

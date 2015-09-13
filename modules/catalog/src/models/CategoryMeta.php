@@ -18,12 +18,4 @@ class CategoryMeta extends Meta
     {
         return '{{%category_meta}}';
     }
-
-//    /**
-//     * @return \yii\db\ActiveQuery
-//     */
-//    public function getEntity()
-//    {
-//        return $this->hasOne(Category::className(), ['id' => 'entity_id']);
-//    }
 }

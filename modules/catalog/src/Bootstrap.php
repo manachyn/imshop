@@ -4,6 +4,7 @@ namespace im\catalog;
 
 use im\catalog\models\Category;
 use im\catalog\models\Product;
+use im\catalog\models\ProductCategory;
 use yii\base\Application;
 use yii\base\BootstrapInterface;
 use Yii;
@@ -77,10 +78,10 @@ class Bootstrap implements BootstrapInterface
      * Registers a class definitions in container.
      */
     public function registerDefinitions() {
-        Yii::$container->set(Category::className(), [
+        Yii::$container->set(ProductCategory::className(), [
             'as seo' => [
                 'class' => 'im\seo\components\SeoBehavior',
-                'metaClass' => 'im\catalog\models\CategoryMeta',
+                'metaClass' => 'im\catalog\models\ProductCategoryMeta',
                 'ownerType' => false
             ]
         ]);

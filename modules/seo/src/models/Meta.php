@@ -111,6 +111,7 @@ class Meta extends ActiveRecord implements MetaInterface, TypeableEntityInterfac
     public function getEnabledSocialMeta()
     {
         $socialMeta = [];
+        $seo = Yii::$app->get('seo');
         foreach (Yii::$app->get('seo')->getSocialMetaTypes($this->getEntityType()) as $socialMetaType) {
             $socialMeta[] = Yii::createObject(Yii::$app->get('seo')->getSocialMetaClass($socialMetaType));
         }

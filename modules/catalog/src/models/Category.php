@@ -76,7 +76,6 @@ class Category extends Tree
                         'fileName' => '{model.slug}.{file.extension}',
                         'relation' => 'image',
                         'deleteOnUnlink' => true,
-                        'extraColumns' => ['attribute' => 'image'],
                         'on beforeSave' => function (FileInterface $file) {
                             $image = ImageManagerStatic::make($file->getPath());
                             $image->resize(300, null, function (Constraint $constraint) {
@@ -86,6 +85,15 @@ class Category extends Tree
                             $image->save($file->getPath(), 100);
                         }
                     ]
+                ]
+            ],
+            'relations' => [
+                'class' => RelationsBehavior::className(),
+                'settings' => [
+                    'image' => ['deleteOnUnlink' => true]
+                ],
+                'relations' => [
+                    'imageRelation' => $this->hasOne(CategoryFile::className(), ['id' => 'image_id'])
                 ]
             ]
         ];
@@ -99,8 +107,6 @@ class Category extends Tree
         return [
             [['name'], 'required'],
             [['name', 'slug', 'description'], 'string', 'max' => 255],
-//            [['uploadedImage'], 'file', 'skipOnEmpty' => false],
-//            [['uploadedImages'], 'file', 'skipOnEmpty' => false, 'maxFiles' => 4],
             [['status'], 'safe']
         ];
     }
@@ -132,11 +138,11 @@ class Category extends Tree
         ];
     }
 
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getImage()
-    {
-        return $this->hasOne(CategoryFile::className(), ['category_id' => 'id'])->where(['attribute' => 'image']);
-    }
+//    /**
+//     * @return \yii\db\ActiveQuery
+//     */
+//    public function getImage()
+//    {
+//        return $this->hasOne(CategoryFile::className(), ['category_id' => 'id'])->where(['attribute' => 'image']);
+//    }
 }

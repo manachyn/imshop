@@ -26,7 +26,7 @@ class CategoryFile extends DbFile
     public function rules()
     {
         return array_merge(parent::rules(), [
-            [['product_id', 'sort'], 'integer'],
+            [['category_id', 'sort'], 'integer'],
             [['attribute'], 'string', 'max' => 100]
         ]);
     }
