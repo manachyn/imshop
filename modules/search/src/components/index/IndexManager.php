@@ -5,11 +5,12 @@ namespace im\search\components\index;
 use im\search\models\Index;
 use yii\base\Component;
 use yii\base\InvalidParamException;
+use yii\helpers\ArrayHelper;
 
 class IndexManager extends Component
 {
     /**
-     * @var array
+     * @var Index[]
      */
     public $indexes = [];
 
@@ -17,20 +18,36 @@ class IndexManager extends Component
      * Gets an index by its name.
      *
      * @param string $name
-     * @return IndexInterface
-     * @throws \InvalidArgumentException
+     * @return IndexInterface|null
      */
     public function getIndex($name)
     {
         if (!isset($this->indexes[$name])) {
-            $index = Index::findOne(['name' => $name]);
-            if ($index) {
-                $this->indexes[$name] = $index;
-            } else {
-                throw new InvalidParamException("The index '$name' does not exist");
-            }
+            $this->indexes[$name] = Index::findOne(['name' => $name]);
         }
 
         return $this->indexes[$name];
+    }
+
+    /**
+     * Gets an index by its type.
+     *
+     * @param string $type
+     * @return IndexInterface|null
+     */
+    public function getIndexByType($type)
+    {
+        foreach ($this->indexes as $index) {
+            if ($index->type === $type) {
+                return $index;
+            }
+        }
+        /** @var Index $index */
+        $index = Index::findOne(['type' => $type]);
+        if ($index) {
+            $this->indexes[$index->name] = $index;
+        }
+
+        return $index;
     }
 }

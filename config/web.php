@@ -12,8 +12,9 @@ $config = [
         'im\eav\Bootstrap',
         'im\seo\Bootstrap',
         'im\filesystem\Bootstrap',
-        'im\catalog\Bootstrap',
+        'im\imshop\Bootstrap',
         'im\cms\Bootstrap',
+        'im\catalog\Bootstrap',
     ],
     'modules' => [
         'base' => [
@@ -32,7 +33,7 @@ $config = [
             'class' => 'im\filesystem\Module'
         ],
         'search' => [
-            'class' => 'im\search\backend\Module'
+            'class' => 'im\search\Module'
         ],
         'eav' => [
             'class' => 'im\eav\Module'
@@ -77,7 +78,24 @@ $config = [
             'showScriptName' => false,
             'cache' => false,
             'rules' => [
-                ['pattern' => 'storage/<path:(.*)>', 'route' => 'glide/index', 'encodeParams' => false]
+                ['pattern' => 'storage/<path:(.*)>', 'route' => 'glide/index', 'encodeParams' => false],
+                [
+                    'class' => 'im\base\routing\GroupUrlRule',
+                    'pattern' => '<path:.+>',
+                    'resolvers' => [
+                        [
+                            'class' => 'im\base\routing\ModelRouteResolver',
+                            'route' => 'cms/page/view',
+                            'modelClass' => 'im\cms\models\Page'
+                        ],
+                        [
+                            'class' => 'im\base\routing\ModelRouteResolver',
+                            'route' => 'catalog/product-category/view',
+                            'modelClass' => 'im\catalog\models\ProductCategory'
+                        ],
+                    ]
+                ]
+
 //                [
 //                    'class' => 'im\base\routing\ModelUrlRule',
 //                    'pattern' => '<url:.+>',
@@ -111,6 +129,9 @@ $config = [
 //                'product_meta' => ['open_graph']
             ]
         ],
+        'view' => [
+            'theme' => ['class' => 'im\imshop\Theme']
+        ],
         'backendTheme' => 'im\adminlte\Theme',
         'authClientCollection' => [
             'class' => 'yii\authclient\Collection',
@@ -134,36 +155,7 @@ $config = [
         ],
         'search' => 'im\search\components\SearchManager',
         'layoutManager' => [
-            'class' => 'im\cms\components\layout\LayoutManager',
-            'layouts' => [
-                [
-                    'class' => 'im\cms\components\layout\Layout',
-                    'id' => 'main',
-                    'name' => 'Main layout',
-                    'default' => true,
-                    'availableWidgetAreas' => [
-                        ['class' => 'im\cms\components\layout\WidgetAreaDescriptor', 'code' => 'sidebar', 'title' => 'Sidebar'],
-                        ['class' => 'im\cms\components\layout\WidgetAreaDescriptor', 'code' => 'footer', 'title' => 'Footer']
-                    ]
-                ],
-                [
-                    'class' => 'im\cms\components\layout\Layout',
-                    'id' => 'home',
-                    'name' => 'Home',
-                    'availableWidgetAreas' => [
-                        ['class' => 'im\cms\components\layout\WidgetAreaDescriptor', 'code' => 'footer', 'title' => 'Footer']
-                    ]
-                ],
-                [
-                    'class' => 'im\cms\components\layout\Layout',
-                    'id' => 'adaptive',
-                    'name' => 'Adaptive layout',
-                    'availableWidgetAreas' => [
-                        ['class' => 'im\cms\components\layout\WidgetAreaDescriptor', 'code' => 'sidebar', 'title' => 'Sidebar'],
-                        ['class' => 'im\cms\components\layout\WidgetAreaDescriptor', 'code' => 'footer', 'title' => 'Footer']
-                    ]
-                ]
-            ]
+            'class' => 'im\cms\components\LayoutManager'
         ],
         'templateManager' => [
             'class' => 'im\cms\components\TemplateManager'

@@ -7,7 +7,6 @@ use im\search\components\searchable\AttributeDescriptor;
 use Yii;
 use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
-use yii\helpers\Inflector;
 
 /**
  * Facet model class.
@@ -15,7 +14,6 @@ use yii\helpers\Inflector;
  * @property integer $id
  * @property string $name
  * @property string $entity_type
- * @property integer $attribute_id
  * @property string $attribute_name
  * @property string $type
  */
@@ -51,13 +49,7 @@ class Facet extends ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'entity_type', 'type'], 'required'],
-//            ['attribute_id', 'required', 'when' => function($model) {
-//                return empty($model->attribute_name);
-//            }],
-//            ['attribute_name', 'required', 'when' => function($model) {
-//                return empty($model->attribute_id);
-//            }],
+            [['name', 'entity_type', 'attribute_name', 'type'], 'required'],
             [['name'], 'string', 'max' => 255],
             [['entity_type', 'type'], 'string', 'max' => 100],
             [['searchableAttribute'], 'safe']
@@ -73,7 +65,6 @@ class Facet extends ActiveRecord
             'id' => Module::t('facet', 'ID'),
             'name' => Module::t('facet', 'Name'),
             'entity_type' => Module::t('facet', 'Entity type'),
-            'attribute_id' => Module::t('facet', 'Attribute ID'),
             'attribute_name' => Module::t('facet', 'Attribute name'),
             'searchableAttribute' => Module::t('facet', 'Attribute'),
             'type' => Module::t('facet', 'Type'),
@@ -94,27 +85,6 @@ class Facet extends ActiveRecord
             self::TYPE_RANGE => Module::t('facet', 'Range'),
             self::TYPE_INTERVAL => Module::t('facet', 'Interval')
         ];
-    }
-
-    /**
-     * Returns facet attribute id or name.
-     *
-     * @return int|string
-     */
-    public function getSearchableAttribute()
-    {
-        return $this->attribute_id ? $this->attribute_id : $this->attribute_name;
-    }
-
-    public function setSearchableAttribute($searchableAttribute)
-    {
-        if (is_numeric($searchableAttribute)) {
-            $this->attribute_id = (int) $searchableAttribute;
-            $this->attribute_name = '';
-        } else {
-            $this->attribute_name = $searchableAttribute;
-            $this->attribute_id = null;
-        }
     }
 
     /**

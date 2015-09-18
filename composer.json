@@ -31,7 +31,8 @@
         "2amigos/yii2-file-input-widget": "~1.0",
         "yiisoft/yii2-elasticsearch": "^2.0",
         "yiisoft/yii2-imagine": "^2.0",
-        "trntv/yii2-glide": "^1.0"
+        "trntv/yii2-glide": "^1.0",
+        "vova07/yii2-imperavi-widget": "^1.2"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",

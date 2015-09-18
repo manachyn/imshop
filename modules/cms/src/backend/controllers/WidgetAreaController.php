@@ -2,14 +2,15 @@
 
 namespace im\cms\backend\controllers;
 
-use im\cms\components\layout\LayoutManager;
-use im\controllers\BackendController;
+use im\base\controllers\BackendController;
+use im\cms\components\LayoutManager;
 use im\forms\components\DynamicActiveForm;
 use yii\base\InvalidParamException;
 use Yii;
 
 /**
- * Class WidgetAreaController implements base operations for widget area
+ * Class WidgetAreaController implements base operations for widget area.
+ *
  * @package im\cms\backend\controllers
  */
 class WidgetAreaController extends BackendController
@@ -38,5 +39,7 @@ class WidgetAreaController extends BackendController
                 }
             }
         }
+
+        return '';
     }
 }

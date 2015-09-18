@@ -96,18 +96,18 @@ $gridConfig = [
 $boxButtons = $actions = [];
 $showActions = false;
 
-if (Yii::$app->user->can('BackendCreatePages')) {
+//if (Yii::$app->user->can('BackendCreatePages')) {
     $boxButtons[] = '{create}';
-}
-if (Yii::$app->user->can('BackendUpdatePages')) {
+//}
+//if (Yii::$app->user->can('BackendUpdatePages')) {
     $actions[] = '{update}';
     $showActions = $showActions || true;
-}
-if (Yii::$app->user->can('BackendDeletePages')) {
+//}
+//if (Yii::$app->user->can('BackendDeletePages')) {
     $boxButtons[] = '{batch-delete}';
     $actions[] = '{delete}';
     $showActions = $showActions || true;
-}
+//}
 
 if ($showActions === true) {
     $gridConfig['columns'][] = [

@@ -1,11 +1,11 @@
 <?php
 
-use im\cms\models\WidgetArea;
+use im\cms\models\widgets\WidgetArea;
 use im\cms\Module;
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model im\cms\models\WidgetArea */
+/* @var $model im\cms\models\widgets\WidgetArea */
 /* @var $widgetArea im\cms\backend\widgets\WidgetArea */
 /* @var $form yii\widgets\ActiveForm|im\forms\components\DynamicActiveForm */
 

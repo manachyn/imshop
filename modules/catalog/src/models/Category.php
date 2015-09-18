@@ -4,20 +4,17 @@ namespace im\catalog\models;
 
 use creocoder\nestedsets\NestedSetsBehavior;
 use im\base\behaviors\RelationsBehavior;
-use im\base\interfaces\ModelBehaviorInterface;
 use im\base\traits\ModelBehaviorTrait;
 use im\catalog\components\CategoryPageTrait;
 use im\catalog\Module;
 use im\filesystem\components\FileInterface;
 use im\filesystem\components\FilesBehavior;
-use im\filesystem\components\UploadBehavior;
-use im\filesystem\models\DbFile;
-use im\filesystem\models\EntityFile;
 use im\tree\models\Tree;
 use Intervention\Image\Constraint;
 use Intervention\Image\ImageManagerStatic;
 use yii\behaviors\SluggableBehavior;
 use yii\behaviors\TimestampBehavior;
+use yii\helpers\Url;
 
 /**
  * Category model class.
@@ -26,6 +23,12 @@ use yii\behaviors\TimestampBehavior;
  * @property string $name
  * @property string $slug
  * @property string $description
+ *
+ * @method CategoryQuery parents(integer $depth = null)
+ * @method CategoryQuery children(integer $depth = null)
+ * @method CategoryQuery leaves()
+ * @method CategoryQuery prev()
+ * @method CategoryQuery next()
  */
 class Category extends Tree
 {
@@ -78,7 +81,7 @@ class Category extends Tree
                         'deleteOnUnlink' => true,
                         'on beforeSave' => function (FileInterface $file) {
                             $image = ImageManagerStatic::make($file->getPath());
-                            $image->resize(300, null, function (Constraint $constraint) {
+                            $image->resize(400, null, function (Constraint $constraint) {
                                 $constraint->aspectRatio();
                                 $constraint->upsize();
                             });
@@ -128,6 +131,25 @@ class Category extends Tree
     }
 
     /**
+     * Returns url.
+     *
+     * @param boolean|string $scheme the URI scheme to use in the generated URL
+     * @return string
+     */
+    public function getUrl($scheme = false)
+    {
+        return Url::to(['category/view', 'path' => $this->slug], $scheme);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function find()
+    {
+        return new CategoryQuery(get_called_class());
+    }
+
+    /**
      * @return array Statuses list
      */
     public static function getStatusesList()
@@ -138,11 +160,13 @@ class Category extends Tree
         ];
     }
 
-//    /**
-//     * @return \yii\db\ActiveQuery
-//     */
-//    public function getImage()
-//    {
-//        return $this->hasOne(CategoryFile::className(), ['category_id' => 'id'])->where(['attribute' => 'image']);
-//    }
+    /**
+     * Finds category by path.
+     * @param string $path
+     * @return CategoryQuery
+     */
+    public static function findByPath($path)
+    {
+        return static::find()->andWhere(['slug' => $path]);
+    }
 }

@@ -2,14 +2,15 @@
 
 namespace im\cms\models;
 
-use im\cms\components\layout\Layout;
+use im\cms\components\Layout;
+use im\cms\models\widgets\WidgetArea;
 use im\cms\Module;
 use Yii;
 use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
 
 /**
- * This is the model class for table "{{%templates}}".
+ * Template model class.
  *
  * @property integer $id
  * @property string $name

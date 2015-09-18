@@ -329,6 +329,11 @@ class m150208_123637_create_catalog_tables extends Migration
         $this->addForeignKey('FK_product_files_product_id', '{{%product_files}}', 'product_id', '{{%products}}', 'id', 'CASCADE', 'CASCADE');
         $this->createIndex('attribute', '{{%product_files}}', 'attribute');
         $this->createIndex('sort', '{{%product_files}}', 'sort');
+
+
+        if ($this->db->schema->getTableSchema('{{%widgets}}', true)) {
+            $this->addColumn('{{%widgets}}', 'depth', Schema::TYPE_INTEGER);
+        }
     }
 
     public function safeDown()
@@ -350,6 +355,9 @@ class m150208_123637_create_catalog_tables extends Migration
         $this->dropTable('{{%product_variants}}');
         $this->dropTable('{{%product_variant_option_values}}');
         $this->dropTable('{{%product_files}}');
+        if ($this->db->schema->getTableSchema('{{%widgets}}', true)) {
+            $this->dropColumn('{{%widgets}}', 'depth');
+        }
         $this->execute('SET FOREIGN_KEY_CHECKS = 1');
     }
 }

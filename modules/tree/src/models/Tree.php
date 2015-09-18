@@ -3,6 +3,7 @@
 namespace im\tree\models;
 
 use creocoder\nestedsets\NestedSetsBehavior;
+use im\tree\components\TreeRecursiveIterator;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
@@ -73,5 +74,41 @@ abstract class Tree extends ActiveRecord
             return $model->children(1)->count() > 0;
         };
         return $fields;
+    }
+
+    /**
+     * @param Tree $node
+     * @param array $items
+     * @return TreeRecursiveIterator
+     */
+    public static function buildNodeTree($node, $items = [])
+    {
+        $items = $items ?: $node->children()->all();
+        $tree = self::buildTree($items, $node->{$node->leftAttribute}, $node->{$node->rightAttribute});
+
+        return $tree;
+    }
+
+    /**
+     * @param Tree[] $nodes
+     * @param int $left
+     * @param int $right
+     * @return array
+     */
+    public static function buildTree($nodes, $left = 0, $right = null) {
+        $tree = [];
+        foreach ($nodes as $key => $node) {
+            if ($node->{$node->leftAttribute} == $left + 1 && (is_null($right) || $node->{$node->rightAttribute} < $right)) {
+                $tree[$key] = $node;
+                if ($node->{$node->rightAttribute} - $node->{$node->leftAttribute} > 1) {
+                    $node->populateRelation('children', self::buildTree($nodes, $node->{$node->leftAttribute}, $node->{$node->rightAttribute}));
+                } else {
+                    $node->populateRelation('children', []);
+                }
+                $left = $node->{$node->rightAttribute};
+            }
+        }
+
+        return $tree;
     }
 } 

@@ -22,9 +22,9 @@ class m141023_154713_create_cms_tables extends Migration
                 'slug' => $this->string(100)->notNull(),
                 'content' => $this->text()->notNull(),
                 'status' => $this->boolean()->defaultValue(0),
+                'template_id' => $this->integer()->defaultValue(null),
                 'created_at' => $this->integer()->notNull(),
-                'updated_at' => $this->integer()->notNull(),
-                'layout_id' => $this->string(50)->notNull()
+                'updated_at' => $this->integer()->notNull()
             ],
             $tableOptions
         );

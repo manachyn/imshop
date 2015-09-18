@@ -2,7 +2,7 @@
 
 namespace im\cms\backend\widgets;
 
-use im\cms\models\Widget;
+use im\cms\models\widgets\Widget;
 use yii\base\InvalidConfigException;
 use yii\jui\Draggable;
 

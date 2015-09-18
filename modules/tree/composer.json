@@ -9,6 +9,14 @@
     ],
     "require": {
         "creocoder/yii2-nested-sets": "*",
-        "bower-asset/jstree": "*"
-    }
+        "bower-asset/jstree": "*",
+        "baum/baum": "^1.1",
+        "cartalyst/nested-sets": "3.0.*"
+    },
+    "repositories": [
+      {
+        "type": "composer",
+        "url": "https://packages.cartalyst.com"
+      }
+    ]
 }

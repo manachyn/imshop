@@ -40,18 +40,20 @@ class IndexController extends Controller
         /** @var \im\search\components\SearchManager $searchManager */
         $searchManager = Yii::$app->get('search');
         $index = $searchManager->getIndexManager()->getIndex($index);
-        $indexer = $index->getSearchService()->getIndexer();
-        $options = [
-            'offset' => $this->offset,
-            'sleep' => $this->sleep,
-            'batchSize' => $this->batchSize
-        ];
-        $progress = $options['batchSize'] ? $this->getProgress('Reindex: ') : null;
-        $result = $indexer->reindex($index, $type, $options, $progress);
+        if ($index) {
+            $indexer = $index->getSearchService()->getIndexer();
+            $options = [
+                'offset' => $this->offset,
+                'sleep' => $this->sleep,
+                'batchSize' => $this->batchSize
+            ];
+            $progress = $options['batchSize'] ? $this->getProgress('Reindex: ') : null;
+            $result = $indexer->reindex($index, $type, $options, $progress);
 
-        $this->stdout("Total: {$result->total}\n");
-        $this->stdout("Indexed: {$result->success}\n");
-        $this->stdout("Error: {$result->error}\n");
+            $this->stdout("Total: {$result->total}\n");
+            $this->stdout("Indexed: {$result->success}\n");
+            $this->stdout("Error: {$result->error}\n");
+        }
 
         return Controller::EXIT_CODE_NORMAL;
     }

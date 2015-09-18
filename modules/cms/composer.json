@@ -12,6 +12,7 @@
         "yiisoft/yii2": ">=2.0.4",
         "yiisoft/yii2-jui": "*",
         "im/base": "*",
-        "im/forms": "*"
+        "im/forms": "*",
+        "vova07/yii2-imperavi-widget": "*"
     }
 }

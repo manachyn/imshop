@@ -3,7 +3,6 @@
 namespace im\cms\models;
 
 use im\base\interfaces\ModelBehaviorInterface;
-use im\cms\components\layout\LayoutBehavior;
 use im\cms\Module;
 use Yii;
 use yii\behaviors\SluggableBehavior;
@@ -61,14 +60,12 @@ class Page extends ActiveRecord
     public function behaviors()
     {
         return [
-            TimestampBehavior::className(),
-            'sluggableBehavior' => [
+            'timestamp' => TimestampBehavior::className(),
+            'sluggable' => [
                 'class' => SluggableBehavior::className(),
                 'attribute' => 'title',
                 'ensureUnique' => true
-            ],
-            LayoutBehavior::className(),
-            //RelationsBehavior::className()
+            ]
         ];
     }
 
@@ -150,7 +147,10 @@ class Page extends ActiveRecord
      */
     public function beforeSave($insert)
     {
-        $this->type = self::TYPE;
+        if (!$this->type) {
+            $this->type = static::TYPE;
+        }
+
         return parent::beforeSave($insert);
     }
 

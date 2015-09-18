@@ -55,6 +55,9 @@ class SeoBehavior extends Behavior implements ModelBehaviorInterface
         $validators->append($validator);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function events()
     {
         return [

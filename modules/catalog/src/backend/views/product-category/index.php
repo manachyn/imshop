@@ -11,8 +11,6 @@ use yii\widgets\ActiveFormAsset;
 use yii\widgets\PjaxAsset;
 
 /* @var $this yii\web\View */
-/* @var $searchModel im\catalog\models\CategorySearch */
-/* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = Module::t('category', 'Categories');
 $this->params['subtitle'] = Module::t('category', 'Categories list');

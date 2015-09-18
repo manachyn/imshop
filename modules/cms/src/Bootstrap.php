@@ -14,22 +14,22 @@ class Bootstrap implements BootstrapInterface
      */
     public function bootstrap($app)
     {
-        $layoutManager = Yii::$app->get('layoutManager');
-        $layoutManager->registerWidgetClass('im\cms\models\ContentWidget');
-        $layoutManager->registerWidgetClass('im\cms\models\BannerWidget');
-        $layoutManager->registerOwnerClass('im\cms\models\Page', 'page');
+        //$layoutManager->registerOwner('im\cms\models\Page', 'page');
         //$layoutManager->registerConfigurableComponent($this);
-        $this->registerTranslations();
+        $this->registerTranslations($app);
         $this->addRules($app);
         $this->registerDefinitions();
+        $this->registerWidgets($app);
     }
 
     /**
      * Register module translations.
+     *
+     * @param Application $app
      */
-    public function registerTranslations()
+    public function registerTranslations($app)
     {
-        Yii::$app->i18n->translations[Module::$messagesCategory . '/*'] = [
+        $app->i18n->translations[Module::$messagesCategory . '/*'] = [
             'class' => 'yii\i18n\PhpMessageSource',
             'sourceLanguage' => 'en-US',
             'basePath' => '@im/cms/messages',
@@ -68,10 +68,25 @@ class Bootstrap implements BootstrapInterface
     public function registerDefinitions() {
         Yii::$container->set(Page::className(), [
             'as seo' => [
-                'class' => 'app\modules\seo\components\SeoBehavior',
+                'class' => 'im\seo\components\SeoBehavior',
                 'metaClass' => 'im\cms\models\PageMeta',
                 'ownerType' => false
+            ],
+            'as template' => [
+                'class' => 'im\cms\components\TemplateBehavior'
             ]
         ]);
+    }
+
+    /**
+     * Registers widgets.
+     *
+     * @param Application $app
+     */
+    public function registerWidgets($app)
+    {
+        $layoutManager = $app->get('layoutManager');
+        $layoutManager->registerWidget('im\cms\models\widgets\ContentWidget');
+        $layoutManager->registerWidget('im\cms\models\widgets\BannerWidget');
     }
 }

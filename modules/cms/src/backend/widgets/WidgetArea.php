@@ -10,7 +10,7 @@ use yii\helpers\Url;
 use yii\jui\Widget;
 use yii\web\JsExpression;
 use yii\widgets\ActiveForm;
-use im\cms\models\WidgetArea as WidgetAreaModel;
+use im\cms\models\widgets\WidgetArea as WidgetAreaModel;
 
 class WidgetArea extends Widget
 {

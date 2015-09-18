@@ -14,6 +14,7 @@ class Bootstrap implements BootstrapInterface
     {
         $vendorDir = Yii::getAlias('@app');
         Yii::setAlias('@im/adminlte', $vendorDir . '/themes/adminlte/src');
+        Yii::setAlias('@im/imshop', $vendorDir . '/themes/imshop/src');
         Yii::setAlias('@im/base', $vendorDir . '/modules/base/src');
         Yii::setAlias('@im/cms', $vendorDir . '/modules/cms/src');
         Yii::setAlias('@im/catalog', $vendorDir . '/modules/catalog/src');

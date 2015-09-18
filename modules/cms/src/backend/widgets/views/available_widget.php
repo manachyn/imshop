@@ -1,7 +1,7 @@
 <?php
 
 /* @var $this yii\web\View */
-/* @var $widget im\cms\models\Widget */
+/* @var $widget im\cms\models\widgets\Widget */
 ?>
 
 <div class="box box-primary">

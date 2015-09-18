@@ -4,8 +4,6 @@ namespace im\cms\backend\controllers;
 
 use im\base\controllers\BackendController;
 use im\cms\components\TemplateManager;
-use im\cms\models\Widget;
-use im\cms\models\WidgetArea;
 use im\cms\Module;
 use im\cms\models\Template;
 use im\cms\models\TemplateSearch;

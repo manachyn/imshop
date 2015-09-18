@@ -39,6 +39,8 @@ class SearchManager extends Component
 
     public $_indexManager = 'im\search\components\index\IndexManager';
 
+    public $_searchComponent = 'im\search\components\SearchComponent';
+
     /**
      * Returns registered searchable types.
      *
@@ -162,6 +164,26 @@ class SearchManager extends Component
     public function setIndexManager($indexManager)
     {
         $this->_indexManager = $indexManager;
+    }
+
+    /**
+     * Returns search component.
+     *
+     * @return SearchComponent
+     */
+    public function getSearchComponent()
+    {
+        return $this->_searchComponent = Instance::ensure($this->_searchComponent, SearchComponent::className());
+    }
+
+    /**
+     * Sets search component instance or config.
+     *
+     * @param string|array|SearchComponent $searchComponent
+     */
+    public function setSearchComponent($searchComponent)
+    {
+        $this->_searchComponent = $searchComponent;
     }
 
     /**

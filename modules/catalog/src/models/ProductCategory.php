@@ -9,6 +9,7 @@ use im\filesystem\components\FilesBehavior;
 use Intervention\Image\Constraint;
 use Intervention\Image\ImageManagerStatic;
 use yii\behaviors\SluggableBehavior;
+use yii\helpers\Url;
 
 /**
  * Product category model class.
@@ -37,8 +38,7 @@ class ProductCategory extends Category
             ],
             'tree' => [
                 'class' => NestedSetsBehavior::className(),
-                //'treeAttribute' => false
-                'treeAttribute' => 'tree'
+                'treeAttribute' => false
             ],
             'files' => [
                 'class' => FilesBehavior::className(),
@@ -70,6 +70,14 @@ class ProductCategory extends Category
                 ]
             ]
         ]);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getUrl($scheme = false)
+    {
+        return Url::to(['product-category/view', 'path' => $this->slug], $scheme);
     }
 
     /**

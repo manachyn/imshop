@@ -35,3 +35,17 @@ Add component to the file `config/web.php`, for example:
     ]
 ]
 ```
+
+Register layout from extension
+
+```php
+$layoutManager = $app->get('layoutManager');
+$layoutManager->registerLayout(new Layout());
+```
+
+Register widget from extension
+
+```php
+$layoutManager = $app->get('layoutManager');
+$layoutManager->registerWidgetClass('im\cms\models\ContentWidget');
+```

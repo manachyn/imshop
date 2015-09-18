@@ -1,9 +1,9 @@
 <?php
 
 /* @var $this yii\web\View */
-/* @var $widget im\cms\models\Widget */
+/* @var $widget im\cms\models\widgets\Widget */
 /* @var $form yii\widgets\ActiveForm|im\forms\components\DynamicActiveForm */
-/* @var $widgetArea im\cms\models\WidgetArea */
+/* @var $widgetArea im\cms\models\widgets\WidgetArea */
 /* @var $index integer */
 
 $fieldConfig = [];

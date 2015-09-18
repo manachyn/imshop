@@ -19,6 +19,9 @@ class Bootstrap implements BootstrapInterface
         $this->registerTranslations($app);
         $this->addRules($app);
         $this->registerDefinitions();
+        if ($app instanceof \yii\web\Application) {
+            $this->registerWidgets($app);
+        }
     }
 
     /**
@@ -77,7 +80,8 @@ class Bootstrap implements BootstrapInterface
     /**
      * Registers a class definitions in container.
      */
-    public function registerDefinitions() {
+    public function registerDefinitions()
+    {
         Yii::$container->set(ProductCategory::className(), [
             'as seo' => [
                 'class' => 'im\seo\components\SeoBehavior',
@@ -92,5 +96,16 @@ class Bootstrap implements BootstrapInterface
                 'ownerType' => false
             ]
         ]);
+    }
+
+    /**
+     * Registers widgets.
+     *
+     * @param Application $app
+     */
+    public function registerWidgets($app)
+    {
+        $layoutManager = $app->get('layoutManager');
+        $layoutManager->registerWidget('im\catalog\models\widgets\ProductCategoriesWidget');
     }
 }

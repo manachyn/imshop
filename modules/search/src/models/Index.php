@@ -46,6 +46,7 @@ class Index extends ActiveRecord implements IndexInterface
     {
         return [
             [['name', 'type', 'service'], 'required'],
+            [['name', 'type'], 'unique'],
             [['status'], 'integer'],
             [['status'], 'default', 'value' => self::DEFAULT_STATUS],
             [['name', 'service'], 'string', 'max' => 100],

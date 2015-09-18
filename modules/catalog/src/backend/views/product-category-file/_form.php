@@ -15,7 +15,7 @@ $fieldConfig = isset($fieldConfig) ? $fieldConfig : [];
 <?php if (!isset($form)) { $form = ActiveForm::begin(); } ?>
 
 <?php if ($url = $model->getUrl(['w' => 225, 'h' => 126, 'fit' => 'crop'])) : ?>
-    <img src="<?= $url ?>">
+    <img src="<?= $url ?>" class="img-responsive">
 <?php endif ?>
 
 <?= $form->field($model, 'filename', $fieldConfig)->textInput(['maxlength' => true]) ?>

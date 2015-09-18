@@ -2,8 +2,9 @@
 
 namespace im\cms\widgets;
 
-use im\cms\models\WidgetArea as WidgetAreaModel;
-use im\cms\models\Widget as WidgetModel;
+use im\cms\models\Template;
+use im\cms\models\widgets\WidgetArea as WidgetAreaModel;
+use im\cms\models\widgets\Widget as WidgetModel;
 use yii\base\Widget;
 use yii\caching\Cache;
 use yii\caching\TagDependency;
@@ -28,6 +29,16 @@ class WidgetArea extends Widget
     public $owner;
 
     /**
+     * @var Template
+     */
+    public $template;
+
+    /**
+     * @var mixed
+     */
+    public $context;
+
+    /**
      * @var boolean whether to enable page caching.
      */
     public $enableCache = true;
@@ -45,11 +56,14 @@ class WidgetArea extends Widget
 
     public function run()
     {
-        if ($this->_widgets)
-            foreach ($this->_widgets as $widget)
-                if ($output = $widget->run())
+        if ($this->_widgets) {
+            foreach ($this->_widgets as $widget) {
+                $widget->context = $this->context;
+                if ($output = $widget->run()) {
                     echo "\n" . $output;
-
+                }
+            }
+        }
     }
 
     protected function setWidgets()
@@ -70,65 +84,33 @@ class WidgetArea extends Widget
                 }
             }
             $this->_widgets = $widgets;
-        }
-        else
+        } else {
             $this->_widgets = $this->loadWidgets();
+        }
     }
 
     /**
-     * @return \im\cms\models\Widget[]|array
+     * @return \im\cms\models\widgets\Widget[]
      */
     protected function loadWidgets()
     {
         $widgets = [];
         $model = $this->loadModel();
-        if ($model !== null) {
-            if ($model->display == WidgetAreaModel::DISPLAY_INHERIT && $this->owner !== null
-                && $this->owner->hasMethod('getParent')) {
-                $model = $this->getInheritedModel($this->owner);
-            }
-        }
-        if ($model !== null) {
-            $widgets = $model->getWidgets();
+        if ($model) {
+            $widgets = $model->getWidgets()->all();
         }
 
         return $widgets;
     }
 
     /**
-     * @return \im\cms\models\WidgetArea|null
+     * @return \im\cms\models\widgets\WidgetArea
      */
     protected function loadModel()
     {
-        $condition = ['code' => $this->code, 'layout_id' => $this->layout];
-        if ($this->owner !== null) {
-            $pks = $this->owner->primaryKey();
-            $condition['owner_id'] = $this->owner->$pks[0];
-        }
-        return WidgetAreaModel::findOne($condition);
-    }
+        $condition = ['code' => $this->code, 'template_id' => $this->template->id];
 
-    /**
-     * @param ActiveRecord $owner
-     * @return \im\cms\models\WidgetArea
-     */
-    protected function getInheritedModel($owner)
-    {
-        $widgetArea = null;
-        $parent = $owner->getParent();
-        if ($parent !== null) {
-            $pks = $parent->primaryKey();
-            $condition = ['code' => $this->code, 'layout_id' => $this->layout, 'owner_id' => $parent->$pks[0], 'owner_type' => Yii::$app->layoutManager->getOwnerType($parent)];
-            /** @var WidgetAreaModel $widgetArea */
-            $widgetArea = Yii::$app->layoutManager->getWidgetAreas()->where($condition)->one();
-            if ($widgetArea !== null && $widgetArea->display == WidgetAreaModel::DISPLAY_INHERIT)
-                $widgetArea = $this->getInheritedModel($parent);
-        }
-        else {
-            $condition = ['code' => $this->code, 'layout_id' => $this->layout, 'owner_id' => 0];
-            $widgetArea = Yii::$app->layoutManager->getWidgetAreas()->where($condition)->one();
-        }
-        return $widgetArea;
+        return WidgetAreaModel::findOne($condition);
     }
 
     /**

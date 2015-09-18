@@ -2,10 +2,9 @@
 
 namespace im\cms\components;
 
-use im\cms\components\layout\LayoutManager;
 use im\cms\models\Template;
-use im\cms\models\Widget;
-use im\cms\models\WidgetArea;
+use im\cms\models\widgets\Widget;
+use im\cms\models\widgets\WidgetArea;
 use yii\base\Component;
 use yii\base\Model;
 
