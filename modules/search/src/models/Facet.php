@@ -2,8 +2,9 @@
 
 namespace im\search\models;
 
-use im\search\backend\Module;
+use im\search\components\query\FacetInterface;
 use im\search\components\searchable\AttributeDescriptor;
+use im\search\Module;
 use Yii;
 use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
@@ -17,7 +18,7 @@ use yii\helpers\ArrayHelper;
  * @property string $attribute_name
  * @property string $type
  */
-class Facet extends ActiveRecord
+abstract class Facet extends ActiveRecord implements FacetInterface
 {
     const TYPE_TERMS = 'terms';
     const TYPE_RANGE = 'range';
@@ -138,15 +139,45 @@ class Facet extends ActiveRecord
         if (!$type) {
             $type = self::TYPE_DEFAULT;
         }
+        $instance = null;
         switch ($type) {
             case self::TYPE_TERMS:
-                return new TermsFacet();
+                $instance = new TermsFacet();
+                break;
             case self::TYPE_RANGE:
-                return new RangeFacet();
+                $instance = new RangeFacet();
+                break;
             case self::TYPE_INTERVAL:
-                return new IntervalFacet();
-            default:
-                return new self;
+                $instance = new IntervalFacet();
+                break;
+//            default:
+//                return new self;
         }
+
+        return $instance;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getField()
+    {
+        return $this->attribute_name;
     }
 }

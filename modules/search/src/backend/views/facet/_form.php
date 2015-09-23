@@ -51,7 +51,7 @@ RelationWidgetAsset::register($this);
         <label><?= Module::t('facet', 'Ranges') ?></label>
         <?= Html::hiddenInput('FacetRange') ?>
         <?= RelationWidget::widget([
-            'relation' => $model->getRangesRelation()->orderBy('sort'),
+            'relation' => $model->getRanges(),
             'modelClass' => 'im\search\models\FacetRange',
             'modelView' => '@im/search/backend/views/facet-range/_form',
             'form' => $form,

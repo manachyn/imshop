@@ -2,6 +2,7 @@
 
 namespace im\search\models;
 
+use im\search\components\query\RangeInterface;
 use Yii;
 use yii\db\ActiveRecord;
 
@@ -19,8 +20,18 @@ use yii\db\ActiveRecord;
  *
  * @property Facet $facet
  */
-class FacetRange extends ActiveRecord
+class FacetRange extends ActiveRecord implements RangeInterface
 {
+    /**
+     * @var string
+     */
+    private $_key;
+
+    /**
+     * @var int
+     */
+    private $_resultsCount = 0;
+
     /**
      * @inheritdoc
      */
@@ -72,5 +83,53 @@ class FacetRange extends ActiveRecord
     public function getFacet()
     {
         return $this->hasOne(Facet::className(), ['id' => 'facet_id']);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getFrom()
+    {
+        return $this->from;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getTo()
+    {
+        return $this->to;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getKey()
+    {
+        return $this->_key ?: (($this->from ?: '*') . '-' . ($this->to ?: '*'));
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setKey($key)
+    {
+        $this->_key = $key;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getResultsCount()
+    {
+        return $this->_resultsCount;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setResultsCount($count)
+    {
+        $this->_resultsCount = $count;
     }
 }

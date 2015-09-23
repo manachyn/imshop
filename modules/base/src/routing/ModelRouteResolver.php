@@ -47,6 +47,30 @@ class ModelRouteResolver extends Object implements RouteResolverInterface
         // @TODO Add caching
         /* @var $modelClass ActiveRecordInterface */
         $modelClass = $this->modelClass;
+        $condition = $this->getCondition($params);
+        if ($condition === false) {
+            return false;
+        }
+
+        return $modelClass::find()->where($condition)->asArray()->count() ? $this->getRoute() : false;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getRoute()
+    {
+        return $this->route;
+    }
+
+    /**
+     * Maps params to condition.
+     *
+     * @param $params
+     * @return array|bool
+     */
+    protected function getCondition($params)
+    {
         $condition = [];
         foreach ($this->paramsToAttributesMap as $param => $attribute) {
             if (isset($params[$param])) {
@@ -56,14 +80,6 @@ class ModelRouteResolver extends Object implements RouteResolverInterface
             }
         }
 
-        return $modelClass::find()->where($condition)->count() ? $this->getRoute() : false;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getRoute()
-    {
-        return $this->route;
+        return $condition;
     }
 }

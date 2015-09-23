@@ -27,7 +27,7 @@ class SearchProvider extends Object implements SearchProviderInterface
     public function getSearchableAttributes()
     {
         $model = $this->getModel();
-        /** @var \im\base\components\EntityTypesRegister $typesRegister */
+        /** @var \im\base\types\EntityTypesRegister $typesRegister */
         $typesRegister = Yii::$app->get('typesRegister');
         $entityType = $typesRegister->getEntityType($model);
 

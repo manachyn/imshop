@@ -9,8 +9,6 @@ use im\seo\models\Meta;
  */
 class CategoryMeta extends Meta
 {
-    const ENTITY_TYPE = 'category_meta';
-
     /**
      * @inheritdoc
      */

@@ -2,6 +2,7 @@
 
 namespace im\catalog;
 
+use im\base\types\EntityType;
 use im\catalog\models\Category;
 use im\catalog\models\Product;
 use im\catalog\models\ProductCategory;
@@ -19,6 +20,7 @@ class Bootstrap implements BootstrapInterface
         $this->registerTranslations($app);
         $this->addRules($app);
         $this->registerDefinitions();
+        $this->registerEntityTypes();
         if ($app instanceof \yii\web\Application) {
             $this->registerWidgets($app);
         }
@@ -107,5 +109,18 @@ class Bootstrap implements BootstrapInterface
     {
         $layoutManager = $app->get('layoutManager');
         $layoutManager->registerWidget('im\catalog\models\widgets\ProductCategoriesWidget');
+    }
+
+    /**
+     * Registers entity types.
+     */
+    public function registerEntityTypes()
+    {
+        /** @var \im\base\types\EntityTypesRegister $typesRegister */
+        $typesRegister = Yii::$app->get('typesRegister');
+        $typesRegister->registerEntityType(new EntityType('product', 'im\catalog\models\Product'));
+        $typesRegister->registerEntityType(new EntityType('product_meta', 'im\catalog\models\ProductMeta'));
+        $typesRegister->registerEntityType(new EntityType('category_meta', 'im\catalog\models\CategoryMeta'));
+        $typesRegister->registerEntityType(new EntityType('product_category_meta', 'im\catalog\models\ProductCategoryMeta'));
     }
 }

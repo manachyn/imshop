@@ -151,7 +151,7 @@ class Variant extends ActiveRecord implements VariantInterface
      */
     public function setEntity(VariableInterface $entity = null)
     {
-        $this->entity_type = $entity ? $entity->getEntityType() : '';
+        $this->entity_type = $entity ? Yii::$app->get('typesRegister')->getEntityType($entity) : '';
         $this->relatedEntity = $entity;
         if ($entity !== null) {
             $entity->addVariant($this);

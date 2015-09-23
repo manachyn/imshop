@@ -2,6 +2,7 @@
 
 namespace im\search\models;
 
+use im\search\components\query\FacetValueInterface;
 use Yii;
 use yii\db\ActiveRecord;
 
@@ -16,8 +17,13 @@ use yii\db\ActiveRecord;
  *
  * @property Facet $facet
  */
-class FacetTerm extends ActiveRecord
+class FacetTerm extends ActiveRecord implements FacetValueInterface
 {
+    /**
+     * @var int
+     */
+    private $_resultsCount = 0;
+
     /**
      * @inheritdoc
      */
@@ -58,5 +64,37 @@ class FacetTerm extends ActiveRecord
     public function getFacet()
     {
         return $this->hasOne(Facet::className(), ['id' => 'facet_id']);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getKey()
+    {
+        return $this->term;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setKey($key)
+    {
+        $this->term = $key;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getResultsCount()
+    {
+        return $this->_resultsCount;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setResultsCount($count)
+    {
+        $this->_resultsCount = $count;
     }
 }

@@ -12,11 +12,6 @@ class AttributeDescriptor extends Object
     public $entity_type;
 
     /**
-     * @var integer
-     */
-    public $attribute_id;
-
-    /**
      * @var string
      */
     public $name;
@@ -30,4 +25,9 @@ class AttributeDescriptor extends Object
      * @var mixed
      */
     public $value;
+
+    /**
+     * @var string
+     */
+    public $type;
 }

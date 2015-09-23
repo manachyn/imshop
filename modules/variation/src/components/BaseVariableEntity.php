@@ -3,7 +3,6 @@
 namespace im\variation\components;
 
 use im\base\behaviors\RelationsBehavior;
-use im\base\interfaces\TypeableEntityInterface;
 use im\variation\models\Variant;
 use yii\db\ActiveRecord;
 
@@ -13,7 +12,7 @@ use yii\db\ActiveRecord;
  * @property integer $id
  * @property Variant[] $relatedVariants
  */
-abstract class BaseVariableEntity extends ActiveRecord implements TypeableEntityInterface, VariableInterface
+abstract class BaseVariableEntity extends ActiveRecord implements VariableInterface
 {
     /**
      * @inheritdoc

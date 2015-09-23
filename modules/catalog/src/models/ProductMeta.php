@@ -9,8 +9,6 @@ use im\seo\models\Meta;
  */
 class ProductMeta extends Meta
 {
-    const ENTITY_TYPE = 'product_meta';
-
     /**
      * @inheritdoc
      */
@@ -18,12 +16,4 @@ class ProductMeta extends Meta
     {
         return '{{%product_meta}}';
     }
-
-//    /**
-//     * @return \yii\db\ActiveQuery
-//     */
-//    public function getEntity()
-//    {
-//        return $this->hasOne(Product::className(), ['id' => 'entity_id']);
-//    }
 }

@@ -2,7 +2,6 @@
 
 namespace im\catalog\components;
 
-use im\base\interfaces\TypeableEntityInterface;
 use im\variation\components\VariableInterface;
 
 /**
@@ -10,7 +9,7 @@ use im\variation\components\VariableInterface;
  *
  * @package im\catalog\components
  */
-interface ProductInterface extends ProductTypeSubjectInterface, TypeableEntityInterface, VariableInterface
+interface ProductInterface extends ProductTypeSubjectInterface, VariableInterface
 {
     /**
      * Get id.

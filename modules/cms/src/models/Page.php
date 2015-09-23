@@ -8,6 +8,7 @@ use Yii;
 use yii\behaviors\SluggableBehavior;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "{{%pages}}".
@@ -38,11 +39,17 @@ class Page extends ActiveRecord
      */
     public static function instantiate($row)
     {
-        try {
-            $class = Yii::$app->get('cms')->getPageClass($row['type']);
-            return Yii::createObject($class);
-        } catch (\Exception $e) {
-            return Yii::createObject(static::className());
+        return Yii::$app->get('cms')->getPageInstance($row['type']);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function init()
+    {
+        parent::init();
+        if (!$this->type) {
+            $this->type = static::TYPE;
         }
     }
 
@@ -134,12 +141,23 @@ class Page extends ActiveRecord
     }
 
     /**
+     * Returns array of available facet types
+     * @return array
+     */
+    public static function getTypesList()
+    {
+        $types = Yii::$app->get('cms')->getPageTypes();
+        return ArrayHelper::map(Yii::$app->get('cms')->getPageTypes(), 'type', 'name');
+    }
+
+
+    /**
      * @inheritdoc
      * @return PageQuery
      */
     public static function find()
     {
-        return new PageQuery(get_called_class(), ['type' => self::TYPE]);
+        return new PageQuery(get_called_class(), ['type' => static::TYPE]);
     }
 
     /**

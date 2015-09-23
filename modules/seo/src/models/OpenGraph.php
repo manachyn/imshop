@@ -19,16 +19,6 @@ use yii\web\View;
  */
 class OpenGraph extends SocialMeta
 {
-    const ENTITY_TYPE = 'open_graph';
-
-    /**
-     * @inheritdoc
-     */
-    public static function getEntityType()
-    {
-        return static::ENTITY_TYPE;
-    }
-
     /**
      * @inheritdoc
      */

@@ -48,7 +48,9 @@ class Set implements SetInterface, SetItemInterface
     public function setItems($items)
     {
         foreach ($items as $item) {
-            $this->addItem($item);
+            if ($item) {
+                $this->addItem($item);
+            }
         }
     }
 

@@ -58,7 +58,42 @@ class QueryResult extends \im\search\components\query\QueryResult
             }
         }
         if (isset($response['aggregations'])) {
-            $this->facets = $response['aggregations'];
+            $this->parseFacets($response['aggregations']);
+        }
+    }
+
+    private function parseFacets($responseFacets)
+    {
+        foreach ($this->getQuery()->getFacets() as $facet) {
+            if (isset($responseFacets[$facet->getName()])) {
+                $facetValues = $facet->getValues();
+                if ($facetValues) {
+                    foreach ($facetValues as $value) {
+                        foreach ($responseFacets[$facet->getName()]['buckets'] as $bucket) {
+                            if ($bucket['key'] == $value->getKey()) {
+                                $value->setResultsCount($bucket['doc_count']);
+                            }
+                        }
+                    }
+                } else {
+                    foreach ($responseFacets[$facet->getName()]['buckets'] as $bucket) {
+                        $config = [
+                            'key' => $bucket['key'],
+                            'resultsCount' => $bucket['doc_count']
+                        ];
+                        if (isset($bucket['from'])) {
+                            $config['from'] = $bucket['from'];
+                        }
+                        if (isset($bucket['to'])) {
+                            $config['to'] = $bucket['to'];
+                        }
+                        $facetValues[] = $facet->getValueInstance($config);
+                    }
+                }
+                if ($facetValues) {
+                    $facet->setValues($facetValues);
+                }
+            }
         }
     }
 }

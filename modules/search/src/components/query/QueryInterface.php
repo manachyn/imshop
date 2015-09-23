@@ -18,12 +18,17 @@ interface QueryInterface extends \yii\db\QueryInterface
     /**
      * Adds an facet to this query.
      *
-     * @param string $name
-     * @param string $type
-     * @param array $options
+     * @param FacetInterface $facet
      * @return static the query object itself
      */
-    public function addFacet($name, $type, $options);
+    public function addFacet(FacetInterface $facet);
+
+    /**
+     * Returns query facets.
+     *
+     * @return FacetInterface[]
+     */
+    public function getFacets();
 
     /**
      * @return DocumentToObjectTransformerInterface

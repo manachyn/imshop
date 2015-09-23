@@ -17,7 +17,7 @@ return [
     'controllerNamespace' => 'app\commands',
     'modules' => [
         'gii' => 'yii\gii\Module',
-        'search' => 'im\search\backend\Module'
+        'search' => 'im\search\Module'
     ],
     'components' => [
         'cache' => [
@@ -32,12 +32,7 @@ return [
             ],
         ],
         'db' => $db,
-        'typesRegister' => [
-            'class' => 'im\base\components\EntityTypesRegister',
-            'entityTypes' => [
-                'product' => 'im\catalog\models\Product'
-            ]
-        ],
+        'typesRegister' => 'im\base\types\EntityTypesRegister',
         'search' => 'im\search\components\SearchManager',
         'elasticsearch' => [
             'class' => 'yii\elasticsearch\Connection',

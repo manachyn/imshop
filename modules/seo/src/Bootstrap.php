@@ -2,6 +2,8 @@
 
 namespace im\seo;
 
+use im\base\types\EntityType;
+use Yii;
 use yii\base\BootstrapInterface;
 
 class Bootstrap implements BootstrapInterface
@@ -28,5 +30,17 @@ class Bootstrap implements BootstrapInterface
                 Module::$messagesCategory . '/meta' => 'meta.php'
             ]
         ];
+    }
+
+    /**
+     * Registers entity types.
+     */
+    public function registerEntityTypes()
+    {
+        /** @var \im\base\types\EntityTypesRegister $typesRegister */
+        $typesRegister = Yii::$app->get('typesRegister');
+        $typesRegister->registerEntityType(new EntityType('seo_meta', 'im\seo\models\Meta'));
+        $typesRegister->registerEntityType(new EntityType('open_graph', 'im\seo\models\OpenGraph'));
+        $typesRegister->registerEntityType(new EntityType('twitter_card', 'im\seo\models\TwitterCard'));
     }
 }

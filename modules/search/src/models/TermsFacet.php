@@ -3,7 +3,8 @@
 namespace im\search\models;
 
 use im\base\behaviors\RelationsBehavior;
-use im\search\backend\Module;
+use im\eav\models\Attribute;
+use im\search\Module;
 
 /**
  * Terms facet model class.
@@ -53,6 +54,59 @@ class TermsFacet extends Facet
     public function getTermsRelation()
     {
         return $this->hasMany(FacetTerm::className(), ['facet_id' => 'id']);
+    }
+
+    /**
+     * @return FacetTerm[]
+     */
+    public function getTerms()
+    {
+        if (!$this->isRelationPopulated('terms')) {
+            $terms = $this->getTermsRelation()->orderBy('sort')->all();
+            if (!$terms && strncmp($this->attribute_name, 'eAttributes.', 12) === 0) {
+                $name = substr($this->attribute_name, 12);
+                $attribute = Attribute::findByNameAndEntityType($name, $this->entity_type);
+                if ($attribute->predefinedValues) {
+                    $values = $attribute->values;
+                    if ($values) {
+                        foreach ($values as $value) {
+                            $terms[] = new FacetTerm([
+                                'facet_id' => $this->id,
+                                'term' => $value->value,
+                                'display' => $value->presentation
+                            ]);
+                        }
+                    }
+                }
+            }
+            $this->populateRelation('terms', $terms);
+        }
+
+        return $this->getRelatedRecords()['terms'];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getValues()
+    {
+        return $this->getTerms();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setValues($values)
+    {
+        $this->populateRelation('terms', $values);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getValueInstance(array $config)
+    {
+        return new FacetTerm($config);
     }
 
     /**

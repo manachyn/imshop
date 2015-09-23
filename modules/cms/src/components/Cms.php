@@ -2,6 +2,7 @@
 
 namespace im\cms\components;
 
+use im\base\types\EntityType;
 use im\cms\models\Page;
 use yii\base\Component;
 use Yii;
@@ -39,45 +40,42 @@ class Cms extends Component
     public $pageCacheDependency;
 
     /**
-     * @var array page types
+     * Registers page type.
+     *
+     * @param EntityType $type
      */
-    public $pageTypes = [];
-
-
-    public function registerPageType($type, $class)
+    public function registerPageType($type)
     {
         $baseClass = Page::className();
-        if (!is_subclass_of($class, $baseClass))
-            throw new InvalidParamException("Class '$class' must extend '$baseClass'");
-        $this->pageTypes[$type] = $class;
+        if ($type->getClass() !== $baseClass && !is_subclass_of($type->getClass(), $baseClass)) {
+            throw new InvalidParamException("Class '{$type->getClass()}' must extend '$baseClass'");
+        }
+        $type->setGroup('page');
+        Yii::$app->get('typesRegister')->registerEntityType($type);
     }
 
     /**
-     * @param Page|string $page page object or class name
-     * @return string page type
-     * @throws InvalidParamException
+     * Returns registered page types.
+     *
+     * @return \im\base\types\EntityType[]
      */
-    public function getPageType($page)
+    public function getPageTypes()
     {
-        $pageClass = is_object($page) ? get_class($page) : $page;
-        $pageType = null;
-        foreach ($this->pageTypes as $type => $class) {
-            if ($class == $pageClass) {
-                $pageType = $type;
-                break;
-            }
-        }
-        if ($pageType === null)
-            throw new InvalidParamException("Class '$pageClass' is not registered as page type");
-
-        return $pageType;
+        return Yii::$app->get('typesRegister')->getEntityTypes('page');
     }
 
-    public function getPageClass($type)
+    /**
+     * Create page instance by type.
+     *
+     * @param string $type
+     * @return Page
+     */
+    public function getPageInstance($type = null)
     {
-        if (isset($this->pageTypes[$type]))
-            return $this->pageTypes[$type];
-        else
-            throw new InvalidParamException("Page type '$type' is not registered");
+        /** @var \im\base\types\EntityTypesRegister $typesRegister */
+        $typesRegister = Yii::$app->get('typesRegister');
+        $class = $type && $typesRegister->hasEntityType($type) ? $typesRegister->getEntityClass($type) : Page::className();
+
+        return Yii::createObject(['class' => $class, 'type' => $type]);
     }
 }

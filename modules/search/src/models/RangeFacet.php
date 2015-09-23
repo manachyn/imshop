@@ -3,14 +3,15 @@
 namespace im\search\models;
 
 use im\base\behaviors\RelationsBehavior;
-use im\search\backend\Module;
+use im\search\components\query\RangeFacetInterface;
+use im\search\Module;
 
 /**
  * Range facet model class.
  *
  * @property FacetRange[] $ranges
  */
-class RangeFacet extends Facet
+class RangeFacet extends Facet implements RangeFacetInterface
 {
     const TYPE = self::TYPE_RANGE;
 
@@ -53,6 +54,43 @@ class RangeFacet extends Facet
     public function getRangesRelation()
     {
         return $this->hasMany(FacetRange::className(), ['facet_id' => 'id']);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getRanges()
+    {
+        if (!$this->isRelationPopulated('ranges')) {
+            $this->populateRelation('ranges', $this->getRangesRelation()->orderBy('sort')->all());
+            return $this->getRelatedRecords()['ranges'];
+        }
+
+        return $this->getRelatedRecords()['ranges'];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getValues()
+    {
+        return $this->getRanges();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setValues($values)
+    {
+        $this->populateRelation('ranges', $values);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getValueInstance(array $config)
+    {
+        return new FacetRange($config);
     }
 
     /**

@@ -37,8 +37,6 @@ class Product extends ActiveRecord implements ProductInterface
 {
     use ProductEavTrait, VariableProductTrait, ModelBehaviorTrait;
 
-    const ENTITY_TYPE = 'product';
-
     const STATUS_ACTIVE = 1;
     const STATUS_INACTIVE = 0;
 
@@ -171,14 +169,6 @@ class Product extends ActiveRecord implements ProductInterface
     public function getBrandRelation()
     {
         return $this->hasOne(Brand::className(), ['id' => 'brand_id']);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public static function getEntityType()
-    {
-        return static::ENTITY_TYPE;
     }
 
     /**

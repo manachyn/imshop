@@ -6,7 +6,9 @@ use im\forms\components\Tab;
 use im\forms\components\TabSet;
 use yii\helpers\Html;
 use vova07\imperavi\Widget as Imperavi;
+use yii\helpers\Url;
 use yii\widgets\ActiveForm;
+use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
 /* @var $model im\cms\models\Page */
@@ -14,11 +16,14 @@ use yii\widgets\ActiveForm;
 
 ?>
 
+<?php Pjax::begin(['id' => 'page-form']) ?>
+
 <?php $form = ActiveForm::begin(['id' => 'batch-update-form', 'options' => ['data-pjax' => 1]]); ?>
 
 <?= new FieldSet('category', [
     new TabSet('tabs', [
         new Tab('main', Module::t('category', 'Main'), [
+            $model->isNewRecord ? $form->field($model, 'type')->dropDownList($model::getTypesList(), ['data-field' => 'type']) : null,
             $form->field($model, 'title')->textInput(['maxlength' => true]),
             $form->field($model, 'slug')->textInput(['maxlength' => true]),
             $form->field($model, 'content')->widget(
@@ -41,5 +46,20 @@ use yii\widgets\ActiveForm;
     ['class' => $model->isNewRecord ? 'btn btn-primary' : 'btn btn-success']) ?>
 
 <?php ActiveForm::end(); ?>
+
+<?php Pjax::end() ?>
+
+<?php
+if ($model->isNewRecord) {
+    $url = Url::to(['create']);
+    $script = <<<JS
+    var type = '[data-field="type"]';
+    $(document).on('change', type, function() {
+        $.pjax.reload({container: '#page-form', url: '{$url}', data: {type: $(this).val()}});
+    });
+JS;
+    $this->registerJs($script);
+}
+?>
 
 

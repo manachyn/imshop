@@ -22,6 +22,7 @@ use yii\helpers\Inflector;
  * @property string $rules_config_data
  *
  * @property FormField $formField
+ * @property Value[] $values
  */
 class Attribute extends ActiveRecord implements AttributeInterface
 {
@@ -165,6 +166,14 @@ class Attribute extends ActiveRecord implements AttributeInterface
     }
 
     /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getValues()
+    {
+        return $this->hasMany(Value::className(), ['attribute_id' => 'id']);
+    }
+
+    /**
      * Returns attributes by entity type.
      *
      * @param $entityType
@@ -179,6 +188,18 @@ class Attribute extends ActiveRecord implements AttributeInterface
         }
 
         return $query->all();
+    }
+
+    /**
+     * Returns attribute by name and entity type.
+     *
+     * @param string $name
+     * @param string $entityType
+     * @return null|self
+     */
+    public static function findByNameAndEntityType($name, $entityType)
+    {
+        return static::findOne(['entity_type' => $entityType, 'name' => $name]);
     }
 
     /**

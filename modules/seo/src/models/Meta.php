@@ -3,7 +3,6 @@
 namespace im\seo\models;
 
 use im\base\behaviors\RelationsBehavior;
-use im\base\interfaces\TypeableEntityInterface;
 use im\seo\components\MetaInterface;
 use im\seo\Module;
 use Yii;
@@ -23,10 +22,8 @@ use yii\web\View;
  *
  * @property SocialMeta[] $socialMeta
  */
-class Meta extends ActiveRecord implements MetaInterface, TypeableEntityInterface
+class Meta extends ActiveRecord implements MetaInterface
 {
-    const ENTITY_TYPE = 'seo_meta';
-
     /**
      * @inheritdoc
      */
@@ -43,14 +40,6 @@ class Meta extends ActiveRecord implements MetaInterface, TypeableEntityInterfac
         return [
             'relations' => RelationsBehavior::className()
         ];
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public static function getEntityType()
-    {
-        return static::ENTITY_TYPE;
     }
 
     /**
@@ -83,26 +72,12 @@ class Meta extends ActiveRecord implements MetaInterface, TypeableEntityInterfac
         ];
     }
 
-//    /**
-//     * @return \yii\db\ActiveQuery
-//     */
-//    public function getEntity()
-//    {
-//        if ($this->entity_type) {
-//            $class = Yii::$app->core->getEntityClass($this->entity_type);
-//            return $this->hasOne($class, ['id' => 'entity_id']);
-//        }
-//        else {
-//            return null;
-//        }
-//    }
-
     /**
      * @return \yii\db\ActiveQuery
      */
     public function getSocialMetaRelation()
     {
-        return $this->hasMany(SocialMeta::className(), ['meta_id' => 'id'])->where(['meta_type' => $this->getEntityType()]);
+        return $this->hasMany(SocialMeta::className(), ['meta_id' => 'id'])->where(['meta_type' => Yii::$app->get('typesRegister')->getEntityType($this)]);
     }
 
     /**
@@ -111,8 +86,7 @@ class Meta extends ActiveRecord implements MetaInterface, TypeableEntityInterfac
     public function getEnabledSocialMeta()
     {
         $socialMeta = [];
-        $seo = Yii::$app->get('seo');
-        foreach (Yii::$app->get('seo')->getSocialMetaTypes($this->getEntityType()) as $socialMetaType) {
+        foreach (Yii::$app->get('seo')->getSocialMetaTypes(Yii::$app->get('typesRegister')->getEntityType($this)) as $socialMetaType) {
             $socialMeta[] = Yii::createObject(Yii::$app->get('seo')->getSocialMetaClass($socialMetaType));
         }
 
@@ -177,7 +151,7 @@ class Meta extends ActiveRecord implements MetaInterface, TypeableEntityInterfac
             if (!$meta->load($data)) {
                 $loaded = false;
             }
-            $meta->meta_type = $this->getEntityType();
+            $meta->meta_type = Yii::$app->get('typesRegister')->getEntityType($this);
         }
         $this->socialMeta = $socialMeta;
 

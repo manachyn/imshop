@@ -32,7 +32,6 @@ use yii\helpers\Url;
  */
 class Category extends Tree
 {
-    use CategoryPageTrait;
     use ModelBehaviorTrait;
 
     const STATUS_ACTIVE = 1;

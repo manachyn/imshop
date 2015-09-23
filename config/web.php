@@ -15,6 +15,7 @@ $config = [
         'im\imshop\Bootstrap',
         'im\cms\Bootstrap',
         'im\catalog\Bootstrap',
+        'im\search\Bootstrap',
     ],
     'modules' => [
         'base' => [
@@ -81,6 +82,18 @@ $config = [
                 ['pattern' => 'storage/<path:(.*)>', 'route' => 'glide/index', 'encodeParams' => false],
                 [
                     'class' => 'im\base\routing\GroupUrlRule',
+                    'pattern' => '<path:[a-zA-Z0-9_\-]+>/<params:.+>',
+                    'defaults' => ['params' => ''],
+                    'resolvers' => [
+                        [
+                            'class' => 'im\base\routing\ModelRouteResolver',
+                            'route' => 'search/search-page',
+                            'modelClass' => 'im\search\models\SearchPage'
+                        ]
+                    ]
+                ],
+                [
+                    'class' => 'im\base\routing\GroupUrlRule',
                     'pattern' => '<path:.+>',
                     'resolvers' => [
                         [
@@ -106,19 +119,8 @@ $config = [
         ],
 
 
-        'core' => [
-            'class' => 'im\base\components\Core',
-//            'entityTypes' => [
-//                'page' => 'app\modules\cms\models\Page',
-//                'product' => 'app\modules\catalog\models\Product'
-//            ]
-        ],
-        'typesRegister' => [
-            'class' => 'im\base\components\EntityTypesRegister',
-            'entityTypes' => [
-                'product' => 'im\catalog\models\Product'
-            ]
-        ],
+        'core' => 'im\base\components\Core',
+        'typesRegister' => 'im\base\types\EntityTypesRegister',
         'filesystem' => [
             'class' => 'im\filesystem\components\FilesystemComponent',
             'filesystems' => require(__DIR__ . '/filesystems.php')
@@ -154,12 +156,14 @@ $config = [
             ],
         ],
         'search' => 'im\search\components\SearchManager',
-        'layoutManager' => [
-            'class' => 'im\cms\components\LayoutManager'
+        'elasticsearch' => [
+            'class' => 'yii\elasticsearch\Connection',
+            'nodes' => [
+                ['http_address' => '127.0.0.1:9200']
+            ]
         ],
-        'templateManager' => [
-            'class' => 'im\cms\components\TemplateManager'
-        ],
+        'layoutManager' => 'im\cms\components\LayoutManager',
+        'templateManager' => 'im\cms\components\TemplateManager',
         'glide' => [
             'class' => 'trntv\glide\components\Glide',
             'sourcePath' => '@app/web/files',
@@ -168,6 +172,7 @@ $config = [
             'maxImageSize' => 4000000,
             'signKey' => 'kmsTmQPdwm'
         ],
+        'cms' => 'im\cms\components\Cms'
     ],
     'controllerMap' => [
         'glide' => '\trntv\glide\controllers\GlideController'

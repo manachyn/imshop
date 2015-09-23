@@ -3,7 +3,6 @@
 namespace im\eav\models;
 
 use im\base\behaviors\RelationsBehavior;
-use im\base\interfaces\TypeableEntityInterface;
 use im\eav\components\AttributeInterface;
 use im\eav\components\AttributesHolderInterface;
 use im\eav\components\AttributeTypes;
@@ -13,7 +12,6 @@ use Yii;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
-use yii\helpers\Inflector;
 use yii\widgets\ActiveField;
 use yii\widgets\ActiveForm;
 
@@ -161,7 +159,7 @@ class AttributeValue extends ActiveRecord implements AttributeValueInterface
     public function setEntity(AttributesHolderInterface $entity = null)
     {
         if ($entity !== null) {
-            $this->entity_type = $entity instanceof TypeableEntityInterface ? $entity->getEntityType() : get_class($entity);
+            $this->entity_type = Yii::$app->get('typesRegister')->getEntityType();
         }
         $this->relatedEntity = $entity;
         if ($entity !== null) {
@@ -221,7 +219,7 @@ class AttributeValue extends ActiveRecord implements AttributeValueInterface
                 $this->string_value = serialize($value);
                 break;
             case 'object':
-                $this->attribute_type = $value instanceof TypeableEntityInterface ? $value->getEntityType() : get_class($value);
+                $this->attribute_type = Yii::$app->get('typesRegister')->getEntityType($value);
                 $this->relatedValueEntity = $value;
                 break;
             default:

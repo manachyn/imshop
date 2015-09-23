@@ -2,6 +2,7 @@
 
 namespace im\cms;
 
+use im\base\types\EntityType;
 use im\cms\models\Page;
 use yii\base\Application;
 use yii\base\BootstrapInterface;
@@ -17,8 +18,10 @@ class Bootstrap implements BootstrapInterface
         //$layoutManager->registerOwner('im\cms\models\Page', 'page');
         //$layoutManager->registerConfigurableComponent($this);
         $this->registerTranslations($app);
-        $this->addRules($app);
+//        $this->addRules($app);
         $this->registerDefinitions();
+        $this->registerEntityTypes();
+        $this->registerPageTypes();
         $this->registerWidgets($app);
     }
 
@@ -88,5 +91,25 @@ class Bootstrap implements BootstrapInterface
         $layoutManager = $app->get('layoutManager');
         $layoutManager->registerWidget('im\cms\models\widgets\ContentWidget');
         $layoutManager->registerWidget('im\cms\models\widgets\BannerWidget');
+    }
+
+    /**
+     * Registers entity types.
+     */
+    public function registerEntityTypes()
+    {
+        /** @var \im\base\types\EntityTypesRegister $typesRegister */
+        $typesRegister = Yii::$app->get('typesRegister');
+        $typesRegister->registerEntityType(new EntityType('page_meta', 'im\cms\models\PageMeta'));
+    }
+
+    /**
+     * Registers page types.
+     */
+    public function registerPageTypes()
+    {
+        /** @var \im\cms\components\Cms $cms */
+        $cms = Yii::$app->get('cms');
+        $cms->registerPageType(new EntityType('page', 'im\cms\models\Page', 'page', 'Static page'));
     }
 }

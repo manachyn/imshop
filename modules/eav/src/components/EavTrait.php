@@ -2,9 +2,9 @@
 
 namespace im\eav\components;
 
-use im\base\interfaces\TypeableEntityInterface;
 use im\eav\models\Attribute;
 use im\eav\models\AttributeValue;
+use Yii;
 use yii\db\ActiveQuery;
 use yii\helpers\ArrayHelper;
 
@@ -241,8 +241,9 @@ trait EavTrait
     /**
      * @return string
      */
-    private function getEntityType() {
-        return $this instanceof TypeableEntityInterface ? $this->getEntityType() : get_class($this);
+    private function getEntityType()
+    {
+        return Yii::$app->get('typesRegister')->getEntityType($this);
     }
 
     private function isEAttribute($name)

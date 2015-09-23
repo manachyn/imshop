@@ -38,7 +38,7 @@ class SearchableActiveRecord extends Object implements SearchableInterface
     public function getSearchableAttributes()
     {
         $model = $this->getModel();
-        /** @var \im\base\components\EntityTypesRegister $typesRegister */
+        /** @var \im\base\types\EntityTypesRegister $typesRegister */
         $typesRegister = Yii::$app->get('typesRegister');
         $entityType = $typesRegister->getEntityType($model);
 
@@ -74,7 +74,7 @@ class SearchableActiveRecord extends Object implements SearchableInterface
     public function getIndexableAttributes()
     {
         $model = $this->getModel();
-        /** @var \im\base\components\EntityTypesRegister $typesRegister */
+        /** @var \im\base\types\EntityTypesRegister $typesRegister */
         $typesRegister = Yii::$app->get('typesRegister');
         $entityType = $typesRegister->getEntityType($model);
         $indexableAttributes = IndexAttribute::findByIndexType($entityType);
@@ -84,6 +84,9 @@ class SearchableActiveRecord extends Object implements SearchableInterface
             foreach ($searchableAttributes as $searchableAttribute) {
                 if ($indexableAttribute->index_type === $searchableAttribute->entity_type
                     && $indexableAttribute->name === $searchableAttribute->name) {
+                    if ($indexableAttribute->type) {
+                        $searchableAttribute->type = $indexableAttribute->type;
+                    }
                     $attributes[] = $searchableAttribute;
                 }
             }

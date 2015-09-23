@@ -2,7 +2,6 @@
 
 namespace im\seo\models;
 
-use im\base\interfaces\TypeableEntityInterface;
 use im\seo\components\MetaInterface;
 use im\seo\Module;
 use Yii;
@@ -18,7 +17,7 @@ use yii\db\ActiveRecord;
  *
  * @property Meta $meta
  */
-abstract class SocialMeta extends ActiveRecord implements MetaInterface, TypeableEntityInterface
+abstract class SocialMeta extends ActiveRecord implements MetaInterface
 {
     /**
      * @inheritdoc
@@ -78,7 +77,7 @@ abstract class SocialMeta extends ActiveRecord implements MetaInterface, Typeabl
      */
     public function beforeSave($insert)
     {
-        $this->social_type = $this->getEntityType();
+        $this->social_type = Yii::$app->get('typesRegister')->getEntityType($this);
         return parent::beforeSave($insert);
     }
 

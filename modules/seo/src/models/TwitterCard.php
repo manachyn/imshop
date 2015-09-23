@@ -18,16 +18,6 @@ use yii\web\View;
  */
 class TwitterCard extends SocialMeta
 {
-    const ENTITY_TYPE = 'twitter_card';
-
-    /**
-     * @inheritdoc
-     */
-    public static function getEntityType()
-    {
-        return static::ENTITY_TYPE;
-    }
-
     /**
      * @inheritdoc
      */

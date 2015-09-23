@@ -20,11 +20,6 @@ class QueryResult implements QueryResultInterface
     protected $objects = [];
 
     /**
-     * @var array query facets
-     */
-    protected $facets = [];
-
-    /**
      * @var QueryInterface
      */
     protected $query;
@@ -90,15 +85,7 @@ class QueryResult implements QueryResultInterface
      */
     public function getFacets()
     {
-        return $this->facets;
-    }
-
-    /**
-     * @param array $facets
-     */
-    public function setFacets($facets)
-    {
-        $this->facets = $facets;
+        return $this->getQuery()->getFacets();
     }
 
     /**

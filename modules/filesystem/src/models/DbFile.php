@@ -75,6 +75,9 @@ class DbFile extends ActiveRecord implements FileInterface
         ];
     }
 
+    /**
+     * @inheritdoc
+     */
     public function __toString()
     {
         return $this->getUrl();
