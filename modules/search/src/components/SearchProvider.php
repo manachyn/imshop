@@ -4,7 +4,6 @@ namespace im\search\components;
 
 use im\eav\models\Attribute;
 use im\search\components\searchable\AttributeDescriptor;
-use im\search\models\EntityAttribute;
 use Yii;
 use yii\base\Model;
 use yii\base\Object;

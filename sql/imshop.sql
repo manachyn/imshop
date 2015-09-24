@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Хост: localhost
--- Время создания: Сен 11 2015 г., 19:11
+-- Время создания: Сен 24 2015 г., 19:15
 -- Версия сервера: 5.5.44-0ubuntu0.14.04.1
 -- Версия PHP: 5.5.9-1ubuntu4.11
 
@@ -86,7 +86,7 @@ CREATE TABLE IF NOT EXISTS `tbl_category_files` (
   KEY `updated_at` (`updated_at`),
   KEY `sort` (`sort`),
   KEY `category_id` (`category_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=19 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -204,8 +204,8 @@ INSERT INTO `tbl_eav_product_values` (`id`, `entity_id`, `attribute_id`, `attrib
 CREATE TABLE IF NOT EXISTS `tbl_eav_values` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `attribute_id` int(11) NOT NULL,
-  `value` varchar(255) NOT NULL,
   `presentation` varchar(255) NOT NULL,
+  `value` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=5 ;
 
@@ -213,7 +213,7 @@ CREATE TABLE IF NOT EXISTS `tbl_eav_values` (
 -- Дамп данных таблицы `tbl_eav_values`
 --
 
-INSERT INTO `tbl_eav_values` (`id`, `attribute_id`, `value`, `presentation`) VALUES
+INSERT INTO `tbl_eav_values` (`id`, `attribute_id`, `presentation`, `value`) VALUES
 (1, 4, 'Двухкамерные', 'two-compartment'),
 (2, 4, 'Однокамерные', 'single-door'),
 (3, 5, '100x100', '100x100'),
@@ -264,18 +264,23 @@ CREATE TABLE IF NOT EXISTS `tbl_facets` (
   `to` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
   `interval` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
   `type` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
+  `multiple` tinyint(1) NOT NULL DEFAULT '1',
+  `operator` varchar(3) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_facets_attribute_id` (`attribute_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=4 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=7 ;
 
 --
 -- Дамп данных таблицы `tbl_facets`
 --
 
-INSERT INTO `tbl_facets` (`id`, `name`, `entity_type`, `attribute_id`, `attribute_name`, `from`, `to`, `interval`, `type`) VALUES
-(1, 'Range facet', 'product', NULL, 'price', '', '', '', 'range'),
-(2, 'Term facet', 'product', NULL, 'type_id', '', '', '', 'terms'),
-(3, 'Ranre facet 2', 'product', NULL, 'price', '', '', '', 'range');
+INSERT INTO `tbl_facets` (`id`, `name`, `entity_type`, `attribute_id`, `attribute_name`, `from`, `to`, `interval`, `type`, `multiple`, `operator`) VALUES
+(1, 'price1', 'product', NULL, 'price', '10', '100', '10', 'interval', 1, 'or'),
+(2, 'type', 'product', NULL, 'eAttributes.type', '', '', '', 'terms', 1, 'or'),
+(3, 'price2', 'product', NULL, 'price', '', '', '', 'range', 1, 'or'),
+(4, 'status', 'product', NULL, 'status', '', '', '', 'terms', 1, 'or'),
+(5, 'status2', 'product', NULL, 'status', '', '', '', 'terms', 1, 'or'),
+(6, 'price3', 'product', NULL, 'price', '', '', '', 'range', 1, 'or');
 
 -- --------------------------------------------------------
 
@@ -301,10 +306,54 @@ CREATE TABLE IF NOT EXISTS `tbl_facet_ranges` (
 --
 
 INSERT INTO `tbl_facet_ranges` (`id`, `facet_id`, `from`, `to`, `from_include`, `to_include`, `display`, `sort`) VALUES
-(1, 1, '0', '10', 1, 0, 'From 0 to 10', 2),
-(2, 1, '10', '20', 1, 0, 'From 10 to 20', 1),
+(1, 3, '0', '50', 1, 0, '', 1),
+(2, 3, '50', '100', 1, 0, 'From 50 to 100', 2),
 (3, 1, '20', '30', 1, 0, 'More then 20', 3),
 (5, 1, '30', '40', 1, 0, '', 4);
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `tbl_facet_sets`
+--
+
+CREATE TABLE IF NOT EXISTS `tbl_facet_sets` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=2 ;
+
+--
+-- Дамп данных таблицы `tbl_facet_sets`
+--
+
+INSERT INTO `tbl_facet_sets` (`id`, `name`) VALUES
+(1, 'Set1');
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `tbl_facet_set_facets`
+--
+
+CREATE TABLE IF NOT EXISTS `tbl_facet_set_facets` (
+  `set_id` int(11) NOT NULL,
+  `facet_id` int(11) NOT NULL,
+  KEY `FK_facet_set_facets_set_id` (`set_id`),
+  KEY `FK_facet_set_facets_facet_id` (`facet_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Дамп данных таблицы `tbl_facet_set_facets`
+--
+
+INSERT INTO `tbl_facet_set_facets` (`set_id`, `facet_id`) VALUES
+(1, 1),
+(1, 3),
+(1, 2),
+(1, 4),
+(1, 5),
+(1, 6);
 
 -- --------------------------------------------------------
 
@@ -327,8 +376,8 @@ CREATE TABLE IF NOT EXISTS `tbl_facet_terms` (
 --
 
 INSERT INTO `tbl_facet_terms` (`id`, `facet_id`, `term`, `display`, `sort`) VALUES
-(8, 2, 'type1', 'Type1111', 1),
-(9, 2, 'type2', 'Type2222', 2);
+(8, 4, '1', 'Active', 1),
+(9, 4, '0', 'Inactive', 2);
 
 -- --------------------------------------------------------
 
@@ -429,20 +478,19 @@ CREATE TABLE IF NOT EXISTS `tbl_index_attributes` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `index_type` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
   `name` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
+  `index_name` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
   `type` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=7 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=6 ;
 
 --
 -- Дамп данных таблицы `tbl_index_attributes`
 --
 
-INSERT INTO `tbl_index_attributes` (`id`, `index_type`, `name`, `type`) VALUES
-(1, 'product', 'status', ''),
-(3, 'product', 'eAttributes.dimensions', ''),
-(4, 'product', 'sku', ''),
-(5, 'product', 'eAttributes.type', ''),
-(6, 'product', 'eAttributes.sdfdsf', '');
+INSERT INTO `tbl_index_attributes` (`id`, `index_type`, `name`, `index_name`, `type`) VALUES
+(1, 'product', 'status', '', 'integer'),
+(3, 'product', 'price', '', 'integer'),
+(5, 'product', 'eAttributes.type', 'type', 'string');
 
 -- --------------------------------------------------------
 
@@ -544,14 +592,22 @@ CREATE TABLE IF NOT EXISTS `tbl_pages` (
   `status` tinyint(1) DEFAULT '0',
   `created_at` int(11) NOT NULL,
   `updated_at` int(11) NOT NULL,
-  `layout_id` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
+  `template_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `type` (`type`),
   KEY `slug` (`slug`),
   KEY `status` (`status`),
   KEY `created_at` (`created_at`),
   KEY `updated_at` (`updated_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=3 ;
+
+--
+-- Дамп данных таблицы `tbl_pages`
+--
+
+INSERT INTO `tbl_pages` (`id`, `type`, `title`, `slug`, `content`, `status`, `created_at`, `updated_at`, `template_id`) VALUES
+(1, 'page', 'fghfg', 'fghfg', '', 0, 1442477644, 1442478100, 1),
+(2, 'search_page', 'Search results', 'search-results', '<p>Search results</p>', 1, 1442846796, 1442846796, 0);
 
 -- --------------------------------------------------------
 
@@ -568,7 +624,14 @@ CREATE TABLE IF NOT EXISTS `tbl_page_meta` (
   `custom_meta` text COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_page_meta_entity_id` (`entity_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=2 ;
+
+--
+-- Дамп данных таблицы `tbl_page_meta`
+--
+
+INSERT INTO `tbl_page_meta` (`id`, `entity_id`, `meta_title`, `meta_description`, `meta_robots`, `custom_meta`) VALUES
+(1, 1, '', '', '', '');
 
 -- --------------------------------------------------------
 
@@ -603,31 +666,31 @@ CREATE TABLE IF NOT EXISTS `tbl_products` (
 --
 
 INSERT INTO `tbl_products` (`id`, `sku`, `title`, `slug`, `description`, `quantity`, `price`, `status`, `brand_id`, `type_id`, `available_on`, `created_at`, `updated_at`, `images_data`, `video_data`, `dvideo_id`) VALUES
-(5, 'P5', 'fgd dfgdf dfg', 'fgd-dfgdf-dfg', '', '', 0, 1, NULL, NULL, 0, 1437549798, 1437549798, '["fgd-dfgdf-dfg-1.png","fgd-dfgdf-dfg-2.png"]', 'fgd-dfgdf-dfg-1.png', 0),
-(6, 'P6', 'fgd dfgdf dfg', 'fgd-dfgdf-dfg-2', '', '', 0, 1, NULL, NULL, 0, 1437549912, 1437549912, '["fgd-dfgdf-dfg-2-1.png","fgd-dfgdf-dfg-2-2.png"]', 'fgd-dfgdf-dfg-2-1.png', 0),
-(7, 'P7', 'fgd dfgdf dfg', 'fgd-dfgdf-dfg-3', '', '', 0, 1, NULL, NULL, 0, 1437549938, 1437549938, '["fgd-dfgdf-dfg-3-1.png","fgd-dfgdf-dfg-3-2.png"]', 'fgd-dfgdf-dfg-3-1.png', 0),
-(8, 'P8', 'fgd dfgdf dfg', 'fgd-dfgdf-dfg-4', '', '', 0, 1, NULL, 3, 0, 1437550071, 1438946430, '["fgd-dfgdf-dfg-4-1.png","fgd-dfgdf-dfg-4-2.png"]', 'fgd-dfgdf-dfg-4-1.png', 0),
-(9, 'P9', 'fgd dfgdf dfg', 'fgd-dfgdf-dfg-5', '', '', 0, 1, NULL, NULL, 0, 1437550204, 1437550204, '["fgd-dfgdf-dfg-5-1.png","fgd-dfgdf-dfg-5-2.png"]', 'fgd-dfgdf-dfg-5-1.png', 0),
-(10, 'P10', 'fgd dfgdf dfg', 'fgd-dfgdf-dfg-6', '', '', 0, 1, NULL, 2, 0, 1437550228, 1438961963, '["fgd-dfgdf-dfg-6-1.png","fgd-dfgdf-dfg-6-2.png"]', 'fgd-dfgdf-dfg-6-1.png', 0),
-(11, 'P11', 'err werewr', 'err-werewr', '', '', 0, 1, NULL, 2, 0, 1437550631, 1438961816, '["err-werewr-1.png","err-werewr-2.png"]', 'err-werewr-1.png', 0),
-(12, 'P12', 'err werewr', 'err-werewr-2', '', '', 0, 1, NULL, NULL, 0, 1437550726, 1437550729, '["err-werewr-2-1.png","err-werewr-2-2.png"]', 'err-werewr-2-1.png', 0),
-(13, 'P13', 'err werewr', 'err-werewr-3', '', '', 0, 1, NULL, NULL, 0, 1437551003, 1437551011, '["err-werewr-3-1.png","err-werewr-3-2.png"]', 'err-werewr-3-1.png', 0),
-(14, 'P14', 'err werewr', 'err-werewr-4', '', '', 0, 1, NULL, NULL, 0, 1437551048, 1437551050, '["err-werewr-4-1.png","err-werewr-4-2.png"]', 'err-werewr-4-1.png', 0),
-(15, 'P15', 'err werewr', 'err-werewr-5', '', '', 0, 1, NULL, NULL, 0, 1437551076, 1437551084, '["err-werewr-5-1.png","err-werewr-5-2.png"]', 'err-werewr-5-1.png', 0),
-(16, 'P16', 'err werewr', 'err-werewr-6', '', '', 0, 1, NULL, NULL, 0, 1437551145, 1437551150, '["err-werewr-6-1.png","err-werewr-6-2.png"]', 'err-werewr-6-1.png', 0),
-(17, 'P17', 'err werewr', 'err-werewr-7', '', '', 0, 1, NULL, 2, 0, 1437551338, 1438962080, '["err-werewr-7-1.png","err-werewr-7-2.png"]', 'err-werewr-7-1.png', 0),
-(19, 'P19', 'fgsdfsdfs', 'fgsdfsdfs', '', '', 0, 1, NULL, NULL, 0, 1437554866, 1437554866, 'a:1:{i:0;s:0:"";}', 'O:20:"yii\\web\\UploadedFile":5:{s:4:"name";s:54:"Снимок экрана от 2015-07-08 16:48:55.png";s:8:"tempName";s:14:"/tmp/phpuTuZ14";s:4:"type";s:9:"image/png";s:4:"size";i:464847;s:5:"error";i:0;}', 0),
-(20, 'P20', 'sdfs 4trsdc sdfsdf', 'sdfs-4trsdc-sdfsdf', '', '', 0, 1, NULL, NULL, 0, 1437555505, 1437555505, 'a:2:{i:0;O:25:"im\\filesystem\\models\\File":7:{s:38:"\0im\\filesystem\\models\\File\0_filesystem";s:5:"local";s:4:"path";s:41:"/products/images/sdfs-4trsdc-sdfsdf-1.png";s:23:"\0yii\\base\\Model\0_errors";N;s:27:"\0yii\\base\\Model\0_validators";N;s:25:"\0yii\\base\\Model\0_scenario";s:7:"default";s:27:"\0yii\\base\\Component\0_events";a:0:{}s:30:"\0yii\\base\\Component\0_behaviors";N;}i:1;O:25:"im\\filesystem\\models\\File":7:{s:38:"\0im\\filesystem\\models\\File\0_filesystem";s:5:"local";s:4:"path";s:41:"/products/images/sdfs-4trsdc-sdfsdf-2.png";s:23:"\0yii\\base\\Model\0_errors";N;s:27:"\0yii\\base\\Model\0_validators";N;s:25:"\0yii\\base\\Model\0_scenario";s:7:"default";s:27:"\0yii\\base\\Component\0_events";a:0:{}s:30:"\0yii\\base\\Component\0_behaviors";N;}}', 'O:25:"im\\filesystem\\models\\File":7:{s:38:"\0im\\filesystem\\models\\File\0_filesystem";s:5:"local";s:4:"path";s:41:"/products/videos/sdfs-4trsdc-sdfsdf-1.png";s:23:"\0yii\\base\\Model\0_errors";N;s:27:"\0yii\\base\\Model\0_validators";N;s:25:"\0yii\\base\\Model\0_scenario', 0),
-(21, 'P21', 'dsf sdf sdf sdfsd dfs ', 'dsf-sdf-sdf-sdfsd-dfs', '', '', 0, 1, NULL, NULL, 0, 1437555645, 1437555645, 'a:1:{i:0;O:25:"im\\filesystem\\models\\File":7:{s:38:"\0im\\filesystem\\models\\File\0_filesystem";s:5:"local";s:4:"path";s:44:"/products/images/dsf-sdf-sdf-sdfsd-dfs-1.png";s:23:"\0yii\\base\\Model\0_errors";N;s:27:"\0yii\\base\\Model\0_validators";N;s:25:"\0yii\\base\\Model\0_scenario";s:7:"default";s:27:"\0yii\\base\\Component\0_events";a:0:{}s:30:"\0yii\\base\\Component\0_behaviors";N;}}', 'O:25:"im\\filesystem\\models\\File":7:{s:38:"\0im\\filesystem\\models\\File\0_filesystem";s:5:"local";s:4:"path";s:44:"/products/videos/dsf-sdf-sdf-sdfsd-dfs-1.png";s:23:"\0yii\\base\\Model\0_errors";N;s:27:"\0yii\\base\\Model\0_validators";N;s:25:"\0yii\\base\\Model\0_scenario";s:7:"default";s:27:"\0yii\\base\\Component\0_events";a:0:{}s:30:"\0yii\\base\\Component\0_behaviors";N;}', 0),
-(22, 'P22', 'sdfsd sdf sdf sdfsdf', 'sdfsd-sdf-sdf-sdfsdf', '', '', 0, 1, NULL, NULL, 0, 1437555866, 1437555866, 'a:1:{i:0;O:25:"im\\filesystem\\models\\File":2:{s:4:"path";s:43:"/products/images/sdfsd-sdf-sdf-sdfsdf-1.png";s:38:"\0im\\filesystem\\models\\File\0_filesystem";s:5:"local";}}', 'O:25:"im\\filesystem\\models\\File":2:{s:4:"path";s:43:"/products/videos/sdfsd-sdf-sdf-sdfsdf-1.png";s:38:"\0im\\filesystem\\models\\File\0_filesystem";s:5:"local";}', 0),
-(23, 'P23', 'sdfsdf sdfsdf', 'sdfsdf-sdfsdf', '', '', 0, 1, NULL, NULL, 0, 1437558324, 1437558324, '', '', 0),
-(24, 'P24', 'sad yutyu', 'sad-yutyu', '', '', 0, 1, NULL, NULL, 0, 1437558586, 1437558586, '', '', 0),
-(25, 'P25', 'sd frewerewr', 'sd-frewerewr', '', '', 0, 1, NULL, NULL, 0, 1437558825, 1437558825, '', '', 3),
-(26, 'P26', 'wewqe wqeqwqwe', 'wewqe-wqeqwqwe', '', '', 0, 1, NULL, NULL, 0, 1437573147, 1437573147, 'a:1:{i:0;O:25:"im\\filesystem\\models\\File":2:{s:4:"path";s:37:"/products/images/wewqe-wqeqwqwe-1.png";s:38:"\0im\\filesystem\\models\\File\0_filesystem";s:5:"local";}}', 'O:25:"im\\filesystem\\models\\File":2:{s:4:"path";s:37:"/products/videos/wewqe-wqeqwqwe-1.png";s:38:"\0im\\filesystem\\models\\File\0_filesystem";s:5:"local";}', 0),
-(27, 'P27', 'sdfsdf sdfs fs sdf', 'sdfsdf-sdfs-fs-sdf', '', '', 0, 1, NULL, NULL, 0, 1437574899, 1437574899, 'a:1:{i:0;O:25:"im\\filesystem\\models\\File":2:{s:4:"path";s:52:"/products/images/{model.id}-sdfsdf-sdfs-fs-sdf-1.png";s:38:"\0im\\filesystem\\models\\File\0_filesystem";s:5:"local";}}', 'O:25:"im\\filesystem\\models\\File":2:{s:4:"path";s:52:"/products/videos/{model.id}-sdfsdf-sdfs-fs-sdf-1.png";s:38:"\0im\\filesystem\\models\\File\0_filesystem";s:5:"local";}', 0),
-(28, 'P28', 'hgjf fg fhgfj', 'hgjf-fg-fhgfj', '', '', 0, 1, NULL, NULL, 0, 1437575301, 1437575301, 'a:1:{i:0;O:25:"im\\filesystem\\models\\File":2:{s:4:"path";s:39:"/products/images/28-hgjf-fg-fhgfj-1.png";s:38:"\0im\\filesystem\\models\\File\0_filesystem";s:5:"local";}}', 'O:25:"im\\filesystem\\models\\File":2:{s:4:"path";s:39:"/products/videos/28-hgjf-fg-fhgfj-1.png";s:38:"\0im\\filesystem\\models\\File\0_filesystem";s:5:"local";}', 0),
-(29, 'dsffds', 'fsdfsdfsdfsdf', 'fsdfsdfsdfsdf', '', '', 0, 1, NULL, NULL, 0, 1441278747, 1441890484, '', '', 0),
-(30, 'gh fghf fghf', 'gh fghfgh', 'gh-fghfgh', '', '', 0, 1, NULL, NULL, 0, 1441279743, 1441279744, '', '', 0);
+(5, 'P5', 'fgd dfgdf dfg', 'fgd-dfgdf-dfg', '', '', 67, 1, NULL, NULL, 0, 1437549798, 1437549798, '["fgd-dfgdf-dfg-1.png","fgd-dfgdf-dfg-2.png"]', 'fgd-dfgdf-dfg-1.png', 0),
+(6, 'P6', 'fgd dfgdf dfg', 'fgd-dfgdf-dfg-2', '', '', 84, 1, NULL, NULL, 0, 1437549912, 1437549912, '["fgd-dfgdf-dfg-2-1.png","fgd-dfgdf-dfg-2-2.png"]', 'fgd-dfgdf-dfg-2-1.png', 0),
+(7, 'P7', 'fgd dfgdf dfg', 'fgd-dfgdf-dfg-3', '', '', 30, 1, NULL, NULL, 0, 1437549938, 1437549938, '["fgd-dfgdf-dfg-3-1.png","fgd-dfgdf-dfg-3-2.png"]', 'fgd-dfgdf-dfg-3-1.png', 0),
+(8, 'P8', 'fgd dfgdf dfg', 'fgd-dfgdf-dfg-4', '', '', 66, 1, NULL, 3, 0, 1437550071, 1438946430, '["fgd-dfgdf-dfg-4-1.png","fgd-dfgdf-dfg-4-2.png"]', 'fgd-dfgdf-dfg-4-1.png', 0),
+(9, 'P9', 'fgd dfgdf dfg', 'fgd-dfgdf-dfg-5', '', '', 51, 1, NULL, NULL, 0, 1437550204, 1437550204, '["fgd-dfgdf-dfg-5-1.png","fgd-dfgdf-dfg-5-2.png"]', 'fgd-dfgdf-dfg-5-1.png', 0),
+(10, 'P10', 'fgd dfgdf dfg', 'fgd-dfgdf-dfg-6', '', '', 49, 1, NULL, 2, 0, 1437550228, 1438961963, '["fgd-dfgdf-dfg-6-1.png","fgd-dfgdf-dfg-6-2.png"]', 'fgd-dfgdf-dfg-6-1.png', 0),
+(11, 'P11', 'err werewr', 'err-werewr', '', '', 83, 1, NULL, 2, 0, 1437550631, 1438961816, '["err-werewr-1.png","err-werewr-2.png"]', 'err-werewr-1.png', 0),
+(12, 'P12', 'err werewr', 'err-werewr-2', '', '', 79, 1, NULL, NULL, 0, 1437550726, 1437550729, '["err-werewr-2-1.png","err-werewr-2-2.png"]', 'err-werewr-2-1.png', 0),
+(13, 'P13', 'err werewr', 'err-werewr-3', '', '', 46, 1, NULL, NULL, 0, 1437551003, 1437551011, '["err-werewr-3-1.png","err-werewr-3-2.png"]', 'err-werewr-3-1.png', 0),
+(14, 'P14', 'err werewr', 'err-werewr-4', '', '', 74, 1, NULL, NULL, 0, 1437551048, 1437551050, '["err-werewr-4-1.png","err-werewr-4-2.png"]', 'err-werewr-4-1.png', 0),
+(15, 'P15', 'err werewr', 'err-werewr-5', '', '', 40, 1, NULL, NULL, 0, 1437551076, 1437551084, '["err-werewr-5-1.png","err-werewr-5-2.png"]', 'err-werewr-5-1.png', 0),
+(16, 'P16', 'err werewr', 'err-werewr-6', '', '', 60, 1, NULL, NULL, 0, 1437551145, 1437551150, '["err-werewr-6-1.png","err-werewr-6-2.png"]', 'err-werewr-6-1.png', 0),
+(17, 'P17', 'err werewr', 'err-werewr-7', '', '', 80, 1, NULL, 2, 0, 1437551338, 1438962080, '["err-werewr-7-1.png","err-werewr-7-2.png"]', 'err-werewr-7-1.png', 0),
+(19, 'P19', 'fgsdfsdfs', 'fgsdfsdfs', '', '', 29, 1, NULL, NULL, 0, 1437554866, 1437554866, 'a:1:{i:0;s:0:"";}', 'O:20:"yii\\web\\UploadedFile":5:{s:4:"name";s:54:"Снимок экрана от 2015-07-08 16:48:55.png";s:8:"tempName";s:14:"/tmp/phpuTuZ14";s:4:"type";s:9:"image/png";s:4:"size";i:464847;s:5:"error";i:0;}', 0),
+(20, 'P20', 'sdfs 4trsdc sdfsdf', 'sdfs-4trsdc-sdfsdf', '', '', 78, 1, NULL, NULL, 0, 1437555505, 1437555505, 'a:2:{i:0;O:25:"im\\filesystem\\models\\File":7:{s:38:"\0im\\filesystem\\models\\File\0_filesystem";s:5:"local";s:4:"path";s:41:"/products/images/sdfs-4trsdc-sdfsdf-1.png";s:23:"\0yii\\base\\Model\0_errors";N;s:27:"\0yii\\base\\Model\0_validators";N;s:25:"\0yii\\base\\Model\0_scenario";s:7:"default";s:27:"\0yii\\base\\Component\0_events";a:0:{}s:30:"\0yii\\base\\Component\0_behaviors";N;}i:1;O:25:"im\\filesystem\\models\\File":7:{s:38:"\0im\\filesystem\\models\\File\0_filesystem";s:5:"local";s:4:"path";s:41:"/products/images/sdfs-4trsdc-sdfsdf-2.png";s:23:"\0yii\\base\\Model\0_errors";N;s:27:"\0yii\\base\\Model\0_validators";N;s:25:"\0yii\\base\\Model\0_scenario";s:7:"default";s:27:"\0yii\\base\\Component\0_events";a:0:{}s:30:"\0yii\\base\\Component\0_behaviors";N;}}', 'O:25:"im\\filesystem\\models\\File":7:{s:38:"\0im\\filesystem\\models\\File\0_filesystem";s:5:"local";s:4:"path";s:41:"/products/videos/sdfs-4trsdc-sdfsdf-1.png";s:23:"\0yii\\base\\Model\0_errors";N;s:27:"\0yii\\base\\Model\0_validators";N;s:25:"\0yii\\base\\Model\0_scenario', 0),
+(21, 'P21', 'dsf sdf sdf sdfsd dfs ', 'dsf-sdf-sdf-sdfsd-dfs', '', '', 21, 1, NULL, NULL, 0, 1437555645, 1437555645, 'a:1:{i:0;O:25:"im\\filesystem\\models\\File":7:{s:38:"\0im\\filesystem\\models\\File\0_filesystem";s:5:"local";s:4:"path";s:44:"/products/images/dsf-sdf-sdf-sdfsd-dfs-1.png";s:23:"\0yii\\base\\Model\0_errors";N;s:27:"\0yii\\base\\Model\0_validators";N;s:25:"\0yii\\base\\Model\0_scenario";s:7:"default";s:27:"\0yii\\base\\Component\0_events";a:0:{}s:30:"\0yii\\base\\Component\0_behaviors";N;}}', 'O:25:"im\\filesystem\\models\\File":7:{s:38:"\0im\\filesystem\\models\\File\0_filesystem";s:5:"local";s:4:"path";s:44:"/products/videos/dsf-sdf-sdf-sdfsd-dfs-1.png";s:23:"\0yii\\base\\Model\0_errors";N;s:27:"\0yii\\base\\Model\0_validators";N;s:25:"\0yii\\base\\Model\0_scenario";s:7:"default";s:27:"\0yii\\base\\Component\0_events";a:0:{}s:30:"\0yii\\base\\Component\0_behaviors";N;}', 0),
+(22, 'P22', 'sdfsd sdf sdf sdfsdf', 'sdfsd-sdf-sdf-sdfsdf', '', '', 42, 1, NULL, NULL, 0, 1437555866, 1437555866, 'a:1:{i:0;O:25:"im\\filesystem\\models\\File":2:{s:4:"path";s:43:"/products/images/sdfsd-sdf-sdf-sdfsdf-1.png";s:38:"\0im\\filesystem\\models\\File\0_filesystem";s:5:"local";}}', 'O:25:"im\\filesystem\\models\\File":2:{s:4:"path";s:43:"/products/videos/sdfsd-sdf-sdf-sdfsdf-1.png";s:38:"\0im\\filesystem\\models\\File\0_filesystem";s:5:"local";}', 0),
+(23, 'P23', 'sdfsdf sdfsdf', 'sdfsdf-sdfsdf', '', '', 49, 1, NULL, NULL, 0, 1437558324, 1437558324, '', '', 0),
+(24, 'P24', 'sad yutyu', 'sad-yutyu', '', '', 17, 1, NULL, NULL, 0, 1437558586, 1437558586, '', '', 0),
+(25, 'P25', 'sd frewerewr', 'sd-frewerewr', '', '', 18, 1, NULL, NULL, 0, 1437558825, 1437558825, '', '', 3),
+(26, 'P26', 'wewqe wqeqwqwe', 'wewqe-wqeqwqwe', '', '', 31, 1, NULL, NULL, 0, 1437573147, 1437573147, 'a:1:{i:0;O:25:"im\\filesystem\\models\\File":2:{s:4:"path";s:37:"/products/images/wewqe-wqeqwqwe-1.png";s:38:"\0im\\filesystem\\models\\File\0_filesystem";s:5:"local";}}', 'O:25:"im\\filesystem\\models\\File":2:{s:4:"path";s:37:"/products/videos/wewqe-wqeqwqwe-1.png";s:38:"\0im\\filesystem\\models\\File\0_filesystem";s:5:"local";}', 0),
+(27, 'P27', 'sdfsdf sdfs fs sdf', 'sdfsdf-sdfs-fs-sdf', '', '', 93, 1, NULL, NULL, 0, 1437574899, 1437574899, 'a:1:{i:0;O:25:"im\\filesystem\\models\\File":2:{s:4:"path";s:52:"/products/images/{model.id}-sdfsdf-sdfs-fs-sdf-1.png";s:38:"\0im\\filesystem\\models\\File\0_filesystem";s:5:"local";}}', 'O:25:"im\\filesystem\\models\\File":2:{s:4:"path";s:52:"/products/videos/{model.id}-sdfsdf-sdfs-fs-sdf-1.png";s:38:"\0im\\filesystem\\models\\File\0_filesystem";s:5:"local";}', 0),
+(28, 'P28', 'hgjf fg fhgfj', 'hgjf-fg-fhgfj', '', '', 89, 1, NULL, NULL, 0, 1437575301, 1437575301, 'a:1:{i:0;O:25:"im\\filesystem\\models\\File":2:{s:4:"path";s:39:"/products/images/28-hgjf-fg-fhgfj-1.png";s:38:"\0im\\filesystem\\models\\File\0_filesystem";s:5:"local";}}', 'O:25:"im\\filesystem\\models\\File":2:{s:4:"path";s:39:"/products/videos/28-hgjf-fg-fhgfj-1.png";s:38:"\0im\\filesystem\\models\\File\0_filesystem";s:5:"local";}', 0),
+(29, 'dsffds', 'fsdfsdfsdfsdf', 'fsdfsdfsdfsdf', '', '', 70, 1, NULL, NULL, 0, 1441278747, 1441890484, '', '', 0),
+(30, 'gh fghf fghf', 'gh fghfgh', 'gh-fghfgh', '', '', 72, 0, NULL, NULL, 0, 1441279743, 1441279744, '', '', 0);
 
 -- --------------------------------------------------------
 
@@ -668,41 +731,26 @@ CREATE TABLE IF NOT EXISTS `tbl_product_categories` (
   KEY `tree` (`tree`),
   KEY `name` (`name`),
   KEY `description` (`description`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=54 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=24 ;
 
 --
 -- Дамп данных таблицы `tbl_product_categories`
 --
 
 INSERT INTO `tbl_product_categories` (`id`, `tree`, `lft`, `rgt`, `depth`, `name`, `slug`, `description`, `status`, `created_at`, `updated_at`, `image_id`, `video_data`) VALUES
-(1, NULL, 1, 36, 0, 'Бытовая техника', 'bytovaya-tehnika', '', 1, 1437407041, 1437407606, 0, ''),
-(2, NULL, 2, 9, 1, 'Крупная бытовая техника ', 'krupnaa-bytovaya-tehnika', '', 1, 1437407816, 1437407825, 0, ''),
-(3, NULL, 10, 17, 1, 'Встраиваемая техника', 'vstraivaemaya-tehnika', '', 1, 1437407901, 1437407906, 0, ''),
-(4, NULL, 18, 25, 1, 'Климатическая техника', 'klimaticeskaya-tehnika', '', 1, 1437407958, 1437407961, 0, ''),
-(5, NULL, 26, 33, 1, 'Мелкая бытовая техника', 'melkaya-bytovaya-tehnika', '', 1, 1437408062, 1437408069, 0, ''),
-(6, NULL, 3, 4, 2, 'Холодильники', 'holodilniki', '', 1, 1437408276, 1437408276, 0, ''),
-(7, NULL, 5, 6, 2, 'Стиральные машины', 'stiralnye-mashiny', '', 1, 1437408298, 1437408306, 0, ''),
-(8, NULL, 7, 8, 2, 'Плиты', 'plity', '', 1, 1437408328, 1437408328, 0, ''),
-(9, NULL, 11, 12, 2, 'Духовые шкафы ', 'duhovye-shkafy', '', 1, 1437408426, 1437408440, 0, ''),
-(10, NULL, 13, 14, 2, 'Варочные поверхности', 'varochnye-poverhnosti', '', 1, 1437408467, 1437408480, 0, ''),
-(11, NULL, 15, 16, 2, 'Вытяжки', 'vytazhki', '', 1, 1437408504, 1437408508, 0, ''),
-(12, NULL, 19, 20, 2, 'Бойлеры', 'bojlery', '', 1, 1437408542, 1437408542, 0, ''),
-(13, NULL, 21, 22, 2, 'Котлы', 'kotly', '', 1, 1437408680, 1437408680, 0, ''),
-(14, NULL, 23, 24, 2, 'Кондиционеры', 'kondicionery', '', 1, 1437408698, 1437408698, 0, ''),
-(15, NULL, 27, 28, 2, 'Техника для кухни', 'tehnika-dla-kuhni', '', 1, 1437408727, 1437408727, 0, ''),
-(16, NULL, 29, 30, 2, 'Товары по уходу за домом', 'tovary-po-uhodu-za-domom', '', 1, 1437408753, 1437408753, 0, ''),
-(17, NULL, 31, 32, 2, 'Красота, здоровье', 'krasota-zdorove', '', 1, 1437408767, 1437408767, 0, ''),
-(18, NULL, 34, 35, 1, 'fg ds sdfsdf', 'fg-ds-sdfsdf', '', 1, 1438672364, 1438675289, 0, ''),
-(19, 19, 1, 2, 0, 'Test Category', 'test-category', '', 1, 1438678886, 1438678886, 0, ''),
-(20, 20, 1, 2, 0, 'fdgdf dfg dfg dfg', 'fdgdf-dfg-dfg-dfg', '', 1, 1438678965, 1438678965, 0, ''),
-(21, 21, 1, 2, 0, 'gfg dfgdfgdfg', 'gfg-dfgdfgdfg', '', 1, 1438679718, 1438679718, 0, ''),
-(22, 22, 1, 2, 0, 'jhg fgh jh', 'jhg-fgh-jh', '', 1, 1438679885, 1438679885, 0, ''),
-(24, 24, 1, 2, 0, 'My test category', 'my-test-category', '', 1, 1438683785, 1438683785, 0, ''),
-(37, 37, 1, 2, 0, 'GFDGFDGDF  DF GDFGdsdf dsf', 'gfdgfdgdf-df-gdfgdsdf-dsf', '', 1, 1438692793, 1438692845, 27, ''),
-(48, 48, 1, 2, 0, 'fg dfgdfg dfg dgdf', 'fg-dfgdfg-dfg-dgdf', '', 1, 1438704853, 1438704881, 28, ''),
-(49, 49, 1, 2, 0, 'gdfgdfg dfgdfg', 'gdfgdfg-dfgdfg', '', 1, 1438759236, 1438759236, 0, ''),
-(51, 51, 1, 2, 0, 'gdfgdf', 'gdfgdf', '', 1, 1438759422, 1438784808, 0, ''),
-(53, 53, 1, 2, 0, 'jl;jlkjkl;jk;', 'jljlkjkljk', '', 1, 1441986188, 1441986209, 0, '');
+(11, NULL, 1, 26, 0, 'Catalog', 'catalog', '', 1, 1442235217, 1442235217, 0, ''),
+(12, NULL, 2, 19, 1, '1', '1', '', 1, 1442235228, 1442235228, 0, ''),
+(13, NULL, 20, 25, 1, '2', '2', '', 1, 1442235236, 1442235236, 0, ''),
+(14, NULL, 21, 22, 2, '2.1', '21', '', 1, 1442235246, 1442235246, 0, ''),
+(15, NULL, 23, 24, 2, '2.2', '22', '', 1, 1442235253, 1442235253, 0, ''),
+(16, NULL, 5, 6, 2, '1.2', '12', '', 1, 1442235264, 1442501789, 25, ''),
+(17, NULL, 3, 4, 2, '1.1', '11', '', 1, 1442235273, 1442501755, 23, ''),
+(18, NULL, 7, 8, 2, '3', '3', '', 1, 1442399223, 1442502969, 29, ''),
+(19, NULL, 9, 10, 2, '4', '4', '', 1, 1442399231, 1442501801, 26, ''),
+(20, NULL, 12, 13, 3, '5', '5', '', 1, 1442399239, 1442501806, 0, ''),
+(21, NULL, 11, 14, 2, '6', '6', '', 1, 1442399250, 1442502983, 30, ''),
+(22, NULL, 15, 16, 2, '7', '7', '', 1, 1442399260, 1442501820, 27, ''),
+(23, NULL, 17, 18, 2, '8', '8', '', 1, 1442399271, 1442501830, 28, '');
 
 -- --------------------------------------------------------
 
@@ -729,14 +777,24 @@ CREATE TABLE IF NOT EXISTS `tbl_product_category_files` (
   KEY `updated_at` (`updated_at`),
   KEY `sort` (`sort`),
   KEY `category_id` (`category_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=20 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=31 ;
 
 --
 -- Дамп данных таблицы `tbl_product_category_files`
 --
 
 INSERT INTO `tbl_product_category_files` (`id`, `category_id`, `attribute`, `filesystem`, `path`, `title`, `size`, `mime_type`, `created_at`, `updated_at`, `sort`) VALUES
-(19, 53, '', 'local', '/categories/jljlkjkljk-1.png', '', 217723, 'image/png', 1441986202, 1441986202, 0);
+(19, 53, '', 'local', '/categories/jljlkjkljk-1.png', '', 217723, 'image/png', 1441986202, 1441986202, 0),
+(21, 0, '', 'local', '/categories/lklhjlhkjl.png', '', 207200, 'image/png', 1442215392, 1442215392, 0),
+(22, 0, '', 'local', '/categories/my-test-category.png', '', 217723, 'image/png', 1442215792, 1442215792, 0),
+(23, 0, '', 'local', '/categories/11.png', '', 153999, 'image/png', 1442501755, 1442501755, 0),
+(24, 0, '', 'local', '/categories/12.png', '', 168333, 'image/png', 1442501777, 1442501777, 0),
+(25, 0, '', 'local', '/categories/12-1.png', '', 167236, 'image/png', 1442501789, 1442501789, 0),
+(26, 0, '', 'local', '/categories/4.png', '', 153794, 'image/png', 1442501801, 1442501801, 0),
+(27, 0, '', 'local', '/categories/7.png', '', 100483, 'image/png', 1442501820, 1442501820, 0),
+(28, 0, '', 'local', '/categories/8.png', '', 178168, 'image/png', 1442501830, 1442501830, 0),
+(29, 0, '', 'local', '/categories/3.png', '', 143480, 'image/png', 1442502969, 1442502969, 0),
+(30, 0, '', 'local', '/categories/6.png', '', 163905, 'image/png', 1442502983, 1442502983, 0);
 
 -- --------------------------------------------------------
 
@@ -753,7 +811,26 @@ CREATE TABLE IF NOT EXISTS `tbl_product_category_meta` (
   `custom_meta` text COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_product_category_meta_entity_id` (`entity_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=24 ;
+
+--
+-- Дамп данных таблицы `tbl_product_category_meta`
+--
+
+INSERT INTO `tbl_product_category_meta` (`id`, `entity_id`, `meta_title`, `meta_description`, `meta_robots`, `custom_meta`) VALUES
+(11, 11, '', '', '', ''),
+(12, 12, '', '', '', ''),
+(13, 13, '', '', '', ''),
+(14, 14, '', '', '', ''),
+(15, 15, '', '', '', ''),
+(16, 16, '', '', '', ''),
+(17, 17, '', '', '', ''),
+(18, 18, '', '', '', ''),
+(19, 19, '', '', '', ''),
+(20, 20, '', '', '', ''),
+(21, 21, '', '', '', ''),
+(22, 22, '', '', '', ''),
+(23, 23, '', '', '', '');
 
 -- --------------------------------------------------------
 
@@ -780,7 +857,7 @@ CREATE TABLE IF NOT EXISTS `tbl_product_files` (
   KEY `updated_at` (`updated_at`),
   KEY `sort` (`sort`),
   KEY `product_id` (`product_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=19 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=11 ;
 
 --
 -- Дамп данных таблицы `tbl_product_files`
@@ -995,7 +1072,7 @@ CREATE TABLE IF NOT EXISTS `tbl_social_meta` (
   KEY `meta_id` (`meta_id`),
   KEY `meta_type` (`meta_type`),
   KEY `social_type` (`social_type`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=59 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=117 ;
 
 --
 -- Дамп данных таблицы `tbl_social_meta`
@@ -1059,7 +1136,65 @@ INSERT INTO `tbl_social_meta` (`id`, `meta_id`, `meta_type`, `social_type`, `tit
 (55, 28, 'product_meta', 'open_graph', '', '', '', '', '', '', '', '', '', ''),
 (56, 28, 'product_meta', 'twitter_card', '', '', '', '', '', '', '', '', '', ''),
 (57, 29, 'product_meta', 'open_graph', '', '', '', '', '', '', '', '', '', ''),
-(58, 29, 'product_meta', 'twitter_card', '', '', '', '', '', '', '', '', '', '');
+(58, 29, 'product_meta', 'twitter_card', '', '', '', '', '', '', '', '', '', ''),
+(59, NULL, 'product_category_meta', 'open_graph', '', '', '', '', '', '', '', '', '', ''),
+(60, NULL, 'product_category_meta', 'twitter_card', '', '', '', '', '', '', '', '', '', ''),
+(61, NULL, 'product_category_meta', 'open_graph', '', '', '', '', '', '', '', '', '', ''),
+(62, NULL, 'product_category_meta', 'twitter_card', '', '', '', '', '', '', '', '', '', ''),
+(63, NULL, 'product_category_meta', 'open_graph', '', '', '', '', '', '', '', '', '', ''),
+(64, NULL, 'product_category_meta', 'twitter_card', '', '', '', '', '', '', '', '', '', ''),
+(65, NULL, 'product_category_meta', 'open_graph', '', '', '', '', '', '', '', '', '', ''),
+(66, NULL, 'product_category_meta', 'twitter_card', '', '', '', '', '', '', '', '', '', ''),
+(67, NULL, 'product_category_meta', 'open_graph', '', '', '', '', '', '', '', '', '', ''),
+(68, NULL, 'product_category_meta', 'twitter_card', '', '', '', '', '', '', '', '', '', ''),
+(69, 1, 'product_category_meta', 'open_graph', '', '', '', '', '', '', '', '', '', ''),
+(70, 1, 'product_category_meta', 'twitter_card', '', '', '', '', '', '', '', '', '', ''),
+(71, 2, 'product_category_meta', 'open_graph', '', '', '', '', '', '', '', '', '', ''),
+(72, 2, 'product_category_meta', 'twitter_card', '', '', '', '', '', '', '', '', '', ''),
+(73, 3, 'product_category_meta', 'open_graph', '', '', '', '', '', '', '', '', '', ''),
+(74, 3, 'product_category_meta', 'twitter_card', '', '', '', '', '', '', '', '', '', ''),
+(75, 4, 'product_category_meta', 'open_graph', '', '', '', '', '', '', '', '', '', ''),
+(76, 4, 'product_category_meta', 'twitter_card', '', '', '', '', '', '', '', '', '', ''),
+(77, 5, 'product_category_meta', 'open_graph', '', '', '', '', '', '', '', '', '', ''),
+(78, 5, 'product_category_meta', 'twitter_card', '', '', '', '', '', '', '', '', '', ''),
+(79, 6, 'product_category_meta', 'open_graph', '', '', '', '', '', '', '', '', '', ''),
+(80, 6, 'product_category_meta', 'twitter_card', '', '', '', '', '', '', '', '', '', ''),
+(81, 7, 'product_category_meta', 'open_graph', '', '', '', '', '', '', '', '', '', ''),
+(82, 7, 'product_category_meta', 'twitter_card', '', '', '', '', '', '', '', '', '', ''),
+(83, 8, 'product_category_meta', 'open_graph', '', '', '', '', '', '', '', '', '', ''),
+(84, 8, 'product_category_meta', 'twitter_card', '', '', '', '', '', '', '', '', '', ''),
+(85, 9, 'product_category_meta', 'open_graph', '', '', '', '', '', '', '', '', '', ''),
+(86, 9, 'product_category_meta', 'twitter_card', '', '', '', '', '', '', '', '', '', ''),
+(87, 10, 'product_category_meta', 'open_graph', '', '', '', '', '', '', '', '', '', ''),
+(88, 10, 'product_category_meta', 'twitter_card', '', '', '', '', '', '', '', '', '', ''),
+(89, 11, 'product_category_meta', 'open_graph', '', '', '', '', '', '', '', '', '', ''),
+(90, 11, 'product_category_meta', 'twitter_card', '', '', '', '', '', '', '', '', '', ''),
+(91, 12, 'product_category_meta', 'open_graph', '', '', '', '', '', '', '', '', '', ''),
+(92, 12, 'product_category_meta', 'twitter_card', '', '', '', '', '', '', '', '', '', ''),
+(93, 13, 'product_category_meta', 'open_graph', '', '', '', '', '', '', '', '', '', ''),
+(94, 13, 'product_category_meta', 'twitter_card', '', '', '', '', '', '', '', '', '', ''),
+(95, 14, 'product_category_meta', 'open_graph', '', '', '', '', '', '', '', '', '', ''),
+(96, 14, 'product_category_meta', 'twitter_card', '', '', '', '', '', '', '', '', '', ''),
+(97, 15, 'product_category_meta', 'open_graph', '', '', '', '', '', '', '', '', '', ''),
+(98, 15, 'product_category_meta', 'twitter_card', '', '', '', '', '', '', '', '', '', ''),
+(99, 16, 'product_category_meta', 'open_graph', '', '', '', '', '', '', '', '', '', ''),
+(100, 16, 'product_category_meta', 'twitter_card', '', '', '', '', '', '', '', '', '', ''),
+(101, 17, 'product_category_meta', 'open_graph', '', '', '', '', '', '', '', '', '', ''),
+(102, 17, 'product_category_meta', 'twitter_card', '', '', '', '', '', '', '', '', '', ''),
+(103, 18, 'product_category_meta', 'open_graph', '', '', '', '', '', '', '', '', '', ''),
+(104, 18, 'product_category_meta', 'twitter_card', '', '', '', '', '', '', '', '', '', ''),
+(105, 19, 'product_category_meta', 'open_graph', '', '', '', '', '', '', '', '', '', ''),
+(106, 19, 'product_category_meta', 'twitter_card', '', '', '', '', '', '', '', '', '', ''),
+(107, 20, 'product_category_meta', 'open_graph', '', '', '', '', '', '', '', '', '', ''),
+(108, 20, 'product_category_meta', 'twitter_card', '', '', '', '', '', '', '', '', '', ''),
+(109, 21, 'product_category_meta', 'open_graph', '', '', '', '', '', '', '', '', '', ''),
+(110, 21, 'product_category_meta', 'twitter_card', '', '', '', '', '', '', '', '', '', ''),
+(111, 22, 'product_category_meta', 'open_graph', '', '', '', '', '', '', '', '', '', ''),
+(112, 22, 'product_category_meta', 'twitter_card', '', '', '', '', '', '', '', '', '', ''),
+(113, 23, 'product_category_meta', 'open_graph', '', '', '', '', '', '', '', '', '', ''),
+(114, 23, 'product_category_meta', 'twitter_card', '', '', '', '', '', '', '', '', '', ''),
+(115, 1, 'page_meta', 'open_graph', '', '', '', '', '', '', '', '', '', ''),
+(116, 1, 'page_meta', 'twitter_card', '', '', '', '', '', '', '', '', '', '');
 
 -- --------------------------------------------------------
 
@@ -1073,14 +1208,15 @@ CREATE TABLE IF NOT EXISTS `tbl_templates` (
   `layout_id` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   KEY `layout_id` (`layout_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=2 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=6 ;
 
 --
 -- Дамп данных таблицы `tbl_templates`
 --
 
 INSERT INTO `tbl_templates` (`id`, `name`, `layout_id`) VALUES
-(1, 'Main templ', '');
+(4, 'Page template', ''),
+(5, 'Category page template', '');
 
 -- --------------------------------------------------------
 
@@ -1126,18 +1262,19 @@ CREATE TABLE IF NOT EXISTS `tbl_widgets` (
   `widget_type` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
   `content` text COLLATE utf8_unicode_ci NOT NULL,
   `banner_id` int(11) NOT NULL,
+  `depth` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=5 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=12 ;
 
 --
 -- Дамп данных таблицы `tbl_widgets`
 --
 
-INSERT INTO `tbl_widgets` (`id`, `widget_type`, `content`, `banner_id`) VALUES
-(1, 'content', 'fdsgdfgdfgdfg', 0),
-(2, 'banner', '', 0),
-(3, 'banner', '', 0),
-(4, 'content', 'gffdgdfgdfg', 0);
+INSERT INTO `tbl_widgets` (`id`, `widget_type`, `content`, `banner_id`, `depth`) VALUES
+(8, 'content', '123', 0, 0),
+(9, 'banner', '', 0, 0),
+(10, 'categories', '', 0, 0),
+(11, 'banner', '', 0, 0);
 
 -- --------------------------------------------------------
 
@@ -1160,15 +1297,17 @@ CREATE TABLE IF NOT EXISTS `tbl_widget_areas` (
   KEY `owner_id` (`owner_id`),
   KEY `owner_type` (`owner_type`),
   KEY `updated_at` (`updated_at`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=3 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=10 ;
 
 --
 -- Дамп данных таблицы `tbl_widget_areas`
 --
 
 INSERT INTO `tbl_widget_areas` (`id`, `code`, `template_id`, `owner_id`, `owner_type`, `display`, `created_at`, `updated_at`) VALUES
-(1, 'sidebar', 1, NULL, '', 3, 1440749938, 1440761771),
-(2, 'footer', 1, NULL, '', 3, 1440749939, 1440761772);
+(6, 'sidebar', 4, NULL, '', 3, 1442475541, 1442475597),
+(7, 'footer', 4, NULL, '', 3, 1442475541, 1442475598),
+(8, 'sidebar', 5, NULL, '', 3, 1442475562, 1442475598),
+(9, 'footer', 5, NULL, '', 3, 1442475562, 1442475598);
 
 -- --------------------------------------------------------
 
@@ -1187,17 +1326,17 @@ CREATE TABLE IF NOT EXISTS `tbl_widget_area_widgets` (
   KEY `FK_widget_area_widgets_widget_id` (`widget_id`),
   KEY `FK_widget_area_widgets_widget_area_id` (`widget_area_id`),
   KEY `sort` (`sort`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=35 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=45 ;
 
 --
 -- Дамп данных таблицы `tbl_widget_area_widgets`
 --
 
 INSERT INTO `tbl_widget_area_widgets` (`id`, `widget_id`, `widget_area_id`, `owner_id`, `owner_type`, `sort`) VALUES
-(31, 1, 1, NULL, '', 1),
-(32, 3, 1, NULL, '', 2),
-(33, 2, 2, NULL, '', 1),
-(34, 4, 2, NULL, '', 2);
+(41, 10, 6, NULL, '', 1),
+(42, 11, 7, NULL, '', 1),
+(43, 10, 8, NULL, '', 1),
+(44, 11, 9, NULL, '', 1);
 
 --
 -- Ограничения внешнего ключа сохраненных таблиц
@@ -1239,6 +1378,13 @@ ALTER TABLE `tbl_facets`
 --
 ALTER TABLE `tbl_facet_ranges`
   ADD CONSTRAINT `FK_facet_ranges_facet_id` FOREIGN KEY (`facet_id`) REFERENCES `tbl_facets` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Ограничения внешнего ключа таблицы `tbl_facet_set_facets`
+--
+ALTER TABLE `tbl_facet_set_facets`
+  ADD CONSTRAINT `FK_facet_set_facets_facet_id` FOREIGN KEY (`facet_id`) REFERENCES `tbl_facets` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `FK_facet_set_facets_set_id` FOREIGN KEY (`set_id`) REFERENCES `tbl_facet_sets` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Ограничения внешнего ключа таблицы `tbl_facet_terms`

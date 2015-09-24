@@ -1,7 +1,7 @@
 <?php
 
-use im\search\backend\Module;
 use im\search\models\IndexAttribute;
+use im\search\Module;
 use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;

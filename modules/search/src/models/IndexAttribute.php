@@ -2,7 +2,7 @@
 
 namespace im\search\models;
 
-use im\search\backend\Module;
+use im\search\Module;
 use Yii;
 use yii\db\ActiveRecord;
 
@@ -12,6 +12,7 @@ use yii\db\ActiveRecord;
  * @property integer $id
  * @property string $index_type
  * @property string $name
+ * @property string $index_name
  * @property string $type
  *
  */
@@ -54,6 +55,7 @@ class IndexAttribute extends ActiveRecord
         return [
             'id' => Module::t('indexAttribute', 'ID'),
             'name' => Module::t('indexAttribute', 'Name'),
+            'index_name' => Module::t('indexAttribute', 'Name in index'),
             'type' => Module::t('indexAttribute', 'Type'),
             'index_type' => Module::t('indexAttribute', 'Index type'),
             'label' => Module::t('indexAttribute', 'Label'),

@@ -4,6 +4,7 @@ namespace im\search\components;
 
 use Yii;
 use yii\base\Component;
+use yii\helpers\ArrayHelper;
 
 class SearchComponent extends Component
 {
@@ -16,16 +17,18 @@ class SearchComponent extends Component
      * Return search query.
      *
      * @param string $type
+     * @param \im\search\components\SearchParam[] $params
      * @param \im\search\components\query\FacetInterface[] $facets
      * @return \im\search\components\query\QueryInterface
      */
-    public function getQuery($type, $facets = [])
+    public function getQuery($type, $params = [], $facets = [])
     {
         /** @var \im\search\components\SearchManager $searchManager */
         $searchManager = Yii::$app->get('search');
         $index = $searchManager->getIndexManager()->getIndexByType($type);
         $finder = $index->getSearchService()->getFinder();
         $query = $finder->find($index->getName(), $type);
+        $query->where(ArrayHelper::map($params, 'name', 'value'));
         if ($facets) {
             foreach ($facets as $facet) {
                 $query->addFacet($facet);

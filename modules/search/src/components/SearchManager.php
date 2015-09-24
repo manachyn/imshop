@@ -6,13 +6,11 @@ use im\search\components\index\IndexManager;
 use im\search\components\searchable\AttributeDescriptor;
 use im\search\components\searchable\SearchableInterface;
 use im\search\components\service\SearchServiceInterface;
-use im\search\models\EntityAttribute;
 use im\search\models\IndexAttribute;
 use Yii;
 use yii\base\Component;
 use yii\base\InvalidParamException;
 use yii\di\Instance;
-use yii\helpers\ArrayHelper;
 use yii\helpers\Inflector;
 
 class SearchManager extends Component

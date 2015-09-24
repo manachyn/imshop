@@ -17,16 +17,20 @@ use yii\helpers\ArrayHelper;
  * @property string $entity_type
  * @property string $attribute_name
  * @property string $type
+ * @property string $operator
+ * @property bool $multiple
  */
 abstract class Facet extends ActiveRecord implements FacetInterface
 {
     const TYPE_TERMS = 'terms';
     const TYPE_RANGE = 'range';
     const TYPE_INTERVAL = 'interval';
-
     const TYPE_DEFAULT = self::TYPE_TERMS;
 
     const TYPE = self::TYPE_DEFAULT;
+
+    const OPERATOR_OR = 'or';
+    const OPERATOR_AND = 'and';
 
     /**
      * @inheritdoc

@@ -24,8 +24,9 @@ class SearchPageController extends Controller
         /** @var FacetSet $facetSet */
         $facetSet = FacetSet::findOne(1);
         $facets = $facetSet->facets;
-        $query = $searchComponent->getQuery('product', $facets)->limit(100);
+        $query = $searchComponent->getQuery('product', $params, $facets)->limit(100);
         $result = $query->result();
+        $facets = $result->getFacets();
 
         return $this->render('index');
     }
