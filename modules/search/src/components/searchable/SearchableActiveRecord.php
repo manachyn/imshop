@@ -5,6 +5,7 @@ namespace im\search\components\searchable;
 use im\eav\models\Attribute;
 use im\search\components\index\provider\IndexProviderInterface;
 use im\search\components\transformer\DocumentToObjectTransformerInterface;
+use im\search\components\transformer\ObjectToDocumentTransformerInterface;
 use im\search\models\IndexAttribute;
 use Yii;
 use yii\base\Model;
@@ -25,7 +26,12 @@ class SearchableActiveRecord extends Object implements SearchableInterface
     /**
      * @var string|array|DocumentToObjectTransformerInterface
      */
-    private $_transformer = 'im\search\components\transformer\DocumentToActiveRecordTransformer';
+    private $_documentToObjectTransformer = 'im\search\components\transformer\DocumentToActiveRecordTransformer';
+
+    /**
+     * @var string|array|ObjectToDocumentTransformerInterface
+     */
+    private $_objectToDocumentTransformer = 'im\search\components\transformer\ObjectToDocumentTransformer';
 
     /**
      * @var Model instance
@@ -71,7 +77,7 @@ class SearchableActiveRecord extends Object implements SearchableInterface
     /**
      * @inheritdoc
      */
-    public function getIndexableAttributes()
+    public function getIndexMapping()
     {
         $model = $this->getModel();
         /** @var \im\base\types\EntityTypesRegister $typesRegister */
@@ -114,17 +120,33 @@ class SearchableActiveRecord extends Object implements SearchableInterface
     /**
      * @inheritdoc
      */
-    public function getTransformer()
+    public function getObjectToDocumentTransformer()
     {
-        if (!$this->_transformer instanceof DocumentToObjectTransformerInterface) {
-            if (is_string($this->_transformer)) {
-                $this->_transformer = ['class' => $this->_transformer];
+        if (!$this->_objectToDocumentTransformer instanceof DocumentToObjectTransformerInterface) {
+            if (is_string($this->_objectToDocumentTransformer)) {
+                $this->_objectToDocumentTransformer = ['class' => $this->_objectToDocumentTransformer];
             }
-            $this->_transformer = Yii::createObject($this->_transformer);
-            $this->_transformer->setObjectClass($this->modelClass);
+            $this->_objectToDocumentTransformer = Yii::createObject($this->_objectToDocumentTransformer);
+            $this->_objectToDocumentTransformer->setObjectClass($this->modelClass);
         }
 
-        return $this->_transformer;
+        return $this->_objectToDocumentTransformer;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getDocumentToObjectTransformer()
+    {
+        if (!$this->_documentToObjectTransformer instanceof ObjectToDocumentTransformerInterface) {
+            if (is_string($this->_documentToObjectTransformer)) {
+                $this->_documentToObjectTransformer = ['class' => $this->_documentToObjectTransformer];
+            }
+            $this->_documentToObjectTransformer = Yii::createObject($this->_documentToObjectTransformer);
+            $this->_documentToObjectTransformer->setObjectClass($this->modelClass);
+        }
+
+        return $this->_documentToObjectTransformer;
     }
 
     /**
@@ -138,6 +160,4 @@ class SearchableActiveRecord extends Object implements SearchableInterface
 
         return $this->_model;
     }
-
-
 }

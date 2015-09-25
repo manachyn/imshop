@@ -4,6 +4,7 @@ namespace im\search\components\searchable;
 
 use im\search\components\index\provider\IndexProviderInterface;
 use im\search\components\transformer\DocumentToObjectTransformerInterface;
+use im\search\components\transformer\ObjectToDocumentTransformerInterface;
 
 /**
  * Interface SearchableInterface
@@ -19,11 +20,11 @@ interface SearchableInterface
     public function getSearchableAttributes();
 
     /**
-     * Returns indexable attributes.
+     * Returns index mapping.
      *
      * @return AttributeDescriptor[]
      */
-    public function getIndexableAttributes();
+    public function getIndexMapping();
 
     /**
      * Returns index provider.
@@ -33,9 +34,16 @@ interface SearchableInterface
     public function getIndexProvider();
 
     /**
-     * Returns transformer.
+     * Returns object to document transformer.
+     *
+     * @return ObjectToDocumentTransformerInterface
+     */
+    public function getObjectToDocumentTransformer();
+
+    /**
+     * Returns document to object transformer.
      *
      * @return DocumentToObjectTransformerInterface
      */
-    public function getTransformer();
+    public function getDocumentToObjectTransformer();
 }
