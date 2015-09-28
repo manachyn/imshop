@@ -90,10 +90,14 @@ class SearchableActiveRecord extends Object implements SearchableInterface
             foreach ($searchableAttributes as $searchableAttribute) {
                 if ($indexableAttribute->index_type === $searchableAttribute->entity_type
                     && $indexableAttribute->name === $searchableAttribute->name) {
+                    $name = $searchableAttribute->name;
                     if ($indexableAttribute->type) {
                         $searchableAttribute->type = $indexableAttribute->type;
                     }
-                    $attributes[] = $searchableAttribute;
+                    if ($indexableAttribute->index_name) {
+                        $searchableAttribute->name = $indexableAttribute->index_name;
+                    }
+                    $attributes[$name] = $searchableAttribute;
                 }
             }
         }
@@ -127,7 +131,6 @@ class SearchableActiveRecord extends Object implements SearchableInterface
                 $this->_objectToDocumentTransformer = ['class' => $this->_objectToDocumentTransformer];
             }
             $this->_objectToDocumentTransformer = Yii::createObject($this->_objectToDocumentTransformer);
-            $this->_objectToDocumentTransformer->setObjectClass($this->modelClass);
         }
 
         return $this->_objectToDocumentTransformer;

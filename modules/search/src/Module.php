@@ -39,22 +39,5 @@ class Module extends \yii\base\Module
                 'class' => 'im\search\backend\Module'
             ]
         ];
-        $this->registerTranslations();
-    }
-
-    /**
-     * Registers module translations.
-     */
-    public function registerTranslations()
-    {
-        Yii::$app->i18n->translations[Module::$messagesCategory . '/*'] = [
-            'class' => 'yii\i18n\PhpMessageSource',
-            'sourceLanguage' => 'en-US',
-            'basePath' => '@im/search/messages',
-            'fileMap' => [
-                Module::$messagesCategory => 'module.php',
-                Module::$messagesCategory . '/index' => 'index.php'
-            ]
-        ];
     }
 }

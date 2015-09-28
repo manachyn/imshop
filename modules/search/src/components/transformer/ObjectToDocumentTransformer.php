@@ -26,7 +26,7 @@ class ObjectToDocumentTransformer implements ObjectToDocumentTransformerInterfac
     {
         $identifier = $object->{$this->options['identifier']};
         $document = new Document($identifier);
-        foreach ($attributes as $attribute) {
+        foreach ($attributes as $name => $attribute) {
             if ($attribute->value) {
                 if ($attribute->value instanceof \Closure) {
                     $value = call_user_func($attribute->value, $object, $attribute);
@@ -34,7 +34,7 @@ class ObjectToDocumentTransformer implements ObjectToDocumentTransformerInterfac
                     $value = $attribute->value;
                 }
             } else {
-                $value = $object->{$attribute->name};
+                $value = $object->$name;
             }
             if ($value !== null) {
                 if ($value instanceof Value) {

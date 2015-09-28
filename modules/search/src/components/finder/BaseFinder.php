@@ -12,7 +12,7 @@ abstract class BaseFinder implements FinderInterface
      */
     public static function getTransformer($type)
     {
-        return static::getSearchableType($type)->getTransformer();
+        return static::getSearchableType($type)->getDocumentToObjectTransformer();
     }
 
     /**

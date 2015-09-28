@@ -37,7 +37,7 @@ class SearchManager extends Component
 
     public $_indexManager = 'im\search\components\index\IndexManager';
 
-    public $_searchComponent = 'im\search\components\SearchComponent';
+    public $_searchComponent = 'im\search\components\search\SearchComponent';
 
     /**
      * Returns registered searchable types.

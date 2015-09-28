@@ -8,12 +8,14 @@ use im\search\Module;
 use Yii;
 use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Inflector;
 
 /**
  * Facet model class.
  *
  * @property integer $id
  * @property string $name
+ * @property string $label
  * @property string $entity_type
  * @property string $attribute_name
  * @property string $type
@@ -167,6 +169,14 @@ abstract class Facet extends ActiveRecord implements FacetInterface
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getLabel()
+    {
+        return $this->label ?: Inflector::titleize($this->name);
     }
 
     /**

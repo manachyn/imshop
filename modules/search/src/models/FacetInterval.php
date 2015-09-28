@@ -48,4 +48,12 @@ class FacetInterval extends Model implements FacetValueInterface
     {
         $this->_resultsCount = $count;
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function getLabel()
+    {
+        return $this->getKey();
+    }
 }

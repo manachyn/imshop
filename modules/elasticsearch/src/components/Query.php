@@ -5,6 +5,7 @@ namespace im\elasticsearch\components;
 use im\search\components\query\FacetInterface;
 use im\search\components\query\IntervalFacetInterface;
 use im\search\components\query\QueryInterface;
+use im\search\components\query\QueryResultInterface;
 use im\search\components\query\RangeFacetInterface;
 use im\search\components\transformer\DocumentToObjectTransformerInterface;
 
@@ -21,13 +22,21 @@ class Query extends \yii\elasticsearch\Query implements QueryInterface
     private $_facets;
 
     /**
+     * @var QueryResultInterface
+     */
+    private $_result;
+
+    /**
      * @inheritdoc
      */
     public function result($db = null)
     {
-        $response = $this->createCommand($db)->search();
+        if (!$this->_result) {
+            $response = $this->createCommand($db)->search();
+            $this->_result = new QueryResult($this, $response);
+        }
 
-        return new QueryResult($this, $response);
+        return $this->_result;
     }
 
     /**

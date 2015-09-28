@@ -23,6 +23,7 @@ https://www.drupal.org/project/facetapi_ranges
 http://www.webwash.net/tutorials/using-search-api-ranges-module-drupal-7
 
 http://localhost:9200/_search
+http://localhost:9200/products_index/_mapping/product
 
 Relevance
 http://blog.qbox.io/optimizing-search-results-in-elasticsearch-with-scoring-and-boosting

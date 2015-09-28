@@ -132,4 +132,12 @@ class FacetRange extends ActiveRecord implements RangeInterface
     {
         $this->_resultsCount = $count;
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function getLabel()
+    {
+        return $this->display ?: $this->getKey();
+    }
 }

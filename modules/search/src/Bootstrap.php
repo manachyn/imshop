@@ -5,6 +5,7 @@ namespace im\search;
 use im\base\types\EntityType;
 use yii\base\BootstrapInterface;
 use Yii;
+use yii\web\Application;
 
 class Bootstrap implements BootstrapInterface
 {
@@ -13,16 +14,50 @@ class Bootstrap implements BootstrapInterface
      */
     public function bootstrap($app)
     {
-        $this->registerPageTypes();
+        $this->registerTranslations($app);
+        if ($app instanceof Application) {
+            $this->registerPageTypes($app);
+            $this->registerWidgets($app);
+        }
+    }
+
+    /**
+     * Registers module translations.
+     *
+     * @param \yii\base\Application $app
+     */
+    public function registerTranslations($app)
+    {
+        $app->i18n->translations[Module::$messagesCategory . '/*'] = [
+            'class' => 'yii\i18n\PhpMessageSource',
+            'sourceLanguage' => 'en-US',
+            'basePath' => '@im/search/messages',
+            'fileMap' => [
+                Module::$messagesCategory => 'module.php',
+                Module::$messagesCategory . '/index' => 'index.php'
+            ]
+        ];
     }
 
     /**
      * Registers page types.
+     *
+     * @param \yii\base\Application $app
      */
-    public function registerPageTypes()
+    public function registerPageTypes($app)
     {
-        /** @var \im\cms\components\Cms $cms */
-        $cms = Yii::$app->get('cms');
+        $cms = $app->get('cms');
         $cms->registerPageType(new EntityType('search_page', 'im\search\models\SearchPage'));
+    }
+
+    /**
+     * Registers widgets.
+     *
+     * @param \yii\base\Application $app
+     */
+    public function registerWidgets($app)
+    {
+        $layoutManager = $app->get('layoutManager');
+        $layoutManager->registerWidget('im\search\widgets\FacetsWidget');
     }
 }

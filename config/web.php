@@ -87,7 +87,7 @@ $config = [
                     'resolvers' => [
                         [
                             'class' => 'im\base\routing\ModelRouteResolver',
-                            'route' => 'search/search-page',
+                            'route' => 'search/search-page/index',
                             'modelClass' => 'im\search\models\SearchPage'
                         ]
                     ]

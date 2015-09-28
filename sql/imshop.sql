@@ -3,9 +3,9 @@
 -- http://www.phpmyadmin.net
 --
 -- Хост: localhost
--- Время создания: Сен 24 2015 г., 19:15
+-- Время создания: Сен 28 2015 г., 19:14
 -- Версия сервера: 5.5.44-0ubuntu0.14.04.1
--- Версия PHP: 5.5.9-1ubuntu4.11
+-- Версия PHP: 5.5.9-1ubuntu4.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -257,6 +257,7 @@ INSERT INTO `tbl_entity_files` (`id`, `entity_id`, `entity_type`, `attribute`, `
 CREATE TABLE IF NOT EXISTS `tbl_facets` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `label` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `entity_type` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
   `attribute_id` int(11) DEFAULT NULL,
   `attribute_name` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
@@ -274,13 +275,13 @@ CREATE TABLE IF NOT EXISTS `tbl_facets` (
 -- Дамп данных таблицы `tbl_facets`
 --
 
-INSERT INTO `tbl_facets` (`id`, `name`, `entity_type`, `attribute_id`, `attribute_name`, `from`, `to`, `interval`, `type`, `multiple`, `operator`) VALUES
-(1, 'price1', 'product', NULL, 'price', '10', '100', '10', 'interval', 1, 'or'),
-(2, 'type', 'product', NULL, 'eAttributes.type', '', '', '', 'terms', 1, 'or'),
-(3, 'price2', 'product', NULL, 'price', '', '', '', 'range', 1, 'or'),
-(4, 'status', 'product', NULL, 'status', '', '', '', 'terms', 1, 'or'),
-(5, 'status2', 'product', NULL, 'status', '', '', '', 'terms', 1, 'or'),
-(6, 'price3', 'product', NULL, 'price', '', '', '', 'range', 1, 'or');
+INSERT INTO `tbl_facets` (`id`, `name`, `label`, `entity_type`, `attribute_id`, `attribute_name`, `from`, `to`, `interval`, `type`, `multiple`, `operator`) VALUES
+(1, 'price1', '', 'product', NULL, 'price', '10', '100', '10', 'interval', 1, 'or'),
+(2, 'type', '', 'product', NULL, 'eAttributes.type', '', '', '', 'terms', 1, 'or'),
+(3, 'price2', '', 'product', NULL, 'price', '', '', '', 'range', 1, 'or'),
+(4, 'status', '', 'product', NULL, 'status', '', '', '', 'terms', 1, 'or'),
+(5, 'status2', '', 'product', NULL, 'status', '', '', '', 'terms', 1, 'or'),
+(6, 'price3', '', 'product', NULL, 'price', '', '', '', 'range', 1, 'or');
 
 -- --------------------------------------------------------
 
@@ -1264,7 +1265,7 @@ CREATE TABLE IF NOT EXISTS `tbl_widgets` (
   `banner_id` int(11) NOT NULL,
   `depth` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=12 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=13 ;
 
 --
 -- Дамп данных таблицы `tbl_widgets`
@@ -1274,7 +1275,8 @@ INSERT INTO `tbl_widgets` (`id`, `widget_type`, `content`, `banner_id`, `depth`)
 (8, 'content', '123', 0, 0),
 (9, 'banner', '', 0, 0),
 (10, 'categories', '', 0, 0),
-(11, 'banner', '', 0, 0);
+(11, 'banner', '', 0, 0),
+(12, 'facets', '', 0, 0);
 
 -- --------------------------------------------------------
 
@@ -1304,10 +1306,10 @@ CREATE TABLE IF NOT EXISTS `tbl_widget_areas` (
 --
 
 INSERT INTO `tbl_widget_areas` (`id`, `code`, `template_id`, `owner_id`, `owner_type`, `display`, `created_at`, `updated_at`) VALUES
-(6, 'sidebar', 4, NULL, '', 3, 1442475541, 1442475597),
-(7, 'footer', 4, NULL, '', 3, 1442475541, 1442475598),
-(8, 'sidebar', 5, NULL, '', 3, 1442475562, 1442475598),
-(9, 'footer', 5, NULL, '', 3, 1442475562, 1442475598);
+(6, 'sidebar', 4, NULL, '', 3, 1442475541, 1443437800),
+(7, 'footer', 4, NULL, '', 3, 1442475541, 1443437800),
+(8, 'sidebar', 5, NULL, '', 3, 1442475562, 1443438013),
+(9, 'footer', 5, NULL, '', 3, 1442475562, 1443438013);
 
 -- --------------------------------------------------------
 
@@ -1326,17 +1328,19 @@ CREATE TABLE IF NOT EXISTS `tbl_widget_area_widgets` (
   KEY `FK_widget_area_widgets_widget_id` (`widget_id`),
   KEY `FK_widget_area_widgets_widget_area_id` (`widget_area_id`),
   KEY `sort` (`sort`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=45 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=60 ;
 
 --
 -- Дамп данных таблицы `tbl_widget_area_widgets`
 --
 
 INSERT INTO `tbl_widget_area_widgets` (`id`, `widget_id`, `widget_area_id`, `owner_id`, `owner_type`, `sort`) VALUES
-(41, 10, 6, NULL, '', 1),
-(42, 11, 7, NULL, '', 1),
-(43, 10, 8, NULL, '', 1),
-(44, 11, 9, NULL, '', 1);
+(51, 10, 6, NULL, '', 1),
+(52, 12, 6, NULL, '', 2),
+(53, 11, 7, NULL, '', 1),
+(57, 10, 8, NULL, '', 1),
+(58, 12, 8, NULL, '', 2),
+(59, 11, 9, NULL, '', 1);
 
 --
 -- Ограничения внешнего ключа сохраненных таблиц

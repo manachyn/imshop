@@ -64,6 +64,8 @@ class QueryResult extends \im\search\components\query\QueryResult
 
     private function parseFacets($responseFacets)
     {
+        $params = $this->getQuery()->where;
+
         foreach ($this->getQuery()->getFacets() as $facet) {
             if (isset($responseFacets[$facet->getName()])) {
                 $facetValues = $facet->getValues();

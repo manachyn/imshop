@@ -12,6 +12,11 @@ interface FacetInterface
     /**
      * @return string
      */
+    public function getLabel();
+
+    /**
+     * @return string
+     */
     public function getType();
 
     /**

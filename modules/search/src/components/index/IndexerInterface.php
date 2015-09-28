@@ -2,8 +2,6 @@
 
 namespace im\search\components\index;
 
-use im\search\components\transformer\ObjectToDocumentTransformerInterface;
-
 interface IndexerInterface
 {
     /**
@@ -101,11 +99,4 @@ interface IndexerInterface
      * @return IndexActionResult
      */
     public function getIndexActionResult(Response $response);
-
-    /**
-     * Returns transformer.
-     *
-     * @return ObjectToDocumentTransformerInterface
-     */
-    public function getTransformer();
 }

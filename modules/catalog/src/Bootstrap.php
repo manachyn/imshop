@@ -3,7 +3,6 @@
 namespace im\catalog;
 
 use im\base\types\EntityType;
-use im\catalog\models\Category;
 use im\catalog\models\Product;
 use im\catalog\models\ProductCategory;
 use yii\base\Application;

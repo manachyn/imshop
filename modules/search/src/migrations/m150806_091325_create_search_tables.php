@@ -38,7 +38,8 @@ class m150806_091325_create_search_tables extends Migration
         // Facets
         $this->createTable('{{%facets}}', [
             'id' => $this->primaryKey(),
-            'name' => $this->string()->notNull(),
+            'name' => $this->string(100)->notNull(),
+            'label' => $this->string()->notNull(),
             'entity_type' => $this->string(100)->notNull(),
             'attribute_name' => $this->string(100)->notNull(),
             'from' => $this->string(100)->notNull(),

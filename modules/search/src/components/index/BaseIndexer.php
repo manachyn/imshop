@@ -10,8 +10,6 @@ use Yii;
 
 abstract class BaseIndexer implements IndexerInterface
 {
-    private $_transformer = 'im\search\components\transformer\ObjectToDocumentTransformer';
-
     /**
      * @inheritdoc
      */
@@ -62,10 +60,10 @@ abstract class BaseIndexer implements IndexerInterface
     public function insertObjects(IndexInterface $index, $type, $objects)
     {
         $transformer = $this->getTransformer($type);
-        $attributes = $this->getIndexableAttributes($type);
+        $mapping = $this->getIndexMapping($type);
         $documents = [];
         foreach ($objects as $object) {
-            $document = $transformer->transform($object, $attributes);
+            $document = $transformer->transform($object, $mapping);
             $document->setIndex($index->getName());
             $document->setType($type);
             $documents[] = $document;
@@ -80,8 +78,8 @@ abstract class BaseIndexer implements IndexerInterface
     public function insertObject(IndexInterface $index, $type, $object)
     {
         $transformer = $this->getTransformer($type);
-        $attributes = $this->getIndexableAttributes($type);
-        $document = $transformer->transform($object, $attributes);
+        $mapping = $this->getIndexMapping($type);
+        $document = $transformer->transform($object, $mapping);
         $document->setIndex($index->getName());
         $document->setType($type);
         return $this->insertDocument($document);
@@ -104,28 +102,6 @@ abstract class BaseIndexer implements IndexerInterface
     }
 
     /**
-     * @inheritdoc
-     */
-    public function getTransformer()
-    {
-        if (!$this->_transformer instanceof ObjectToDocumentTransformerInterface) {
-            $this->_transformer = Yii::createObject($this->_transformer);
-        }
-
-        return $this->_transformer;
-    }
-
-    /**
-     * Sets transformer instance or config.
-     *
-     * @param string|array|ObjectToDocumentTransformerInterface $transformer
-     */
-    public function setTransformer($transformer)
-    {
-        $this->_transformer = $transformer;
-    }
-
-    /**
      * Returns searchable type by index type.
      *
      * @param string $type
@@ -140,6 +116,17 @@ abstract class BaseIndexer implements IndexerInterface
     }
 
     /**
+     * Returns object to index document transformer.
+     *
+     * @param string $type
+     * @return ObjectToDocumentTransformerInterface
+     */
+    public function getTransformer($type)
+    {
+        return $this->getSearchableType($type)->getObjectToDocumentTransformer();
+    }
+
+    /**
      * Returns index provider by index type.
      *
      * @param string $type
@@ -151,13 +138,13 @@ abstract class BaseIndexer implements IndexerInterface
     }
 
     /**
-     * Returns searchable attributes by index type.
+     * Returns index mapping by index type.
      *
      * @param string $type
      * @return AttributeDescriptor[]
      */
-    public function getIndexableAttributes($type)
+    public function getIndexMapping($type)
     {
-        return $this->getSearchableType($type)->getIndexableAttributes();
+        return $this->getSearchableType($type)->getIndexMapping();
     }
 }

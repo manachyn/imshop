@@ -5,6 +5,7 @@ namespace im\cms\models\widgets;
 use ReflectionClass;
 use yii\base\InvalidParamException;
 use yii\base\View;
+use yii\base\ViewContextInterface;
 use yii\db\ActiveRecord;
 use Yii;
 
@@ -15,7 +16,7 @@ use Yii;
  * @property string $widget_type
  * @property string $type
  */
-abstract class Widget extends ActiveRecord
+abstract class Widget extends ActiveRecord implements ViewContextInterface
 {
     const TYPE = 'default';
 

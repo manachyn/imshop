@@ -31,4 +31,11 @@ interface FacetValueInterface
      * @param int $count
      */
     public function setResultsCount($count);
+
+    /**
+     * Return facet value label.
+     *
+     * @return string
+     */
+    public function getLabel();
 }

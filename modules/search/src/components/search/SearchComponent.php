@@ -1,6 +1,6 @@
 <?php
 
-namespace im\search\components;
+namespace im\search\components\search;
 
 use Yii;
 use yii\base\Component;
@@ -28,7 +28,8 @@ class SearchComponent extends Component
         $index = $searchManager->getIndexManager()->getIndexByType($type);
         $finder = $index->getSearchService()->getFinder();
         $query = $finder->find($index->getName(), $type);
-        $query->where(ArrayHelper::map($params, 'name', 'value'));
+        //$query->where(ArrayHelper::map($params, 'name', 'value'));
+        $query->query = ['filtered' => ['filter' => ['term' => ['status' => 1]]]];
         if ($facets) {
             foreach ($facets as $facet) {
                 $query->addFacet($facet);
@@ -45,21 +46,24 @@ class SearchComponent extends Component
     public function parseQueryParams($queryParams)
     {
         $params = [];
-        $queryParams = is_string($queryParams) ? explode('/', $queryParams) : $queryParams;
-        foreach ($queryParams as $name => $value) {
-            if (!is_string($name)) {
-                $paramPart = explode('=', $value);
-                $name = $paramPart[0];
-                $value = isset($paramPart[1]) ? $paramPart[1] : '';
+        if ($queryParams) {
+            $queryParams = is_string($queryParams) ? explode('/', $queryParams) : $queryParams;
+            foreach ($queryParams as $name => $value) {
+                if (!is_string($name)) {
+                    $paramPart = explode('=', $value);
+                    $name = $paramPart[0];
+                    $value = isset($paramPart[1]) ? $paramPart[1] : '';
+                }
+                if (!is_array($value)) {
+                    $value = explode(';', $value);
+                }
+                if (count($value) === 1) {
+                    $value = reset($value);
+                }
+                if ($name) {
+                    $params[] = new SearchParam($name, $value);
+                }
             }
-            if (!is_array($value)) {
-                $value = explode(';', $value);
-            }
-            if (count($value) === 1) {
-                $value = reset($value);
-            }
-
-            $params[] = new SearchParam($name, $value);
         }
 
         return $params;

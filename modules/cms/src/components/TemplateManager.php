@@ -155,9 +155,10 @@ class TemplateManager extends Component
                 }
             }
             if ($pks) {
-                $areas = $areas + WidgetArea::find(['id' => $pks])->indexBy('id')->all();
+                $areas = $areas + WidgetArea::find()->where(['id' => $pks])->indexBy('id')->all();
             }
         }
+
         return $areas;
     }
 
@@ -185,7 +186,7 @@ class TemplateManager extends Component
                 }
             }
             if ($pks) {
-                $widgets = $widgets + Widget::find(['id' => $pks])->indexBy('id')->all();
+                $widgets = $widgets + Widget::find()->where(['id' => $pks])->indexBy('id')->all();
             }
         }
         return $widgets;

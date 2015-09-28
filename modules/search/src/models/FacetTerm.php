@@ -97,4 +97,12 @@ class FacetTerm extends ActiveRecord implements FacetValueInterface
     {
         $this->_resultsCount = $count;
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function getLabel()
+    {
+        return $this->display ?: $this->getKey();
+    }
 }
