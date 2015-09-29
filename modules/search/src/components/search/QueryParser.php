@@ -2,6 +2,7 @@
 
 namespace im\search\components\search;
 
+use im\search\components\parser\QueryLexer;
 use Symfony\Component\ExpressionLanguage\Lexer;
 use Symfony\Component\ExpressionLanguage\Parser;
 use ZendSearch\Lucene\Analysis\Analyzer\Analyzer;
@@ -23,6 +24,7 @@ class QueryParser
      */
     public function parse($queryStr)
     {
+        $query = '';
 //        Analyzer::setDefault(new CaseInsensitive());
 //        $query = new Boolean();
 //        $parts = explode($this->parametersSeparator, $queryStr);
@@ -30,11 +32,14 @@ class QueryParser
 //            $subQuery = \ZendSearch\Lucene\Search\QueryParser::parse($subQuery);
 //            $query->addSubquery($subQuery, $this->defaultOperator);
 //        }
-        $lexer = new Lexer();
-        $query = $lexer->tokenize($queryStr);
+//        $lexer = new Lexer();
+//        $query = $lexer->tokenize($queryStr);
+//
+//        $parser = new Parser([]);
+//        $query = $parser->parse($query);
 
-        $parser = new Parser([]);
-        $query = $parser->parse($query);
+        $lexer = new QueryLexer();
+        $tokens = $lexer->tokenize('title=one-or-to');
 
         return $query;
     }
