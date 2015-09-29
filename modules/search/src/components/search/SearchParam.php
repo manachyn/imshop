@@ -1,6 +1,6 @@
 <?php
 
-namespace im\search\components;
+namespace im\search\components\search;
 
 class SearchParam
 {

@@ -3,6 +3,7 @@
 namespace im\search\components;
 
 use im\search\components\index\IndexManager;
+use im\search\components\search\SearchComponent;
 use im\search\components\searchable\AttributeDescriptor;
 use im\search\components\searchable\SearchableInterface;
 use im\search\components\service\SearchServiceInterface;
@@ -35,9 +36,9 @@ class SearchManager extends Component
         ]
     ];
 
-    public $_indexManager = 'im\search\components\index\IndexManager';
+    private $_indexManager = 'im\search\components\index\IndexManager';
 
-    public $_searchComponent = 'im\search\components\search\SearchComponent';
+    private $_searchComponent = 'im\search\components\search\SearchComponent';
 
     /**
      * Returns registered searchable types.

@@ -3,11 +3,12 @@
 namespace im\search\controllers;
 
 use im\search\components\query\QueryResultInterface;
-use im\search\components\SearchDataProvider;
-use im\search\components\SearchResultContextInterface;
+use im\search\components\search\SearchDataProvider;
+use im\search\components\search\SearchResultContextInterface;
 use im\search\models\FacetSet;
 use Yii;
 use yii\web\Controller;
+use ZendSearch\Lucene\Search\QueryParser;
 
 class SearchPageController extends Controller implements SearchResultContextInterface
 {
@@ -28,6 +29,10 @@ class SearchPageController extends Controller implements SearchResultContextInte
             unset($params['path']);
         }
         $searchComponent = $searchManager->getSearchComponent();
+//        \ZendSearch\Lucene\Analysis\Analyzer\Analyzer::setDefault(new \ZendSearch\Lucene\Analysis\Analyzer\Common\TextNum\CaseInsensitive());
+//        $userQuery = QueryParser::parse($params);
+//        $str = $userQuery->__toString();
+
         $params = $searchComponent->parseQueryParams($params);
         /** @var FacetSet $facetSet */
         $facetSet = FacetSet::findOne(1);

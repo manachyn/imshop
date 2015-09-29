@@ -4,10 +4,25 @@ namespace im\search\components\search;
 
 use Yii;
 use yii\base\Component;
+use yii\di\Instance;
 use yii\helpers\ArrayHelper;
 
 class SearchComponent extends Component
 {
+    /**
+     * @var QueryParser
+     */
+    public $queryParser = 'im\search\components\search\QueryParser';
+
+    /**
+     * @inheritdoc
+     */
+    public function init()
+    {
+        parent::init();
+        $this->queryParser = Instance::ensure($this->queryParser, 'im\search\components\search\QueryParser');
+    }
+
     public function search($type, $params)
     {
         $query = $this->getQuery($type);
@@ -45,27 +60,7 @@ class SearchComponent extends Component
      */
     public function parseQueryParams($queryParams)
     {
-        $params = [];
-        if ($queryParams) {
-            $queryParams = is_string($queryParams) ? explode('/', $queryParams) : $queryParams;
-            foreach ($queryParams as $name => $value) {
-                if (!is_string($name)) {
-                    $paramPart = explode('=', $value);
-                    $name = $paramPart[0];
-                    $value = isset($paramPart[1]) ? $paramPart[1] : '';
-                }
-                if (!is_array($value)) {
-                    $value = explode(';', $value);
-                }
-                if (count($value) === 1) {
-                    $value = reset($value);
-                }
-                if ($name) {
-                    $params[] = new SearchParam($name, $value);
-                }
-            }
-        }
+        $this->queryParser->parse($queryParams);
 
-        return $params;
     }
 }

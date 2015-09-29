@@ -3,9 +3,8 @@
 namespace im\search\models;
 
 use im\cms\models\Page;
-use im\search\components\SearchPageInterface;
 
-class SearchPage extends Page implements SearchPageInterface
+class SearchPage extends Page
 {
     const TYPE = 'search_page';
 }

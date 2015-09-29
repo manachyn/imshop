@@ -32,3 +32,18 @@ https://www.elastic.co/guide/en/elasticsearch/reference/current/search-request-s
 
 Elasticsearch
 http://www.sitepoint.com/introduction-to-elasticsearch-in-php/
+http://elastica.io/getting-started/search-documents.html
+
+Zend search
+http://framework.zend.com/manual/2.2/en/modules/zendsearch.lucene.searching.html
+http://framework.zend.com/manual/current/en/modules/zendsearch.lucene.searching.html
+
+Parser
+http://codehackit.blogspot.com/2011/08/expression-parser-in-php.html
+https://github.com/symfony/expression-language
+https://github.com/angeloskath/php-nlp-tools/blob/master/src/NlpTools/Tokenizers/RegexTokenizer.php
+https://nikic.github.io/2011/10/23/Improving-lexing-performance-in-PHP.html
+http://php-nlp-tools.com/documentation/tokenizers.html
+
+FSM
+http://pear.github.io/FSM/

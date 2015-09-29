@@ -12,7 +12,7 @@
         "irc": "irc://irc.freenode.net/yii",
         "source": "https://github.com/yiisoft/yii2"
     },
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "require": {
         "php": ">=5.4.0",
         "yiisoft/yii2": ">=2.0.4",
@@ -32,7 +32,9 @@
         "yiisoft/yii2-elasticsearch": "^2.0",
         "yiisoft/yii2-imagine": "^2.0",
         "trntv/yii2-glide": "^1.0",
-        "vova07/yii2-imperavi-widget": "^1.2"
+        "vova07/yii2-imperavi-widget": "^1.2",
+        "zendframework/zendsearch": "dev-master",
+        "symfony/expression-language": "^3.0@dev"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",
