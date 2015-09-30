@@ -6,21 +6,22 @@ use yii\base\InvalidParamException;
 
 class QueryToken
 {
+    const TYPE_WHITE_SPACE = 'white_space';
     const TYPE_WORD = 'word';
     const TYPE_PHRASE = 'phrase';
     const TYPE_NUMBER = 'number';
+    const TYPE_DATE = 'date';
     const TYPE_OPERATOR = 'operator';
     const TYPE_SYNTAX = 'syntax';
     const TYPE_FIELD                = 'field';
-    const TYPE_FIELD_INDICATOR      = 'field_indicator';
+    //const TYPE_FIELD_INDICATOR      = 'field_indicator';
     const TYPE_LEFT_SQUARE_BRACKET     = 'left_square_bracket';
     const TYPE_RIGHT_SQUARE_BRACKET     = 'right_square_bracket';
     const TYPE_LEFT_PARENTHESIS     = 'left_parenthesis';
     const TYPE_RIGHT_PARENTHESIS     = 'right_parenthesis';
-
-    const TYPE_AND_LEXEME           = 'and';
-    const TYPE_OR_LEXEME            = 'or';
-    const TYPE_NOT_LEXEME           = 'not';
+    const TYPE_AND_OPERATOR           = 'and';
+    const TYPE_OR_OPERATOR            = 'or';
+    const TYPE_NOT_OPERATOR           = 'not';
     const TYPE_TO_LEXEME            = 'to';
 
     /**
@@ -53,15 +54,15 @@ class QueryToken
             case self::TYPE_WORD:
                 switch (strtolower($text)) {
                     case 'and':
-                        $this->type = self::TYPE_AND_LEXEME;
+                        $this->type = self::TYPE_AND_OPERATOR;
                         break;
 
                     case 'or':
-                        $this->type = self::TYPE_OR_LEXEME;
+                        $this->type = self::TYPE_OR_OPERATOR;
                         break;
 
                     case 'not':
-                        $this->type = self::TYPE_NOT_LEXEME;
+                        $this->type = self::TYPE_NOT_OPERATOR;
                         break;
 
                     case 'to':
@@ -76,20 +77,25 @@ class QueryToken
             case self::TYPE_OPERATOR:
                 switch ($text) {
                     case '=':
-                        $this->type = self::TYPE_FIELD_INDICATOR;
+                    case '>':
+                    case '<':
+                    case '>=':
+                    case '<=':
+                        $this->type = self::TYPE_OPERATOR;
                         break;
 
+                    case 'not':
                     case '!':
-                        $this->type = self::TYPE_NOT_LEXEME;
+                        $this->type = self::TYPE_NOT_OPERATOR;
                         break;
 
-                    case '&&':
-                        $this->type = self::TYPE_AND_LEXEME;
+                    case 'and':
+                    case '&':
+                        $this->type = self::TYPE_AND_OPERATOR;
                         break;
 
-                    case '-or-':
-                    case '||':
-                        $this->type = self::TYPE_OR_LEXEME;
+                    case 'or':
+                        $this->type = self::TYPE_OR_OPERATOR;
                         break;
 
                     default:
@@ -115,9 +121,21 @@ class QueryToken
                         $this->type = self::TYPE_RIGHT_PARENTHESIS;
                         break;
 
+                    case '-':
+                        $this->type = self::TYPE_WHITE_SPACE;
+                        break;
+
                     default:
                         throw new InvalidParamException("Unrecognized query syntax lexeme: '{$text}'");
                 }
+                break;
+
+            case self::TYPE_NUMBER:
+                $this->type = self::TYPE_WORD;
+                break;
+
+            case self::TYPE_DATE:
+                $this->type = self::TYPE_WORD;
                 break;
 
             default:
@@ -125,5 +143,25 @@ class QueryToken
         }
     }
 
-
+    public static function getTypes()
+    {
+        return [
+            self::TYPE_WHITE_SPACE,
+            self::TYPE_WORD,
+            self::TYPE_PHRASE,
+            self::TYPE_NUMBER,
+            self::TYPE_DATE,
+            self::TYPE_OPERATOR,
+            self::TYPE_SYNTAX,
+            self::TYPE_FIELD,
+            self::TYPE_LEFT_SQUARE_BRACKET,
+            self::TYPE_RIGHT_SQUARE_BRACKET,
+            self::TYPE_LEFT_PARENTHESIS,
+            self::TYPE_RIGHT_PARENTHESIS,
+            self::TYPE_AND_OPERATOR,
+            self::TYPE_OR_OPERATOR,
+            self::TYPE_NOT_OPERATOR,
+            self::TYPE_TO_LEXEME,
+        ];
+    }
 }

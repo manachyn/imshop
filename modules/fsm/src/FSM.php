@@ -33,7 +33,7 @@ abstract class FSM
     private $_inputAlphabet = [];
 
     /**
-     * State transition table
+     * State transitions table
      *
      * [sourceState][input] => targetState
      *
@@ -84,34 +84,15 @@ abstract class FSM
     /**
      * Finite State machine constructor
      *
-     * $states is an array of integers or strings with a list of possible machine states
-     * constructor treats fist list element as a sturt state (assignes it to $_current state).
-     * It may be reassigned by setState() call.
-     * States list may be empty and can be extended later by addState() or addStates() calls.
-     *
-     * $inputAphabet is the same as $states, but represents input alphabet
-     * it also may be extended later by addInputSymbols() or addInputSymbol() calls.
-     *
-     * $rules parameter describes FSM transitions and has a structure:
-     * array( array(sourseState, input, targetState[, inputAction]),
-     *        array(sourseState, input, targetState[, inputAction]),
-     *        array(sourseState, input, targetState[, inputAction]),
-     *        ...
-     *      )
-     * Rules also can be added later by addRules() and addRule() calls.
-     *
-     * FSM actions are very flexible and may be defined by addEntryAction(), addExitAction(),
-     * addInputAction() and addTransitionAction() calls.
-     *
      * @param array $states
      * @param array $inputAlphabet
-     * @param array $rules
+     * @param array $transitions
      */
-    public function __construct($states = array(), $inputAlphabet = array(), $rules = array())
+    public function __construct($states = array(), $inputAlphabet = array(), $transitions = array())
     {
         $this->addStates($states);
         $this->addInputSymbols($inputAlphabet);
-        $this->addRules($rules);
+        $this->addTransitions($transitions);
     }
 
     /**
@@ -190,7 +171,7 @@ abstract class FSM
 
 
     /**
-     * Add transition rules
+     * Add transitions
      *
      * array structure:
      * array( array(sourseState, input, targetState[, inputAction]),
@@ -199,12 +180,12 @@ abstract class FSM
      *        ...
      *      )
      *
-     * @param array $rules
+     * @param array $transitions
      */
-    public function addRules($rules)
+    public function addTransitions($transitions)
     {
-        foreach ($rules as $rule) {
-            $this->addrule($rule[0], $rule[1], $rule[2], isset($rule[3])?$rule[3]:null);
+        foreach ($transitions as $transition) {
+            $this->addtransition($transition[0], $transition[1], $transition[2], isset($transition[3])?$transition[3]:null);
         }
     }
 
@@ -218,7 +199,7 @@ abstract class FSM
      * @throws InvalidParamException
      * @throws \RuntimeException
      */
-    public function addRule($sourceState, $input, $targetState, $inputAction = null)
+    public function addTransition($sourceState, $input, $targetState, $inputAction = null)
     {
         if (!isset($this->_states[$sourceState])) {
             throw new InvalidParamException('Undefined source state (' . $sourceState . ').');
@@ -234,7 +215,7 @@ abstract class FSM
             $this->_transitions[$sourceState] = array();
         }
         if (isset($this->_transitions[$sourceState][$input])) {
-            throw new \RuntimeException('Rule for {state,input} pair (' . $sourceState . ', '. $input . ') is already defined.');
+            throw new \RuntimeException('Transition for {state,input} pair (' . $sourceState . ', '. $input . ') is already defined.');
         }
 
         $this->_transitions[$sourceState][$input] = $targetState;
@@ -359,10 +340,10 @@ abstract class FSM
     public function process($input)
     {
         if (!isset($this->_transitions[$this->_currentState])) {
-            throw new \RuntimeException('There is no any rule for current state (' . $this->_currentState . ').');
+            throw new \RuntimeException('There is no any transition for current state (' . $this->_currentState . ').');
         }
         if (!isset($this->_transitions[$this->_currentState][$input])) {
-            throw new InvalidParamException('There is no any rule for {current state, input} pair (' . $this->_currentState . ', ' . $input . ').');
+            throw new InvalidParamException('There is no any transition for {current state, input} pair (' . $this->_currentState . ', ' . $input . ').');
         }
 
         $sourceState = $this->_currentState;

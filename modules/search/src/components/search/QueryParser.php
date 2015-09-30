@@ -38,8 +38,15 @@ class QueryParser
 //        $parser = new Parser([]);
 //        $query = $parser->parse($query);
 
+
+//        $query = 'title:one OR two date:[10 to 20] test=NOT ggg';
+//        Analyzer::setDefault(new CaseInsensitive());
+//        $query = \ZendSearch\Lucene\Search\QueryParser::parse($query);
+
         $lexer = new QueryLexer();
         $tokens = $lexer->tokenize('title=one-or-to');
+        $parser = new \im\search\components\parser\QueryParser();
+        $query = $parser->parse($tokens);
 
         return $query;
     }
