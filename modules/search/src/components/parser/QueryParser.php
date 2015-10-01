@@ -31,6 +31,21 @@ class QueryParser
     private $_currentToken;
 
     /**
+     * Current token
+     *
+     * @var QueryToken
+     */
+    private $_nextToken;
+
+    /**
+     * Last token
+     *
+     * It can be processed within FSM states, but this addirional state simplifies FSM
+     * @var QueryToken
+     */
+    private $_lastToken = null;
+
+    /**
      * Range query first term
      *
      * @var string
@@ -47,37 +62,32 @@ class QueryParser
         $this->_context = new QueryParserContext();
         $this->_contextStack = [];
 
-        $addTermEntryAction             = new FSMAction($this, 'addTermEntry');
-        $addPhraseEntryAction           = new FSMAction($this, 'addPhraseEntry');
-        $setFieldAction                 = new FSMAction($this, 'setField');
-        $setSignAction                  = new FSMAction($this, 'setSign');
-        $setFuzzyProxAction             = new FSMAction($this, 'processFuzzyProximityModifier');
-        $processModifierParameterAction = new FSMAction($this, 'processModifierParameter');
-        $subConditionStartAction            = new FSMAction($this, 'subConditionStart');
-        $subConditionEndAction              = new FSMAction($this, 'subConditionEnd');
-        $logicalOperatorAction          = new FSMAction($this, 'logicalOperator');
-        $operatorAction          = new FSMAction($this, 'operator');
-        $includedRangeFirstTermAction        = new FSMAction($this, 'includedRangeFirstTerm');
-        $includedRangeLastTermAction         = new FSMAction($this, 'includedRangeLastTerm');
-        $closedRQFirstTermAction        = new FSMAction($this, 'closedRQFirstTerm');
-        $closedRQLastTermAction         = new FSMAction($this, 'closedRQLastTerm');
+        $addTermEntryAction = new FSMAction($this, 'addTermEntry');
+        $operatorAction = new FSMAction($this, 'operator');
+        $logicalOperatorAction = new FSMAction($this, 'logicalOperator');
+        $conditionStartAction = new FSMAction($this, 'conditionStart');
+        $conditionEndAction = new FSMAction($this, 'conditionEnd');
+        $includedRangeFirstTermAction = new FSMAction($this, 'includedRangeFirstTerm');
+        $includedRangeLastTermAction = new FSMAction($this, 'includedRangeLastTerm');
 
         $fsm->addInputAction($fsm::STATE_QUERY_ELEMENT, QueryToken::TYPE_WORD, $addTermEntryAction);
         $fsm->addInputAction($fsm::STATE_QUERY_ELEMENT, QueryToken::TYPE_OPERATOR, $operatorAction);
-        $fsm->addInputAction($fsm::STATE_QUERY_ELEMENT, QueryToken::TYPE_AND_OPERATOR,      $logicalOperatorAction);
-        $fsm->addInputAction($fsm::STATE_QUERY_ELEMENT, QueryToken::TYPE_OR_OPERATOR,       $logicalOperatorAction);
-        $fsm->addInputAction($fsm::STATE_QUERY_ELEMENT, QueryToken::TYPE_NOT_OPERATOR,      $logicalOperatorAction);
-        $fsm->addInputAction($fsm::STATE_QUERY_ELEMENT, QueryToken::TYPE_LEFT_PARENTHESIS,  $subConditionStartAction);
-        $fsm->addInputAction($fsm::STATE_QUERY_ELEMENT, QueryToken::TYPE_RIGHT_PARENTHESIS,    $subConditionEndAction);
+        $fsm->addInputAction($fsm::STATE_QUERY_ELEMENT, QueryToken::TYPE_AND_OPERATOR, $logicalOperatorAction);
+        $fsm->addInputAction($fsm::STATE_QUERY_ELEMENT, QueryToken::TYPE_OR_OPERATOR, $logicalOperatorAction);
+        $fsm->addInputAction($fsm::STATE_QUERY_ELEMENT, QueryToken::TYPE_NOT_OPERATOR, $logicalOperatorAction);
+        $fsm->addInputAction($fsm::STATE_QUERY_ELEMENT, QueryToken::TYPE_LEFT_PARENTHESIS, $conditionStartAction);
+        $fsm->addInputAction($fsm::STATE_QUERY_ELEMENT, QueryToken::TYPE_RIGHT_PARENTHESIS, $conditionEndAction);
         $fsm->addEntryAction($fsm::STATE_INCLUDED_RANGE_FIRST_TERM, $includedRangeFirstTermAction);
-        $fsm->addEntryAction($fsm::STATE_INCLUDED_RANGE_LAST_TERM,  $includedRangeLastTermAction);
-        //$fsm->addEntryAction($fsm::ST_CLOSEDINT_RQ_FIRST_TERM, $closedRQFirstTermAction);
-        //$fsm->addEntryAction($fsm::ST_CLOSEDINT_RQ_LAST_TERM,  $closedRQLastTermAction);
+        $fsm->addEntryAction($fsm::STATE_INCLUDED_RANGE_LAST_TERM, $includedRangeLastTermAction);
 
 
-        foreach ($tokens as $token) {
+        foreach ($tokens as $key => $token) {
             $this->_currentToken = $token;
+            if (isset($tokens[$key + 1])) {
+                $this->_nextToken = $tokens[$key + 1];
+            }
             $fsm->process($token->type);
+            $this->_lastToken = $token;
         }
 
         return $this->_context->getCondition();
@@ -90,36 +100,64 @@ class QueryParser
 
     public function addTermEntry()
     {
-        $entry = new Term($this->_currentToken->text, $this->_context->getNextEntryField());
-        $this->_context->addEntry($entry);
+//        if ($this->_lastToken && in_array($this->_lastToken->type, QueryToken::getLogicalOperatorsTypes())) {
+//            /** @var LogicalOperator $operator */
+//            $operator = null;
+//            $operands = [];
+//            $condition = null;
+//            foreach ($this->_context->getEntries() as $entry) {
+//                if ($entry instanceof LogicalOperator) {
+//                    if (!$operator) {
+//                        $operator = $entry;
+//                    } elseif ($operator->getType() !== $entry->getType()) {
+//                        $condition = new Condition($operator, $operands);
+//                        $operands = [$condition];
+//                        $operator = $entry;
+//                    }
+//                } else {
+//                    $operands[] = $entry;
+//                }
+//            }
+//            if ($condition) {
+//                $this->_context->getCondition()->setOperands([$condition]);
+//            }
+//        }
+        //$operand = new Term($this->_context->getField(), $this->_currentToken->text);
+        $operand = new FieldCondition($this->_context->getField(), $this->_context->getOperator(), $this->_currentToken->text);
+        $this->_context->addOperand($operand);
     }
 
     public function operator()
     {
-        $this->_context->addLogicalOperator($this->_currentToken->type);
+        if (!$this->_lastToken || $this->_lastToken->type !== QueryToken::TYPE_WORD) {
+            throw new QueryParserException('Syntax Error: operator must follow field.');
+        }
+        $this->_context->setField($this->_lastToken->text);
+        $this->_context->setOperator(new Operator($this->_currentToken->text));
     }
 
     public function logicalOperator()
     {
-        $this->_context->addLogicalOperator($this->_currentToken->type);
+        $operator = new LogicalOperator($this->_currentToken->type);
+        $this->_context->setLogicalOperator($operator);
     }
 
 
-    public function subConditionStart()
+    public function conditionStart()
     {
         $this->_contextStack[] = $this->_context;
-        $this->_context = new QueryParserContext($this->_context->getNextEntryField());
+        $this->_context = new QueryParserContext($this->_context->getField(), $this->_context->getOperator());
     }
 
 
-    public function subConditionEnd()
+    public function conditionEnd()
     {
         if (count($this->_contextStack) == 0) {
             throw new QueryParserException('Syntax Error: mismatched parentheses, every opening must have closing. Char position ' . $this->_currentToken->position . '.' );
         }
-        $condition = $this->_context->getCondition();
+        $operands = $this->_context->getCondition()->getOperands();
         $this->_context = array_pop($this->_contextStack);
-        $this->_context->addEntry(new SubCondition($condition));
+        $this->_context->addOperand(new Condition(new LogicalOperator('Undefined'), $operands));
     }
 
     public function includedRangeFirstTerm()
@@ -135,8 +173,8 @@ class QueryParser
             throw new QueryParserException('At least one range query boundary term must be non-empty term');
         }
 
-        $rangeCondition = new Range($from, $to, true, true);
-        $entry      = new SubCondition($rangeCondition);
-        $this->_context->addEntry($entry);
+        $range = new Range($this->_context->getField(), $from, $to, true, true);
+        //$entry      = new SubCondition($rangeCondition);
+        $this->_context->addOperand($range);
     }
 }

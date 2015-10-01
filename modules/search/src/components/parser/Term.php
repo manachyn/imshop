@@ -2,17 +2,15 @@
 
 namespace im\search\components\parser;
 
-class Term extends ConditionEntry
+class Term implements ConditionOperandInterface
 {
-    private $_term;
-
     private $_field;
 
-    function __construct($term, $field)
+    private $_term;
+
+    function __construct($field, $term)
     {
-        $this->_term = $term;
         $this->_field = $field;
+        $this->_term = $term;
     }
-
-
 }

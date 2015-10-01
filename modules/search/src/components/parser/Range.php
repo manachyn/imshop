@@ -2,8 +2,10 @@
 
 namespace im\search\components\parser;
 
-class Range extends Condition
+class Range implements ConditionOperandInterface
 {
+    private $_field;
+
     private $_from;
 
     private $_to;
@@ -12,13 +14,12 @@ class Range extends Condition
 
     private $_toInclude;
 
-    function __construct($from, $to, $fromInclude, $toInclude)
+    function __construct($field, $from, $to, $fromInclude, $toInclude)
     {
+        $this->_field = $field;
         $this->_from = $from;
         $this->_to = $to;
         $this->_fromInclude = $fromInclude;
         $this->_toInclude = $toInclude;
     }
-
-
 }

@@ -44,7 +44,7 @@ class QueryParser
 //        $query = \ZendSearch\Lucene\Search\QueryParser::parse($query);
 
         $lexer = new QueryLexer();
-        $tokens = $lexer->tokenize('title=one-or-to');
+        $tokens = $lexer->tokenize('title=((one OR two) AND three) OR four&date=[10 to 20]&test>100');
         $parser = new \im\search\components\parser\QueryParser();
         $query = $parser->parse($tokens);
 

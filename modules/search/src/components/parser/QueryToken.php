@@ -164,4 +164,13 @@ class QueryToken
             self::TYPE_TO_LEXEME,
         ];
     }
+
+    public static function getLogicalOperatorsTypes()
+    {
+        return [
+            self::TYPE_AND_OPERATOR,
+            self::TYPE_OR_OPERATOR,
+            self::TYPE_NOT_OPERATOR
+        ];
+    }
 }
