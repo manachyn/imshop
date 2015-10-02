@@ -33,7 +33,7 @@ class SearchPageController extends Controller implements SearchResultContextInte
 //        $userQuery = QueryParser::parse($params);
 //        $str = $userQuery->__toString();
 
-        $params = $searchComponent->parseQueryParams($params);
+        $params = $searchComponent->parseQuery($params);
         /** @var FacetSet $facetSet */
         $facetSet = FacetSet::findOne(1);
         $facets = $facetSet->facets;

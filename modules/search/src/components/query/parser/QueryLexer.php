@@ -1,9 +1,16 @@
 <?php
 
-namespace im\search\components\parser;
+namespace im\search\components\query\parser;
 
-class QueryLexer
+/**
+ * Class QueryLexer
+ * @package im\search\components\query\parser
+ */
+class QueryLexer implements QueryLexerInterface
 {
+    /**
+     * @inheritdoc
+     */
     public function tokenize($string)
     {
         $cursor = 0;
@@ -29,7 +36,7 @@ class QueryLexer
                     continue 2;
                 }
             }
-            throw new \LogicException(sprintf('Unexpected character "%s" around position %d.', $string[$cursor], $cursor));
+            throw new SyntaxException(sprintf("Unexpected character '%s' around position %d.", $string[$cursor], $cursor));
         }
 
         return $tokens;

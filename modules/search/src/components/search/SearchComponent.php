@@ -2,17 +2,20 @@
 
 namespace im\search\components\search;
 
+use im\search\components\query\parser\QueryParser;
+use im\search\components\query\parser\QueryParserInterface;
 use Yii;
 use yii\base\Component;
-use yii\di\Instance;
-use yii\helpers\ArrayHelper;
 
 class SearchComponent extends Component
 {
     /**
-     * @var QueryParser
+     * @var QueryParserInterface
      */
-    public $queryParser = 'im\search\components\search\QueryParser';
+    public $queryParser = [
+        'class' => 'im\search\components\query\parser\QueryParser',
+        'higherPriorityOperator' => QueryParser::OPERATOR_AND
+    ];
 
     /**
      * @inheritdoc
@@ -20,7 +23,9 @@ class SearchComponent extends Component
     public function init()
     {
         parent::init();
-        $this->queryParser = Instance::ensure($this->queryParser, 'im\search\components\search\QueryParser');
+        if (!$this->queryParser instanceof QueryParserInterface) {
+            $this->queryParser = Yii::createObject($this->queryParser);
+        }
     }
 
     public function search($type, $params)
@@ -55,12 +60,17 @@ class SearchComponent extends Component
     }
 
     /**
-     * @param string $queryParams
+     * @param string $querySting
      * @return SearchParam[]
      */
-    public function parseQueryParams($queryParams)
+    public function parseQuery($querySting)
     {
-        $this->queryParser->parse($queryParams);
 
+//        $query = 'title:one OR two AND three name:test';
+//        Analyzer::setDefault(new CaseInsensitive());
+//        $query = \ZendSearch\Lucene\Search\QueryParser::parse($query);
+        $querySting = 'title=one OR two&date=[10 to 20]&test>100';
+        $query = $this->queryParser->parse($querySting);
+        $a = 1;
     }
 }

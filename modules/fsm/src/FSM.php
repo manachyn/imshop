@@ -377,9 +377,6 @@ abstract class FSM
         }
     }
 
-    /**
-     * @throws \ZendSearch\Lucene\Exception\RuntimeException
-     */
     public function reset()
     {
         if (count($this->_states) == 0) {
