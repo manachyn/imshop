@@ -4,9 +4,9 @@ namespace im\search\components\query\parser;
 
 use im\fsm\FSM;
 use im\fsm\FSMAction;
-use im\search\components\query\parser\entry\Range;
+use im\search\components\query\parser\entry\Condition;
 use im\search\components\query\parser\entry\SubQuery;
-use im\search\components\query\parser\entry\Term;
+use im\search\components\query\Range;
 use Yii;
 
 /**
@@ -197,7 +197,7 @@ class QueryParser extends FSM implements QueryParserInterface
      */
     public function addTermEntry()
     {
-        $entry = new Term($this->_currentToken->text, $this->_context->getField(), $this->_context->getOperator());
+        $entry = new Condition($this->_context->getField(), $this->_currentToken->text, $this->_context->getOperator());
         $this->_context->addEntry($entry);
     }
 
@@ -256,6 +256,7 @@ class QueryParser extends FSM implements QueryParserInterface
             throw new QueryParserException('Syntax Error: At least one range query boundary term must be non-empty term.');
         }
         $range = new Range($this->_context->getField(), $from, $to, true, true);
-        $this->_context->addEntry($range);
+        //$range = new Range($this->_context->getField(), $from, $to, true, true);
+        $this->_context->addEntry(new SubQuery($range));
     }
 }

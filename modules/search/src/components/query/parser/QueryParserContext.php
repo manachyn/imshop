@@ -2,7 +2,9 @@
 
 namespace im\search\components\query\parser;
 
+use im\search\components\query\Boolean;
 use im\search\components\query\parser\entry\QueryEntryInterface;
+use im\search\components\query\QueryInterface;
 
 /**
  * Query parser context.
@@ -124,6 +126,7 @@ class QueryParserContext
     /**
      * Returns query from context.
      *
+     * @throws QueryParserException
      * @return QueryInterface
      */
     public function getQuery()
@@ -170,54 +173,44 @@ class QueryParserContext
         // Remove 'only negative' conjunctions
         foreach ($conjunctions as $conjunctionId => $conjunction) {
             $nonNegativeEntryFound = false;
-
             foreach ($conjunction as $conjunctionEntry) {
                 if ($conjunctionEntry[1]) {
                     $nonNegativeEntryFound = true;
                     break;
                 }
             }
-
             if (!$nonNegativeEntryFound) {
                 unset($conjunctions[$conjunctionId]);
             }
         }
 
+        $subQueries = array();
+        foreach ($conjunctions as  $conjunction) {
+            // Check, if it's a one term conjunction
+            if (count($conjunction) === 1) {
+                /** @var QueryEntryInterface $entry */
+                $entry = $conjunction[0][0];
+                $subQueries[] = $entry->getQuery();
+            } else {
+                $subQuery = new Boolean();
+                foreach ($conjunction as $conjunctionEntry) {
+                    $entry = $conjunctionEntry[0];
+                    $subQuery->addSubquery($entry->getQuery()/*, $conjunctionEntry[1]*/);
+                }
+                $subQueries[] = $subQuery;
+            }
+        }
 
-        $subqueries = array();
-//        foreach ($conjunctions as  $conjunction) {
-//            // Check, if it's a one term conjunction
-//            if (count($conjunction) == 1) {
-//                $subqueries[] = $conjunction[0][0]->getQuery($this->_encoding);
-//            } else {
-//                $subquery = new Query\Boolean();
-//
-//                foreach ($conjunction as $conjunctionEntry) {
-//                    $subquery->addSubquery($conjunctionEntry[0]->getQuery($this->_encoding), $conjunctionEntry[1]);
-//                }
-//
-//                $subqueries[] = $subquery;
-//            }
-//        }
-//
-//        if (count($subqueries) == 0) {
-//            return new Query\Insignificant();
-//        }
-//
-//        if (count($subqueries) == 1) {
-//            return $subqueries[0];
-//        }
-//
-//
-//        $query = new Query\Boolean();
-//
-//        foreach ($subqueries as $subquery) {
-//            // Non-requirered entry/subquery
-//            $query->addSubquery($subquery);
-//        }
+        if (count($subQueries) == 1) {
+            return $subQueries[0];
+        }
 
-//        return $query;
+        $query = new Boolean();
 
-        return new Query($conjunctions);
+        foreach ($subQueries as $subQuery) {
+            $query->addSubquery($subQuery);
+        }
+
+        return $query;
     }
 }

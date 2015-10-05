@@ -2,15 +2,29 @@
 
 namespace im\search\components\query;
 
-interface RangeInterface extends FacetValueInterface
+/**
+ * Interface RangeInterface
+ * @package im\search\components\query
+ */
+interface RangeInterface
 {
     /**
      * @return mixed
      */
-    public function getFrom();
+    public function getLowerBound();
 
     /**
      * @return mixed
      */
-    public function getTo();
+    public function getUpperBound();
+
+    /**
+     * @return bool
+     */
+    public function isIncludeLowerBound();
+
+    /**
+     * @return bool
+     */
+    public function isIncludeUpperBound();
 }

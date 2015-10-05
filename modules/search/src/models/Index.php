@@ -8,7 +8,6 @@ use im\search\components\service\SearchServiceInterface;
 use Yii;
 use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
-use yii\helpers\Inflector;
 
 /**
  * Index model class.

@@ -2,11 +2,11 @@
 
 namespace im\elasticsearch\components;
 
-use im\search\components\query\FacetInterface;
-use im\search\components\query\IntervalFacetInterface;
+use im\search\components\query\facet\FacetInterface;
+use im\search\components\query\facet\IntervalFacetInterface;
+use im\search\components\query\facet\RangeFacetInterface;
 use im\search\components\query\QueryInterface;
 use im\search\components\query\QueryResultInterface;
-use im\search\components\query\RangeFacetInterface;
 use im\search\components\transformer\DocumentToObjectTransformerInterface;
 
 class Query extends \yii\elasticsearch\Query implements QueryInterface
@@ -87,10 +87,10 @@ class Query extends \yii\elasticsearch\Query implements QueryInterface
             $options = ['field' => $facet->getField(), 'ranges' => []];
             foreach ($ranges as $range) {
                 $optionsRange = [];
-                if ($from = $range->getFrom()) {
+                if ($from = $range->getLowerBound()) {
                     $optionsRange['from'] = $from;
                 }
-                if ($to = $range->getTo()) {
+                if ($to = $range->getUpperBound()) {
                     $optionsRange['to'] = $to;
                 }
                 if ($optionsRange) {

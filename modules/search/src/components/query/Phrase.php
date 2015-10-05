@@ -1,13 +1,13 @@
 <?php
 
-namespace im\search\components\query\parser\entry;
+namespace im\search\components\query;
 
 /**
- * Phrase query entry.
+ * Phrase query.
  *
- * @package im\search\components\query\parser\entry
+ * @package im\search\components\query
  */
-class Phrase implements QueryEntryInterface
+class Phrase extends Query
 {
     /**
      * @var string
@@ -20,6 +20,8 @@ class Phrase implements QueryEntryInterface
     private $_phrase;
 
     /**
+     * Creates phrase query.
+     *
      * @param string $phrase
      * @param string $field
      */
@@ -28,12 +30,4 @@ class Phrase implements QueryEntryInterface
         $this->_field = $field;
         $this->_phrase = $phrase;
     }
-
-    /**
-     * @inheritdoc
-     */
-    public function getQuery()
-    {
-        return new Phrase($this->_field, $this->_phrase);
-    }
-}
+} 

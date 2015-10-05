@@ -14,7 +14,7 @@ class SearchComponent extends Component
      */
     public $queryParser = [
         'class' => 'im\search\components\query\parser\QueryParser',
-        'higherPriorityOperator' => QueryParser::OPERATOR_AND
+        'higherPriorityOperator' => QueryParser::OPERATOR_OR
     ];
 
     /**

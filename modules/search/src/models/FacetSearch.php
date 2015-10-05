@@ -9,7 +9,7 @@ use yii\data\ActiveDataProvider;
 /**
  * FacetSearch represents the model behind the search form about `im\search\models\Facet`.
  */
-class FacetSearch extends Facet
+class FacetSearch extends Model
 {
     /**
      * @inheritdoc

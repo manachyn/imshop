@@ -58,8 +58,8 @@ class m150806_091325_create_search_tables extends Migration
             'facet_id' => $this->integer()->notNull(),
             'from' => $this->string()->notNull(),
             'to' => $this->string()->notNull(),
-            'from_include' => $this->boolean()->defaultValue(1),
-            'to_include' => $this->boolean()->defaultValue(0),
+            'include_lower_bound' => $this->boolean()->defaultValue(1),
+            'include_upper_bound' => $this->boolean()->defaultValue(0),
             'display' => $this->string()->notNull(),
             'sort' => $this->integer()->defaultValue(null)
         ], $tableOptions);

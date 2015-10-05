@@ -3,7 +3,7 @@
 namespace im\search\models;
 
 use im\base\behaviors\RelationsBehavior;
-use im\search\backend\Module;
+use im\search\Module;
 use yii\db\ActiveRecord;
 
 /**

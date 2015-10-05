@@ -2,7 +2,7 @@
 
 namespace im\search\models;
 
-use im\search\components\query\IntervalFacetInterface;
+use im\search\components\query\facet\IntervalFacetInterface;
 
 /**
  * Interval facet model class.

@@ -1,7 +1,11 @@
 <?php
 
-namespace im\search\components\query;
+namespace im\search\components\query\facet;
 
+/**
+ * Interface FacetInterface
+ * @package im\search\components\query\facet
+ */
 interface FacetInterface
 {
     /**

@@ -16,16 +16,16 @@ $fieldConfig = isset($fieldConfig) ? $fieldConfig : [];
 
 <div class="form-inline">
 
-    <?= $form->field($model, 'from', array_merge($fieldConfig, [
-        'template' => "{label}\n<div class=\"input-group\"><span class=\"input-group-addon\">" . $form->field($model, 'from_include', array_merge($fieldConfig, [
+    <?= $form->field($model, 'lower_bound', array_merge($fieldConfig, [
+        'template' => "{label}\n<div class=\"input-group\"><span class=\"input-group-addon\">" . $form->field($model, 'include_lower_bound', array_merge($fieldConfig, [
                 'template' => "{input}"
             ]))->checkbox(['label' => false]) . "</span>{input}</div>\n{hint}\n{error}"
     ]))->textInput(['maxlength' => true])->label(false) ?>
 
     <span><strong>to</strong></span>
 
-    <?= $form->field($model, 'to', array_merge($fieldConfig, [
-        'template' => "{label}\n<div class=\"input-group\">{input}\n<span class=\"input-group-addon\">" . $form->field($model, 'to_include', array_merge($fieldConfig, [
+    <?= $form->field($model, 'upper_bound', array_merge($fieldConfig, [
+        'template' => "{label}\n<div class=\"input-group\">{input}\n<span class=\"input-group-addon\">" . $form->field($model, 'include_upper_bound', array_merge($fieldConfig, [
                 'template' => "{input}"
             ]))->checkbox(['label' => false]) . "</span></div>\n{hint}\n{error}"
     ]))->textInput(['maxlength' => true])->label(false) ?>

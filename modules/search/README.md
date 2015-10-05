@@ -45,5 +45,8 @@ https://github.com/angeloskath/php-nlp-tools/blob/master/src/NlpTools/Tokenizers
 https://nikic.github.io/2011/10/23/Improving-lexing-performance-in-PHP.html
 http://php-nlp-tools.com/documentation/tokenizers.html
 
+Query language
+https://lucidworks.com/blog/why-not-and-or-and-not/
+
 FSM
 http://pear.github.io/FSM/

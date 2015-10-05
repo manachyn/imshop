@@ -3,7 +3,7 @@
 namespace im\search\models;
 
 use im\base\behaviors\RelationsBehavior;
-use im\search\components\query\RangeFacetInterface;
+use im\search\components\query\facet\RangeFacetInterface;
 use im\search\Module;
 
 /**

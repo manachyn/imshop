@@ -2,7 +2,7 @@
 
 namespace im\search\models;
 
-use im\search\components\query\FacetInterface;
+use im\search\components\query\facet\FacetInterface;
 use im\search\components\searchable\AttributeDescriptor;
 use im\search\Module;
 use Yii;

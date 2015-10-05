@@ -2,6 +2,7 @@
 
 namespace im\search\models;
 
+use im\search\components\query\facet\FacetValueInterface;
 use im\search\components\query\RangeInterface;
 use Yii;
 use yii\db\ActiveRecord;
@@ -11,16 +12,16 @@ use yii\db\ActiveRecord;
  *
  * @property integer $id
  * @property integer $facet_id
- * @property string $from
- * @property string $to
- * @property integer $from_include
- * @property integer $to_include
+ * @property string $lower_bound
+ * @property string $upper_bound
+ * @property integer $include_lower_bound
+ * @property integer $include_upper_bound
  * @property string $display
  * @property integer $sort
  *
  * @property Facet $facet
  */
-class FacetRange extends ActiveRecord implements RangeInterface
+class FacetRange extends ActiveRecord implements RangeInterface, FacetValueInterface
 {
     /**
      * @var string
@@ -37,7 +38,7 @@ class FacetRange extends ActiveRecord implements RangeInterface
      */
     public function init()
     {
-        $this->from_include = true;
+        $this->include_lower_bound = true;
     }
 
     /**
@@ -55,8 +56,8 @@ class FacetRange extends ActiveRecord implements RangeInterface
     {
         return [
             [['facet_id'], 'required'],
-            [['facet_id', 'from_include', 'to_include', 'sort'], 'integer'],
-            [['from', 'to', 'display'], 'string', 'max' => 255]
+            [['facet_id', 'include_lower_bound', 'include_upper_bound', 'sort'], 'integer'],
+            [['lower_bound', 'upper_bound', 'display'], 'string', 'max' => 255]
         ];
     }
 
@@ -68,10 +69,10 @@ class FacetRange extends ActiveRecord implements RangeInterface
         return [
             'id' => Yii::t('app', 'ID'),
             'facet_id' => Yii::t('app', 'Facet ID'),
-            'from' => Yii::t('app', 'From'),
-            'to' => Yii::t('app', 'To'),
-            'from_include' => Yii::t('app', 'Include from value'),
-            'to_include' => Yii::t('app', 'Include to value'),
+            'lower_bound' => Yii::t('app', 'From'),
+            'upper_bound' => Yii::t('app', 'To'),
+            'include_lower_bound' => Yii::t('app', 'Include lower bound'),
+            'include_upper_bound' => Yii::t('app', 'Include upper bound'),
             'display' => Yii::t('app', 'Display'),
             'sort' => Yii::t('app', 'Sort')
         ];
@@ -88,17 +89,33 @@ class FacetRange extends ActiveRecord implements RangeInterface
     /**
      * @inheritdoc
      */
-    public function getFrom()
+    public function getLowerBound()
     {
-        return $this->from;
+        return $this->lower_bound;
     }
 
     /**
      * @inheritdoc
      */
-    public function getTo()
+    public function getUpperBound()
     {
-        return $this->to;
+        return $this->upper_bound;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function isIncludeLowerBound()
+    {
+        return (bool) $this->include_lower_bound;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function isIncludeUpperBound()
+    {
+        return (bool) $this->include_upper_bound;
     }
 
     /**
@@ -106,7 +123,7 @@ class FacetRange extends ActiveRecord implements RangeInterface
      */
     public function getKey()
     {
-        return $this->_key ?: (($this->from ?: '*') . '-' . ($this->to ?: '*'));
+        return $this->_key ?: (($this->lower_bound ?: '*') . '-' . ($this->upper_bound ?: '*'));
     }
 
     /**

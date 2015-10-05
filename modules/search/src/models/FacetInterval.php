@@ -2,7 +2,7 @@
 
 namespace im\search\models;
 
-use im\search\components\query\FacetValueInterface;
+use im\search\components\query\facet\FacetValueInterface;
 use yii\base\Model;
 
 class FacetInterval extends Model implements FacetValueInterface

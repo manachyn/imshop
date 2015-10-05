@@ -1,7 +1,11 @@
 <?php
 
-namespace im\search\components\query;
+namespace im\search\components\query\facet;
 
+/**
+ * Interface IntervalFacetInterface
+ * @package im\search\components\query\facet
+ */
 interface IntervalFacetInterface extends FacetInterface
 {
     /**

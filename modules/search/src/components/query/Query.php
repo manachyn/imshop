@@ -3,10 +3,10 @@
 namespace im\search\components\query;
 
 /**
- * Query interface.
+ * Search query.
  *
  * @package im\search\components\query
  */
-interface QueryInterface
+class Query implements QueryInterface
 {
 }
