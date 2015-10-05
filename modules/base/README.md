@@ -1,3 +1,4 @@
+Add to vendor/composer/autoload_psr4.php
 'im\\base\\' => array($baseDir . '/modules/base/src'),
 'im\\forms\\' => array($baseDir . '/modules/forms/src'),
 'im\\config\\' => array($baseDir . '/modules/config/src'),
@@ -15,6 +16,7 @@
 'im\\elasticsearch\\' => array($baseDir . '/modules/elasticsearch/src'),
 'im\\image\\' => array($baseDir . '/modules/image/src'),
 'im\\fsm\\' => array($baseDir . '/modules/fsm/src'),
+'im\\elfinder\\' => array($baseDir . '/modules/elfinder/src'),
 
 
 'im\\elfinder\\' => array($baseDir . '/modules/elfinder/src'),
@@ -24,6 +26,7 @@
 'im\\events\\' => array($baseDir . '/modules/events/src'),
 'im\\messaging\\' => array($baseDir . '/modules/messaging/src'),
 
+Add to vendor/composer/autoload_classmap.php
 'elFinderVolumeFlysystem' => $baseDir . '/modules/elfinder/elFinderVolumeFlysystem.php',
 'elFinderVolumeS3' => $baseDir . '/modules/elfinder/elFinderVolumeS3.php',
 

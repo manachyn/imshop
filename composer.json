@@ -36,7 +36,10 @@
         "zendframework/zendsearch": "dev-master",
         "symfony/expression-language": "^3.0@dev",
         "2amigos/yii2-ckeditor-widget": "~1.0@dev",
-        "mihaildev/yii2-ckeditor": "dev-master"
+        "mihaildev/yii2-ckeditor": "dev-master",
+        "league/flysystem-cached-adapter": "dev-master",
+        "league/flysystem-aws-s3-v3": "^1.0@dev",
+        "studio-42/elfinder": "2.x-dev"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",

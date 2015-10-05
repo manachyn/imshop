@@ -125,6 +125,21 @@ $config = [
             'class' => 'im\filesystem\components\FilesystemComponent',
             'filesystems' => require(__DIR__ . '/filesystems.php')
         ],
+        'elFinder' => [
+            'class' => '\im\elfinder\ElFinderComponent',
+            'roots' => [
+//    [
+//        'path' => '@webroot/uploads',
+//        'url' => '@web/uploads',
+//        'alias' => ['modules/filesystem/module', 'Uploads']
+//    ],
+                [
+                    'driver' => 'S3',
+                    'options' => require(__DIR__ . '/s3.php')
+                ]
+            ],
+            'filesystems' => [/*'local', 'dropbox', 's3'*/]
+        ],
         'seo' => [
             'class' => 'im\seo\components\Seo',
             'metaTypeSocialMetaTypes' => [
@@ -175,7 +190,10 @@ $config = [
         'cms' => 'im\cms\components\Cms'
     ],
     'controllerMap' => [
-        'glide' => '\trntv\glide\controllers\GlideController'
+        'glide' => '\trntv\glide\controllers\GlideController',
+        'elfinder' => [
+            'class' => 'im\elfinder\ElFinderController'
+        ]
     ],
     'params' => $params,
 ];

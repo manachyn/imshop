@@ -2,7 +2,6 @@
 
 namespace im\filesystem\components\flysystem\adapters;
 
-use im\filesystem\helpers\FileHelper;
 use yii\helpers\Url;
 use Yii;
 

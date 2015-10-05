@@ -1,0 +1,15 @@
+.elfinder .elfinder-button {
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+}
+
+.elfinder-button-search input {
+    box-sizing: content-box;
+}
+
+.elfinder-navbar, .elfinder-quicklook-navbar {
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+}

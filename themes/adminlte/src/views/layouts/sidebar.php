@@ -131,6 +131,11 @@ $assetsPublishUrl = Yii::$app->assetManager->getPublishedUrl('@vendor/almasaeed2
                         ],
                     ],
                     [
+                        'label' => Yii::t('app', 'File manager'),
+                        'url' => ['/filesystem/file-manager'],
+                        'icon' => 'fa fa-folder'
+                    ],
+                    [
                         'label' => Yii::t('app', 'Tasks'),
                         'url' => ['/tasks/backend/task/index'],
                         'icon' => 'fa fa-tasks',
