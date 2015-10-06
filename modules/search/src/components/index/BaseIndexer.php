@@ -8,6 +8,12 @@ use im\search\components\searchable\SearchableInterface;
 use im\search\components\transformer\ObjectToDocumentTransformerInterface;
 use Yii;
 
+/**
+ * Indexer base class.
+ * Implements base methods for adding objects to the index and removing them.
+ *
+ * @package im\search\components\index
+ */
 abstract class BaseIndexer implements IndexerInterface
 {
     /**

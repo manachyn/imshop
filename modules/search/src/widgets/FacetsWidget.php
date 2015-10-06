@@ -3,9 +3,14 @@
 namespace im\search\widgets;
 
 use im\cms\models\widgets\Widget;
-use im\search\components\SearchResultContextInterface;
+use im\search\components\search\SearchResultContextInterface;
 use im\search\Module;
 
+/**
+ * Facets widget class.
+ *
+ * @package im\search\widgets
+ */
 class FacetsWidget extends Widget
 {
     const TYPE = 'facets';
@@ -39,8 +44,8 @@ class FacetsWidget extends Widget
      */
     public function run()
     {
-        if ($this->context instanceof SearchResultContextInterface && $result = $this->context->getResult()) {
-            return $this->render('facets', ['facets' => $result->getFacets()]);
+        if ($this->context instanceof SearchResultContextInterface && ($result = $this->context->getResult()) && $facets = $result->getFacets()) {
+            return $this->render('facets', ['facets' => $facets]);
         } else {
             return '';
         }

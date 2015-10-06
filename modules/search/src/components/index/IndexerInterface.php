@@ -2,6 +2,11 @@
 
 namespace im\search\components\index;
 
+/**
+ * Interface IndexerInterface.
+ *
+ * @package im\search\components\index
+ */
 interface IndexerInterface
 {
     /**

@@ -5,6 +5,11 @@ namespace im\search\components\finder;
 use im\search\components\searchable\SearchableInterface;
 use Yii;
 
+/**
+ * Finder base class.
+ *
+ * @package im\search\components\finder
+ */
 abstract class BaseFinder implements FinderInterface
 {
     /**

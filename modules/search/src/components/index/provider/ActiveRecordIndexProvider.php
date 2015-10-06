@@ -4,22 +4,27 @@ namespace im\search\components\index\provider;
 
 use yii\db\ActiveRecord;
 
+/**
+ * Provides index data using ORM.
+ *
+ * @package im\search\components\index\provider
+ */
 class ActiveRecordIndexProvider implements IndexProviderInterface
 {
     /**
      * @var string
      */
-    private $_modelClass;
+    private $_objectClass;
 
     /**
      * @inheritdoc
      */
     public function countObjects($offset = 0)
     {
-        /** @var ActiveRecord $modelClass */
-        $modelClass = $this->getModelClass();
+        /** @var ActiveRecord $class */
+        $class = $this->getObjectClass();
 
-        return $modelClass::find()->count() - $offset;
+        return $class::find()->count() - $offset;
     }
 
     /**
@@ -27,9 +32,9 @@ class ActiveRecordIndexProvider implements IndexProviderInterface
      */
     public function getObjects($limit = null, $offset = 0)
     {
-        /** @var ActiveRecord $modelClass */
-        $modelClass = $this->getModelClass();
-        $query = $modelClass::find()->offset($offset);
+        /** @var ActiveRecord $class */
+        $class = $this->getObjectClass();
+        $query = $class::find()->offset($offset);
         if ($limit) {
             $query->limit($limit);
         }
@@ -40,16 +45,16 @@ class ActiveRecordIndexProvider implements IndexProviderInterface
     /**
      * @inheritdoc
      */
-    public function getModelClass()
+    public function getObjectClass()
     {
-        return $this->_modelClass;
+        return $this->_objectClass;
     }
 
     /**
      * @inheritdoc
      */
-    public function setModelClass($modelClass)
+    public function setObjectClass($objectClass)
     {
-        $this->_modelClass = $modelClass;
+        $this->_objectClass = $objectClass;
     }
 }

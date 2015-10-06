@@ -8,7 +8,6 @@ use Yii;
 use yii\base\InvalidConfigException;
 use yii\data\BaseDataProvider;
 use yii\data\Pagination;
-use yii\db\ActiveQueryInterface;
 use yii\web\Request;
 
 class SearchDataProvider extends BaseDataProvider

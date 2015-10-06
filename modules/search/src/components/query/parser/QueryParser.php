@@ -7,6 +7,7 @@ use im\fsm\FSMAction;
 use im\search\components\query\parser\entry\Condition;
 use im\search\components\query\parser\entry\SubQuery;
 use im\search\components\query\Range;
+use im\search\components\query\SearchQueryInterface;
 use Yii;
 
 /**
@@ -190,6 +191,14 @@ class QueryParser extends FSM implements QueryParserInterface
         }
 
         return $this->_context->getQuery();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function toString(SearchQueryInterface $query)
+    {
+        return $query->getField() . '=' . $query->__toString();
     }
 
     /**

@@ -4,6 +4,11 @@ namespace im\search\components\index;
 
 use yii\base\InvalidParamException;
 
+/**
+ * Index document class.
+ *
+ * @package im\search\components\index
+ */
 class Document
 {
     /**

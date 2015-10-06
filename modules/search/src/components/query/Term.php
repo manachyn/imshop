@@ -30,4 +30,44 @@ class Term extends Query
         $this->_field = $field;
         $this->_term = $term;
     }
+
+    /**
+     * Returns query field.
+     *
+     * @return string
+     */
+    public function getField()
+    {
+        return $this->_field;
+    }
+
+    /**
+     * Sets query field.
+     *
+     * @param string $field
+     */
+    public function setField($field)
+    {
+        $this->_field = $field;
+    }
+
+    /**
+     * Returns query term.
+     *
+     * @return string
+     */
+    public function getTerm()
+    {
+        return $this->_term;
+    }
+
+    /**
+     * Sets query term.
+     *
+     * @param string $term
+     */
+    public function setTerm($term)
+    {
+        $this->_term = $term;
+    }
 }

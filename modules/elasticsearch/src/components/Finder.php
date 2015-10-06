@@ -4,9 +4,15 @@ namespace im\elasticsearch\components;
 
 use im\search\components\finder\BaseFinder;
 use im\search\components\query\QueryInterface;
+use im\search\components\query\SearchQueryInterface;
 use Yii;
 use yii\elasticsearch\Connection;
 
+/**
+ * Elastic search finder implementation.
+ *
+ * @package im\elasticsearch\components
+ */
 class Finder extends BaseFinder
 {
     /**
@@ -20,6 +26,26 @@ class Finder extends BaseFinder
             'index' => $index,
             'type' => $type
         ]);
+
+        if ($transformer = static::getTransformer($type)) {
+            $query->setTransformer($transformer);
+        }
+
+        return $query;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function findByQuery(SearchQueryInterface $query, $index = null, $type = null)
+    {
+        $query = Yii::createObject([
+            'class' => Query::className(),
+            'searchQuery' => $query,
+            'index' => $index,
+            'type' => $type
+        ]);
+
         if ($transformer = static::getTransformer($type)) {
             $query->setTransformer($transformer);
         }

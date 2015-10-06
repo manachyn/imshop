@@ -4,7 +4,7 @@ namespace im\search\components\query\parser;
 
 use im\search\components\query\Boolean;
 use im\search\components\query\parser\entry\QueryEntryInterface;
-use im\search\components\query\QueryInterface;
+use im\search\components\query\SearchQueryInterface;
 
 /**
  * Query parser context.
@@ -127,7 +127,7 @@ class QueryParserContext
      * Returns query from context.
      *
      * @throws QueryParserException
-     * @return QueryInterface
+     * @return SearchQueryInterface
      */
     public function getQuery()
     {
@@ -195,7 +195,7 @@ class QueryParserContext
                 $subQuery = new Boolean();
                 foreach ($conjunction as $conjunctionEntry) {
                     $entry = $conjunctionEntry[0];
-                    $subQuery->addSubquery($entry->getQuery()/*, $conjunctionEntry[1]*/);
+                    $subQuery->addSubquery($entry->getQuery(), $conjunctionEntry[1]);
                 }
                 $subQueries[] = $subQuery;
             }
@@ -208,7 +208,7 @@ class QueryParserContext
         $query = new Boolean();
 
         foreach ($subQueries as $subQuery) {
-            $query->addSubquery($subQuery);
+            $query->addSubquery($subQuery, true);
         }
 
         return $query;

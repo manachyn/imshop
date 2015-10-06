@@ -2,6 +2,8 @@
 
 namespace im\search\components\query\parser;
 
+use im\search\components\query\SearchQueryInterface;
+
 /**
  * Query parser interface.
  *
@@ -13,7 +15,15 @@ interface QueryParserInterface
      * Parses query string.
      *
      * @param string $queryString
-     * @return QueryInterface
+     * @return SearchQueryInterface
      */
     public function parse($queryString);
+
+    /**
+     * Converts query to string.
+     *
+     * @param SearchQueryInterface $query
+     * @return string
+     */
+    public function toString(SearchQueryInterface $query);
 }

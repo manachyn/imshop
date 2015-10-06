@@ -2,6 +2,8 @@
 
 namespace im\search\components\query;
 
+use im\search\components\query\facet\FacetInterface;
+
 interface QueryResultInterface
 {
     /**
@@ -20,7 +22,7 @@ interface QueryResultInterface
     public function getObjects();
 
     /**
-     * @return array
+     * @return FacetInterface[]
      */
     public function getFacets();
 

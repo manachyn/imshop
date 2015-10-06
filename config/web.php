@@ -82,8 +82,9 @@ $config = [
                 ['pattern' => 'storage/<path:(.*)>', 'route' => 'glide/index', 'encodeParams' => false],
                 [
                     'class' => 'im\base\routing\GroupUrlRule',
-                    'pattern' => '<path:[a-zA-Z0-9_\-]+>/<params:.+>',
-                    'defaults' => ['params' => ''],
+                    'pattern' => '<path:[a-zA-Z0-9_\-]+>/<query:.+>',
+                    'defaults' => ['query' => ''],
+                    'encodeParams' => false,
                     'resolvers' => [
                         [
                             'class' => 'im\base\routing\ModelRouteResolver',

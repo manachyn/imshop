@@ -59,6 +59,26 @@ class Range extends Query implements RangeInterface
     }
 
     /**
+     * Returns query field.
+     *
+     * @return string
+     */
+    public function getField()
+    {
+        return $this->_field;
+    }
+
+    /**
+     * Sets query field.
+     *
+     * @param string $field
+     */
+    public function setField($field)
+    {
+        $this->_field = $field;
+    }
+
+    /**
      * @inheritdoc
      */
     public function getLowerBound()
@@ -89,4 +109,16 @@ class Range extends Query implements RangeInterface
     {
         return $this->_includeUpperBound;
     }
+
+    public function __toString()
+    {
+        $rangeString = $this->isIncludeLowerBound() ? '[' : '(';
+        $rangeString .= $this->getLowerBound() !== null ? $this->getLowerBound() : '';
+        $rangeString .= ' to ';
+        $rangeString .= $this->getUpperBound() !== null ? $this->getUpperBound() : '';
+        $rangeString .= $this->isIncludeUpperBound() ? ']' : ')';
+
+        return $rangeString;
+    }
+
 } 

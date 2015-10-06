@@ -2,7 +2,6 @@
 
 namespace im\search\components\query\parser\entry;
 use im\search\components\query\parser\Operator;
-use im\search\components\query\QueryInterface;
 use im\search\components\query\Range;
 use im\search\components\query\Term;
 

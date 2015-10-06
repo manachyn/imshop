@@ -115,7 +115,7 @@ class SearchableActiveRecord extends Object implements SearchableInterface
                 $this->_indexProvider = ['class' => $this->_indexProvider];
             }
             $this->_indexProvider = Yii::createObject($this->_indexProvider);
-            $this->_indexProvider->setModelClass($this->modelClass);
+            $this->_indexProvider->setObjectClass($this->modelClass);
         }
 
         return $this->_indexProvider;

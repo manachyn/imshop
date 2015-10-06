@@ -2,7 +2,8 @@
 
 namespace im\search\components\query\parser\entry;
 
-use im\search\components\query\QueryInterface;
+use im\search\components\query\SearchQueryInterface;
+
 
 /**
  * Sub query entry.
@@ -14,14 +15,14 @@ class SubQuery implements QueryEntryInterface
     /**
      * Query instance
      *
-     * @var QueryInterface
+     * @var SearchQueryInterface
      */
     private $_query;
 
     /**
-     * @param QueryInterface $query
+     * @param SearchQueryInterface $query
      */
-    public function __construct(QueryInterface $query)
+    public function __construct(SearchQueryInterface $query)
     {
         $this->_query = $query;
     }

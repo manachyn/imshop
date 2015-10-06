@@ -2,11 +2,15 @@
 
 namespace im\elasticsearch\components;
 
+use im\search\components\query\Boolean;
 use im\search\components\query\facet\FacetInterface;
 use im\search\components\query\facet\IntervalFacetInterface;
 use im\search\components\query\facet\RangeFacetInterface;
 use im\search\components\query\QueryInterface;
 use im\search\components\query\QueryResultInterface;
+use im\search\components\query\Range;
+use im\search\components\query\SearchQueryInterface;
+use im\search\components\query\Term;
 use im\search\components\transformer\DocumentToObjectTransformerInterface;
 
 class Query extends \yii\elasticsearch\Query implements QueryInterface
@@ -78,6 +82,68 @@ class Query extends \yii\elasticsearch\Query implements QueryInterface
     public function setTransformer(DocumentToObjectTransformerInterface $transformer)
     {
         $this->_transformer = $transformer;
+    }
+
+    /**
+     * @param SearchQueryInterface $query
+     */
+    public function setSearchQuery($query)
+    {
+        $this->query = $this->mapQuery($query);
+    }
+
+    /**
+     * @param SearchQueryInterface $query
+     * @return array
+     */
+    protected function mapQuery(SearchQueryInterface $query)
+    {
+        $queryArr = [];
+        if ($query instanceof Boolean) {
+            $signs = $query->getSigns();
+            foreach ($query->getSubQueries() as $key => $subQuery) {
+                $sign = isset($signs[$key]) ? $signs[$key] : null;
+                switch ($sign) {
+                    case true:
+                        if ($subQueryArr = $this->mapQuery($subQuery)) {
+                            if (!isset($queryArr['must'])) {
+                                $queryArr['must'] = [];
+                            }
+                            $queryArr['must'][] = $this->mapQuery($subQuery);
+                        }
+                        break;
+                    case false:
+                        if ($subQueryArr = $this->mapQuery($subQuery)) {
+                            if (!isset($queryArr['must_not'])) {
+                                $queryArr['must_not'] = [];
+                            }
+                            $queryArr['must_not'][] = $this->mapQuery($subQuery);
+                        }
+                        break;
+                    case null:
+                        if ($subQueryArr = $this->mapQuery($subQuery)) {
+                            if (!isset($queryArr['should'])) {
+                                $queryArr['should'] = [];
+                            }
+                            $queryArr['should'][] = $this->mapQuery($subQuery);
+                        }
+                        break;
+                }
+            }
+        } elseif ($query instanceof Term) {
+            $queryArr['term'] = [$query->getField() => $query->getTerm()];
+        } elseif ($query instanceof Range) {
+            $range = [];
+            if (($from = $query->getLowerBound()) !== null) {
+                $range[$query->isIncludeLowerBound() ? 'gte' : 'gt'] = $from;
+            }
+            if (($to = $query->getUpperBound()) !== null) {
+                $range[$query->isIncludeUpperBound() ? 'lte' : 'lt'] = $to;
+            }
+            $queryArr['range'] = [$query->getField() => $range];
+        }
+
+        return $queryArr;
     }
 
     protected function addRangeFacet(RangeFacetInterface $facet)

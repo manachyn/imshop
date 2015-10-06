@@ -2,7 +2,7 @@
 
 namespace im\search\components\query\parser\entry;
 
-use im\search\components\query\QueryInterface;
+use im\search\components\query\SearchQueryInterface;
 
 /**
  * Interface QueryEntryInterface.
@@ -14,7 +14,7 @@ interface QueryEntryInterface
     /**
      * Converts query entry to query.
      *
-     * @return QueryInterface
+     * @return SearchQueryInterface
      */
     public function getQuery();
 }

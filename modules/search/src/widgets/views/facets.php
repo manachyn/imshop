@@ -1,7 +1,7 @@
 <?php
 
 /* @var $this yii\web\View */
-/* @var $facets im\search\components\query\FacetInterface[] */
+/* @var $facets im\search\components\query\facet\FacetInterface[] */
 ?>
 
 <?php foreach ($facets as $facet) : ?>
