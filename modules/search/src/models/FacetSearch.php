@@ -11,14 +11,15 @@ use yii\data\ActiveDataProvider;
  */
 class FacetSearch extends Model
 {
+    public $name;
+
     /**
      * @inheritdoc
      */
     public function rules()
     {
         return [
-            [['id'], 'integer'],
-            [['name'], 'safe']
+            [['name'], 'string']
         ];
     }
 
@@ -49,14 +50,8 @@ class FacetSearch extends Model
         $this->load($params);
 
         if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
             return $dataProvider;
         }
-
-        $query->andFilterWhere([
-            'id' => $this->id
-        ]);
 
         $query->andFilterWhere(['like', 'name', $this->name]);
 

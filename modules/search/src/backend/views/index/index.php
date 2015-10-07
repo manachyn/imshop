@@ -1,6 +1,6 @@
 <?php
 
-use im\search\backend\Module;
+use im\search\Module;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
@@ -29,7 +29,20 @@ $this->params['breadcrumbs'][] = $this->title;
             'columns' => [
                 'name',
                 'status',
-                ['class' => 'yii\grid\ActionColumn', 'template' => '{update} {delete}']
+                [
+                    'class' => 'yii\grid\ActionColumn',
+                    'template' => '{update} {attributes} {delete}',
+                    'buttons' => [
+                        'attributes' => function ($url) {
+                                $options = [
+                                    'title' => Module::t('index', 'Attributes'),
+                                    'aria-label' => Module::t('index', 'Attributes'),
+                                    'data-pjax' => '0',
+                                ];
+                                return Html::a('<span class="glyphicon glyphicon-cog"></span>', $url, $options);
+                            },
+                    ],
+                ]
             ],
         ]); ?>
         <?php Pjax::end(); ?>

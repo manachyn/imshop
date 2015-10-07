@@ -2,9 +2,9 @@
 
 namespace im\search\models;
 
-use im\search\backend\Module;
 use im\search\components\index\IndexInterface;
 use im\search\components\service\SearchServiceInterface;
+use im\search\Module;
 use Yii;
 use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;

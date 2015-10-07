@@ -6,9 +6,14 @@ use im\cms\models\widgets\Widget;
 use yii\base\Component;
 use Yii;
 use yii\base\InvalidParamException;
-use yii\db\ActiveRecord;
 
-class LayoutManager extends Component {
+/**
+ * Class LayoutManager manages saving templates, widget areas and widgets.
+ *
+ * @package im\cms\components
+ */
+class LayoutManager extends Component
+{
 
     public $widgetBaseClass = 'im\cms\models\widgets\Widget';
 
@@ -39,6 +44,7 @@ class LayoutManager extends Component {
      * Registers widget.
      *
      * @param string $class
+     * @throws \yii\base\InvalidParamException
      */
     public function registerWidget($class)
     {
@@ -119,6 +125,8 @@ class LayoutManager extends Component {
     }
 
     /**
+     * Returns available widgets.
+     *
      * @return Widget[]
      */
     public function getAvailableWidgets()
@@ -132,6 +140,8 @@ class LayoutManager extends Component {
     }
 
     /**
+     * Creates widget by it's type.
+     *
      * @param string $type
      * @return Widget|null
      */
@@ -147,15 +157,15 @@ class LayoutManager extends Component {
         return null;
     }
 
-    /**
-     * @param ActiveRecord $owner
-     */
-    public function invalidateWidgetAreasCache($owner = null)
-    {
+//    /**
+//     * @param ActiveRecord $owner
+//     */
+//    public function invalidateWidgetAreasCache($owner = null)
+//    {
 //        /* @var $cache Cache */
 //        $cache = \Yii::$app->cache;
 //        TagDependency::invalidate($cache, $this->getWidgetAreasCacheTag($owner));
-    }
+//    }
 
 //    /**
 //     * Returns the cache tag name.

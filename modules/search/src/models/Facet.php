@@ -22,7 +22,7 @@ use yii\helpers\Inflector;
  * @property string $operator
  * @property bool $multivalue
  */
-abstract class Facet extends ActiveRecord implements FacetInterface
+class Facet extends ActiveRecord implements FacetInterface
 {
     const TYPE_TERMS = 'terms';
     const TYPE_RANGE = 'range';
@@ -209,5 +209,28 @@ abstract class Facet extends ActiveRecord implements FacetInterface
     public function getOperator()
     {
         return $this->operator;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getValues()
+    {
+        return [];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setValues($values)
+    {
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getValueInstance(array $config)
+    {
+        return null;
     }
 }

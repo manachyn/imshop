@@ -1,7 +1,7 @@
 <?php
 
-use im\search\backend\Module;
 use im\search\models\Facet;
+use im\search\Module;
 use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;

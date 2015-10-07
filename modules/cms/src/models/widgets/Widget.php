@@ -95,7 +95,7 @@ abstract class Widget extends ActiveRecord implements ViewContextInterface
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
-        Yii::$app->get('layoutManager')->invalidateWidgetAreasCache();
+//        Yii::$app->get('layoutManager')->invalidateWidgetAreasCache();
     }
 
     private $_view;

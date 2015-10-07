@@ -7,6 +7,7 @@ use im\cms\models\widgets\Widget;
 use im\cms\models\widgets\WidgetArea;
 use yii\base\Component;
 use yii\base\Model;
+use Yii;
 
 /**
  * Class TemplateManager manages saving templates, widget areas and widgets.
@@ -174,7 +175,7 @@ class TemplateManager extends Component
         $widgets = [];
         if (!empty($data[$formName])) {
             /** @var LayoutManager $layoutManager */
-            $layoutManager = \Yii::$app->get('layoutManager');
+            $layoutManager = Yii::$app->get('layoutManager');
             $pks = [];
             foreach ($data[$formName] as $area => $areaWidgets) {
                 foreach ($areaWidgets as $sort => $widgetData) {

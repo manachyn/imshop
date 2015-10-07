@@ -5,9 +5,9 @@ use im\cms\backend\widgets\WidgetArea;
 use im\cms\Module;
 
 /* @var $this yii\web\View */
-/* @var $layout im\cms\components\layout\Layout */
+/* @var $layout im\cms\components\Layout */
 /* @var $form yii\widgets\ActiveForm|im\forms\components\DynamicActiveForm */
-/* @var $layoutManager im\cms\components\layout\LayoutManager */
+/* @var $layoutManager im\cms\components\LayoutManager */
 
 $layoutManager = Yii::$app->get('layoutManager');
 if (is_string($layout)) {
@@ -30,6 +30,3 @@ $availableWidgets = $layoutManager->getAvailableWidgets();
         } ?>
     </div>
 </div>
-
-
-

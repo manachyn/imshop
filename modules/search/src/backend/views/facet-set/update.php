@@ -1,6 +1,6 @@
 <?php
 
-use im\search\backend\Module;
+use im\search\Module;
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */

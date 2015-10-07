@@ -59,15 +59,20 @@ $assetsPublishUrl = Yii::$app->assetManager->getPublishedUrl('@vendor/almasaeed2
                         //'visible' => Yii::$app->user->can('readPost'),
                         'items' => [
                             [
+                                'label' => Yii::t('app', 'Templates'),
+                                'url' => ['/cms/backend/template/index'],
+                                'icon' => 'fa fa-circle-o',
+                            ],
+                            [
                                 'label' => Yii::t('app', 'Pages'),
                                 'url' => ['/cms/backend/page/index'],
                                 'icon' => 'fa fa-circle-o',
                             ],
                             [
-                                'label' => Yii::t('app', 'Layouts'),
-                                'url' => ['/cms/backend/layout/index'],
+                                'label' => Yii::t('app', 'Menus'),
+                                'url' => ['/cms/backend/menu/index'],
                                 'icon' => 'fa fa-circle-o',
-                            ],
+                            ]
                         ],
                     ],
                     [
@@ -81,6 +86,11 @@ $assetsPublishUrl = Yii::$app->assetManager->getPublishedUrl('@vendor/almasaeed2
                             [
                                 'label' => Yii::t('app', 'Attributes'),
                                 'url' => ['/catalog/backend/product-attribute/index'],
+                                'icon' => 'fa fa-circle-o',
+                            ],
+                            [
+                                'label' => Yii::t('app', 'Values'),
+                                'url' => ['/eav/backend/value/index'],
                                 'icon' => 'fa fa-circle-o',
                             ],
                             [
@@ -108,6 +118,31 @@ $assetsPublishUrl = Yii::$app->assetManager->getPublishedUrl('@vendor/almasaeed2
                                 'url' => ['/catalog/backend/product/index'],
                                 'icon' => 'fa fa-circle-o',
                             ],
+                        ],
+                    ],
+                    [
+                        'label' => Yii::t('app', 'Search'),
+                        'url' => ['/search/backend/index/index'],
+                        'icon' => 'fa fa-search',
+                        'options' => [
+                            'class' => 'treeview',
+                        ],
+                        'items' => [
+                            [
+                                'label' => Yii::t('app', 'Index'),
+                                'url' => ['/search/backend/index/index'],
+                                'icon' => 'fa fa-circle-o'
+                            ],
+                            [
+                                'label' => Yii::t('app', 'Facets'),
+                                'url' => ['/search/backend/facet/index'],
+                                'icon' => 'fa fa-circle-o'
+                            ],
+                            [
+                                'label' => Yii::t('app', 'Facet sets'),
+                                'url' => ['/search/backend/facet-set/index'],
+                                'icon' => 'fa fa-circle-o'
+                            ]
                         ],
                     ],
                     [

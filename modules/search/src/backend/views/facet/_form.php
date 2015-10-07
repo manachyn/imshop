@@ -2,11 +2,11 @@
 
 use im\base\widgets\RelationWidget;
 use im\base\widgets\RelationWidgetAsset;
-use im\search\backend\Module;
 use im\search\models\Facet;
 use im\search\models\IntervalFacet;
 use im\search\models\RangeFacet;
 use im\search\models\TermsFacet;
+use im\search\Module;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
@@ -36,9 +36,9 @@ RelationWidgetAsset::register($this);
         ['prompt' => '', 'data-field' => 'entity_type']
     ) ?>
 
-    <?= $form->field($model, 'searchableAttribute')->dropDownList(
+    <?= $form->field($model, 'attribute_name')->dropDownList(
         $model::getSearchableAttributes($model->entity_type),
-        ['prompt' => '', 'data-field' => 'searchable-attribute']
+        ['prompt' => '', 'data-field' => 'attribute']
     ) ?>
 
     <?php if ($model instanceof IntervalFacet) :
@@ -85,7 +85,7 @@ $url = Url::to(['create']);
 $script = <<<JS
     var facetType = '[data-field="type"]';
     var entityType = '[data-field="entity_type"]';
-    var attribute = '[data-field="searchable-attribute"]';
+    var attribute = '[data-field="attribute"]';
     $(document).on('change', entityType, function() {
         $.ajax({
             url: 'attributes?entityType=' + $(this).val()

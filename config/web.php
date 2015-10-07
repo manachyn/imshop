@@ -10,6 +10,7 @@ $config = [
         'im\base\Bootstrap',
         'im\users\Bootstrap',
         'im\eav\Bootstrap',
+        'im\variation\Bootstrap',
         'im\seo\Bootstrap',
         'im\filesystem\Bootstrap',
         'im\imshop\Bootstrap',

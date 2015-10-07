@@ -31,6 +31,13 @@ $this->params['breadcrumbs'] = [['label' => $this->title, 'url' => ['index']], $
                 'name',
                 'label',
                 [
+                    'attribute' => 'index_name',
+                    'format' => 'raw',
+                    'value' => function (IndexAttribute $attribute, $key) use ($form) {
+                            return $form->field($attribute, "[$key]index_name")->textInput()->label(false);
+                        },
+                ],
+                [
                     'attribute' => 'indexable',
                     'format' => 'raw',
                     'value' => function (IndexAttribute $attribute, $key) use ($form) {

@@ -1,7 +1,6 @@
 <?php
 
-use im\search\backend\Module;
-use yii\helpers\ArrayHelper;
+use im\search\Module;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
