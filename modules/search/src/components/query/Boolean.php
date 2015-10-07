@@ -7,7 +7,7 @@ namespace im\search\components\query;
  *
  * @package im\search\components\query
  */
-class Boolean extends Query
+class Boolean extends Query implements BooleanQueryInterface
 {
     /**
      * @var SearchQueryInterface[]
@@ -16,9 +16,9 @@ class Boolean extends Query
 
     /**
      * SubQueries signs.
-     * true - sub query is required,
-     * false - prohibited.
-     * null - neither prohibited, nor required
+     * true is used to define required query.
+     * false is used to define prohibited query.
+     * null is used to define optional query.
      * If array is null then all sub queries are required
      *
      * @var array
@@ -44,7 +44,7 @@ class Boolean extends Query
     }
 
     /**
-     * @return SearchQueryInterface[]
+     * @inheritdoc
      */
     public function getSubQueries()
     {
@@ -52,8 +52,7 @@ class Boolean extends Query
     }
 
     /**
-     * @param SearchQueryInterface $subQuery
-     * @param bool|null $sign
+     * @inheritdoc
      */
     public function addSubQuery(SearchQueryInterface $subQuery, $sign = null)
     {
@@ -67,7 +66,7 @@ class Boolean extends Query
     }
 
     /**
-     * @return array
+     * @inheritdoc
      */
     public function getSigns()
     {

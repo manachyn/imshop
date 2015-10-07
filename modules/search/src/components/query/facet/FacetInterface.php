@@ -39,6 +39,22 @@ interface FacetInterface
     public function setValues($values);
 
     /**
+     * Whether facet can has multiple selected values.
+     *
+     * @return bool
+     */
+    public function isMultivalue();
+
+    /**
+     * Returns facet operator fo multivalue case.
+     *
+     * @return string
+     */
+    public function getOperator();
+
+    /**
+     * Creates facet value instance by config.
+     *
      * @param array $config
      * @return FacetValueInterface
      */

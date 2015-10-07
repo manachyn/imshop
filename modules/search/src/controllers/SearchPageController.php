@@ -35,11 +35,11 @@ class SearchPageController extends Controller implements SearchResultContextInte
         $this->_searchResult = $dataProvider->query->result();
         $facets = $this->_searchResult->getFacets();
         foreach ($facets as $facet) {
-            $values = $facet->getValues();
-            foreach ($values as $value) {
-                //$url = $searchComponent->createFacetValueUrl($value, $facet);
+            if ($values = $facet->getValues()) {
+                foreach ($values as $value) {
+                    $url = $searchComponent->createFacetValueUrl($value, $facet);
+                }
             }
-
         }
 
         return $this->render('index', [

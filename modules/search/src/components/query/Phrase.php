@@ -7,7 +7,7 @@ namespace im\search\components\query;
  *
  * @package im\search\components\query
  */
-class Phrase extends Query
+class Phrase extends Query implements FieldQueryInterface
 {
     /**
      * @var string
@@ -30,4 +30,38 @@ class Phrase extends Query
         $this->_field = $field;
         $this->_phrase = $phrase;
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function getField()
+    {
+        return $this->_field;
+    }
+
+    /**
+     * @param string $field
+     */
+    public function setField($field)
+    {
+        $this->_field = $field;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPhrase()
+    {
+        return $this->_phrase;
+    }
+
+    /**
+     * @param string $phrase
+     */
+    public function setPhrase($phrase)
+    {
+        $this->_phrase = $phrase;
+    }
+
+
 } 

@@ -20,7 +20,7 @@ use yii\helpers\Inflector;
  * @property string $attribute_name
  * @property string $type
  * @property string $operator
- * @property bool $multiple
+ * @property bool $multivalue
  */
 abstract class Facet extends ActiveRecord implements FacetInterface
 {
@@ -193,5 +193,21 @@ abstract class Facet extends ActiveRecord implements FacetInterface
     public function getField()
     {
         return $this->attribute_name;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function isMultivalue()
+    {
+        return (bool) $this->multivalue;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getOperator()
+    {
+        return $this->operator;
     }
 }

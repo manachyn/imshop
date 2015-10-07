@@ -4,10 +4,15 @@ namespace im\search\components\query\parser;
 
 use im\fsm\FSM;
 use im\fsm\FSMAction;
+use im\search\components\query\Boolean;
+use im\search\components\query\BooleanQueryInterface;
+use im\search\components\query\FieldQueryInterface;
 use im\search\components\query\parser\entry\Condition;
 use im\search\components\query\parser\entry\SubQuery;
 use im\search\components\query\Range;
+use im\search\components\query\RangeInterface;
 use im\search\components\query\SearchQueryInterface;
+use im\search\components\query\Term;
 use Yii;
 
 /**
@@ -198,7 +203,45 @@ class QueryParser extends FSM implements QueryParserInterface
      */
     public function toString(SearchQueryInterface $query)
     {
-        return $query->getField() . '=' . $query->__toString();
+        $queryString = '';
+        if ($query instanceof BooleanQueryInterface) {
+            $subQueries = $query->getSubQueries();
+            $signs = $query->getSigns();
+            $lastSign = reset($signs);
+            $lastQuery = reset($subQueries);
+            $same = true;
+            foreach ($subQueries as $key => $subQuery) {
+                if ($signs[$key] !== $sign) {
+                    $same = false;
+                    $subQuery1 = new Boolean(array_slice($subQueries, $key), array_slice($signs, $key));
+                    $subQuery2 = new Boolean(array_slice($subQueries, $key), array_slice($signs, $key));
+                    $queryString = implode($sign, [$this->toString($subQuery1), $this->toString($subQuery2)]);
+                    break;
+                }
+                $sign = $signs[$key];
+            }
+            if ($same) {
+//                $queryString = implode($sign, array_map(function(SearchQueryInterface $query) {
+//                    return $this->toString($query);
+//                }, $subQueries));
+//                $a = 1;
+            }
+        } elseif ($query instanceof FieldQueryInterface) {
+            if ($query instanceof RangeInterface) {
+                $queryString = $query->isIncludeLowerBound() ? '[' : '(';
+                $queryString .= $query->getLowerBound() !== null ? $query->getLowerBound() : '';
+                $queryString .= ' to ';
+                $queryString .= $query->getUpperBound() !== null ? $query->getUpperBound() : '';
+                $queryString .= $query->isIncludeUpperBound() ? ']' : ')';
+            } elseif ($query instanceof Term) {
+                $queryString = $query->getTerm();
+            }
+            if ($queryString) {
+                $queryString = $query->getField() . '=' . $queryString;
+            }
+        }
+
+        return $queryString;
     }
 
     /**

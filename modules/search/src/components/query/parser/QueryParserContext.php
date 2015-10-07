@@ -174,7 +174,7 @@ class QueryParserContext
         foreach ($conjunctions as $conjunctionId => $conjunction) {
             $nonNegativeEntryFound = false;
             foreach ($conjunction as $conjunctionEntry) {
-                if ($conjunctionEntry[1]) {
+                if ($conjunctionEntry[1] || $conjunctionEntry[1] === null) {
                     $nonNegativeEntryFound = true;
                     break;
                 }
@@ -184,13 +184,15 @@ class QueryParserContext
             }
         }
 
-        $subQueries = array();
+        $subQueries = [];
+        $signs = [];
         foreach ($conjunctions as  $conjunction) {
             // Check, if it's a one term conjunction
             if (count($conjunction) === 1) {
                 /** @var QueryEntryInterface $entry */
                 $entry = $conjunction[0][0];
                 $subQueries[] = $entry->getQuery();
+                $signs[end(array_keys($subQueries))] = $conjunction[0][1];
             } else {
                 $subQuery = new Boolean();
                 foreach ($conjunction as $conjunctionEntry) {
@@ -207,8 +209,9 @@ class QueryParserContext
 
         $query = new Boolean();
 
-        foreach ($subQueries as $subQuery) {
-            $query->addSubquery($subQuery, true);
+        foreach ($subQueries as $key => $subQuery) {
+            $query->addSubquery($subQuery, array_key_exists($key, $signs) ? $signs[$key]
+                : ($this->_higherPriorityLogicalOperator === QueryParser::OPERATOR_OR ? true : null));
         }
 
         return $query;

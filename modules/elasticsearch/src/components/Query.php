@@ -101,34 +101,38 @@ class Query extends \yii\elasticsearch\Query implements QueryInterface
         $queryArr = [];
         if ($query instanceof Boolean) {
             $signs = $query->getSigns();
+            $boolean = [];
             foreach ($query->getSubQueries() as $key => $subQuery) {
                 $sign = isset($signs[$key]) ? $signs[$key] : null;
                 switch ($sign) {
                     case true:
                         if ($subQueryArr = $this->mapQuery($subQuery)) {
-                            if (!isset($queryArr['must'])) {
-                                $queryArr['must'] = [];
+                            if (!isset($boolean['must'])) {
+                                $boolean['must'] = [];
                             }
-                            $queryArr['must'][] = $this->mapQuery($subQuery);
+                            $boolean['must'][] = $this->mapQuery($subQuery);
                         }
                         break;
                     case false:
                         if ($subQueryArr = $this->mapQuery($subQuery)) {
-                            if (!isset($queryArr['must_not'])) {
-                                $queryArr['must_not'] = [];
+                            if (!isset($booleanr['must_not'])) {
+                                $boolean['must_not'] = [];
                             }
-                            $queryArr['must_not'][] = $this->mapQuery($subQuery);
+                            $boolean['must_not'][] = $this->mapQuery($subQuery);
                         }
                         break;
                     case null:
                         if ($subQueryArr = $this->mapQuery($subQuery)) {
-                            if (!isset($queryArr['should'])) {
-                                $queryArr['should'] = [];
+                            if (!isset($boolean['should'])) {
+                                $boolean['should'] = [];
                             }
-                            $queryArr['should'][] = $this->mapQuery($subQuery);
+                            $boolean['should'][] = $this->mapQuery($subQuery);
                         }
                         break;
                 }
+            }
+            if ($boolean) {
+                $queryArr['bool'] = $boolean;
             }
         } elseif ($query instanceof Term) {
             $queryArr['term'] = [$query->getField() => $query->getTerm()];

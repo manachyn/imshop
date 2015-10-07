@@ -7,7 +7,7 @@ namespace im\search\components\query;
  *
  * @package im\search\components\query\parser\entry
  */
-class Term extends Query
+class Term extends Query implements FieldQueryInterface
 {
     /**
      * @var string
@@ -32,9 +32,7 @@ class Term extends Query
     }
 
     /**
-     * Returns query field.
-     *
-     * @return string
+     * @inheritdoc
      */
     public function getField()
     {
@@ -69,5 +67,15 @@ class Term extends Query
     public function setTerm($term)
     {
         $this->_term = $term;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function equals(SearchQueryInterface $query)
+    {
+        $sameField = $query instanceof Term && $this->getField() === $query->getField();
+
+        return $sameField && $this->getTerm() === $query->getTerm() ? 1 : ($sameField ? 0 : -1);
     }
 }

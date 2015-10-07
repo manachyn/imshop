@@ -2,19 +2,30 @@
 
 namespace im\search\components\search;
 
+use im\search\components\query\Boolean;
+use im\search\components\query\BooleanQueryInterface;
 use im\search\components\query\facet\FacetInterface;
 use im\search\components\query\facet\FacetValueInterface;
+use im\search\components\query\FieldQueryInterface;
 use im\search\components\query\parser\QueryParser;
 use im\search\components\query\parser\QueryParserInterface;
 use im\search\components\query\Range;
 use im\search\components\query\RangeInterface;
 use im\search\components\query\SearchQueryInterface;
+use im\search\components\query\Term;
+use im\search\models\Facet;
+use im\search\models\FacetTerm;
 use Yii;
 use yii\base\Component;
 use yii\helpers\Url;
 
 class SearchComponent extends Component
 {
+    /**
+     * @var SearchQueryInterface
+     */
+    private $_serchQuery;
+
     /**
      * @var QueryParserInterface
      */
@@ -74,7 +85,7 @@ class SearchComponent extends Component
     {
         //$querySting = 'title=one OR two&date=[10 to 20]&test>100';
         $query = $this->queryParser->parse($querySting);
-
+        $this->_serchQuery = $query;
         return $query;
     }
 
@@ -88,19 +99,57 @@ class SearchComponent extends Component
      */
     public function createFacetValueUrl(FacetValueInterface $facetValue, FacetInterface $facet, SearchQueryInterface $query = null)
     {
+        $query = $this->_serchQuery;
         $url = '';
-        if ($facetValue instanceof RangeInterface) {
-            $query = new Range(
-                $facet->getField(),
-                $facetValue->getLowerBound(),
-                $facetValue->getUpperBound(),
-                $facetValue->isIncludeLowerBound(),
-                $facetValue->isIncludeUpperBound()
-            );
+        if ($facetValue instanceof FacetTerm) {
+            $facetValueQuery = new Term($facet->getName(), $facetValue->getKey());
+            if ($query) {
+                $multivalue = $facet->isMultivalue();
+                $sign = $facet->getOperator() === Facet::OPERATOR_AND ? true : null;
+                $this->combineSearchQueries($query, $facetValueQuery, $multivalue, $sign);
+            }
+
             $url = Url::to(['/search/search-page/index', 'path' => 'search-results', 'query' => $this->queryParser->toString($query)]);
             $a = 1;
         }
+//        if ($facetValue instanceof RangeInterface) {
+//            $query = new Range(
+//                $facet->getField(),
+//                $facetValue->getLowerBound(),
+//                $facetValue->getUpperBound(),
+//                $facetValue->isIncludeLowerBound(),
+//                $facetValue->isIncludeUpperBound()
+//            );
+//            $url = Url::to(['/search/search-page/index', 'path' => 'search-results', 'query' => $this->queryParser->toString($query)]);
+//            $a = 1;
+//        }
 
         return $url;
+    }
+
+    protected function combineSearchQueries(SearchQueryInterface $query1, FieldQueryInterface $query2, $multivalue = false, $sign = true)
+    {
+        if ($query1 instanceof BooleanQueryInterface) {
+            $signs = $query1->getSigns();
+            $toAdd = true;
+            foreach ($query1->getSubQueries() as $key => $subQuery) {
+                if ($subQuery instanceof Boolean) {
+                    $toAdd = false;
+                    break;
+                } elseif ($query2->equals($subQuery) !== 0 || $signs[$key] !== $sign) {
+                    $toAdd = false;
+                    break;
+                } else {
+                    $a = 1;
+                }
+            }
+            if ($toAdd) {
+                $query1->addSubQuery($query2, $sign);
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return $query1;
     }
 }

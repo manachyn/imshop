@@ -47,7 +47,7 @@ class m150806_091325_create_search_tables extends Migration
             'interval' => $this->string(100)->notNull(),
             'type' => $this->string(100)->notNull(),
             'operator' => $this->string(3)->notNull(),
-            'multiple' => $this->boolean()->defaultValue(1)
+            'multivalue' => $this->boolean()->defaultValue(0)
         ], $tableOptions);
 
         $this->addForeignKey('FK_facets_attribute_id', '{{%facets}}', 'attribute_id', '{{%eav_attributes}}', 'id', 'CASCADE', 'CASCADE');

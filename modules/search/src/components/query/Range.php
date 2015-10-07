@@ -9,7 +9,7 @@ use yii\base\InvalidParamException;
  *
  * @package im\search\components\query
  */
-class Range extends Query implements RangeInterface
+class Range extends Query implements FieldQueryInterface, RangeInterface
 {
     /**
      * @var string
@@ -59,9 +59,7 @@ class Range extends Query implements RangeInterface
     }
 
     /**
-     * Returns query field.
-     *
-     * @return string
+     * @inheritdoc
      */
     public function getField()
     {
@@ -109,16 +107,4 @@ class Range extends Query implements RangeInterface
     {
         return $this->_includeUpperBound;
     }
-
-    public function __toString()
-    {
-        $rangeString = $this->isIncludeLowerBound() ? '[' : '(';
-        $rangeString .= $this->getLowerBound() !== null ? $this->getLowerBound() : '';
-        $rangeString .= ' to ';
-        $rangeString .= $this->getUpperBound() !== null ? $this->getUpperBound() : '';
-        $rangeString .= $this->isIncludeUpperBound() ? ']' : ')';
-
-        return $rangeString;
-    }
-
 } 

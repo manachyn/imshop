@@ -51,6 +51,13 @@ class BooleanExpressionParser extends FSM
     private $_negativeLiteral = false;
 
     /**
+     * Sign
+     *
+     * @var bool|null
+     */
+    private $_sign = true;
+
+    /**
      * Current literal
      *
      * @var mixed
@@ -138,11 +145,11 @@ class BooleanExpressionParser extends FSM
 
         $this->addEntryAction(self::ST_NOT_OPERATOR, $notOperatorAction);
         $this->addEntryAction(self::ST_LITERAL, $literalAction);
-        if ($this->_higherPriorityOperator === QueryParser::OPERATOR_AND) {
+        //if ($this->_higherPriorityOperator === QueryParser::OPERATOR_AND) {
             $this->addEntryAction(self::ST_OR_OPERATOR, $orOperatorAction);
-        } else {
+        //} else {
             $this->addEntryAction(self::ST_AND_OPERATOR, $andOperatorAction);
-        }
+        //}
     }
 
 
@@ -240,6 +247,7 @@ class BooleanExpressionParser extends FSM
     public function notOperatorAction()
     {
         $this->_negativeLiteral = true;
+        $this->_sign = false;
     }
 
     /**
@@ -248,8 +256,14 @@ class BooleanExpressionParser extends FSM
      */
     public function orOperatorAction()
     {
-        $this->_conjunctions[] = $this->_currentConjunction;
-        $this->_currentConjunction = [];
+        $this->_sign = null;
+        //$this->_currentConjunction[end(array_keys($this->_currentConjunction))][1] = $this->_sign;
+        if ($this->_higherPriorityOperator === QueryParser::OPERATOR_AND) {
+            $this->_conjunctions[] = $this->_currentConjunction;
+            $this->_currentConjunction = [];
+        } else {
+            $this->_currentConjunction[end(array_keys($this->_currentConjunction))][1] = $this->_sign;
+        }
     }
 
     /**
@@ -258,8 +272,14 @@ class BooleanExpressionParser extends FSM
      */
     public function andOperatorAction()
     {
-        $this->_conjunctions[] = $this->_currentConjunction;
-        $this->_currentConjunction = [];
+        $this->_sign = true;
+        //$this->_currentConjunction[end(array_keys($this->_currentConjunction))][1] = $this->_sign;
+        if ($this->_higherPriorityOperator === QueryParser::OPERATOR_OR) {
+            $this->_conjunctions[] = $this->_currentConjunction;
+            $this->_currentConjunction = [];
+        } else {
+            $this->_currentConjunction[end(array_keys($this->_currentConjunction))][1] = $this->_sign;
+        }
     }
 
     /**
@@ -268,9 +288,11 @@ class BooleanExpressionParser extends FSM
     public function literalAction()
     {
         // Add literal to the current conjunction
-        $this->_currentConjunction[] = array($this->_literal, !$this->_negativeLiteral);
+//        $this->_currentConjunction[] = array($this->_literal, !$this->_negativeLiteral);
+        $this->_currentConjunction[] = array($this->_literal, $this->_sign);
 
         // Switch off negative signal
         $this->_negativeLiteral = false;
+//        $this->_sign = true;
     }
 }
