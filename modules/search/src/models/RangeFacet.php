@@ -53,7 +53,7 @@ class RangeFacet extends Facet implements RangeFacetInterface
      */
     public function getRangesRelation()
     {
-        return $this->hasMany(FacetRange::className(), ['facet_id' => 'id']);
+        return $this->hasMany(FacetRange::className(), ['facet_id' => 'id'])->inverseOf('facetRelation');
     }
 
     /**
@@ -62,7 +62,7 @@ class RangeFacet extends Facet implements RangeFacetInterface
     public function getRanges()
     {
         if (!$this->isRelationPopulated('ranges')) {
-            $this->populateRelation('ranges', $this->getRangesRelation()->orderBy('sort')->all());
+            $this->populateRelation('ranges', $this->getRangesRelation()->orderBy('sort')->findFor('ranges', $this));
             return $this->getRelatedRecords()['ranges'];
         }
 

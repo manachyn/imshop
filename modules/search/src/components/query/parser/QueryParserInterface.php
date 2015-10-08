@@ -18,12 +18,4 @@ interface QueryParserInterface
      * @return SearchQueryInterface
      */
     public function parse($queryString);
-
-    /**
-     * Converts query to string.
-     *
-     * @param SearchQueryInterface $query
-     * @return string
-     */
-    public function toString(SearchQueryInterface $query);
 }

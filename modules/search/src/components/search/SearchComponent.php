@@ -7,10 +7,10 @@ use im\search\components\query\BooleanQueryInterface;
 use im\search\components\query\facet\FacetInterface;
 use im\search\components\query\facet\FacetValueInterface;
 use im\search\components\query\FieldQueryInterface;
+use im\search\components\query\parser\QueryConverterInterface;
 use im\search\components\query\parser\QueryParser;
 use im\search\components\query\parser\QueryParserInterface;
-use im\search\components\query\Range;
-use im\search\components\query\RangeInterface;
+use im\search\components\query\SearchQueryHelper;
 use im\search\components\query\SearchQueryInterface;
 use im\search\components\query\Term;
 use im\search\models\Facet;
@@ -27,12 +27,21 @@ class SearchComponent extends Component
     private $_serchQuery;
 
     /**
+     * Query parser is used to parse search request to query object.
+     *
      * @var QueryParserInterface
      */
     public $queryParser = [
         'class' => 'im\search\components\query\parser\QueryParser',
         'higherPriorityOperator' => QueryParser::OPERATOR_OR
     ];
+
+    /**
+     * Query converter is used to convert query back to string.
+     *
+     * @var QueryConverterInterface
+     */
+    public $queryConverter = 'im\search\components\query\parser\QueryConverter';
 
     /**
      * @inheritdoc
@@ -42,6 +51,9 @@ class SearchComponent extends Component
         parent::init();
         if (!$this->queryParser instanceof QueryParserInterface) {
             $this->queryParser = Yii::createObject($this->queryParser);
+        }
+        if (!$this->queryConverter instanceof QueryConverterInterface) {
+            $this->queryConverter= Yii::createObject($this->queryConverter);
         }
     }
 
@@ -83,9 +95,8 @@ class SearchComponent extends Component
      */
     public function parseQuery($querySting)
     {
-        //$querySting = 'title=one OR two&date=[10 to 20]&test>100';
         $query = $this->queryParser->parse($querySting);
-        $this->_serchQuery = $query;
+
         return $query;
     }
 
@@ -106,50 +117,13 @@ class SearchComponent extends Component
             if ($query) {
                 $multivalue = $facet->isMultivalue();
                 $sign = $facet->getOperator() === Facet::OPERATOR_AND ? true : null;
-                $this->combineSearchQueries($query, $facetValueQuery, $multivalue, $sign);
+                SearchQueryHelper::combineSearchQueries($query, $facetValueQuery, $multivalue, $sign);
             }
 
             $url = Url::to(['/search/search-page/index', 'path' => 'search-results', 'query' => $this->queryParser->toString($query)]);
             $a = 1;
         }
-//        if ($facetValue instanceof RangeInterface) {
-//            $query = new Range(
-//                $facet->getField(),
-//                $facetValue->getLowerBound(),
-//                $facetValue->getUpperBound(),
-//                $facetValue->isIncludeLowerBound(),
-//                $facetValue->isIncludeUpperBound()
-//            );
-//            $url = Url::to(['/search/search-page/index', 'path' => 'search-results', 'query' => $this->queryParser->toString($query)]);
-//            $a = 1;
-//        }
 
         return $url;
-    }
-
-    protected function combineSearchQueries(SearchQueryInterface $query1, FieldQueryInterface $query2, $multivalue = false, $sign = true)
-    {
-        if ($query1 instanceof BooleanQueryInterface) {
-            $signs = $query1->getSigns();
-            $toAdd = true;
-            foreach ($query1->getSubQueries() as $key => $subQuery) {
-                if ($subQuery instanceof Boolean) {
-                    $toAdd = false;
-                    break;
-                } elseif ($query2->equals($subQuery) !== 0 || $signs[$key] !== $sign) {
-                    $toAdd = false;
-                    break;
-                } else {
-                    $a = 1;
-                }
-            }
-            if ($toAdd) {
-                $query1->addSubQuery($query2, $sign);
-                return true;
-            } else {
-                return false;
-            }
-        }
-        return $query1;
     }
 }

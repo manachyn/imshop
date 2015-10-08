@@ -9,6 +9,20 @@ use yii\db\Connection;
 interface QueryInterface extends \yii\db\QueryInterface
 {
     /**
+     * Sets search query.
+     *
+     * @param SearchQueryInterface $searchQuery
+     */
+    public function setSearchQuery(SearchQueryInterface $searchQuery);
+
+    /**
+     * Returns search query.
+     *
+     * @return SearchQueryInterface
+     */
+    public function getSearchQuery();
+
+    /**
      * Executes the query and returns result object.
      *
      * @param Connection $db the service connection used to execute the query.

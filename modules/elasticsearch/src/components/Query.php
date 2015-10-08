@@ -13,6 +13,10 @@ use im\search\components\query\SearchQueryInterface;
 use im\search\components\query\Term;
 use im\search\components\transformer\DocumentToObjectTransformerInterface;
 
+/**
+ * Class Query
+ * @package im\elasticsearch\components
+ */
 class Query extends \yii\elasticsearch\Query implements QueryInterface
 {
     /**
@@ -29,6 +33,11 @@ class Query extends \yii\elasticsearch\Query implements QueryInterface
      * @var QueryResultInterface
      */
     private $_result;
+
+    /**
+     * @var SearchQueryInterface
+     */
+    private $_searchQuery;
 
     /**
      * @inheritdoc
@@ -85,11 +94,20 @@ class Query extends \yii\elasticsearch\Query implements QueryInterface
     }
 
     /**
-     * @param SearchQueryInterface $query
+     * @inheritdoc
      */
-    public function setSearchQuery($query)
+    public function getSearchQuery()
     {
-        $this->query = $this->mapQuery($query);
+        return $this->_searchQuery;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setSearchQuery(SearchQueryInterface $searchQuery)
+    {
+        $this->_searchQuery = $searchQuery;
+        $this->query = $this->mapQuery($searchQuery);
     }
 
     /**

@@ -53,7 +53,7 @@ class TermsFacet extends Facet
      */
     public function getTermsRelation()
     {
-        return $this->hasMany(FacetTerm::className(), ['facet_id' => 'id']);
+        return $this->hasMany(FacetTerm::className(), ['facet_id' => 'id'])->inverseOf('facetRelation');
     }
 
     /**
@@ -62,7 +62,7 @@ class TermsFacet extends Facet
     public function getTerms()
     {
         if (!$this->isRelationPopulated('terms')) {
-            $terms = $this->getTermsRelation()->orderBy('sort')->all();
+            $terms = $this->getTermsRelation()->orderBy('sort')->findFor('terms', $this);
             if (!$terms && strncmp($this->attribute_name, 'eAttributes.', 12) === 0) {
                 $name = substr($this->attribute_name, 12);
                 $attribute = Attribute::findByNameAndEntityType($name, $this->entity_type);
@@ -71,7 +71,7 @@ class TermsFacet extends Facet
                     if ($values) {
                         foreach ($values as $value) {
                             $terms[] = new FacetTerm([
-                                'facet_id' => $this->id,
+                                'facet' => $this,
                                 'term' => $value->value,
                                 'display' => $value->presentation
                             ]);

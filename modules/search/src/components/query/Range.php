@@ -107,4 +107,16 @@ class Range extends Query implements FieldQueryInterface, RangeInterface
     {
         return $this->_includeUpperBound;
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function equals(SearchQueryInterface $query)
+    {
+        $sameField = $query instanceof Range && $this->getField() === $query->getField();
+
+        return $sameField && ($this->getLowerBound() === $query->getLowerBound()
+            && $this->getUpperBound() === $query->getUpperBound() && $this->isIncludeLowerBound() === $query->isIncludeLowerBound()
+            && $this->isIncludeUpperBound() === $query->isIncludeUpperBound()) ? 1 : ($sameField ? 0 : -1);
+    }
 } 

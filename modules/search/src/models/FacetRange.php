@@ -2,8 +2,10 @@
 
 namespace im\search\models;
 
+use im\search\components\query\facet\FacetInterface;
 use im\search\components\query\facet\FacetValueInterface;
 use im\search\components\query\RangeInterface;
+use im\search\components\query\SearchQueryInterface;
 use Yii;
 use yii\db\ActiveRecord;
 
@@ -19,7 +21,7 @@ use yii\db\ActiveRecord;
  * @property string $display
  * @property integer $sort
  *
- * @property Facet $facet
+ * @property Facet $facetRelation
  */
 class FacetRange extends ActiveRecord implements RangeInterface, FacetValueInterface
 {
@@ -32,6 +34,11 @@ class FacetRange extends ActiveRecord implements RangeInterface, FacetValueInter
      * @var int
      */
     private $_resultsCount = 0;
+
+    /**
+     * @var SearchQueryInterface
+     */
+    private $_searchQuery;
 
     /**
      * @inheritdoc
@@ -81,9 +88,27 @@ class FacetRange extends ActiveRecord implements RangeInterface, FacetValueInter
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getFacet()
+    public function getFacetRelation()
     {
         return $this->hasOne(Facet::className(), ['id' => 'facet_id']);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getFacet()
+    {
+        return $this->facetRelation;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setFacet(FacetInterface $facet)
+    {
+        /** @var Facet $facet */
+        $this->facet_id = $facet->id;
+        $this->populateRelation('facetRelation', $facet);
     }
 
     /**
@@ -156,5 +181,21 @@ class FacetRange extends ActiveRecord implements RangeInterface, FacetValueInter
     public function getLabel()
     {
         return $this->display ?: $this->getKey();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getSearchQuery()
+    {
+        return $this->_searchQuery;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setSearchQuery(SearchQueryInterface $searchQuery)
+    {
+        $this->_searchQuery = $searchQuery;
     }
 }

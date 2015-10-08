@@ -9,7 +9,7 @@ use im\search\components\query\facet\IntervalFacetInterface;
  *
  * @property string $from
  * @property string $to
- * @property string $interval
+ * @property int|float $interval
  */
 class IntervalFacet extends Facet implements IntervalFacetInterface
 {

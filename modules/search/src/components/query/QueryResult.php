@@ -2,6 +2,10 @@
 
 namespace im\search\components\query;
 
+/**
+ * Class QueryResult
+ * @package im\search\components\query
+ */
 class QueryResult implements QueryResultInterface
 {
     /**

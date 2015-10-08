@@ -2,7 +2,9 @@
 
 namespace im\search\models;
 
+use im\search\components\query\facet\FacetInterface;
 use im\search\components\query\facet\FacetValueInterface;
+use im\search\components\query\SearchQueryInterface;
 use Yii;
 use yii\db\ActiveRecord;
 
@@ -15,7 +17,7 @@ use yii\db\ActiveRecord;
  * @property string $display
  * @property integer $sort
  *
- * @property Facet $facet
+ * @property Facet $facetRelation
  */
 class FacetTerm extends ActiveRecord implements FacetValueInterface
 {
@@ -23,6 +25,11 @@ class FacetTerm extends ActiveRecord implements FacetValueInterface
      * @var int
      */
     private $_resultsCount = 0;
+
+    /**
+     * @var SearchQueryInterface
+     */
+    private $_searchQuery;
 
     /**
      * @inheritdoc
@@ -61,9 +68,27 @@ class FacetTerm extends ActiveRecord implements FacetValueInterface
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getFacet()
+    public function getFacetRelation()
     {
         return $this->hasOne(Facet::className(), ['id' => 'facet_id']);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getFacet()
+    {
+        return $this->facetRelation;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setFacet(FacetInterface $facet)
+    {
+        /** @var Facet $facet */
+        $this->facet_id = $facet->id;
+        $this->populateRelation('facetRelation', $facet);
     }
 
     /**
@@ -104,5 +129,21 @@ class FacetTerm extends ActiveRecord implements FacetValueInterface
     public function getLabel()
     {
         return $this->display ?: $this->getKey();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getSearchQuery()
+    {
+        return $this->_searchQuery;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setSearchQuery(SearchQueryInterface $searchQuery)
+    {
+        $this->_searchQuery = $searchQuery;
     }
 }
