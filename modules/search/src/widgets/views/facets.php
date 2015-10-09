@@ -1,7 +1,10 @@
 <?php
 
+use yii\helpers\Url;
+
 /* @var $this yii\web\View */
 /* @var $facets im\search\components\query\facet\FacetInterface[] */
+/* @var $searchComponent im\search\components\search\SearchComponent */
 ?>
 
 <?php if ($facets) : ?>
@@ -12,8 +15,13 @@
         <li class="facet">
             <span class="facet-label"><?= $facet->getLabel() ?></span>
             <ul class="facet-values">
-            <?php foreach ($values as $value) : ?>
-                <li class="facet-value"><?= $value->getLabel() ?> (<?= $value->getResultsCount() ?>)</li>
+            <?php foreach ($values as $value) :
+                $params = [];
+                if ($searchQuery = $value->getSearchQuery()) {
+                    $params['query'] = $searchComponent->queryConverter->toString($searchQuery);
+                }
+            ?>
+                <li class="facet-value"><a href="<?= Url::current($params) ?>"><?= $value->getLabel() ?></a> (<?= $value->getResultsCount() ?>)</li>
             <?php endforeach ?>
             </ul>
             <?php endif ?>

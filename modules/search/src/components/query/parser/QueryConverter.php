@@ -56,7 +56,7 @@ class QueryConverter implements QueryConverterInterface
         if ($query instanceof BooleanQueryInterface) {
             $subQueries = $query->getSubQueries();
             $groupedQueries = [];
-            $operator = $this->getOperator(reset($query->getSigns()), $topLevelQuery);
+            $operator1 = $this->getOperator(reset($query->getSigns()), $topLevelQuery);
             foreach ($subQueries as $subQuery) {
                 if ($field = $this->getQueryField($subQuery)) {
                     $groupedQueries[$field][] = $subQuery;
@@ -66,16 +66,18 @@ class QueryConverter implements QueryConverterInterface
             }
             $queryStringParts = [];
             foreach ($groupedQueries as $field => $queries) {
+                $operator2 = $this->getOperator(reset($query->getSigns()), is_string($field) ? false : $topLevelQuery);
                 if (!is_array($queries)) {
                     $queries = [$queries];
                 }
                 $queryParts = [];
-                foreach ($queries as $query) {
-                    $queryParts[] = $this->queryToString($query, is_string($field), false);
+                foreach ($queries as $queryItem) {
+                    $topLevelQuery = $queryItem instanceof BooleanQueryInterface ? $topLevelQuery : false;
+                    $queryParts[] = $this->queryToString($queryItem, is_string($field), $topLevelQuery);
                 }
-                $queryStringParts[] = (!$asValue && is_string($field) ? $field . $this->syntax[self::SYNTAX_EQUAL_OPERATOR] : '') . implode($operator, $queryParts);
+                $queryStringParts[] = (!$asValue && is_string($field) ? $field . $this->syntax[self::SYNTAX_EQUAL_OPERATOR] : '') . implode($operator2, $queryParts);
             }
-            $queryString = implode($operator, $queryStringParts);
+            $queryString = implode($operator1, $queryStringParts);
         } elseif ($query instanceof FieldQueryInterface) {
             if ($query instanceof RangeInterface) {
                 $queryString = $query->isIncludeLowerBound() ? $this->syntax[self::SYNTAX_INCLUDED_RANGE_START] : $this->syntax[self::SYNTAX_EXCLUDED_RANGE_START];
@@ -86,7 +88,7 @@ class QueryConverter implements QueryConverterInterface
             } elseif ($query instanceof Term) {
                 $queryString = $query->getTerm();
             }
-            if ($queryString && !$asValue) {
+            if ($queryString !== '' && !$asValue) {
                 $queryString = $query->getField() . $this->syntax[self::SYNTAX_EQUAL_OPERATOR] . $queryString;
             }
         }

@@ -26,21 +26,12 @@ class Boolean extends Query implements BooleanQueryInterface
     private $_signs = [];
 
     /**
-     * @param SearchQueryInterface[] $subQueries
-     * @param array $signs
+     * @inheritdoc
      */
     public function setSubQueries($subQueries = [], $signs = null)
     {
         $this->_subQueries = $subQueries;
-        $this->_signs = null;
-        if (is_array($signs)) {
-            foreach ($signs as $sign) {
-                if ($sign !== true) {
-                    $this->_signs = $signs;
-                    break;
-                }
-            }
-        }
+        $this->_signs = $signs ? $signs : array_fill_keys(array_keys($subQueries), true);
     }
 
     /**

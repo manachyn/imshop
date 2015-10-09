@@ -119,9 +119,9 @@ class QueryToken
                     case ')':
                         $this->type = self::TYPE_RIGHT_PARENTHESIS;
                         break;
-                    case '-':
-                        $this->type = self::TYPE_WHITE_SPACE;
-                        break;
+//                    case '-':
+//                        $this->type = self::TYPE_WHITE_SPACE;
+//                        break;
                     default:
                         throw new InvalidParamException("Unrecognized query syntax lexeme: '{$text}'");
                 }

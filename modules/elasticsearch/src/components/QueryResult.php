@@ -5,6 +5,7 @@ namespace im\elasticsearch\components;
 use im\search\components\index\Document;
 use im\search\components\query\QueryInterface;
 use im\search\components\query\SearchQueryHelper;
+use im\search\models\Facet;
 
 /**
  * Class QueryResult
@@ -78,14 +79,15 @@ class QueryResult extends \im\search\components\query\QueryResult
                         foreach ($responseFacets[$facet->getName()]['buckets'] as $bucket) {
                             if ($bucket['key'] == $value->getKey()) {
                                 $value->setResultsCount($bucket['doc_count']);
-                                SearchQueryHelper::getQueryInstanceFromFacetValue($value);
-                                $valueQuery = SearchQueryHelper::getQueryInstanceFromFacetValue($value);
-                                if ($searchQuery) {
-                                    $valueQuery = SearchQueryHelper::combineSearchQueries($searchQuery, $valueQuery);
-                                    $value->setSearchQuery($valueQuery);
-                                }
                             }
                         }
+                        SearchQueryHelper::getQueryInstanceFromFacetValue($value);
+                        $valueQuery = SearchQueryHelper::getQueryInstanceFromFacetValue($value);
+                        if ($searchQuery) {
+                            $valueQuery = SearchQueryHelper::includeQuery(clone $searchQuery, $valueQuery,
+                                $facet->getOperator() === Facet::OPERATOR_AND ? true : null);
+                        }
+                        $value->setSearchQuery($valueQuery);
                     }
                 } else {
                     foreach ($responseFacets[$facet->getName()]['buckets'] as $bucket) {
@@ -101,12 +103,12 @@ class QueryResult extends \im\search\components\query\QueryResult
                         }
                         $value = $facet->getValueInstance($config);
                         $value->setFacet($facet);
-//                        $valueQuery = SearchQueryHelper::getQueryInstanceFromFacetValue($value);
-//                        if ($searchQuery) {
-//                            $valueQuery = SearchQueryHelper::combineSearchQueries($searchQuery, $valueQuery);
-//                            $value->setSearchQuery($valueQuery);
-//                        }
-
+                        $valueQuery = SearchQueryHelper::getQueryInstanceFromFacetValue($value);
+                        if ($searchQuery) {
+                            $valueQuery = SearchQueryHelper::includeQuery(clone $searchQuery, $valueQuery,
+                                $facet->getOperator() === Facet::OPERATOR_AND ? true : null);
+                        }
+                        $value->setSearchQuery($valueQuery);
                         $facetValues[] = $value;
                     }
                 }

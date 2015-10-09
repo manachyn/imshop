@@ -5,6 +5,7 @@ namespace im\search\widgets;
 use im\cms\models\widgets\Widget;
 use im\search\components\search\SearchResultContextInterface;
 use im\search\Module;
+use Yii;
 
 /**
  * Facets widget class.
@@ -45,7 +46,10 @@ class FacetsWidget extends Widget
     public function run()
     {
         if ($this->context instanceof SearchResultContextInterface && ($result = $this->context->getResult()) && $facets = $result->getFacets()) {
-            return $this->render('facets', ['facets' => $facets]);
+            /** @var \im\search\components\SearchManager $searchManager */
+            $searchManager = Yii::$app->get('search');
+            $searchComponent = $searchManager->getSearchComponent();
+            return $this->render('facets', ['facets' => $facets, 'searchComponent' => $searchComponent]);
         } else {
             return '';
         }

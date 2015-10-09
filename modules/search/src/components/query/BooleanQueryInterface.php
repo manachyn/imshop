@@ -12,6 +12,14 @@ interface BooleanQueryInterface extends SearchQueryInterface
     public function getSubQueries();
 
     /**
+     * Sets sub queries.
+     *
+     * @param SearchQueryInterface[] $subQueries
+     * @param array $signs
+     */
+    public function setSubQueries($subQueries, $signs = null);
+
+    /**
      * Adds sub query.
      *
      * @param SearchQueryInterface $subQuery

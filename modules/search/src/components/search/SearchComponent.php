@@ -99,31 +99,4 @@ class SearchComponent extends Component
 
         return $query;
     }
-
-    /**
-     * Creates facet value url in the context of current search query.
-     *
-     * @param FacetValueInterface $facetValue
-     * @param FacetInterface $facet
-     * @param SearchQueryInterface $query
-     * @return string
-     */
-    public function createFacetValueUrl(FacetValueInterface $facetValue, FacetInterface $facet, SearchQueryInterface $query = null)
-    {
-        $query = $this->_serchQuery;
-        $url = '';
-        if ($facetValue instanceof FacetTerm) {
-            $facetValueQuery = new Term($facet->getName(), $facetValue->getKey());
-            if ($query) {
-                $multivalue = $facet->isMultivalue();
-                $sign = $facet->getOperator() === Facet::OPERATOR_AND ? true : null;
-                SearchQueryHelper::combineSearchQueries($query, $facetValueQuery, $multivalue, $sign);
-            }
-
-            $url = Url::to(['/search/search-page/index', 'path' => 'search-results', 'query' => $this->queryParser->toString($query)]);
-            $a = 1;
-        }
-
-        return $url;
-    }
 }
