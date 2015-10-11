@@ -1,5 +1,6 @@
 <?php
 
+use dosamigos\ckeditor\CKEditor;
 use im\cms\Module;
 use im\forms\components\FieldSet;
 use im\forms\components\Tab;
@@ -26,17 +27,29 @@ use yii\widgets\Pjax;
             $model->isNewRecord ? $form->field($model, 'type')->dropDownList($model::getTypesList(), ['data-field' => 'type']) : null,
             $form->field($model, 'title')->textInput(['maxlength' => true]),
             $form->field($model, 'slug')->textInput(['maxlength' => true]),
-            $form->field($model, 'content')->widget(
-                Imperavi::className(),
-                [
-                    'settings' => [
-                        'minHeight' => 300,
-//                    'imageGetJson' => Url::to(['/blogs/default/imperavi-get']),
-//                    'imageUpload' => Url::to(['/blogs/default/imperavi-image-upload']),
-//                    'fileUpload' => Url::to(['/blogs/default/imperavi-file-upload'])
-                    ]
+//            $form->field($model, 'content')->widget(
+//                Imperavi::className(),
+//                [
+//                    'settings' => [
+//                        'minHeight' => 300,
+////                    'imageGetJson' => Url::to(['/blogs/default/imperavi-get']),
+////                    'imageUpload' => Url::to(['/blogs/default/imperavi-image-upload']),
+////                    'fileUpload' => Url::to(['/blogs/default/imperavi-file-upload'])
+//                    ]
+//                ]
+//            ),
+            $form->field($model, 'content')->widget(CKEditor::className(), [
+                'options' => ['rows' => 6],
+                'clientOptions' => [
+                    'filebrowserBrowseUrl' => '/elfinder'
                 ]
-            ),
+            ]),
+//            $form->field($model, 'content')->widget(\mihaildev\ckeditor\CKEditor::className(),[
+//                'editorOptions' => [
+//                    //'preset' => 'full', //basic, standard, full
+//                    //'inline' => false,
+//                ],
+//            ]),
             $form->field($model, 'status')->dropDownList($model::getStatusesList())
         ])
     ])

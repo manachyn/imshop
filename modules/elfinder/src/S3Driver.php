@@ -204,7 +204,7 @@ class S3Driver extends elFinderVolumeDriver
         $stat['size'] = isset($meta['size'])? $meta['size'] : $this->s3Adapter->getSize($path);
 
         if ($meta['type'] == 'file') {
-            $stat['mime'] = isset($meta['mimetype'])? $meta['mimetype'] : $this->s3Adapter->getMimetype($path);
+            $stat['mime'] = isset($meta['mimetype']) ? $meta['mimetype'] : $this->s3Adapter->getMimetype($path);
 //            $imgMimes = ['image/jpeg', 'image/png', 'image/gif'];
 //            if ($this->urlBuilder && in_array($stat['mime'], $imgMimes)) {
 //                $stat['url'] = $this->urlBuilder->getUrl($path, ['ts' => $stat['ts']]);

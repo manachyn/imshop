@@ -130,17 +130,19 @@ $config = [
         'elFinder' => [
             'class' => '\im\elfinder\ElFinderComponent',
             'roots' => [
-//    [
-//        'path' => '@webroot/uploads',
-//        'url' => '@web/uploads',
-//        'alias' => ['modules/filesystem/module', 'Uploads']
-//    ],
+                [
+                    'path' => '@webroot/uploads',
+                    'url' => '@web/uploads',
+                    'alias' => ['modules/filesystem/module', 'Uploads']
+                ],
                 [
                     'driver' => 'S3',
-                    'options' => require(__DIR__ . '/s3.php')
+                    'options' => array_merge(require(__DIR__ . '/s3.php'), [
+                        'alias' => 'S3'
+                    ])
                 ]
             ],
-            'filesystems' => [/*'local', 'dropbox', 's3'*/]
+            'filesystems' => ['local'/*, 'dropbox', 's3'*/]
         ],
         'seo' => [
             'class' => 'im\seo\components\Seo',
@@ -194,7 +196,8 @@ $config = [
     'controllerMap' => [
         'glide' => '\trntv\glide\controllers\GlideController',
         'elfinder' => [
-            'class' => 'im\elfinder\ElFinderController'
+            'class' => 'im\elfinder\ElFinderController',
+            'enableCsrfValidation' => false,
         ]
     ],
     'params' => $params,

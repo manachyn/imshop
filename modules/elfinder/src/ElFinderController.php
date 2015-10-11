@@ -4,6 +4,7 @@ namespace im\elfinder;
 
 use creocoder\flysystem\Filesystem;
 use im\filesystem\components\FilesystemComponent;
+use yii\helpers\Inflector;
 use yii\web\Controller;
 use Yii;
 
@@ -11,8 +12,6 @@ class ElFinderController extends Controller
 {
     public function actionConnector()
     {
-
-
         /** @var ElFinderComponent $elFinder */
         $elFinder = Yii::$app->get('elFinder');
 
@@ -34,7 +33,9 @@ class ElFinderController extends Controller
                 $defaults = [
                     'driver' => 'Flysystem',
                     'filesystem' => $fs,
-                    'alias' => $key,
+                    'alias' => Inflector::titleize($key),
+//                    'glideURL' => 'http://imshop.loc/storage',
+//                    'glideKey' => 'kmsTmQPdwm',
                 ];
                 $roots[] = array_merge($defaults, $root);
             }

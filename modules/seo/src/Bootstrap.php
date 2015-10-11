@@ -14,6 +14,7 @@ class Bootstrap implements BootstrapInterface
     public function bootstrap($app)
     {
         $this->registerTranslations($app);
+        $this->registerEntityTypes();
     }
 
     /**

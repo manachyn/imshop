@@ -33,7 +33,7 @@ class ElFinderAsset extends AssetBundle
      */
     public $depends = [
         'yii\jui\JuiAsset',
-        //'im\elfinder\JqueryMigrateAsset'
+        'im\elfinder\JqueryMigrateAsset'
     ];
 
     /**

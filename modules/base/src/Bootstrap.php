@@ -22,6 +22,7 @@ class Bootstrap implements BootstrapInterface
         Yii::setAlias('@im/eav', $vendorDir . '/modules/eav/src');
         Yii::setAlias('@im/variation', $vendorDir . '/modules/variation/src');
         Yii::setAlias('@im/filesystem', $vendorDir . '/modules/filesystem/src');
+        Yii::setAlias('@im/elfinder', $vendorDir . '/modules/elfinder/src');
         Yii::setAlias('@im/seo', $vendorDir . '/modules/seo/src');
         Yii::setAlias('@im/tree', $vendorDir . '/modules/tree/src');
         Yii::setAlias('@im/users', $vendorDir . '/modules/users/src');
