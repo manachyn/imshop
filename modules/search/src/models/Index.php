@@ -74,7 +74,10 @@ class Index extends ActiveRecord implements IndexInterface
      */
     public static function getTypesList()
     {
-        return Yii::$app->get('search')->getSearchableTypeNames();
+        /** @var \im\search\components\SearchManager $searchManager */
+        $searchManager = Yii::$app->get('searchManager');
+
+        return $searchManager->getSearchableTypeNames();
     }
 
     /**
@@ -84,9 +87,10 @@ class Index extends ActiveRecord implements IndexInterface
      */
     public static function getServicesList()
     {
-        $services = Yii::$app->get('search')->searchServices;
+        /** @var \im\search\components\SearchManager $searchManager */
+        $searchManager = Yii::$app->get('searchManager');
 
-        return array_combine(array_keys($services), ArrayHelper::getColumn($services, 'name'));
+        return array_combine(array_keys($searchManager->searchServices), ArrayHelper::getColumn($searchManager->searchServices, 'name'));
     }
 
     /**
@@ -141,7 +145,7 @@ class Index extends ActiveRecord implements IndexInterface
     {
         if (!$this->_searchService) {
             /** @var \im\search\components\SearchManager $searchManager */
-            $searchManager = Yii::$app->get('search');
+            $searchManager = Yii::$app->get('searchManager');
             $this->_searchService = $searchManager->getSearchService($this->service);
         }
 

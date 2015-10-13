@@ -45,6 +45,7 @@ class m150208_123637_create_catalog_tables extends Migration
                 'description' => Schema::TYPE_STRING . '(255) NOT NULL',
                 'image_id' => Schema::TYPE_INTEGER . ' DEFAULT NULL',
                 'status' => 'tinyint(1) NOT NULL DEFAULT 1',
+                'template_id' => $this->integer()->defaultValue(null),
                 'created_at' => Schema::TYPE_INTEGER . ' NOT NULL',
                 'updated_at' => Schema::TYPE_INTEGER . ' NOT NULL'
             ],
@@ -110,6 +111,7 @@ class m150208_123637_create_catalog_tables extends Migration
                 'description' => Schema::TYPE_STRING . '(255) NOT NULL',
                 'image_id' => Schema::TYPE_INTEGER . ' DEFAULT NULL',
                 'status' => 'tinyint(1) NOT NULL DEFAULT 1',
+                'template_id' => $this->integer()->defaultValue(null),
                 'created_at' => Schema::TYPE_INTEGER . ' NOT NULL',
                 'updated_at' => Schema::TYPE_INTEGER . ' NOT NULL'
             ],
@@ -241,7 +243,7 @@ class m150208_123637_create_catalog_tables extends Migration
         );
         //$this->addPrimaryKey('PK_products_categories', '{{%product_category}}', 'product_id, category_id');
         $this->addForeignKey('FK_products_categories_product_id', '{{%products_categories}}', 'product_id', '{{%products}}', 'id', 'CASCADE', 'CASCADE');
-        $this->addForeignKey('FK_products_categories_category_id', '{{%products_categories}}', 'category_id', '{{%categories}}', 'id', 'CASCADE', 'CASCADE');
+        $this->addForeignKey('FK_products_categories_category_id', '{{%products_categories}}', 'category_id', '{{%product_categories}}', 'id', 'CASCADE', 'CASCADE');
 
         // Product attribute values
         $this->createTable(

@@ -19,13 +19,6 @@ interface SearchServiceInterface
     public function getName();
 
     /**
-     * Returns indexer.
-     *
-     * @return IndexerInterface
-     */
-    public function getIndexer();
-
-    /**
      * Returns finder.
      *
      * @return FinderInterface

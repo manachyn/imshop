@@ -2,13 +2,17 @@
 
 namespace im\catalog\models\widgets;
 
-use im\catalog\components\CategoryContextInterface;
+use im\base\context\ModelContextInterface;
 use im\catalog\models\ProductCategory;
 use im\catalog\Module;
 use im\cms\models\widgets\Widget;
-use im\tree\widgets\Tree;
 
-class ProductCategoriesWidget extends Widget
+/**
+ * Product categories list widget.
+ *
+ * @package im\catalog\models\widgets
+ */
+class ProductCategoriesList extends Widget
 {
     const TYPE = 'categories';
 
@@ -46,16 +50,16 @@ class ProductCategoriesWidget extends Widget
      */
     public function run()
     {
-        if (!$this->context instanceof CategoryContextInterface || !($root = $this->context->getCategory())) {
-            /** @var ProductCategory $root */
+        if ($this->context instanceof ModelContextInterface && ($model = $this->context->getModel()) && $model instanceof ProductCategory) {
+            $root = $model;
+        } else {
             $root = ProductCategory::find()->roots()->active()->one();
         }
         $items = ProductCategory::buildNodeTree($root, $root->children()->active()->all());
 
-        return Tree::widget([
-            'items' => $items,
-            'itemView' => '@im/catalog/views/product-category/_tree_item',
-            'depth' => $this->depth
+        return $this->render('product_categories_list', [
+            'widget' => $this,
+            'items' => $items
         ]);
     }
 }

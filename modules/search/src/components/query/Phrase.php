@@ -3,11 +3,11 @@
 namespace im\search\components\query;
 
 /**
- * Phrase query.
+ * Phrase search query.
  *
  * @package im\search\components\query
  */
-class Phrase extends Query implements FieldQueryInterface
+class Phrase extends SearchQuery implements FieldQueryInterface
 {
     /**
      * @var string

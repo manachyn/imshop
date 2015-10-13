@@ -209,7 +209,7 @@ class Query extends \yii\elasticsearch\Query implements QueryInterface
 
     protected function addTermsFacet(FacetInterface $facet)
     {
-        $options = ['field' => $facet->getField()];
+        $options = ['field' => $facet->getField(), 'min_doc_count' => 0];
         $this->addAggregation($facet->getName(), 'terms', $options);
     }
 }

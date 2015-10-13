@@ -6,8 +6,10 @@ use im\search\components\query\QueryResultInterface;
 use im\search\components\search\SearchDataProvider;
 use im\search\components\search\SearchResultContextInterface;
 use im\search\models\FacetSet;
+use im\search\models\SearchPage;
 use Yii;
 use yii\web\Controller;
+use yii\web\NotFoundHttpException;
 use yii\web\Request;
 
 class SearchPageController extends Controller implements SearchResultContextInterface
@@ -18,10 +20,11 @@ class SearchPageController extends Controller implements SearchResultContextInte
     private $_searchResult;
 
 
-    public function actionIndex($path, Request $request)
+    public function actionView($path, Request $request)
     {
+        $model = $this->findModel($path);
         /** @var \im\search\components\SearchManager $searchManager */
-        $searchManager = Yii::$app->get('search');
+        $searchManager = Yii::$app->get('searchManager');
         $query = $request->get('query', '');
         $searchComponent = $searchManager->getSearchComponent();
         /** @var FacetSet $facetSet */
@@ -33,16 +36,9 @@ class SearchPageController extends Controller implements SearchResultContextInte
         ]);
         $dataProvider->prepare();
         $this->_searchResult = $dataProvider->query->result();
-//        $facets = $this->_searchResult->getFacets();
-//        foreach ($facets as $facet) {
-//            if ($values = $facet->getValues()) {
-//                foreach ($values as $value) {
-//                    $url = $searchComponent->createFacetValueUrl($value, $facet);
-//                }
-//            }
-//        }
 
-        return $this->render('index', [
+        return $this->render('view', [
+            'model' => $model,
             'dataProvider' => $dataProvider
         ]);
     }
@@ -53,5 +49,15 @@ class SearchPageController extends Controller implements SearchResultContextInte
     public function getResult()
     {
         return $this->_searchResult;
+    }
+
+
+    protected function findModel($path)
+    {
+        if (($model = SearchPage::findByPath($path)->published()->one()) !== null) {
+            return $model;
+        } else {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
     }
 }

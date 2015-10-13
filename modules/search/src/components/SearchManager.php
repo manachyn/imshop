@@ -19,25 +19,21 @@ class SearchManager extends Component
     /**
      * @var SearchableInterface[]
      */
-    private $_searchableTypes = [
-        'product' => [
-            'class' => 'im\search\components\searchable\SearchableActiveRecord',
-            'modelClass' => 'im\catalog\models\Product'
-        ]
-    ];
+    private $_searchableTypes = [];
 
     /**
      * @var SearchServiceInterface[]
      */
-    public $searchServices = [
-        'elastic' => [
-            'class' => 'im\elasticsearch\components\SearchService',
-            'name' => 'ElasticSearch'
-        ]
-    ];
+    private $_searchServices = [];
 
+    /**
+     * @var string|array|IndexManager
+     */
     private $_indexManager = 'im\search\components\index\IndexManager';
 
+    /**
+     * @var string|array|SearchComponent
+     */
     private $_searchComponent = 'im\search\components\search\SearchComponent';
 
     /**
@@ -47,9 +43,11 @@ class SearchManager extends Component
      */
     public function getSearchableTypes()
     {
-        foreach ($this->_searchableTypes as $type => $item) {
+        foreach ($this->_searchableTypes as $item) {
             if (!$item instanceof SearchableInterface) {
-                $this->_searchableTypes[$type] = Yii::createObject($item);
+                /** @var SearchableInterface $item */
+                $item = Yii::createObject($item);
+                $this->_searchableTypes[$item->getType()] = $item;
             }
         }
 
@@ -57,11 +55,26 @@ class SearchManager extends Component
     }
 
     /**
-     * @param array $searchableTypes
+     * Sets searchable types.
+     *
+     * @param array|SearchableInterface[] $searchableTypes
      */
     public function setSearchableTypes($searchableTypes)
     {
         $this->_searchableTypes = $searchableTypes;
+    }
+
+    /**
+     * Register searchable type.
+     *
+     * @param string|array|SearchableInterface $type
+     */
+    public function registerSearchableType($type)
+    {
+        if (!$type instanceof SearchableInterface) {
+            $type = Yii::createObject($type);
+        }
+        $this->_searchableTypes[$type->getType()] = $type;
     }
 
     /**
@@ -82,6 +95,11 @@ class SearchManager extends Component
         return $this->_searchableTypes[$type];
     }
 
+    /**
+     * Returns searchable types names.
+     *
+     * @return array
+     */
     public function getSearchableTypeNames()
     {
         $names = array_keys($this->_searchableTypes);
@@ -92,6 +110,64 @@ class SearchManager extends Component
     }
 
     /**
+     * Returns registered search services.
+     *
+     * @return service\SearchServiceInterface[]
+     */
+    public function getSearchServices()
+    {
+        foreach ($this->_searchServices as $key => $item) {
+            if (!$item instanceof SearchServiceInterface) {
+                $this->_searchServices[$key] = Yii::createObject($item);
+            }
+        }
+
+        return $this->_searchServices;
+    }
+
+    /**
+     * Sets search services.
+     *
+     * @param array|SearchServiceInterface[] $searchServices
+     */
+    public function setSearchServices($searchServices)
+    {
+        $this->_searchServices = $searchServices;
+    }
+
+    /**
+     * Returns search service by id.
+     *
+     * @param string $id
+     * @return SearchServiceInterface
+     * @throws \yii\base\InvalidConfigException
+     */
+    public function getSearchService($id)
+    {
+        if (!isset($this->_searchServices[$id])) {
+            throw new InvalidParamException("The search service '$id' is not registered");
+        }
+        if (!$this->_searchServices[$id] instanceof SearchServiceInterface) {
+            $this->_searchServices[$id] = Yii::createObject($this->_searchServices[$id]);
+        }
+
+        return $this->_searchServices[$id];
+    }
+
+    /**
+     * Register search service.
+     *
+     * @param string $id
+     * @param string|array|SearchServiceInterface $service
+     */
+    public function registerSearchService($id, $service)
+    {
+        $this->_searchServices[$id] = $service;
+    }
+
+    /**
+     * Returns searchable attributes by type.
+     *
      * @param string $type
      * @return AttributeDescriptor[]
      */
@@ -112,6 +188,8 @@ class SearchManager extends Component
     }
 
     /**
+     * Returns index attributes by type.
+     *
      * @param string $type
      * @return IndexAttribute[]
      */
@@ -184,27 +262,6 @@ class SearchManager extends Component
     {
         $this->_searchComponent = $searchComponent;
     }
-
-    /**
-     * Returns search service by id.
-     *
-     * @param string $id
-     * @return SearchServiceInterface
-     * @throws \yii\base\InvalidConfigException
-     */
-    public function getSearchService($id)
-    {
-        if (!isset($this->searchServices[$id])) {
-            throw new InvalidParamException("The search service '$id' is not registered");
-        }
-        if (!$this->searchServices[$id] instanceof SearchServiceInterface) {
-            $this->searchServices[$id] = Yii::createObject($this->searchServices[$id]);
-        }
-
-        return $this->searchServices[$id];
-    }
-
-
 
 //
 //    /**

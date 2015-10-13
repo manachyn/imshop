@@ -19,6 +19,7 @@ use Yii;
 use yii\behaviors\SluggableBehavior;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
+use yii\helpers\Url;
 
 /**
  * Product model class.
@@ -337,6 +338,17 @@ class Product extends ActiveRecord implements ProductInterface
             }
         }
         return $values;
+    }
+
+    /**
+     * Returns url.
+     *
+     * @param boolean|string $scheme the URI scheme to use in the generated URL
+     * @return string
+     */
+    public function getUrl($scheme = false)
+    {
+        return Url::to(['/catalog/product/view', 'path' => $this->slug], $scheme);
     }
 
     public function afterFind()

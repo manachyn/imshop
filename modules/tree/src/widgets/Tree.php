@@ -4,6 +4,11 @@ namespace im\tree\widgets;
 
 use yii\base\Widget;
 
+/**
+ * Tree widget.
+ *
+ * @package im\tree\widgets
+ */
 class Tree extends Widget
 {
     /**

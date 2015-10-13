@@ -2,12 +2,13 @@
 
 namespace im\catalog\controllers;
 
-use im\catalog\components\CategoryContextInterface;
+use im\base\context\ModelContextInterface;
 use im\catalog\models\Category;
+use yii\base\Model;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
-class CategoryController extends Controller implements CategoryContextInterface
+class CategoryController extends Controller implements ModelContextInterface
 {
     /**
      * @var Category
@@ -16,7 +17,8 @@ class CategoryController extends Controller implements CategoryContextInterface
 
     public function actionView($path)
     {
-        $this->category = $model = $this->findModel($path);
+        $model = $this->findModel($path);
+        $this->setModel($model);
 
         return $this->render('view', [
             'model' => $model,
@@ -45,5 +47,21 @@ class CategoryController extends Controller implements CategoryContextInterface
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getModel()
+    {
+        return $this->category;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setModel(Model $model)
+    {
+        $this->category = $model;
     }
 }

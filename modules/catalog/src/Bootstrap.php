@@ -19,7 +19,8 @@ class Bootstrap implements BootstrapInterface
         $this->registerTranslations($app);
         $this->addRules($app);
         $this->registerDefinitions();
-        $this->registerEntityTypes();
+        $this->registerEntityTypes($app);
+        $this->registerSearchableTypes($app);
         if ($app instanceof \yii\web\Application) {
             $this->registerWidgets($app);
         }
@@ -88,6 +89,9 @@ class Bootstrap implements BootstrapInterface
                 'class' => 'im\seo\components\SeoBehavior',
                 'metaClass' => 'im\catalog\models\ProductCategoryMeta',
                 'ownerType' => false
+            ],
+            'as template' => [
+                'class' => 'im\cms\components\TemplateBehavior'
             ]
         ]);
         Yii::$container->set(Product::className(), [
@@ -107,19 +111,42 @@ class Bootstrap implements BootstrapInterface
     public function registerWidgets($app)
     {
         $layoutManager = $app->get('layoutManager');
-        $layoutManager->registerWidget('im\catalog\models\widgets\ProductCategoriesWidget');
+        $layoutManager->registerWidget('im\catalog\models\widgets\ProductCategoriesList');
     }
 
     /**
      * Registers entity types.
+     *
+     * @param Application $app
      */
-    public function registerEntityTypes()
+    public function registerEntityTypes($app)
     {
         /** @var \im\base\types\EntityTypesRegister $typesRegister */
-        $typesRegister = Yii::$app->get('typesRegister');
+        $typesRegister = $app->get('typesRegister');
         $typesRegister->registerEntityType(new EntityType('product', 'im\catalog\models\Product'));
         $typesRegister->registerEntityType(new EntityType('product_meta', 'im\catalog\models\ProductMeta'));
         $typesRegister->registerEntityType(new EntityType('category_meta', 'im\catalog\models\CategoryMeta'));
         $typesRegister->registerEntityType(new EntityType('product_category_meta', 'im\catalog\models\ProductCategoryMeta'));
+    }
+
+    /**
+     * Registers searchable types.
+     *
+     * @param Application $app
+     */
+    public function registerSearchableTypes($app)
+    {
+        /** @var \im\search\components\SearchManager $searchManager */
+        $searchManager = $app->get('searchManager');
+        $searchManager->registerSearchableType([
+            'class' => 'im\search\components\service\db\IndexedSearchableType',
+            'type' => 'product',
+            'modelClass' => 'im\catalog\models\Product'
+        ]);
+//        $searchManager->registerSearchableType('product', [
+//            'class' => 'im\search\components\service\db\SearchableType',
+//            'modelClass' => 'im\catalog\models\Product',
+//            'searchServiceId' => 'db'
+//        ]);
     }
 }

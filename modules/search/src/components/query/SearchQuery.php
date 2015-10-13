@@ -7,6 +7,6 @@ namespace im\search\components\query;
  *
  * @package im\search\components\query
  */
-class Query implements SearchQueryInterface
+class SearchQuery implements SearchQueryInterface
 {
 }

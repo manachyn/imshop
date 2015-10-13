@@ -34,6 +34,11 @@ class FacetInterval extends Model implements FacetValueInterface
     private $_searchQuery;
 
     /**
+     * @var bool
+     */
+    private $_isSelected = false;
+
+    /**
      * @inheritdoc
      */
     public function getKey()
@@ -103,5 +108,21 @@ class FacetInterval extends Model implements FacetValueInterface
     public function setFacet(FacetInterface $facet)
     {
         $this->_facet = $facet;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setSelected($selected)
+    {
+        $this->_isSelected = $selected;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function isSelected()
+    {
+        return $this->_isSelected;
     }
 }

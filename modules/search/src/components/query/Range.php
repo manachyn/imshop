@@ -5,11 +5,11 @@ namespace im\search\components\query;
 use yii\base\InvalidParamException;
 
 /**
- * Range query.
+ * Range search query.
  *
  * @package im\search\components\query
  */
-class Range extends Query implements FieldQueryInterface, RangeInterface
+class Range extends SearchQuery implements FieldQueryInterface, RangeInterface
 {
     /**
      * @var string

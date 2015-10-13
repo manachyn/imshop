@@ -5,7 +5,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model im\catalog\models\widgets\ProductCategoriesWidget */
+/* @var $model im\catalog\models\widgets\ProductCategoriesList */
 /* @var $form yii\widgets\ActiveForm|im\forms\components\DynamicActiveForm */
 /* @var $fieldConfig array */
 

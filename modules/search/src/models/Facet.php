@@ -102,9 +102,9 @@ class Facet extends ActiveRecord implements FacetInterface
     public static function getSearchableAttributes($entityType)
     {
         if ($entityType) {
-            /** @var \im\search\components\SearchManager $search */
-            $search = Yii::$app->get('search');
-            return ArrayHelper::map($search->getSearchableAttributes($entityType), function (AttributeDescriptor $attribute) {
+            /** @var \im\search\components\SearchManager $searchManager */
+            $searchManager = Yii::$app->get('searchManager');
+            return ArrayHelper::map($searchManager->getSearchableAttributes($entityType), function (AttributeDescriptor $attribute) {
                 return $attribute->name;
             }, 'label');
         } else {
@@ -118,10 +118,10 @@ class Facet extends ActiveRecord implements FacetInterface
      */
     public static function getEntityTypesList()
     {
-        /** @var \im\search\components\SearchManager $search */
-        $search = Yii::$app->get('search');
+        /** @var \im\search\components\SearchManager $searchManager */
+        $searchManager = Yii::$app->get('searchManager');
 
-        return $search->getSearchableTypeNames();
+        return $searchManager->getSearchableTypeNames();
     }
 
     /**

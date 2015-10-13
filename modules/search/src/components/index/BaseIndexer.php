@@ -115,10 +115,10 @@ abstract class BaseIndexer implements IndexerInterface
      */
     public function getSearchableType($type)
     {
-        /** @var \im\search\components\SearchManager $search */
-        $search = Yii::$app->get('search');
+        /** @var \im\search\components\SearchManager $searchManager */
+        $searchManager = Yii::$app->get('searchManager');
 
-        return $search->getSearchableType($type);
+        return $searchManager->getSearchableType($type);
     }
 
     /**

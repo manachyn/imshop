@@ -1,17 +1,20 @@
 <?php
 
-namespace im\search\components\searchable;
+namespace im\search\components\service\db;
 
-use im\eav\models\Attribute;
+use im\search\components\index\IndexableInterface;
 use im\search\components\index\provider\IndexProviderInterface;
 use im\search\components\transformer\DocumentToObjectTransformerInterface;
 use im\search\components\transformer\ObjectToDocumentTransformerInterface;
 use im\search\models\IndexAttribute;
 use Yii;
-use yii\base\Model;
-use yii\base\Object;
 
-class SearchableActiveRecord extends Object implements SearchableInterface
+/**
+ * Searchable type for indexed active record models.
+ *
+ * @package im\search\components\service\db
+ */
+class IndexedSearchableType extends SearchableType implements IndexableInterface
 {
     /**
      * @var string
@@ -34,44 +37,18 @@ class SearchableActiveRecord extends Object implements SearchableInterface
     private $_objectToDocumentTransformer = 'im\search\components\transformer\ObjectToDocumentTransformer';
 
     /**
-     * @var Model instance
-     */
-    private $_model;
-
-    /**
      * @inheritdoc
      */
-    public function getSearchableAttributes()
+    public function getSearchService()
     {
-        $model = $this->getModel();
-        /** @var \im\base\types\EntityTypesRegister $typesRegister */
-        $typesRegister = Yii::$app->get('typesRegister');
-        $entityType = $typesRegister->getEntityType($model);
-
-        $attributes = $model->attributes();
-        $labels = $model->attributeLabels();
-        $searchableAttributes = [];
-        $key = 0;
-        foreach ($attributes as $attribute) {
-            $searchableAttributes[$key] = new AttributeDescriptor([
-                'entity_type' => $entityType,
-                'name' => $attribute,
-                'label' => isset($labels[$attribute]) ? $labels[$attribute] : $model->generateAttributeLabel($attribute)
-            ]);
-            $key++;
+        if ($this->searchServiceId) {
+            return parent::getSearchService();
+        } else {
+            /** @var \im\search\components\SearchManager $searchManager */
+            $searchManager = Yii::$app->get('searchManager');
+            $index = $searchManager->getIndexManager()->getIndexByType($this->getType());
+            return $index->getSearchService();
         }
-
-        $eavAttributes = Attribute::findByEntityType($entityType);
-        foreach ($eavAttributes as $attribute) {
-            $searchableAttributes[$key] = new AttributeDescriptor([
-                'entity_type' => $entityType,
-                'name' => 'eAttributes.' . $attribute->getName(),
-                'label' => $attribute->getPresentation()
-            ]);
-            $key++;
-        }
-
-        return $searchableAttributes;
     }
 
     /**
@@ -152,15 +129,5 @@ class SearchableActiveRecord extends Object implements SearchableInterface
         return $this->_documentToObjectTransformer;
     }
 
-    /**
-     * @return Model
-     */
-    private function getModel()
-    {
-        if (!$this->_model) {
-            $this->_model = Yii::createObject($this->modelClass);
-        }
 
-        return $this->_model;
-    }
 }

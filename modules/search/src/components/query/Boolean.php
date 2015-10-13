@@ -7,7 +7,7 @@ namespace im\search\components\query;
  *
  * @package im\search\components\query
  */
-class Boolean extends Query implements BooleanQueryInterface
+class Boolean extends SearchQuery implements BooleanQueryInterface
 {
     /**
      * @var SearchQueryInterface[]

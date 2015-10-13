@@ -30,7 +30,6 @@ use yii\widgets\Breadcrumbs;
                 <?= WidgetArea::widget([
                     'code' => 'sidebar',
                     'layout' => 'main',
-                    'template' => \im\cms\models\Template::findOne(5),
                     'context' => $this->context,
                     'enableCache' => false
                 ]) ?>
@@ -44,6 +43,14 @@ use yii\widgets\Breadcrumbs;
             <p class="pull-right"><?= Yii::powered() ?></p>
         </div>
     </footer>
+<!--<script src="/js/system.js"></script>-->
+<!--<script>-->
+<!--    System.config({-->
+<!--        transpiler: 'babel',-->
+<!--        baseURL: '/js/frontend'-->
+<!--    });-->
+<!--    System.import('index.js');-->
+<!--</script>-->
 <?php $this->endBody() ?>
 </body>
 </html>

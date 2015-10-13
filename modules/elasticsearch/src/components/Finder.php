@@ -18,39 +18,40 @@ class Finder extends BaseFinder
     /**
      * @inheritdoc
      */
-    public static function find($index = null, $type = null)
+    public function find($type)
     {
-        /** @var QueryInterface $query */
-        $query = Yii::createObject([
-            'class' => Query::className(),
-            'index' => $index,
-            'type' => $type
-        ]);
-
-        if ($transformer = static::getTransformer($type)) {
-            $query->setTransformer($transformer);
-        }
-
-        return $query;
+        //$index =
+//        /** @var QueryInterface $query */
+//        $query = Yii::createObject([
+//            'class' => Query::className(),
+//            'index' => $index,
+//            'type' => $type
+//        ]);
+//
+//        if ($transformer = static::getTransformer($type)) {
+//            $query->setTransformer($transformer);
+//        }
+//
+//        return $query;
     }
 
     /**
      * @inheritdoc
      */
-    public static function findByQuery(SearchQueryInterface $query, $index = null, $type = null)
+    public function findByQuery($type, SearchQueryInterface $query)
     {
-        $query = Yii::createObject([
-            'class' => Query::className(),
-            'searchQuery' => $query,
-            'index' => $index,
-            'type' => $type
-        ]);
-
-        if ($transformer = static::getTransformer($type)) {
-            $query->setTransformer($transformer);
-        }
-
-        return $query;
+//        $query = Yii::createObject([
+//            'class' => Query::className(),
+//            'searchQuery' => $query,
+//            'index' => $index,
+//            'type' => $type
+//        ]);
+//
+//        if ($transformer = static::getTransformer($type)) {
+//            $query->setTransformer($transformer);
+//        }
+//
+//        return $query;
     }
 
     public static function findById($id, $index, $type, $options = [])

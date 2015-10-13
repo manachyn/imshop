@@ -3,6 +3,7 @@
 namespace im\elasticsearch\components;
 
 use im\search\components\index\Document;
+use im\search\components\query\facet\FacetInterface;
 use im\search\components\query\QueryInterface;
 use im\search\components\query\SearchQueryHelper;
 use im\search\models\Facet;
@@ -33,6 +34,8 @@ class QueryResult extends \im\search\components\query\QueryResult
      */
     private $_timedOut = false;
 
+    private $_selectedFacets = [];
+
     function __construct(QueryInterface $query, array $response)
     {
         parent::__construct($query);
@@ -49,6 +52,14 @@ class QueryResult extends \im\search\components\query\QueryResult
         }
 
         return $this->objects;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getSelectedFacets()
+    {
+        return $this->_selectedFacets;
     }
 
     protected function init(array $response)
@@ -74,6 +85,8 @@ class QueryResult extends \im\search\components\query\QueryResult
         foreach ($this->getQuery()->getFacets() as $facet) {
             if (isset($responseFacets[$facet->getName()])) {
                 $facetValues = $facet->getValues();
+                $operator = $facet->getOperator() === Facet::OPERATOR_AND ? true : null;
+                $selectedValues = [];
                 if ($facetValues) {
                     foreach ($facetValues as $value) {
                         foreach ($responseFacets[$facet->getName()]['buckets'] as $bucket) {
@@ -84,8 +97,16 @@ class QueryResult extends \im\search\components\query\QueryResult
                         SearchQueryHelper::getQueryInstanceFromFacetValue($value);
                         $valueQuery = SearchQueryHelper::getQueryInstanceFromFacetValue($value);
                         if ($searchQuery) {
-                            $valueQuery = SearchQueryHelper::includeQuery(clone $searchQuery, $valueQuery,
-                                $facet->getOperator() === Facet::OPERATOR_AND ? true : null);
+                            $value->setSelected(SearchQueryHelper::isIncludeQuery($searchQuery, $valueQuery, $operator));
+                            if ($value->isSelected()) {
+                                $selectedValue = clone $value;
+                                $selectedValueQuery = SearchQueryHelper::excludeQuery(clone $searchQuery, $valueQuery, $operator);
+                                $selectedValue->setSearchQuery($selectedValueQuery);
+                                $selectedValues[] = $selectedValue;
+                            }
+                            $valueQuery = SearchQueryHelper::includeQuery(clone $searchQuery, $valueQuery, $operator);
+                        } else {
+                            $value->setSelected(false);
                         }
                         $value->setSearchQuery($valueQuery);
                     }
@@ -105,8 +126,16 @@ class QueryResult extends \im\search\components\query\QueryResult
                         $value->setFacet($facet);
                         $valueQuery = SearchQueryHelper::getQueryInstanceFromFacetValue($value);
                         if ($searchQuery) {
-                            $valueQuery = SearchQueryHelper::includeQuery(clone $searchQuery, $valueQuery,
-                                $facet->getOperator() === Facet::OPERATOR_AND ? true : null);
+                            $value->setSelected(SearchQueryHelper::isIncludeQuery($searchQuery, $valueQuery, $operator));
+                            if ($value->isSelected()) {
+                                $selectedValue = clone $value;
+                                $selectedValueQuery = SearchQueryHelper::excludeQuery(clone $searchQuery, $valueQuery, $operator);
+                                $selectedValue->setSearchQuery($selectedValueQuery);
+                                $selectedValues[] = $selectedValue;
+                            }
+                            $valueQuery = SearchQueryHelper::includeQuery(clone $searchQuery, $valueQuery, $operator);
+                        } else {
+                            $value->setSelected(false);
                         }
                         $value->setSearchQuery($valueQuery);
                         $facetValues[] = $value;
@@ -114,6 +143,11 @@ class QueryResult extends \im\search\components\query\QueryResult
                 }
                 if ($facetValues) {
                     $facet->setValues($facetValues);
+                }
+                if ($selectedValues) {
+                    $selectedFacet = clone $facet;
+                    $selectedFacet->setValues($selectedValues);
+                    $this->_selectedFacets[] = $selectedFacet;
                 }
             }
         }

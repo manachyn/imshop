@@ -6,7 +6,7 @@ namespace im\search\components\query;
  * Class QueryResult
  * @package im\search\components\query
  */
-class QueryResult implements QueryResultInterface
+abstract class QueryResult implements QueryResultInterface
 {
     /**
      * @var int total count of query results
@@ -85,7 +85,7 @@ class QueryResult implements QueryResultInterface
     }
 
     /**
-     * @return array
+     * @inheritdoc
      */
     public function getFacets()
     {

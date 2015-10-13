@@ -3,11 +3,11 @@
 namespace im\search\components\query;
 
 /**
- * Term query.
+ * Term search query.
  *
  * @package im\search\components\query\parser\entry
  */
-class Term extends Query implements FieldQueryInterface
+class Term extends SearchQuery implements FieldQueryInterface
 {
     /**
      * @var string

@@ -49,16 +49,25 @@ class SearchQueryHelper
         return $newQuery;
     }
 
-    public static function excludeQuery(SearchQueryInterface $fromQuery, FieldQueryInterface $query, $sign = true)
+    public static function isIncludeQuery(SearchQueryInterface $inQuery, FieldQueryInterface $query, $sign = true)
     {
-        if ($newQuery = self::addQuery($fromQuery, $query, $sign)) {
-            return $newQuery;
-        } else {
-            $newQuery = new Boolean();
-            $newQuery->setSubQueries([$fromQuery, $query], [$sign, $sign]);
+        if ($inQuery instanceof BooleanQueryInterface) {
+            $signs = $inQuery->getSigns();
+            foreach ($inQuery->getSubQueries() as $key => $subQuery) {
+                if ($signs[$key] === $sign && self::isIncludeQuery($subQuery, $query, $sign)) {
+                    return true;
+                }
+            }
+        } elseif ($inQuery instanceof FieldQueryInterface && $query->equals($inQuery) === 1) {
+            return true;
         }
 
-        return $newQuery;
+        return false;
+    }
+
+    public static function excludeQuery(SearchQueryInterface $fromQuery, FieldQueryInterface $query, $sign = true)
+    {
+        return self::removeQuery($fromQuery, $query, $sign);
     }
 
     /**
@@ -101,7 +110,7 @@ class SearchQueryHelper
             $subQueries = $fromQuery->getSubQueries();
             $signs = $fromQuery->getSigns();
             foreach ($subQueries as $key => $subQuery) {
-                if ($subQuery instanceof FieldQueryInterface && $signs[$key] === $sign && $query->equals($fromQuery) === 1) {
+                if ($subQuery instanceof FieldQueryInterface && $signs[$key] === $sign && $query->equals($subQuery) === 1) {
                     unset($subQueries[$key], $signs[$key]);
                 }
             }

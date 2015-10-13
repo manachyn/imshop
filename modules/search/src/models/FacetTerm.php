@@ -32,6 +32,11 @@ class FacetTerm extends ActiveRecord implements FacetValueInterface
     private $_searchQuery;
 
     /**
+     * @var bool
+     */
+    private $_isSelected = false;
+
+    /**
      * @inheritdoc
      */
     public static function tableName()
@@ -145,5 +150,21 @@ class FacetTerm extends ActiveRecord implements FacetValueInterface
     public function setSearchQuery(SearchQueryInterface $searchQuery)
     {
         $this->_searchQuery = $searchQuery;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setSelected($selected)
+    {
+        $this->_isSelected = $selected;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function isSelected()
+    {
+        return $this->_isSelected;
     }
 }

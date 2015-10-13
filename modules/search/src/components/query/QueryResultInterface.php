@@ -27,6 +27,11 @@ interface QueryResultInterface
     public function getFacets();
 
     /**
+     * @return FacetInterface[]
+     */
+    public function getSelectedFacets();
+
+    /**
      * @return QueryInterface
      */
     public function getQuery();

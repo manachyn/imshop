@@ -8,15 +8,16 @@ $config = [
     'bootstrap' => [
         'log',
         'im\base\Bootstrap',
-        'im\users\Bootstrap',
         'im\eav\Bootstrap',
         'im\variation\Bootstrap',
         'im\seo\Bootstrap',
         'im\filesystem\Bootstrap',
-        'im\imshop\Bootstrap',
+        'im\search\Bootstrap',
+        'im\elasticsearch\Bootstrap',
+        'im\users\Bootstrap',
         'im\cms\Bootstrap',
         'im\catalog\Bootstrap',
-        'im\search\Bootstrap',
+        'im\imshop\Bootstrap',
     ],
     'modules' => [
         'base' => [
@@ -89,7 +90,12 @@ $config = [
                     'resolvers' => [
                         [
                             'class' => 'im\base\routing\ModelRouteResolver',
-                            'route' => 'search/search-page/index',
+                            'route' => 'catalog/product-category/view',
+                            'modelClass' => 'im\catalog\models\ProductCategory'
+                        ],
+                        [
+                            'class' => 'im\base\routing\ModelRouteResolver',
+                            'route' => 'search/search-page/view',
                             'modelClass' => 'im\search\models\SearchPage'
                         ]
                     ]
@@ -97,16 +103,17 @@ $config = [
                 [
                     'class' => 'im\base\routing\GroupUrlRule',
                     'pattern' => '<path:.+>',
+                    'defaults' => ['path' => 'index'],
                     'resolvers' => [
+                        [
+                            'class' => 'im\base\routing\ModelRouteResolver',
+                            'route' => 'catalog/product/view',
+                            'modelClass' => 'im\catalog\models\Product'
+                        ],
                         [
                             'class' => 'im\base\routing\ModelRouteResolver',
                             'route' => 'cms/page/view',
                             'modelClass' => 'im\cms\models\Page'
-                        ],
-                        [
-                            'class' => 'im\base\routing\ModelRouteResolver',
-                            'route' => 'catalog/product-category/view',
-                            'modelClass' => 'im\catalog\models\ProductCategory'
                         ],
                     ]
                 ]
@@ -174,7 +181,7 @@ $config = [
 //                ]
             ],
         ],
-        'search' => 'im\search\components\SearchManager',
+        'searchManager' => 'im\search\components\SearchManager',
         'elasticsearch' => [
             'class' => 'yii\elasticsearch\Connection',
             'nodes' => [

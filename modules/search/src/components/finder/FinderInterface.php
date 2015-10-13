@@ -13,31 +13,19 @@ use im\search\components\query\SearchQueryInterface;
 interface FinderInterface
 {
     /**
-     * Finds by index and type.
+     * Finds by type.
      *
-     * @param string $index
      * @param string $type
      * @return QueryInterface
      */
-    public static function find($index = null, $type = null);
+    public function find($type);
 
     /**
-     * Finds by search query, index and type.
+     * Finds by type and search query.
      *
-     * @param SearchQueryInterface $query
-     * @param string $index
      * @param string $type
+     * @param SearchQueryInterface $query
      * @return QueryInterface
      */
-    public static function findByQuery(SearchQueryInterface $query, $index = null, $type = null);
-
-//    public static function findOne($condition, $index = null, $type = null);
-//
-//    public static function findAll($condition, $index = null, $type = null);
-
-    public static function findById($id, $index, $type, $options = []);
-
-    public static function findByIds($ids, $index, $type, $options = []);
-
-    public static function getTransformer($type);
+    public function findByQuery($type, SearchQueryInterface $query);
 }

@@ -10,6 +10,7 @@ use im\forms\components\Tab;
 use im\seo\Module;
 use yii\base\Behavior;
 use yii\db\ActiveRecord;
+use yii\helpers\ArrayHelper;
 use yii\validators\Validator;
 
 /**
@@ -46,7 +47,7 @@ class TemplateBehavior extends Behavior implements ModelBehaviorInterface
      */
     public function getTemplate()
     {
-        return $this->owner->hasOne(Template::className(), ['template_id' => 'id']);
+        return $this->owner->hasOne(Template::className(), ['id' => 'template_id']);
     }
 
     /**
@@ -56,7 +57,10 @@ class TemplateBehavior extends Behavior implements ModelBehaviorInterface
     {
         $fieldSet = $event->fieldSet;
         $templateTab = new Tab('template', Module::t('template', 'Template'), [
-            $fieldSet->getForm()->field($fieldSet->getModel(), 'template_id')->textInput()->label(Module::t('template', 'Template'))
+            $fieldSet->getForm()->field($fieldSet->getModel(), 'template_id')->dropDownList(
+                ArrayHelper::map(Template::find()->asArray()->all(), 'id', 'name'),
+                ['prompt' => '']
+            )->label(Module::t('template', 'Template'))
         ]);
         $fieldSet->addItem($templateTab, 'tabs');
     }

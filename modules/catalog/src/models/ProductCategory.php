@@ -77,7 +77,7 @@ class ProductCategory extends Category
      */
     public function getUrl($scheme = false)
     {
-        return Url::to(['product-category/view', 'path' => $this->slug], $scheme);
+        return Url::to(['/catalog/product-category/view', 'path' => $this->slug], $scheme);
     }
 
     /**

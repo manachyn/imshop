@@ -96,7 +96,7 @@ class m141023_154713_create_cms_tables extends Migration
             [
                 'id' => $this->primaryKey(),
                 'code' => $this->string(50)->notNull(),
-                'template_id' => $this->integer()->notNull(),
+                'template_id' => $this->integer()->defaultValue(null),
                 'owner_id' => $this->integer()->defaultValue(null),
                 'owner_type' => $this->string(100)->notNull(),
                 'display' => $this->boolean()->defaultValue(1),

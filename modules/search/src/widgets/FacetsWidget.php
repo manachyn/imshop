@@ -45,11 +45,15 @@ class FacetsWidget extends Widget
      */
     public function run()
     {
-        if ($this->context instanceof SearchResultContextInterface && ($result = $this->context->getResult()) && $facets = $result->getFacets()) {
+        if ($this->context instanceof SearchResultContextInterface && ($result = $this->context->getResult())) {
             /** @var \im\search\components\SearchManager $searchManager */
-            $searchManager = Yii::$app->get('search');
+            $searchManager = Yii::$app->get('searchManager');
             $searchComponent = $searchManager->getSearchComponent();
-            return $this->render('facets', ['facets' => $facets, 'searchComponent' => $searchComponent]);
+            return $this->render('facets', [
+                'facets' => $result->getFacets(),
+                'selectedFacets' => $result->getSelectedFacets(),
+                'searchComponent' => $searchComponent]
+            );
         } else {
             return '';
         }

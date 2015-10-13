@@ -15,6 +15,7 @@ class Bootstrap implements BootstrapInterface
     public function bootstrap($app)
     {
         $this->registerTranslations($app);
+        $this->registerSearchService($app);
         if ($app instanceof Application) {
             $this->registerPageTypes($app);
             $this->registerWidgets($app);
@@ -59,5 +60,20 @@ class Bootstrap implements BootstrapInterface
     {
         $layoutManager = $app->get('layoutManager');
         $layoutManager->registerWidget('im\search\widgets\FacetsWidget');
+    }
+
+    /**
+     * Registers search service.
+     *
+     * @param \yii\base\Application $app
+     */
+    public function registerSearchService($app)
+    {
+        /** @var \im\search\components\SearchManager $searchManager */
+        $searchManager = $app->get('searchManager');
+        $searchManager->registerSearchService('db', [
+            'class' => 'im\search\components\service\db\SearchService',
+            'name' => 'Database'
+        ]);
     }
 }

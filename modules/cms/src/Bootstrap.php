@@ -18,7 +18,6 @@ class Bootstrap implements BootstrapInterface
         //$layoutManager->registerOwner('im\cms\models\Page', 'page');
         //$layoutManager->registerConfigurableComponent($this);
         $this->registerTranslations($app);
-//        $this->addRules($app);
         $this->registerDefinitions();
         $this->registerEntityTypes();
         $this->registerPageTypes();
@@ -45,30 +44,10 @@ class Bootstrap implements BootstrapInterface
     }
 
     /**
-     * Adds module rules.
-     *
-     * @param Application $app
-     */
-    public function addRules($app)
-    {
-        $app->getUrlManager()->addRules([
-            //'<path>' => 'cms/page/view',
-            //'<path:.+>' => 'cms/page/view',
-            '' => 'cms/page/view',
-            [
-                'pattern' => '<path:.+>',
-                'route' => 'cms/page/view',
-                'suffix' => '.html',
-            ],
-            //'' => 'cms/default/index',
-            '<_a:(about|contacts|captcha)>' => 'site/default/<_a>'
-        ], false);
-    }
-
-    /**
      * Registers a class definitions in container.
      */
-    public function registerDefinitions() {
+    public function registerDefinitions()
+    {
         Yii::$container->set(Page::className(), [
             'as seo' => [
                 'class' => 'im\seo\components\SeoBehavior',

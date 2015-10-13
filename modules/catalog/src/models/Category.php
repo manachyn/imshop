@@ -137,7 +137,7 @@ class Category extends Tree
      */
     public function getUrl($scheme = false)
     {
-        return Url::to(['category/view', 'path' => $this->slug], $scheme);
+        return Url::to(['/catalog/category/view', 'path' => $this->slug], $scheme);
     }
 
     /**

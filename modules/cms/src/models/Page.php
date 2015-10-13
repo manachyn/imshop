@@ -21,8 +21,6 @@ use yii\helpers\ArrayHelper;
  * @property integer $created_at
  * @property integer $updated_at
  * @property integer $status
- *
- * @property PageMeta $pageMeta
  */
 class Page extends ActiveRecord
 {
@@ -106,14 +104,6 @@ class Page extends ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getPageMeta()
-    {
-        return $this->hasOne(PageMeta::className(), ['page_id' => 'id']);
-    }
-
-    /**
      * @return string Readable status
      */
     public function getStatus()
@@ -123,6 +113,11 @@ class Page extends ActiveRecord
         return $statuses[$this->status];
     }
 
+    /**
+     * Gets page url.
+     *
+     * @return string
+     */
     public function getUrl()
     {
         return $this->slug;
@@ -146,7 +141,6 @@ class Page extends ActiveRecord
      */
     public static function getTypesList()
     {
-        $types = Yii::$app->get('cms')->getPageTypes();
         return ArrayHelper::map(Yii::$app->get('cms')->getPageTypes(), 'type', 'name');
     }
 

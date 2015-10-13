@@ -38,7 +38,7 @@ class IndexController extends Controller
     public function actionReindex($index, $type)
     {
         /** @var \im\search\components\SearchManager $searchManager */
-        $searchManager = Yii::$app->get('search');
+        $searchManager = Yii::$app->get('searchManager');
         $index = $searchManager->getIndexManager()->getIndex($index);
         if ($index) {
             $indexer = $index->getSearchService()->getIndexer();
@@ -61,7 +61,7 @@ class IndexController extends Controller
     public function actionSearch($index, $type)
     {
         /** @var \im\search\components\SearchManager $searchManager */
-        $searchManager = Yii::$app->get('search');
+        $searchManager = Yii::$app->get('searchManager');
         $index = $searchManager->getIndexManager()->getIndex($index);
         $finder = $index->getSearchService()->getFinder();
         $query = $finder->find($index->getName(), $type);

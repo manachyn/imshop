@@ -120,10 +120,10 @@ class IndexController extends BackendController
         if ($data = Yii::$app->request->post('IndexAttribute', [])) {
             IndexAttribute::saveFromData($data);
         }
-        /** @var \im\search\components\SearchManager $search */
-        $search = Yii::$app->get('search');
+        /** @var \im\search\components\SearchManager $searchManager */
+        $searchManager = Yii::$app->get('searchManager');
         $model = $this->findModel($id);
-        $attributes = $search->getIndexAttributes($model->type);
+        $attributes = $searchManager->getIndexAttributes($model->type);
         $dataProvider = new ArrayDataProvider([
             'allModels' => $attributes,
             'sort' => [

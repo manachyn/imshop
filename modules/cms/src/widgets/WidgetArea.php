@@ -2,6 +2,8 @@
 
 namespace im\cms\widgets;
 
+use im\base\context\ModelContextInterface;
+use im\cms\components\TemplateBehavior;
 use im\cms\models\Template;
 use im\cms\models\widgets\WidgetArea as WidgetAreaModel;
 use im\cms\models\widgets\Widget as WidgetModel;
@@ -10,6 +12,7 @@ use yii\caching\Cache;
 use yii\caching\TagDependency;
 use yii\db\ActiveRecord;
 use Yii;
+use yii\web\Controller;
 
 class WidgetArea extends Widget
 {
@@ -51,6 +54,18 @@ class WidgetArea extends Widget
     public function init()
     {
         parent::init();
+        $model = null;
+        if ($this->context instanceof ModelContextInterface) {
+            $model = $this->context->getModel();
+        } elseif ($this->context instanceof Controller && $this->context->action instanceof ModelContextInterface) {
+            /** @var ModelContextInterface $action */
+            $action = $this->context->action;
+            $model = $action->getModel();
+        }
+        if ($model && $model->getBehavior('template')) {
+            /** @var TemplateBehavior $model */
+            $this->template = $model->template;
+        }
         $this->setWidgets();
     }
 
@@ -108,7 +123,8 @@ class WidgetArea extends Widget
      */
     protected function loadModel()
     {
-        $condition = ['code' => $this->code, 'template_id' => $this->template->id];
+        $condition = ['code' => $this->code];
+        $condition['template_id'] = $this->template ? $this->template->id : null;
 
         return WidgetAreaModel::findOne($condition);
     }

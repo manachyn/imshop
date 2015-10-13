@@ -41,6 +41,11 @@ class FacetRange extends ActiveRecord implements RangeInterface, FacetValueInter
     private $_searchQuery;
 
     /**
+     * @var bool
+     */
+    private $_isSelected = false;
+
+    /**
      * @inheritdoc
      */
     public function init()
@@ -197,5 +202,21 @@ class FacetRange extends ActiveRecord implements RangeInterface, FacetValueInter
     public function setSearchQuery(SearchQueryInterface $searchQuery)
     {
         $this->_searchQuery = $searchQuery;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setSelected($selected)
+    {
+        $this->_isSelected = $selected;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function isSelected()
+    {
+        return $this->_isSelected;
     }
 }

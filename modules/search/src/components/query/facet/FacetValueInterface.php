@@ -71,4 +71,18 @@ interface FacetValueInterface
      * @param SearchQueryInterface $searchQuery
      */
     public function setSearchQuery(SearchQueryInterface $searchQuery);
+
+    /**
+     * Sets selected flag.
+     *
+     * @param bool $selected
+     */
+    public function setSelected($selected);
+
+    /**
+     * Returns whether the facet value is selected.
+     *
+     * @return bool
+     */
+    public function isSelected();
 }
