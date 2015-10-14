@@ -4,6 +4,8 @@ namespace im\catalog\controllers;
 
 use im\catalog\models\ProductCategory;
 use im\search\components\query\QueryResultInterface;
+use im\search\components\query\SearchQueryHelper;
+use im\search\components\query\Term;
 use im\search\components\search\SearchDataProvider;
 use im\search\components\search\SearchResultContextInterface;
 use im\search\models\FacetSet;
@@ -37,7 +39,13 @@ class ProductCategoryController extends CategoryController implements SearchResu
         /** @var FacetSet $facetSet */
         $facetSet = FacetSet::findOne(1);
         $facets = $facetSet->facets;
-        $query = $searchComponent->getQuery('product', $query, $facets);
+        $categoryQuery = new Term('categoriesRelation.id', $model->id);
+        if ($query) {
+            $searchQuery = SearchQueryHelper::includeQuery($searchComponent->parseQuery($query), $categoryQuery);
+        } else {
+            $searchQuery = $categoryQuery;
+        }
+        $query = $searchComponent->getQuery('product', $searchQuery, $facets);
         $dataProvider = new SearchDataProvider([
             'query' => $query
         ]);
@@ -46,7 +54,7 @@ class ProductCategoryController extends CategoryController implements SearchResu
 
         return $this->render('view', [
             'model' => $model,
-            'dataProvider' => $dataProvider
+            'productsDataProvider' => $dataProvider
         ]);
     }
 

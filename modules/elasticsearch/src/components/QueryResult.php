@@ -3,7 +3,7 @@
 namespace im\elasticsearch\components;
 
 use im\search\components\index\Document;
-use im\search\components\query\facet\FacetInterface;
+use im\search\components\query\IndexQueryResultInterface;
 use im\search\components\query\QueryInterface;
 use im\search\components\query\SearchQueryHelper;
 use im\search\models\Facet;
@@ -12,8 +12,13 @@ use im\search\models\Facet;
  * Class QueryResult
  * @package im\elasticsearch\components
  */
-class QueryResult extends \im\search\components\query\QueryResult
+class QueryResult extends \im\search\components\query\QueryResult implements IndexQueryResultInterface
 {
+    /**
+     * @var array query result documents
+     */
+    protected $documents = [];
+
     /**
      * @var array
      */
@@ -60,6 +65,14 @@ class QueryResult extends \im\search\components\query\QueryResult
     public function getSelectedFacets()
     {
         return $this->_selectedFacets;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getDocuments()
+    {
+        return $this->documents;
     }
 
     protected function init(array $response)

@@ -143,9 +143,10 @@ class Bootstrap implements BootstrapInterface
             'type' => 'product',
             'modelClass' => 'im\catalog\models\Product'
         ]);
-//        $searchManager->registerSearchableType('product', [
+//        $searchManager->registerSearchableType([
 //            'class' => 'im\search\components\service\db\SearchableType',
 //            'modelClass' => 'im\catalog\models\Product',
+//            'type' => 'product',
 //            'searchServiceId' => 'db'
 //        ]);
     }

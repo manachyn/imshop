@@ -3,7 +3,6 @@
 namespace im\search\components\query;
 
 use im\search\components\query\facet\FacetInterface;
-use im\search\components\transformer\DocumentToObjectTransformerInterface;
 use yii\db\Connection;
 
 interface QueryInterface extends \yii\db\QueryInterface
@@ -44,14 +43,4 @@ interface QueryInterface extends \yii\db\QueryInterface
      * @return FacetInterface[]
      */
     public function getFacets();
-
-    /**
-     * @return DocumentToObjectTransformerInterface
-     */
-    public function getTransformer();
-
-    /**
-     * @param DocumentToObjectTransformerInterface $transformer
-     */
-    public function setTransformer(DocumentToObjectTransformerInterface $transformer);
 }

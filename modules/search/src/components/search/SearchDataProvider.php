@@ -2,12 +2,14 @@
 
 namespace im\search\components\search;
 
+use im\search\components\query\IndexQueryInterface;
 use im\search\components\query\QueryInterface;
 use im\search\components\transformer\DocumentToActiveRecordTransformer;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\data\BaseDataProvider;
 use yii\data\Pagination;
+use yii\db\ActiveQuery;
 use yii\web\Request;
 
 class SearchDataProvider extends BaseDataProvider
@@ -62,28 +64,35 @@ class SearchDataProvider extends BaseDataProvider
             }
 
             return $keys;
-        } elseif (($transformer = $this->query->getTransformer()) && $transformer instanceof DocumentToActiveRecordTransformer) {
-            /* @var $class \yii\db\ActiveRecord */
-            $class = $transformer->getObjectClass();
-            $pks = $class::primaryKey();
-            if (count($pks) === 1) {
-                $pk = $pks[0];
-                foreach ($models as $model) {
-                    $keys[] = $model[$pk];
-                }
-            } else {
-                foreach ($models as $model) {
-                    $kk = [];
-                    foreach ($pks as $pk) {
-                        $kk[$pk] = $model[$pk];
-                    }
-                    $keys[] = $kk;
-                }
-            }
-
-            return $keys;
         } else {
-            return array_keys($models);
+            if ($this->query instanceof IndexQueryInterface && ($transformer = $this->query->getTransformer())
+                && $transformer instanceof DocumentToActiveRecordTransformer) {
+                $class = $transformer->getObjectClass();
+            } elseif ($this->query instanceof ActiveQuery) {
+                $class = $this->query->modelClass;
+            }
+            if (isset($class)) {
+                /* @var $class \yii\db\ActiveRecord */
+                $pks = $class::primaryKey();
+                if (count($pks) === 1) {
+                    $pk = $pks[0];
+                    foreach ($models as $model) {
+                        $keys[] = $model[$pk];
+                    }
+                } else {
+                    foreach ($models as $model) {
+                        $kk = [];
+                        foreach ($pks as $pk) {
+                            $kk[$pk] = $model[$pk];
+                        }
+                        $keys[] = $kk;
+                    }
+                }
+
+                return $keys;
+            } else {
+                return array_keys($models);
+            }
         }
     }
 

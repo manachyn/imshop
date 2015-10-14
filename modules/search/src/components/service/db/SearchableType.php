@@ -8,6 +8,8 @@ use im\search\components\searchable\SearchableInterface;
 use Yii;
 use yii\base\Model;
 use yii\base\Object;
+use yii\db\ActiveRecord;
+use yii\helpers\Inflector;
 
 /**
  * Searchable type for active record models.
@@ -64,7 +66,6 @@ class SearchableType extends Object implements SearchableInterface
         /** @var \im\base\types\EntityTypesRegister $typesRegister */
         $typesRegister = Yii::$app->get('typesRegister');
         $entityType = $typesRegister->getEntityType($model);
-
         $attributes = $model->attributes();
         $labels = $model->attributeLabels();
         $searchableAttributes = [];
@@ -76,6 +77,34 @@ class SearchableType extends Object implements SearchableInterface
                 'label' => isset($labels[$attribute]) ? $labels[$attribute] : $model->generateAttributeLabel($attribute)
             ]);
             $key++;
+        }
+
+        $class = new \ReflectionClass($model);
+        foreach ($class->getMethods() as $method) {
+            if ($method->isPublic()) {
+                $methodName = $method->getName();
+                if (strpos($methodName, 'get') === 0) {
+                    $math = false;
+                    $name = substr($methodName, 3);
+                    if (substr($name, -8) === 'Relation') {
+                        $name = substr($name, 0, -8);
+                        $math = true;
+                    } elseif (preg_match('/@return.*ActiveQuery/i', $method->getDocComment())) {
+                        $math = true;
+                    }
+                    if ($math) {
+                        $searchableAttributes[$key] = new AttributeDescriptor([
+                            'entity_type' => $entityType,
+                            'name' => Inflector::variablize(substr($methodName, 3)),
+                            'label' => Inflector::titleize($name),
+                            'value' => function ($model) use ($methodName) {
+                                return $model->$methodName();
+                            }
+                        ]);
+                        $key++;
+                    }
+                }
+            }
         }
 
         $eavAttributes = Attribute::findByEntityType($entityType);
@@ -92,7 +121,7 @@ class SearchableType extends Object implements SearchableInterface
     }
 
     /**
-     * @return Model
+     * @return ActiveRecord
      */
     protected function getModel()
     {

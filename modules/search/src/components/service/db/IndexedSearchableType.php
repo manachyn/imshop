@@ -3,6 +3,7 @@
 namespace im\search\components\service\db;
 
 use im\search\components\index\IndexableInterface;
+use im\search\components\index\IndexInterface;
 use im\search\components\index\provider\IndexProviderInterface;
 use im\search\components\transformer\DocumentToObjectTransformerInterface;
 use im\search\components\transformer\ObjectToDocumentTransformerInterface;
@@ -37,6 +38,11 @@ class IndexedSearchableType extends SearchableType implements IndexableInterface
     private $_objectToDocumentTransformer = 'im\search\components\transformer\ObjectToDocumentTransformer';
 
     /**
+     * @var IndexInterface
+     */
+    private $_index;
+
+    /**
      * @inheritdoc
      */
     public function getSearchService()
@@ -44,11 +50,22 @@ class IndexedSearchableType extends SearchableType implements IndexableInterface
         if ($this->searchServiceId) {
             return parent::getSearchService();
         } else {
+            return $this->getIndex()->getSearchService();
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getIndex()
+    {
+        if (!$this->_index) {
             /** @var \im\search\components\SearchManager $searchManager */
             $searchManager = Yii::$app->get('searchManager');
-            $index = $searchManager->getIndexManager()->getIndexByType($this->getType());
-            return $index->getSearchService();
+            $this->_index = $searchManager->getIndexManager()->getIndexByType($this->getType());
         }
+
+        return $this->_index;
     }
 
     /**
@@ -128,6 +145,4 @@ class IndexedSearchableType extends SearchableType implements IndexableInterface
 
         return $this->_documentToObjectTransformer;
     }
-
-
 }

@@ -5,6 +5,7 @@ namespace im\search\components\search;
 use im\search\components\query\parser\QueryConverterInterface;
 use im\search\components\query\parser\QueryParser;
 use im\search\components\query\parser\QueryParserInterface;
+use im\search\components\query\SearchQueryInterface;
 use Yii;
 use yii\base\Component;
 
@@ -50,18 +51,25 @@ class SearchComponent extends Component
      * Return search query.
      *
      * @param string $type
-     * @param string $querySting
+     * @param SearchQueryInterface|string $searchQuery
      * @param \im\search\components\query\facet\FacetInterface[] $facets
      * @return \im\search\components\query\QueryInterface
      */
-    public function getQuery($type, $querySting, $facets = [])
+    public function getQuery($type, $searchQuery = null, $facets = [])
     {
         /** @var \im\search\components\SearchManager $searchManager */
         $searchManager = Yii::$app->get('searchManager');
         $searchableType = $searchManager->getSearchableType($type);
         $searchService = $searchableType->getSearchService();
         $finder = $searchService->getFinder();
-        $query = $querySting ? $finder->findByQuery($type, $this->parseQuery($querySting)) : $finder->find($type);
+        if ($searchQuery) {
+            if (is_string($searchQuery)) {
+                $searchQuery = $this->parseQuery($searchQuery);
+            }
+            $query = $finder->findByQuery($type, $searchQuery);
+        } else {
+            $query = $finder->find($type);
+        }
         if ($facets) {
             foreach ($facets as $facet) {
                 $query->addFacet($facet);

@@ -22,3 +22,10 @@ $this->params['model'] = $model;
     </div>
 <?php endforeach ?>
 </div>
+
+<?= \yii\widgets\ListView::widget([
+    'dataProvider' => $productsDataProvider,
+    'itemView' => '@im/catalog/views/product/_item.php',
+    'layout' => "{summary}\n<div class='row'>{items}</div>\n{pager}",
+    'itemOptions' => ['class' => 'col-xs-6 col-sm-4 col-md-4 col-lg-3']
+]) ?>

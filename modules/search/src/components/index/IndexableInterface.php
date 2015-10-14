@@ -15,6 +15,13 @@ use im\search\components\transformer\ObjectToDocumentTransformerInterface;
 interface IndexableInterface
 {
     /**
+     * Returns index.
+     *
+     * @return IndexInterface
+     */
+    public function getIndex();
+
+    /**
      * Returns index mapping.
      *
      * @return AttributeDescriptor[]

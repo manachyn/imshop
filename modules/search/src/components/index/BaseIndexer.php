@@ -111,7 +111,7 @@ abstract class BaseIndexer implements IndexerInterface
      * Returns searchable type by index type.
      *
      * @param string $type
-     * @return SearchableInterface
+     * @return SearchableInterface|IndexableInterface
      */
     public function getSearchableType($type)
     {

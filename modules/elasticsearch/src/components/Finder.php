@@ -3,7 +3,7 @@
 namespace im\elasticsearch\components;
 
 use im\search\components\finder\BaseFinder;
-use im\search\components\query\QueryInterface;
+use im\search\components\query\IndexQueryInterface;
 use im\search\components\query\SearchQueryInterface;
 use Yii;
 use yii\elasticsearch\Connection;
@@ -20,19 +20,18 @@ class Finder extends BaseFinder
      */
     public function find($type)
     {
-        //$index =
-//        /** @var QueryInterface $query */
-//        $query = Yii::createObject([
-//            'class' => Query::className(),
-//            'index' => $index,
-//            'type' => $type
-//        ]);
-//
-//        if ($transformer = static::getTransformer($type)) {
-//            $query->setTransformer($transformer);
-//        }
-//
-//        return $query;
+        /** @var IndexQueryInterface $query */
+        $query = Yii::createObject([
+            'class' => Query::className(),
+            'index' => $this->getIndex($type),
+            'type' => $type
+        ]);
+
+        if ($transformer = $this->getTransformer($type)) {
+            $query->setTransformer($transformer);
+        }
+
+        return $query;
     }
 
     /**
@@ -40,18 +39,18 @@ class Finder extends BaseFinder
      */
     public function findByQuery($type, SearchQueryInterface $query)
     {
-//        $query = Yii::createObject([
-//            'class' => Query::className(),
-//            'searchQuery' => $query,
-//            'index' => $index,
-//            'type' => $type
-//        ]);
-//
-//        if ($transformer = static::getTransformer($type)) {
-//            $query->setTransformer($transformer);
-//        }
-//
-//        return $query;
+        $query = Yii::createObject([
+            'class' => Query::className(),
+            'searchQuery' => $query,
+            'index' => $this->getIndex($type),
+            'type' => $type
+        ]);
+
+        if ($transformer = static::getTransformer($type)) {
+            $query->setTransformer($transformer);
+        }
+
+        return $query;
     }
 
     public static function findById($id, $index, $type, $options = [])
@@ -101,5 +100,26 @@ class Finder extends BaseFinder
     public static function getDb()
     {
         return \Yii::$app->get('elasticsearch');
+    }
+
+    /**
+     * Returns index for type.
+     * @param string $type
+     * @return string
+     */
+    protected function getIndex($type)
+    {
+        return $this->getSearchableType($type)->getIndex()->getName();
+    }
+
+    /**
+     * Returns transformer for type.
+     *
+     * @param string $type
+     * @return \im\search\components\transformer\DocumentToObjectTransformerInterface
+     */
+    protected function getTransformer($type)
+    {
+        return $this->getSearchableType($type)->getDocumentToObjectTransformer();
     }
 }

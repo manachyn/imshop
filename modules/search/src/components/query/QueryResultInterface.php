@@ -14,11 +14,6 @@ interface QueryResultInterface
     /**
      * @return array
      */
-    public function getDocuments();
-
-    /**
-     * @return array
-     */
     public function getObjects();
 
     /**
@@ -32,7 +27,7 @@ interface QueryResultInterface
     public function getSelectedFacets();
 
     /**
-     * @return QueryInterface
+     * @return QueryInterface|IndexQueryInterface
      */
     public function getQuery();
 }

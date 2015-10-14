@@ -14,11 +14,6 @@ abstract class QueryResult implements QueryResultInterface
     protected $total;
 
     /**
-     * @var array query result documents
-     */
-    protected $documents = [];
-
-    /**
      * @var array query result objects
      */
     protected $objects = [];
@@ -50,22 +45,6 @@ abstract class QueryResult implements QueryResultInterface
     public function setTotal($total)
     {
         $this->total = $total;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getDocuments()
-    {
-        return $this->documents;
-    }
-
-    /**
-     * @param array $documents
-     */
-    public function setDocuments($documents)
-    {
-        $this->documents = $documents;
     }
 
     /**

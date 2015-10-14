@@ -5,7 +5,6 @@ namespace im\search\components\service\db;
 use im\search\components\finder\BaseFinder;
 use im\search\components\query\SearchQueryInterface;
 use Yii;
-use yii\db\ActiveRecord;
 
 class Finder extends BaseFinder
 {
@@ -14,8 +13,10 @@ class Finder extends BaseFinder
      */
     public function find($type)
     {
-        /** @var ActiveRecord $modelClass */
-        $modelClass = $this->getModelClass($type);
+        return Yii::createObject([
+            'class' => Query::className(),
+            'searchableType' => $this->getSearchableType($type)
+        ], [$this->getModelClass($type)]);
     }
 
     /**
@@ -23,10 +24,11 @@ class Finder extends BaseFinder
      */
     public function findByQuery($type, SearchQueryInterface $query)
     {
-        /** @var ActiveRecord $modelClass */
-        $modelClass = $this->getModelClass($type);
-
-        return [];
+        return Yii::createObject([
+            'class' => Query::className(),
+            'searchableType' => $this->getSearchableType($type),
+            'searchQuery' => $query
+        ], [$this->getModelClass($type)]);
     }
 
     /**
