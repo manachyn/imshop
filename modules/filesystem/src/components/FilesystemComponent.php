@@ -200,8 +200,9 @@ class FilesystemComponent extends Component
         $filesystem = $this->get($filesystem);
         $filesystem->addPlugin(new UrlPlugin());
         if ($params) {
-            return Yii::$app->get('glide')->createSignedUrl(array_merge([
-                'glide/index',
+            return Yii::$app->get('glide')->createUrl(array_merge([
+                '/glide/index',
+                'server' => 'local',
                 'path' => $file->getPath()
             ], $params), true);
         }

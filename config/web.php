@@ -81,7 +81,7 @@ $config = [
             'showScriptName' => false,
             'cache' => false,
             'rules' => [
-                ['pattern' => 'storage/<path:(.*)>', 'route' => 'glide/index', 'encodeParams' => false],
+                ['pattern' => 'storage/<server:(.*)>/<path:(.*)>', 'route' => 'glide/index', 'encodeParams' => false],
                 [
                     'class' => 'im\base\routing\GroupUrlRule',
                     'pattern' => '<path:[a-zA-Z0-9_\-]+>/<query:.+>',
@@ -191,12 +191,14 @@ $config = [
         'layoutManager' => 'im\cms\components\LayoutManager',
         'templateManager' => 'im\cms\components\TemplateManager',
         'glide' => [
-            'class' => 'trntv\glide\components\Glide',
-            'sourcePath' => '@app/web/files',
-            'cachePath' => '@app/runtime/cache/glide',
-            'urlManager' => 'urlManager',
-            'maxImageSize' => 4000000,
-            'signKey' => 'kmsTmQPdwm'
+            'class' => 'im\image\glide\Glide',
+            'signKey' => 'fsdsadasd',
+            'servers' => [
+                'local' => [
+                    'source' => '@app/web/files',
+                    'cache' => '@app/runtime/cache/glide'
+                ]
+            ]
         ],
         'cms' => 'im\cms\components\Cms'
     ],
