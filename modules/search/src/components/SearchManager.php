@@ -96,6 +96,23 @@ class SearchManager extends Component
     }
 
     /**
+     * Returns searchable type by class.
+     *
+     * @param string $class
+     * @return SearchableInterface|null
+     */
+    public function getSearchableTypeByClass($class)
+    {
+        foreach ($this->getSearchableTypes() as $type) {
+            if ($type->getClass() === $class) {
+                return $type;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Returns searchable types names.
      *
      * @return array
@@ -202,7 +219,7 @@ class SearchManager extends Component
             /** @var IndexAttribute $indexAttribute */
             $indexAttribute = null;
             foreach ($indexAttributes as $attribute) {
-                if ($attribute->index_type === $searchableAttribute->entity_type && $attribute->name === $searchableAttribute->name) {
+                if ($attribute->name === $searchableAttribute->name) {
                     $indexAttribute = $attribute;
                     break;
                 }
@@ -212,7 +229,7 @@ class SearchManager extends Component
                 $indexAttribute->label = $searchableAttribute->label;
             } else {
                 $indexAttribute = new IndexAttribute([
-                    'index_type' => $searchableAttribute->entity_type,
+                    'index_type' => $type ?: $searchableAttribute->entity_type,
                     'name' => $searchableAttribute->name,
                     'label' => $searchableAttribute->label
                 ]);

@@ -19,6 +19,13 @@ interface SearchableInterface
     public function getType();
 
     /**
+     * Returns class.
+     *
+     * @return string
+     */
+    public function getClass();
+
+    /**
      * Returns search service.
      *
      * @return SearchServiceInterface
@@ -28,7 +35,8 @@ interface SearchableInterface
     /**
      * Returns searchable attributes.
      *
+     * @param bool $recursive
      * @return AttributeDescriptor[]
      */
-    public function getSearchableAttributes();
+    public function getSearchableAttributes($recursive = false);
 }

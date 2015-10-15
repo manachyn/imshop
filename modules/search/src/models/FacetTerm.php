@@ -7,6 +7,7 @@ use im\search\components\query\facet\FacetValueInterface;
 use im\search\components\query\SearchQueryInterface;
 use Yii;
 use yii\db\ActiveRecord;
+use yii\helpers\ArrayHelper;
 
 /**
  * Facet range model class.
@@ -167,4 +168,19 @@ class FacetTerm extends ActiveRecord implements FacetValueInterface
     {
         return $this->_isSelected;
     }
+
+//    /**
+//     * @inheritdoc
+//     */
+//    public function createUrl($route = null, $scheme = false)
+//    {
+//        if (!$route) {
+//            $currentParams = Yii::$app->getRequest()->getQueryParams();
+//            $currentParams[0] = '/' . Yii::$app->controller->getRoute();
+//            $route = ArrayHelper::merge($currentParams, []);
+//        }
+//        if ($searchQuery = $this->getSearchQuery()) {
+//            $route['query'] = $searchComponent->queryConverter->toString($searchQuery);
+//        }
+//    }
 }

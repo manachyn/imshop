@@ -248,12 +248,13 @@ trait EavTrait
 
     private function isEAttribute($name)
     {
-        return strncmp($name, 'eAttributes.', 12) === 0;
+        return substr($name, -5) === '_attr';
     }
 
-    private function normalizeEAttributeName($name) {
-        if (strncmp($name, 'eAttributes.', 12) === 0) {
-            $name = substr($name, 12);
+    private function normalizeEAttributeName($name)
+    {
+        if ($this->isEAttribute($name)) {
+            $name = substr($name, 0, -5);
         }
 
         return $name;

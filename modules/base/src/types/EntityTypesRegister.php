@@ -80,12 +80,14 @@ class EntityTypesRegister extends Component
     public function getEntityType($entity, $asString = true)
     {
         $entityClass = is_object($entity) ? get_class($entity) : $entity;
-        $entityType = $entityClass;
         foreach ($this->_entityTypes as $type) {
             if ($type->getClass() === $entityClass) {
                 $entityType = $type;
                 break;
             }
+        }
+        if (!isset($entityType)) {
+            $entityType = new EntityType($entityClass, $entityClass);
         }
 
         return $asString ? $entityType->getType() : $entityType;

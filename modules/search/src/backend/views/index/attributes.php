@@ -28,8 +28,8 @@ $this->params['breadcrumbs'] = [['label' => $this->title, 'url' => ['index']], $
         <?= GridView::widget([
             'dataProvider' => $dataProvider,
             'columns' => [
-                'name',
                 'label',
+                'name',
                 [
                     'attribute' => 'index_name',
                     'format' => 'raw',

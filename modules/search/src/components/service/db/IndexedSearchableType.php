@@ -35,7 +35,7 @@ class IndexedSearchableType extends SearchableType implements IndexableInterface
     /**
      * @var string|array|ObjectToDocumentTransformerInterface
      */
-    private $_objectToDocumentTransformer = 'im\search\components\transformer\ObjectToDocumentTransformer';
+    private $_objectToDocumentTransformer = 'im\search\components\service\db\ActiveRecordToDocumentTransformer';
 
     /**
      * @var IndexInterface
@@ -82,8 +82,7 @@ class IndexedSearchableType extends SearchableType implements IndexableInterface
         $attributes = [];
         foreach ($indexableAttributes as $indexableAttribute) {
             foreach ($searchableAttributes as $searchableAttribute) {
-                if ($indexableAttribute->index_type === $searchableAttribute->entity_type
-                    && $indexableAttribute->name === $searchableAttribute->name) {
+                if ($indexableAttribute->name === $searchableAttribute->name) {
                     $name = $searchableAttribute->name;
                     if ($indexableAttribute->type) {
                         $searchableAttribute->type = $indexableAttribute->type;

@@ -146,7 +146,12 @@ class QueryResult extends \im\search\components\query\QueryResult implements Ind
                                 $selectedValue->setSearchQuery($selectedValueQuery);
                                 $selectedValues[] = $selectedValue;
                             }
-                            $valueQuery = SearchQueryHelper::includeQuery(clone $searchQuery, $valueQuery, $operator);
+                            if (!$facet->isMultivalue()) {
+                                $excludedQuery = SearchQueryHelper::excludeQueryByFieldName(clone $searchQuery, $valueQuery->getField());
+                                $valueQuery = SearchQueryHelper::includeQuery($excludedQuery, $valueQuery, $operator);
+                            } else {
+                                $valueQuery = SearchQueryHelper::includeQuery(clone $searchQuery, $valueQuery, $operator);
+                            }
                         } else {
                             $value->setSelected(false);
                         }

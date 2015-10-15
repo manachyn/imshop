@@ -67,7 +67,22 @@ class SearchQueryHelper
 
     public static function excludeQuery(SearchQueryInterface $fromQuery, FieldQueryInterface $query, $sign = true)
     {
-        return self::removeQuery($fromQuery, $query, $sign);
+        $query = self::removeQuery($fromQuery, $query, $sign);
+        if ($query instanceof BooleanQueryInterface && count($query->getSubQueries()) === 1) {
+            $query = reset($query->getSubQueries());
+        }
+
+        return $query;
+    }
+
+    public static function excludeQueryByFieldName(SearchQueryInterface $fromQuery, $field, $sign = true)
+    {
+        $query = self::removeQueryByFieldName($fromQuery, $field, $sign);
+        if ($query instanceof BooleanQueryInterface && count($query->getSubQueries()) === 1) {
+            $query = reset($query->getSubQueries());
+        }
+
+        return $query;
     }
 
     /**
@@ -109,13 +124,53 @@ class SearchQueryHelper
         if ($fromQuery instanceof BooleanQueryInterface) {
             $subQueries = $fromQuery->getSubQueries();
             $signs = $fromQuery->getSigns();
+            $removed = false;
             foreach ($subQueries as $key => $subQuery) {
-                if ($subQuery instanceof FieldQueryInterface && $signs[$key] === $sign && $query->equals($subQuery) === 1) {
-                    unset($subQueries[$key], $signs[$key]);
+                if ($subQuery instanceof FieldQueryInterface) {
+                    if ($signs[$key] === $sign && $query->equals($subQuery) === 1) {
+                        unset($subQueries[$key], $signs[$key]);
+                        $removed = true;
+                    }
+                }
+            }
+            if (!$removed) {
+                foreach ($subQueries as $key => $subQuery) {
+                    if ($subQuery instanceof BooleanQueryInterface) {
+                        $subQueries[$key] = self::removeQuery($subQuery, $query, $sign);
+                    }
                 }
             }
             $fromQuery->setSubQueries($subQueries, $signs);
         } elseif ($fromQuery instanceof FieldQueryInterface && $query->equals($fromQuery) === 1) {
+            return new Boolean();
+        }
+
+        return $fromQuery;
+    }
+
+    protected static function removeQueryByFieldName(SearchQueryInterface $fromQuery, $field, $sign = true)
+    {
+        if ($fromQuery instanceof BooleanQueryInterface) {
+            $subQueries = $fromQuery->getSubQueries();
+            $signs = $fromQuery->getSigns();
+            $removed = false;
+            foreach ($subQueries as $key => $subQuery) {
+                if ($subQuery instanceof FieldQueryInterface) {
+                    if ($signs[$key] === $sign && $subQuery->getField() === $field) {
+                        unset($subQueries[$key], $signs[$key]);
+                        $removed = true;
+                    }
+                }
+            }
+            if (!$removed) {
+                foreach ($subQueries as $key => $subQuery) {
+                    if ($subQuery instanceof BooleanQueryInterface) {
+                        $subQueries[$key] = self::removeQueryByFieldName($subQuery, $field, $sign);
+                    }
+                }
+            }
+            $fromQuery->setSubQueries($subQueries, $signs);
+        } elseif ($fromQuery instanceof FieldQueryInterface && $fromQuery->getField() === $field) {
             return new Boolean();
         }
 

@@ -85,4 +85,13 @@ interface FacetValueInterface
      * @return bool
      */
     public function isSelected();
+
+//    /**
+//     * Create facet value url.
+//     *
+//     * @param string|array $route
+//     * @param bool $scheme
+//     * @return mixed
+//     */
+//    public function createUrl($route, $scheme = false);
 }

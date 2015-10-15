@@ -3,6 +3,7 @@
 namespace im\catalog\controllers;
 
 use im\catalog\models\ProductCategory;
+use im\search\components\query\facet\FacetValueInterface;
 use im\search\components\query\QueryResultInterface;
 use im\search\components\query\SearchQueryHelper;
 use im\search\components\query\Term;
@@ -10,6 +11,7 @@ use im\search\components\search\SearchDataProvider;
 use im\search\components\search\SearchResultContextInterface;
 use im\search\models\FacetSet;
 use Yii;
+use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
 use yii\web\Request;
 
@@ -39,7 +41,7 @@ class ProductCategoryController extends CategoryController implements SearchResu
         /** @var FacetSet $facetSet */
         $facetSet = FacetSet::findOne(1);
         $facets = $facetSet->facets;
-        $categoryQuery = new Term('categoriesRelation.id', $model->id);
+        $categoryQuery = new Term('category', $model->id);
         if ($query) {
             $searchQuery = SearchQueryHelper::includeQuery($searchComponent->parseQuery($query), $categoryQuery);
         } else {
@@ -51,6 +53,26 @@ class ProductCategoryController extends CategoryController implements SearchResu
         ]);
         $dataProvider->prepare();
         $this->_searchResult = $dataProvider->query->result();
+        $facets = $this->_searchResult->getFacets();
+        $selectedFacets = $this->_searchResult->getSelectedFacets();
+        foreach ($facets as $facet) {
+            $values = $facet->getValues();
+            if ($facet->getName() === 'category') {
+                $keys = array_map(function (FacetValueInterface $value) {
+                    return $value->getKey();
+                }, $values);
+                $categories = ProductCategory::buildNodeTree($model, $model->children()->active()->where(['id' => $keys])->all());
+                $a = 1;
+            }
+            foreach ($values as $value) {
+                $value->setSearchQuery(SearchQueryHelper::excludeQuery($value->getSearchQuery(), $categoryQuery));
+            }
+        }
+        foreach ($selectedFacets as $facet) {
+            foreach ($facet->getValues() as $value) {
+                $value->setSearchQuery(SearchQueryHelper::excludeQuery($value->getSearchQuery(), $categoryQuery));
+            }
+        }
 
         return $this->render('view', [
             'model' => $model,

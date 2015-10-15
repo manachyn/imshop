@@ -12,7 +12,10 @@ return [
         'log',
         'gii',
         'im\base\Bootstrap',
+        'im\eav\Bootstrap',
+        'im\variation\Bootstrap',
         'im\catalog\Bootstrap',
+        'im\elasticsearch\Bootstrap',
     ],
     'controllerNamespace' => 'app\commands',
     'modules' => [
@@ -33,7 +36,7 @@ return [
         ],
         'db' => $db,
         'typesRegister' => 'im\base\types\EntityTypesRegister',
-        'search' => 'im\search\components\SearchManager',
+        'searchManager' => 'im\search\components\SearchManager',
         'elasticsearch' => [
             'class' => 'yii\elasticsearch\Connection',
             'nodes' => [

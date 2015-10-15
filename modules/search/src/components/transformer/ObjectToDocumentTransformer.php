@@ -37,9 +37,6 @@ class ObjectToDocumentTransformer implements ObjectToDocumentTransformerInterfac
                 $value = $object->$name;
             }
             if ($value !== null) {
-                if ($value instanceof Value) {
-                    $value = $value->value;
-                }
                 if ($attribute->type) {
                     settype($value, $attribute->type);
                 }
