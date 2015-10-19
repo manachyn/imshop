@@ -127,6 +127,8 @@ class Bootstrap implements BootstrapInterface
         $typesRegister->registerEntityType(new EntityType('product_meta', 'im\catalog\models\ProductMeta'));
         $typesRegister->registerEntityType(new EntityType('category_meta', 'im\catalog\models\CategoryMeta'));
         $typesRegister->registerEntityType(new EntityType('product_category_meta', 'im\catalog\models\ProductCategoryMeta'));
+        $typesRegister->registerEntityType(new EntityType('categories_facet', 'im\catalog\models\CategoriesFacet', 'facets', Module::t('facet', 'Categories facet')));
+        $typesRegister->registerEntityType(new EntityType('product_categories_facet', 'im\catalog\models\ProductCategoriesFacet', 'facets', Module::t('facet', 'Product categories facet')));
     }
 
     /**

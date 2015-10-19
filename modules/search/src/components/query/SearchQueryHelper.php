@@ -3,9 +3,9 @@
 namespace im\search\components\query;
 
 use im\search\components\query\facet\FacetValueInterface;
-use im\search\models\FacetInterval;
-use im\search\models\FacetTerm;
-use im\search\models\IntervalFacet;
+use im\search\components\query\facet\IntervalFacetInterface;
+use im\search\components\query\facet\IntervalFacetValueInterface;
+use im\search\components\query\facet\RangeFacetValueInterface;
 
 class SearchQueryHelper
 {
@@ -185,15 +185,15 @@ class SearchQueryHelper
     {
         $query = null;
         $facet = $facetValue->getFacet();
-        if ($facetValue instanceof FacetTerm) {
-            $query = new Term($facet->getName(), $facetValue->getKey());
-        } elseif ($facetValue instanceof RangeInterface) {
+        if ($facetValue instanceof RangeFacetValueInterface) {
             $query = new Range($facet->getName(), $facetValue->getLowerBound(), $facetValue->getUpperBound(), $facetValue->isIncludeLowerBound(), $facetValue->isIncludeUpperBound());
-        } elseif ($facetValue instanceof FacetInterval) {
-            /** @var IntervalFacet $facet */
+        } elseif ($facetValue instanceof IntervalFacetValueInterface) {
+            /** @var IntervalFacetInterface $facet */
             /** @var int|float $key */
             $key = $facetValue->getKey();
-            $query = new Range($facet->getName(), $facetValue->getKey(), $key + $facet->interval, true, false);
+            $query = new Range($facet->getName(), $facetValue->getKey(), $key + $facet->getInterval(), true, false);
+        } else {
+            $query = new Term($facet->getName(), $facetValue->getKey());
         }
 
         return $query;

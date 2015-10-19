@@ -23,14 +23,6 @@ class IntervalFacet extends Facet implements IntervalFacetInterface
     /**
      * @inheritdoc
      */
-    public function init()
-    {
-        $this->type = self::TYPE;
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function rules()
     {
         return array_merge(parent::rules(), [
@@ -75,6 +67,7 @@ class IntervalFacet extends Facet implements IntervalFacetInterface
      */
     public function setValues($values)
     {
+        parent::setValues($values);
         $this->_intervals = $values;
     }
 

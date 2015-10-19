@@ -82,6 +82,7 @@ class RangeFacet extends Facet implements RangeFacetInterface
      */
     public function setValues($values)
     {
+        parent::setValues($values);
         $this->populateRelation('ranges', $values);
     }
 

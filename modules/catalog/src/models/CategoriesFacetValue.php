@@ -1,42 +1,43 @@
 <?php
 
-namespace im\search\models;
+namespace im\catalog\models;
 
+use im\search\components\query\facet\EntityFacetValueInterface;
 use im\search\components\query\facet\FacetInterface;
-use im\search\components\query\facet\IntervalFacetValueInterface;
 use im\search\components\query\SearchQueryInterface;
-use yii\base\Model;
+use yii\base\Object;
 
-/**
- * Class FacetInterval
- * @package im\search\models
- */
-class FacetInterval extends Model implements IntervalFacetValueInterface
+class CategoriesFacetValue extends Object implements EntityFacetValueInterface
 {
     /**
      * @var FacetInterface
      */
-    private $_facet;
+    protected $_facet;
 
     /**
      * @var string
      */
-    private $_key;
+    protected $_key;
 
     /**
      * @var int
      */
-    private $_resultsCount = 0;
+    protected $_resultsCount = 0;
 
     /**
      * @var SearchQueryInterface
      */
-    private $_searchQuery;
+    protected $_searchQuery;
 
     /**
      * @var bool
      */
-    private $_isSelected = false;
+    protected $_isSelected = false;
+
+    /**
+     * @var Category
+     */
+    protected $_category;
 
     /**
      * @inheritdoc
@@ -75,7 +76,7 @@ class FacetInterval extends Model implements IntervalFacetValueInterface
      */
     public function getLabel()
     {
-        return $this->getKey();
+        return $this->_category->name;
     }
 
     /**
@@ -124,5 +125,21 @@ class FacetInterval extends Model implements IntervalFacetValueInterface
     public function isSelected()
     {
         return $this->_isSelected;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getEntity()
+    {
+        return $this->_category;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setEntity($entity)
+    {
+        $this->_category = $entity;
     }
 }

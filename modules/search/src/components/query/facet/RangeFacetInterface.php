@@ -9,7 +9,7 @@ namespace im\search\components\query\facet;
 interface RangeFacetInterface extends FacetInterface
 {
     /**
-     * @return FacetValueInterface[]
+     * @return RangeFacetValueInterface[]
      */
     public function getRanges();
 }

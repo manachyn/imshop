@@ -16,6 +16,7 @@ class Bootstrap implements BootstrapInterface
     {
         $this->registerTranslations($app);
         $this->registerSearchService($app);
+        $this->registerEntityTypes($app);
         if ($app instanceof Application) {
             $this->registerPageTypes($app);
             $this->registerWidgets($app);
@@ -75,5 +76,17 @@ class Bootstrap implements BootstrapInterface
             'class' => 'im\search\components\service\db\SearchService',
             'name' => 'Database'
         ]);
+    }
+
+    /**
+     * Registers entity types.
+     */
+    public function registerEntityTypes()
+    {
+        /** @var \im\base\types\EntityTypesRegister $typesRegister */
+        $typesRegister = Yii::$app->get('typesRegister');
+        $typesRegister->registerEntityType(new EntityType('terms_facet', 'im\search\models\TermsFacet', 'facets', Module::t('facet', 'Terms facet')));
+        $typesRegister->registerEntityType(new EntityType('range_facet', 'im\search\models\RangeFacet', 'facets', Module::t('facet', 'Range facet')));
+        $typesRegister->registerEntityType(new EntityType('interval_facet', 'im\search\models\IntervalFacet', 'facets', Module::t('facet', 'Interval facet')));
     }
 }

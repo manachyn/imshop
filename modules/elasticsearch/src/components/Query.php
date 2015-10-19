@@ -58,12 +58,18 @@ class Query extends \yii\elasticsearch\Query implements QueryInterface
     public function addFacet(FacetInterface $facet)
     {
         $this->_facets[$facet->getName()] = $facet;
+        $options = ['field' => $facet->getField()];
         if ($facet instanceof RangeFacetInterface) {
-            $this->addRangeFacet($facet);
+            $options = array_merge($options, $this->getRangeAggregationOptions($facet));
+            if (!empty($options['ranges'])) {
+                $this->addAggregation($facet->getName(), 'range', $options);
+            }
         } elseif ($facet instanceof IntervalFacetInterface) {
-            $this->addIntervalFacet($facet);
+            $options = array_merge($options, $this->getIntervalAggregationOptions($facet));
+            $this->addAggregation($facet->getName(), 'histogram', $options);
         } else {
-            $this->addTermsFacet($facet);
+            $options = array_merge($options, $this->getTermsAggregationOptions($facet));
+            $this->addAggregation($facet->getName(), 'terms', $options);
         }
 
         return $this;
@@ -168,11 +174,11 @@ class Query extends \yii\elasticsearch\Query implements QueryInterface
         return $queryArr;
     }
 
-    protected function addRangeFacet(RangeFacetInterface $facet)
+    protected function getRangeAggregationOptions(RangeFacetInterface $facet)
     {
+        $options = ['ranges' => []];
         $ranges = $facet->getRanges();
         if ($ranges) {
-            $options = ['field' => $facet->getField(), 'ranges' => []];
             foreach ($ranges as $range) {
                 $optionsRange = [];
                 if ($from = $range->getLowerBound()) {
@@ -186,30 +192,18 @@ class Query extends \yii\elasticsearch\Query implements QueryInterface
                     $options['ranges'][] = $optionsRange;
                 }
             }
-            if ($options['ranges']) {
-                $this->addAggregation($facet->getName(), 'range', $options);
-            }
         }
+
+        return $options;
     }
 
-    protected function addIntervalFacet(IntervalFacetInterface $facet)
+    protected function getIntervalAggregationOptions(IntervalFacetInterface $facet)
     {
-        $options = ['field' => $facet->getField(), 'interval' => $facet->getInterval(), 'min_doc_count' => 0, 'extended_bounds' => []];
-//        if ($from = $facet->getFrom()) {
-//            $options['extended_bounds']['min'] = 1000;
-//        }
-//        if ($to = $facet->getTo()) {
-//            //$options['extended_bounds']['max'] = 50;
-//        }
-        if (!$options['extended_bounds']) {
-            unset($options['extended_bounds']);
-        }
-        $this->addAggregation($facet->getName(), 'histogram', $options);
+        return ['interval' => $facet->getInterval(), 'min_doc_count' => 0];
     }
 
-    protected function addTermsFacet(FacetInterface $facet)
+    protected function getTermsAggregationOptions(FacetInterface $facet)
     {
-        $options = ['field' => $facet->getField(), 'min_doc_count' => 0];
-        $this->addAggregation($facet->getName(), 'terms', $options);
+        return ['min_doc_count' => 0];
     }
 }

@@ -4,6 +4,7 @@ namespace im\search\models;
 
 use im\base\behaviors\RelationsBehavior;
 use im\eav\models\Attribute;
+use im\search\components\query\facet\TermsFacetInterface;
 use im\search\Module;
 
 /**
@@ -11,7 +12,7 @@ use im\search\Module;
  *
  * @property FacetTerm[] $terms
  */
-class TermsFacet extends Facet
+class TermsFacet extends Facet implements TermsFacetInterface
 {
     const TYPE = self::TYPE_TERMS;
 
@@ -98,6 +99,7 @@ class TermsFacet extends Facet
      */
     public function setValues($values)
     {
+        parent::setValues($values);
         $this->populateRelation('terms', $values);
     }
 

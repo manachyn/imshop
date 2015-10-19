@@ -59,4 +59,12 @@ interface FacetInterface
      * @return FacetValueInterface
      */
     public function getValueInstance(array $config);
+
+    /**
+     * Creates multiple facet value instances by configs.
+     *
+     * @param array $configs
+     * @return FacetValueInterface[]
+     */
+    public function getValueInstances(array $configs);
 }

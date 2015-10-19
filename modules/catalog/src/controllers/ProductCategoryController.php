@@ -55,24 +55,24 @@ class ProductCategoryController extends CategoryController implements SearchResu
         $this->_searchResult = $dataProvider->query->result();
         $facets = $this->_searchResult->getFacets();
         $selectedFacets = $this->_searchResult->getSelectedFacets();
-        foreach ($facets as $facet) {
-            $values = $facet->getValues();
-            if ($facet->getName() === 'category') {
-                $keys = array_map(function (FacetValueInterface $value) {
-                    return $value->getKey();
-                }, $values);
-                $categories = ProductCategory::buildNodeTree($model, $model->children()->active()->where(['id' => $keys])->all());
-                $a = 1;
-            }
-            foreach ($values as $value) {
-                $value->setSearchQuery(SearchQueryHelper::excludeQuery($value->getSearchQuery(), $categoryQuery));
-            }
-        }
-        foreach ($selectedFacets as $facet) {
-            foreach ($facet->getValues() as $value) {
-                $value->setSearchQuery(SearchQueryHelper::excludeQuery($value->getSearchQuery(), $categoryQuery));
-            }
-        }
+//        foreach ($facets as $facet) {
+//            $values = $facet->getValues();
+//            if ($facet->getName() === 'category') {
+//                $keys = array_map(function (FacetValueInterface $value) {
+//                    return $value->getKey();
+//                }, $values);
+//                $categories = ProductCategory::buildNodeTree($model, $model->children()->active()->where(['id' => $keys])->all());
+//                $a = 1;
+//            }
+//            foreach ($values as $value) {
+//                $value->setSearchQuery(SearchQueryHelper::excludeQuery($value->getSearchQuery(), $categoryQuery));
+//            }
+//        }
+//        foreach ($selectedFacets as $facet) {
+//            foreach ($facet->getValues() as $value) {
+//                $value->setSearchQuery(SearchQueryHelper::excludeQuery($value->getSearchQuery(), $categoryQuery));
+//            }
+//        }
 
         return $this->render('view', [
             'model' => $model,

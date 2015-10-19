@@ -124,6 +124,7 @@ class QueryResult extends \im\search\components\query\QueryResult implements Ind
                         $value->setSearchQuery($valueQuery);
                     }
                 } else {
+                    $configs = [];
                     foreach ($responseFacets[$facet->getName()]['buckets'] as $bucket) {
                         $config = [
                             'key' => $bucket['key'],
@@ -135,8 +136,11 @@ class QueryResult extends \im\search\components\query\QueryResult implements Ind
                         if (isset($bucket['to'])) {
                             $config['to'] = $bucket['to'];
                         }
-                        $value = $facet->getValueInstance($config);
-                        $value->setFacet($facet);
+                        $configs[] = $config;
+                    }
+                    $facetValues = $facet->getValueInstances($configs);
+                    $facet->setValues($facetValues);
+                    foreach ($facetValues as $value) {
                         $valueQuery = SearchQueryHelper::getQueryInstanceFromFacetValue($value);
                         if ($searchQuery) {
                             $value->setSelected(SearchQueryHelper::isIncludeQuery($searchQuery, $valueQuery, $operator));
@@ -156,11 +160,7 @@ class QueryResult extends \im\search\components\query\QueryResult implements Ind
                             $value->setSelected(false);
                         }
                         $value->setSearchQuery($valueQuery);
-                        $facetValues[] = $value;
                     }
-                }
-                if ($facetValues) {
-                    $facet->setValues($facetValues);
                 }
                 if ($selectedValues) {
                     $selectedFacet = clone $facet;

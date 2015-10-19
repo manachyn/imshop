@@ -2,9 +2,9 @@
 
 use im\base\widgets\RelationWidget;
 use im\base\widgets\RelationWidgetAsset;
+use im\search\components\query\facet\IntervalFacetInterface;
+use im\search\components\query\facet\RangeFacetInterface;
 use im\search\models\Facet;
-use im\search\models\IntervalFacet;
-use im\search\models\RangeFacet;
 use im\search\models\TermsFacet;
 use im\search\Module;
 use yii\helpers\Html;
@@ -13,7 +13,7 @@ use yii\widgets\ActiveForm;
 use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
-/* @var $model Facet|TermsFacet|RangeFacet|IntervalFacet */
+/* @var $model Facet|RangeFacetInterface|TermsFacet */
 /* @var $form yii\widgets\ActiveForm */
 
 RelationWidgetAsset::register($this);
@@ -41,13 +41,13 @@ RelationWidgetAsset::register($this);
         ['prompt' => '', 'data-field' => 'attribute']
     ) ?>
 
-    <?php if ($model instanceof IntervalFacet) :
+    <?php if ($model instanceof IntervalFacetInterface) :
         echo $form->field($model, 'from')->textInput(['maxlength' => true]);
         echo $form->field($model, 'to')->textInput(['maxlength' => true]);
         echo $form->field($model, 'interval')->textInput(['maxlength' => true]);
     endif ?>
 
-    <?php if ($model instanceof RangeFacet) : ?>
+    <?php if ($model instanceof RangeFacetInterface) : ?>
         <label><?= Module::t('facet', 'Ranges') ?></label>
         <?= Html::hiddenInput('FacetRange') ?>
         <?= RelationWidget::widget([

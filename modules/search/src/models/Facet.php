@@ -18,6 +18,7 @@ use yii\helpers\Inflector;
  * @property string $label
  * @property string $entity_type
  * @property string $attribute_name
+ * @property string $index_name
  * @property string $type
  * @property string $operator
  * @property bool $multivalue
@@ -37,9 +38,19 @@ class Facet extends ActiveRecord implements FacetInterface
     /**
      * @inheritdoc
      */
+    public function init()
+    {
+        $this->type = static::TYPE;
+    }
+
+    /**
+     * @inheritdoc
+     */
     public static function instantiate($row)
     {
-        return self::getInstance($row['type']);
+        $row['type'] ?: self::TYPE_DEFAULT;
+
+        return Yii::$app->get('searchManager')->getFacetInstance($row['type']);
     }
 
     /**
@@ -56,7 +67,7 @@ class Facet extends ActiveRecord implements FacetInterface
     public function rules()
     {
         return [
-            [['name', 'entity_type', 'attribute_name', 'type'], 'required'],
+            [['name', 'entity_type', 'attribute_name', 'index_name', 'type'], 'required'],
             [['name'], 'string', 'max' => 255],
             [['entity_type', 'type'], 'string', 'max' => 100],
             [['searchableAttribute'], 'safe']
@@ -73,6 +84,7 @@ class Facet extends ActiveRecord implements FacetInterface
             'name' => Module::t('facet', 'Name'),
             'entity_type' => Module::t('facet', 'Entity type'),
             'attribute_name' => Module::t('facet', 'Attribute name'),
+            'index_name' => Module::t('facet', 'Index name'),
             'searchableAttribute' => Module::t('facet', 'Attribute'),
             'type' => Module::t('facet', 'Type'),
             'from' => Module::t('facet', 'From'),
@@ -137,33 +149,6 @@ class Facet extends ActiveRecord implements FacetInterface
     }
 
     /**
-     * @param string $type
-     * @return Facet|IntervalFacet|RangeFacet|TermsFacet
-     */
-    public static function getInstance($type = null)
-    {
-        if (!$type) {
-            $type = self::TYPE_DEFAULT;
-        }
-        $instance = null;
-        switch ($type) {
-            case self::TYPE_TERMS:
-                $instance = new TermsFacet();
-                break;
-            case self::TYPE_RANGE:
-                $instance = new RangeFacet();
-                break;
-            case self::TYPE_INTERVAL:
-                $instance = new IntervalFacet();
-                break;
-//            default:
-//                return new self;
-        }
-
-        return $instance;
-    }
-
-    /**
      * @inheritdoc
      */
     public function getName()
@@ -192,7 +177,7 @@ class Facet extends ActiveRecord implements FacetInterface
      */
     public function getField()
     {
-        return $this->attribute_name;
+        return $this->index_name;
     }
 
     /**
@@ -224,6 +209,9 @@ class Facet extends ActiveRecord implements FacetInterface
      */
     public function setValues($values)
     {
+        foreach ($values as $value) {
+            $value->setFacet($this);
+        }
     }
 
     /**
@@ -232,5 +220,18 @@ class Facet extends ActiveRecord implements FacetInterface
     public function getValueInstance(array $config)
     {
         return null;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getValueInstances(array $configs)
+    {
+        $instances = [];
+        foreach ($configs as $config) {
+            $instances[] = $this->getValueInstance($config);
+        }
+
+        return $instances;
     }
 }

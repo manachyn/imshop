@@ -3,8 +3,7 @@
 namespace im\search\models;
 
 use im\search\components\query\facet\FacetInterface;
-use im\search\components\query\facet\FacetValueInterface;
-use im\search\components\query\RangeInterface;
+use im\search\components\query\facet\RangeFacetValueInterface;
 use im\search\components\query\SearchQueryInterface;
 use Yii;
 use yii\db\ActiveRecord;
@@ -23,7 +22,7 @@ use yii\db\ActiveRecord;
  *
  * @property Facet $facetRelation
  */
-class FacetRange extends ActiveRecord implements RangeInterface, FacetValueInterface
+class FacetRange extends ActiveRecord implements RangeFacetValueInterface
 {
     /**
      * @var string
