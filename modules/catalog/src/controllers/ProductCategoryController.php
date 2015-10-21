@@ -2,7 +2,10 @@
 
 namespace im\catalog\controllers;
 
+use im\catalog\models\Product;
+use im\catalog\models\ProductCategoriesFacet;
 use im\catalog\models\ProductCategory;
+use im\search\components\index\IndexableInterface;
 use im\search\components\query\facet\FacetValueInterface;
 use im\search\components\query\QueryResultInterface;
 use im\search\components\query\SearchQueryHelper;
@@ -38,10 +41,24 @@ class ProductCategoryController extends CategoryController implements SearchResu
         $searchManager = Yii::$app->get('searchManager');
         $query = $request->get('query', '');
         $searchComponent = $searchManager->getSearchComponent();
+
         /** @var FacetSet $facetSet */
         $facetSet = FacetSet::findOne(1);
         $facets = $facetSet->facets;
-        $categoryQuery = new Term('category', $model->id);
+
+        $searchableType = $searchManager->getSearchableTypeByClass(Product::className());
+        if ($searchableType instanceof IndexableInterface) {
+            $mapping = $searchableType->getIndexMapping();
+            foreach ($mapping as $name => $attribute) {
+                $nameParts = explode('.', $name);
+                if (count($nameParts) == 2 && $nameParts[0] == 'categoriesRelation') {
+                    $categoryQuery = new Term($attribute->name, $model->{$nameParts[1]});
+                    break;
+                }
+            }
+        } else {
+            $categoryQuery = new Term('categoriesRelation.id', $model->id);
+        }
         if ($query) {
             $searchQuery = SearchQueryHelper::includeQuery($searchComponent->parseQuery($query), $categoryQuery);
         } else {
@@ -53,8 +70,19 @@ class ProductCategoryController extends CategoryController implements SearchResu
         ]);
         $dataProvider->prepare();
         $this->_searchResult = $dataProvider->query->result();
+        $query->setSearchQuery(SearchQueryHelper::excludeQuery($query->getSearchQuery(), $categoryQuery));
         $facets = $this->_searchResult->getFacets();
-        $selectedFacets = $this->_searchResult->getSelectedFacets();
+        foreach ($facets as $facet) {
+            if ($facet instanceof ProductCategoriesFacet) {
+                foreach ($facet->getValues() as $value) {
+                    $value->setRouteParams(['path' => $value->getEntity()->slug]);
+                }
+            }
+        }
+
+
+//        $facets = $this->_searchResult->getFacets();
+//        $selectedFacets = $this->_searchResult->getSelectedFacets();
 //        foreach ($facets as $facet) {
 //            $values = $facet->getValues();
 //            if ($facet->getName() === 'category') {

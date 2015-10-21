@@ -82,16 +82,32 @@ interface FacetValueInterface
     /**
      * Returns whether the facet value is selected.
      *
+     * @param SearchQueryInterface $searchQuery
      * @return bool
      */
-    public function isSelected();
+    public function isSelected(SearchQueryInterface $searchQuery = null);
 
-//    /**
-//     * Create facet value url.
-//     *
-//     * @param string|array $route
-//     * @param bool $scheme
-//     * @return mixed
-//     */
-//    public function createUrl($route, $scheme = false);
+    /**
+     * Return route params.
+     *
+     * @return array
+     */
+    public function getRouteParams();
+
+    /**
+     * Sets route params.
+     *
+     * @param array $params
+     */
+    public function setRouteParams(array $params);
+
+    /**
+     * Create facet value url.
+     *
+     * @param string|array $route
+     * @param SearchQueryInterface $searchQuery
+     * @param bool $scheme
+     * @return string
+     */
+    public function createUrl($route = null, SearchQueryInterface $searchQuery = null, $scheme = false);
 }

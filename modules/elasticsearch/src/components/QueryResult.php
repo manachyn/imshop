@@ -98,8 +98,8 @@ class QueryResult extends \im\search\components\query\QueryResult implements Ind
         foreach ($this->getQuery()->getFacets() as $facet) {
             if (isset($responseFacets[$facet->getName()])) {
                 $facetValues = $facet->getValues();
-                $operator = $facet->getOperator() === Facet::OPERATOR_AND ? true : null;
-                $selectedValues = [];
+//                $operator = $facet->getOperator() === Facet::OPERATOR_AND ? true : null;
+//                $selectedValues = [];
                 if ($facetValues) {
                     foreach ($facetValues as $value) {
                         foreach ($responseFacets[$facet->getName()]['buckets'] as $bucket) {
@@ -107,21 +107,21 @@ class QueryResult extends \im\search\components\query\QueryResult implements Ind
                                 $value->setResultsCount($bucket['doc_count']);
                             }
                         }
-                        SearchQueryHelper::getQueryInstanceFromFacetValue($value);
-                        $valueQuery = SearchQueryHelper::getQueryInstanceFromFacetValue($value);
-                        if ($searchQuery) {
-                            $value->setSelected(SearchQueryHelper::isIncludeQuery($searchQuery, $valueQuery, $operator));
-                            if ($value->isSelected()) {
-                                $selectedValue = clone $value;
-                                $selectedValueQuery = SearchQueryHelper::excludeQuery(clone $searchQuery, $valueQuery, $operator);
-                                $selectedValue->setSearchQuery($selectedValueQuery);
-                                $selectedValues[] = $selectedValue;
-                            }
-                            $valueQuery = SearchQueryHelper::includeQuery(clone $searchQuery, $valueQuery, $operator);
-                        } else {
-                            $value->setSelected(false);
-                        }
-                        $value->setSearchQuery($valueQuery);
+//                        SearchQueryHelper::getQueryInstanceFromFacetValue($value);
+//                        $valueQuery = SearchQueryHelper::getQueryInstanceFromFacetValue($value);
+//                        if ($searchQuery) {
+//                            $value->setSelected(SearchQueryHelper::isIncludeQuery($searchQuery, $valueQuery, $operator));
+//                            if ($value->isSelected()) {
+//                                $selectedValue = clone $value;
+//                                $selectedValueQuery = SearchQueryHelper::excludeQuery(clone $searchQuery, $valueQuery, $operator);
+//                                $selectedValue->setSearchQuery($selectedValueQuery);
+//                                $selectedValues[] = $selectedValue;
+//                            }
+//                            $valueQuery = SearchQueryHelper::includeQuery(clone $searchQuery, $valueQuery, $operator);
+//                        } else {
+//                            $value->setSelected(false);
+//                        }
+//                        $value->setSearchQuery($valueQuery);
                     }
                 } else {
                     $configs = [];
@@ -140,33 +140,33 @@ class QueryResult extends \im\search\components\query\QueryResult implements Ind
                     }
                     $facetValues = $facet->getValueInstances($configs);
                     $facet->setValues($facetValues);
-                    foreach ($facetValues as $value) {
-                        $valueQuery = SearchQueryHelper::getQueryInstanceFromFacetValue($value);
-                        if ($searchQuery) {
-                            $value->setSelected(SearchQueryHelper::isIncludeQuery($searchQuery, $valueQuery, $operator));
-                            if ($value->isSelected()) {
-                                $selectedValue = clone $value;
-                                $selectedValueQuery = SearchQueryHelper::excludeQuery(clone $searchQuery, $valueQuery, $operator);
-                                $selectedValue->setSearchQuery($selectedValueQuery);
-                                $selectedValues[] = $selectedValue;
-                            }
-                            if (!$facet->isMultivalue()) {
-                                $excludedQuery = SearchQueryHelper::excludeQueryByFieldName(clone $searchQuery, $valueQuery->getField());
-                                $valueQuery = SearchQueryHelper::includeQuery($excludedQuery, $valueQuery, $operator);
-                            } else {
-                                $valueQuery = SearchQueryHelper::includeQuery(clone $searchQuery, $valueQuery, $operator);
-                            }
-                        } else {
-                            $value->setSelected(false);
-                        }
-                        $value->setSearchQuery($valueQuery);
-                    }
+//                    foreach ($facetValues as $value) {
+//                        $valueQuery = SearchQueryHelper::getQueryInstanceFromFacetValue($value);
+//                        if ($searchQuery) {
+//                            $value->setSelected(SearchQueryHelper::isIncludeQuery($searchQuery, $valueQuery, $operator));
+//                            if ($value->isSelected()) {
+//                                $selectedValue = clone $value;
+//                                $selectedValueQuery = SearchQueryHelper::excludeQuery(clone $searchQuery, $valueQuery, $operator);
+//                                $selectedValue->setSearchQuery($selectedValueQuery);
+//                                $selectedValues[] = $selectedValue;
+//                            }
+//                            if (!$facet->isMultivalue()) {
+//                                $excludedQuery = SearchQueryHelper::excludeQueryByFieldName(clone $searchQuery, $valueQuery->getField());
+//                                $valueQuery = SearchQueryHelper::includeQuery($excludedQuery, $valueQuery, $operator);
+//                            } else {
+//                                $valueQuery = SearchQueryHelper::includeQuery(clone $searchQuery, $valueQuery, $operator);
+//                            }
+//                        } else {
+//                            $value->setSelected(false);
+//                        }
+//                        $value->setSearchQuery($valueQuery);
+//                    }
                 }
-                if ($selectedValues) {
-                    $selectedFacet = clone $facet;
-                    $selectedFacet->setValues($selectedValues);
-                    $this->_selectedFacets[] = $selectedFacet;
-                }
+//                if ($selectedValues) {
+//                    $selectedFacet = clone $facet;
+//                    $selectedFacet->setValues($selectedValues);
+//                    $this->_selectedFacets[] = $selectedFacet;
+//                }
             }
         }
     }

@@ -3,8 +3,8 @@
 namespace im\search\models;
 
 use im\search\components\query\facet\FacetInterface;
+use im\search\components\query\facet\FacetValueTrait;
 use im\search\components\query\facet\RangeFacetValueInterface;
-use im\search\components\query\SearchQueryInterface;
 use Yii;
 use yii\db\ActiveRecord;
 
@@ -24,25 +24,7 @@ use yii\db\ActiveRecord;
  */
 class FacetRange extends ActiveRecord implements RangeFacetValueInterface
 {
-    /**
-     * @var string
-     */
-    private $_key;
-
-    /**
-     * @var int
-     */
-    private $_resultsCount = 0;
-
-    /**
-     * @var SearchQueryInterface
-     */
-    private $_searchQuery;
-
-    /**
-     * @var bool
-     */
-    private $_isSelected = false;
+    use FacetValueTrait;
 
     /**
      * @inheritdoc
@@ -158,64 +140,8 @@ class FacetRange extends ActiveRecord implements RangeFacetValueInterface
     /**
      * @inheritdoc
      */
-    public function setKey($key)
-    {
-        $this->_key = $key;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getResultsCount()
-    {
-        return $this->_resultsCount;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function setResultsCount($count)
-    {
-        $this->_resultsCount = $count;
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function getLabel()
     {
         return $this->display ?: $this->getKey();
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getSearchQuery()
-    {
-        return $this->_searchQuery;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function setSearchQuery(SearchQueryInterface $searchQuery)
-    {
-        $this->_searchQuery = $searchQuery;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function setSelected($selected)
-    {
-        $this->_isSelected = $selected;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function isSelected()
-    {
-        return $this->_isSelected;
     }
 }

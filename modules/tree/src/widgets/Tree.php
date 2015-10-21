@@ -22,9 +22,14 @@ class Tree extends Widget
     public $itemView;
 
     /**
+     * @var array
+     */
+    public $itemViewParams = [];
+
+    /**
      * @var int
      */
-    public $depth = 1;
+    public $depth;
 
     /**
      * @inheritdoc

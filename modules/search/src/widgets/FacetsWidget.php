@@ -3,6 +3,8 @@
 namespace im\search\widgets;
 
 use im\cms\models\widgets\Widget;
+use im\search\components\query\facet\FacetInterface;
+use im\search\components\query\facet\FacetValueInterface;
 use im\search\components\search\SearchResultContextInterface;
 use im\search\Module;
 use Yii;
@@ -49,11 +51,27 @@ class FacetsWidget extends Widget
             /** @var \im\search\components\SearchManager $searchManager */
             $searchManager = Yii::$app->get('searchManager');
             $searchComponent = $searchManager->getSearchComponent();
+            $searchQuery = $result->getQuery()->getSearchQuery();
+            $selectedFacets = [];
+            foreach ($result->getFacets() as $facet) {
+                if ($values = $facet->getValues()) {
+                    $selectedValues = array_filter($values, function (FacetValueInterface $value) use ($searchQuery) {
+                        return $value->isSelected($searchQuery);
+                    });
+                    if ($selectedValues) {
+                        $selectedFacet = clone $facet;
+                        $selectedFacet->setValues($selectedValues);
+                        $selectedFacets[] = $selectedFacet;
+                    }
+                }
+            }
             return $this->render('facets', [
                 'facets' => $result->getFacets(),
-                'selectedFacets' => $result->getSelectedFacets(),
-                'searchComponent' => $searchComponent]
-            );
+                //'selectedFacets' => $result->getSelectedFacets(),
+                'selectedFacets' => $selectedFacets,
+                'searchComponent' => $searchComponent,
+                'searchQuery' => $searchQuery
+            ]);
         } else {
             return '';
         }

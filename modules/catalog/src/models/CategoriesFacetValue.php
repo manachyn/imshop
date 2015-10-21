@@ -3,36 +3,13 @@
 namespace im\catalog\models;
 
 use im\search\components\query\facet\EntityFacetValueInterface;
-use im\search\components\query\facet\FacetInterface;
-use im\search\components\query\SearchQueryInterface;
+use im\search\components\query\facet\FacetValueTrait;
+use im\search\components\query\facet\TreeFacetValueInterface;
 use yii\base\Object;
 
-class CategoriesFacetValue extends Object implements EntityFacetValueInterface
+class CategoriesFacetValue extends Object implements EntityFacetValueInterface, TreeFacetValueInterface
 {
-    /**
-     * @var FacetInterface
-     */
-    protected $_facet;
-
-    /**
-     * @var string
-     */
-    protected $_key;
-
-    /**
-     * @var int
-     */
-    protected $_resultsCount = 0;
-
-    /**
-     * @var SearchQueryInterface
-     */
-    protected $_searchQuery;
-
-    /**
-     * @var bool
-     */
-    protected $_isSelected = false;
+    use FacetValueTrait;
 
     /**
      * @var Category
@@ -40,36 +17,9 @@ class CategoriesFacetValue extends Object implements EntityFacetValueInterface
     protected $_category;
 
     /**
-     * @inheritdoc
+     * @var CategoriesFacetValue[]
      */
-    public function getKey()
-    {
-        return $this->_key;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function setKey($key)
-    {
-        $this->_key = $key;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getResultsCount()
-    {
-        return $this->_resultsCount;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function setResultsCount($count)
-    {
-        $this->_resultsCount = $count;
-    }
+    private $_children = [];
 
     /**
      * @inheritdoc
@@ -77,54 +27,6 @@ class CategoriesFacetValue extends Object implements EntityFacetValueInterface
     public function getLabel()
     {
         return $this->_category->name;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getSearchQuery()
-    {
-        return $this->_searchQuery;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function setSearchQuery(SearchQueryInterface $searchQuery)
-    {
-        $this->_searchQuery = $searchQuery;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getFacet()
-    {
-        return $this->_facet;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function setFacet(FacetInterface $facet)
-    {
-        $this->_facet = $facet;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function setSelected($selected)
-    {
-        $this->_isSelected = $selected;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function isSelected()
-    {
-        return $this->_isSelected;
     }
 
     /**
@@ -141,5 +43,21 @@ class CategoriesFacetValue extends Object implements EntityFacetValueInterface
     public function setEntity($entity)
     {
         $this->_category = $entity;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getChildren()
+    {
+        return $this->_children;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setChildren($children)
+    {
+        $this->_children = $children;
     }
 }

@@ -10,7 +10,7 @@
 <ul>
 <?php foreach ($items as $item) : ?>
     <li>
-        <?= $this->render($widget->itemView, ['model' => $item, 'level' => $level]) ?>
+        <?= $this->render($widget->itemView, array_merge(['model' => $item, 'level' => $level], $widget->itemViewParams)) ?>
         <?php if (!$widget->depth || $level < $widget->depth) : ?>
             <?= $this->render('tree', ['widget' => $widget, 'items' => $item->children, 'level' => $level + 1]) ?>
         <?php endif ?>

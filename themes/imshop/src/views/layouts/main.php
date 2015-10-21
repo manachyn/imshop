@@ -23,34 +23,8 @@ use yii\widgets\Breadcrumbs;
 </head>
 <body>
 <?php $this->beginBody() ?>
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-10 col-md-push-2"><?= $content ?></div>
-            <div class="col-md-2 col-md-pull-10">
-                <?= WidgetArea::widget([
-                    'code' => 'sidebar',
-                    'layout' => 'main',
-                    'context' => $this->context,
-                    'enableCache' => false
-                ]) ?>
-            </div>
-        </div>
-    </div>
 
-    <footer class="footer">
-        <div class="container">
-            <p class="pull-left">&copy; My Company <?= date('Y') ?></p>
-            <p class="pull-right"><?= Yii::powered() ?></p>
-        </div>
-    </footer>
-<!--<script src="/js/system.js"></script>-->
-<!--<script>-->
-<!--    System.config({-->
-<!--        transpiler: 'babel',-->
-<!--        baseURL: '/js/frontend'-->
-<!--    });-->
-<!--    System.import('index.js');-->
-<!--</script>-->
+
 <?php $this->endBody() ?>
 </body>
 </html>

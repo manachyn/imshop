@@ -36,4 +36,11 @@ class ThemeAsset extends AssetBundle
         ],
         'forceCopy' => true
     ];
+
+    /**
+     * @inheritdoc
+     */
+    public $depends = [
+        'im\imshop\FontAwesomeAsset'
+    ];
 }

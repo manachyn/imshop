@@ -2,7 +2,7 @@
 
 namespace im\search\components\query\facet;
 
-interface TermsFacetInterface
+interface TermsFacetInterface extends FacetInterface
 {
 
 }

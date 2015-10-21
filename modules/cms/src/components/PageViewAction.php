@@ -39,6 +39,12 @@ class PageViewAction extends ModelViewAction implements ModelContextInterface
     {
         $model = $this->findModel($path);
         $this->setModel($model);
+        if ($model && $model->getBehavior('template')) {
+            /** @var TemplateBehavior|Page $model */
+            if ($model->template && $layout = $model->template->getLayout()) {
+                $this->controller->layout = '//' . $layout->id;
+            }
+        }
 
         return $this->render($this->view, $model);
     }

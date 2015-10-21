@@ -24,22 +24,32 @@ class TemplateManager extends Component
      */
     public function saveTemplate(Template $template, $data)
     {
-        if ($template->load($data) && ($widgetAreas = $this->loadWidgetAreas($data)) && ($widgets = $this->loadWidgets($data, 'Widgets'))) {
+        if ($template->load($data)) {
+            $widgetAreas = $this->loadWidgetAreas($data);
+            $widgets = $this->loadWidgets($data, 'Widgets');
             $valid = true;
             $valid = $template->validate() && $valid;
             $first = reset($widgetAreas);
             $valid = Model::validateMultiple($widgetAreas, array_diff($first->activeAttributes(), ['template_id'])) && $valid;
             $valid = Model::validateMultiple($widgets) && $valid;
             if ($valid && $template->save(false)) {
-                foreach ($widgetAreas as $area) {
-                    $area->template_id = $template->id;
-                    $this->setWidgets($area, $widgets);
-                    $area->save();
+                if ($widgetAreas) {
+                    foreach ($widgetAreas as $area) {
+                        $area->template_id = $template->id;
+                        if ($widgets) {
+                            $this->setWidgets($area, $widgets);
+                        }
+                        $area->save();
+                    }
                 }
                 return true;
             } else {
-                $template->populateRelation('widgetAreas', $widgetAreas);
-                $this->linkWidgets($widgetAreas, $widgets);
+                if ($widgetAreas) {
+                    $template->populateRelation('widgetAreas', $widgetAreas);
+                }
+                if ($widgets) {
+                    $this->linkWidgets($widgetAreas, $widgets);
+                }
             }
         }
         return false;
@@ -59,6 +69,7 @@ class TemplateManager extends Component
         if (Model::loadMultiple($widgetAreas, $data, $formName)) {
             $loaded = $widgetAreas;
         }
+
         return $loaded;
     }
 

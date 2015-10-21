@@ -136,7 +136,6 @@ class Query extends ActiveQuery implements QueryInterface
                 }
             }
             $value = $query->getTerm();
-            $value = [17, 12];
             $condition = is_array($value) ? ['in', $field, $value] : [$field => $value];
         } elseif ($query instanceof Range) {
             if (($from = $query->getLowerBound()) !== null) {

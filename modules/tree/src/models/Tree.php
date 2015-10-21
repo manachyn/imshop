@@ -77,7 +77,7 @@ abstract class Tree extends ActiveRecord
     }
 
     /**
-     * @param Tree $node
+     * @param Tree|NestedSetsBehavior $node
      * @param array $items
      * @return TreeRecursiveIterator
      */
@@ -90,7 +90,7 @@ abstract class Tree extends ActiveRecord
     }
 
     /**
-     * @param Tree[] $nodes
+     * @param Tree[]|NestedSetsBehavior[] $nodes
      * @param int $left
      * @param int $right
      * @return array
