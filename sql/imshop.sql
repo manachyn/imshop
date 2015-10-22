@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Хост: localhost
--- Время создания: Окт 14 2015 г., 16:47
+-- Время создания: Окт 22 2015 г., 19:05
 -- Версия сервера: 5.5.44-0ubuntu0.14.04.1
 -- Версия PHP: 5.5.9-1ubuntu4.13
 
@@ -261,27 +261,30 @@ CREATE TABLE IF NOT EXISTS `tbl_facets` (
   `entity_type` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
   `attribute_id` int(11) DEFAULT NULL,
   `attribute_name` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
+  `index_name` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
   `from` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
   `to` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
   `interval` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
   `type` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
   `multivalue` tinyint(1) NOT NULL DEFAULT '1',
   `operator` varchar(3) COLLATE utf8_unicode_ci NOT NULL,
+  `route_param` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_facets_attribute_id` (`attribute_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=7 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=8 ;
 
 --
 -- Дамп данных таблицы `tbl_facets`
 --
 
-INSERT INTO `tbl_facets` (`id`, `name`, `label`, `entity_type`, `attribute_id`, `attribute_name`, `from`, `to`, `interval`, `type`, `multivalue`, `operator`) VALUES
-(1, 'price1', '', 'product', NULL, 'price', '10', '100', '10', 'interval', 1, 'and'),
-(2, 'type', '', 'product', NULL, 'eAttributes.type', '', '', '', 'terms', 1, 'and'),
-(3, 'price2', '', 'product', NULL, 'price', '', '', '', 'range', 1, 'and'),
-(4, 'status', '', 'product', NULL, 'status', '', '', '', 'terms', 1, 'and'),
-(5, 'status2', '', 'product', NULL, 'status', '', '', '', 'terms', 1, 'and'),
-(6, 'price3', '', 'product', NULL, 'price', '', '', '', 'range', 1, 'and');
+INSERT INTO `tbl_facets` (`id`, `name`, `label`, `entity_type`, `attribute_id`, `attribute_name`, `index_name`, `from`, `to`, `interval`, `type`, `multivalue`, `operator`, `route_param`) VALUES
+(1, 'price1', '', 'product', NULL, '', 'price', '10', '100', '10', 'interval_facet', 1, 'and', ''),
+(2, 'type', '', 'product', NULL, '', 'eAttributes.type', '', '', '', 'terms_facet', 1, 'and', ''),
+(3, 'price2', '', 'product', NULL, '', 'price', '', '', '', 'range_facet', 1, 'and', ''),
+(4, 'status', '', 'product', NULL, '', 'status', '', '', '', 'terms_facet', 1, 'and', ''),
+(5, 'status2', '', 'product', NULL, '', 'status', '', '', '', 'terms_facet', 1, 'and', ''),
+(6, 'price3', '', 'product', NULL, '', 'price', '', '', '', 'range_facet', 1, 'and', ''),
+(7, 'category', '', 'product', NULL, 'id', 'category', '', '', '', 'product_categories_facet', 0, 'and', 'path');
 
 -- --------------------------------------------------------
 
@@ -354,7 +357,8 @@ INSERT INTO `tbl_facet_set_facets` (`set_id`, `facet_id`) VALUES
 (1, 2),
 (1, 4),
 (1, 5),
-(1, 6);
+(1, 6),
+(1, 7);
 
 -- --------------------------------------------------------
 
@@ -482,7 +486,7 @@ CREATE TABLE IF NOT EXISTS `tbl_index_attributes` (
   `index_name` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
   `type` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=6 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=16 ;
 
 --
 -- Дамп данных таблицы `tbl_index_attributes`
@@ -491,7 +495,9 @@ CREATE TABLE IF NOT EXISTS `tbl_index_attributes` (
 INSERT INTO `tbl_index_attributes` (`id`, `index_type`, `name`, `index_name`, `type`) VALUES
 (1, 'product', 'status', '', 'integer'),
 (3, 'product', 'price', '', 'integer'),
-(5, 'product', 'eAttributes.type', 'type', 'string');
+(5, 'product', 'type_attr', 'type', 'string'),
+(12, 'product', 'brandRelation', 'brand', ''),
+(15, 'product', 'categoriesRelation.id', 'category', '');
 
 -- --------------------------------------------------------
 
@@ -523,6 +529,63 @@ CREATE TABLE IF NOT EXISTS `tbl_menus_items` (
   KEY `FK_menu_item_page` (`page_id`),
   KEY `FK_menu_item_menu` (`menu_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `tbl_menu_items`
+--
+
+CREATE TABLE IF NOT EXISTS `tbl_menu_items` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `tree` int(11) DEFAULT NULL,
+  `lft` int(11) NOT NULL,
+  `rgt` int(11) NOT NULL,
+  `depth` int(11) NOT NULL,
+  `label` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `url` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `status` tinyint(1) NOT NULL DEFAULT '1',
+  `icon_id` int(11) NOT NULL,
+  `active_icon_id` int(11) NOT NULL,
+  `video_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `lft_rgt` (`lft`,`rgt`),
+  KEY `depth` (`depth`),
+  KEY `tree` (`tree`),
+  KEY `label` (`label`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=2 ;
+
+--
+-- Дамп данных таблицы `tbl_menu_items`
+--
+
+INSERT INTO `tbl_menu_items` (`id`, `tree`, `lft`, `rgt`, `depth`, `label`, `url`, `status`, `icon_id`, `active_icon_id`, `video_id`) VALUES
+(1, 1, 1, 2, 0, 'fsdfsdf', '', 1, 0, 0, 0);
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `tbl_menu_item_files`
+--
+
+CREATE TABLE IF NOT EXISTS `tbl_menu_item_files` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `menu_item_id` int(11) NOT NULL,
+  `attribute` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
+  `filesystem` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
+  `path` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `title` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `size` int(11) DEFAULT NULL,
+  `mime_type` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `created_at` int(11) NOT NULL,
+  `updated_at` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `filesystem` (`filesystem`),
+  KEY `path` (`path`),
+  KEY `created_at` (`created_at`),
+  KEY `updated_at` (`updated_at`),
+  KEY `menu_item_id` (`menu_item_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=9 ;
 
 -- --------------------------------------------------------
 
@@ -607,7 +670,7 @@ CREATE TABLE IF NOT EXISTS `tbl_pages` (
 --
 
 INSERT INTO `tbl_pages` (`id`, `type`, `title`, `slug`, `content`, `status`, `created_at`, `updated_at`, `template_id`) VALUES
-(1, 'page', 'fghfg', 'index', '<p>Index content</p>\r\n', 1, 1442477644, 1444723830, 4),
+(1, 'page', 'fghfg', 'index', '<p>Index content</p>\r\n', 1, 1442477644, 1445438082, 6),
 (2, 'search_page', 'Search results', 'search-results', '<p>Search results</p>', 1, 1442846796, 1442846796, 0);
 
 -- --------------------------------------------------------
@@ -713,7 +776,8 @@ CREATE TABLE IF NOT EXISTS `tbl_products_categories` (
 INSERT INTO `tbl_products_categories` (`product_id`, `category_id`) VALUES
 (5, 17),
 (5, 12),
-(5, 11);
+(5, 11),
+(6, 11);
 
 -- --------------------------------------------------------
 
@@ -1220,7 +1284,7 @@ CREATE TABLE IF NOT EXISTS `tbl_templates` (
   `layout_id` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   KEY `layout_id` (`layout_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=6 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=7 ;
 
 --
 -- Дамп данных таблицы `tbl_templates`
@@ -1228,7 +1292,8 @@ CREATE TABLE IF NOT EXISTS `tbl_templates` (
 
 INSERT INTO `tbl_templates` (`id`, `name`, `layout_id`) VALUES
 (4, 'Page template', ''),
-(5, 'Category page template', '');
+(5, 'Category page template', ''),
+(6, 'Home template', 'home');
 
 -- --------------------------------------------------------
 
@@ -1311,7 +1376,7 @@ CREATE TABLE IF NOT EXISTS `tbl_widget_areas` (
   KEY `owner_id` (`owner_id`),
   KEY `owner_type` (`owner_type`),
   KEY `updated_at` (`updated_at`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=10 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=11 ;
 
 --
 -- Дамп данных таблицы `tbl_widget_areas`
@@ -1321,7 +1386,8 @@ INSERT INTO `tbl_widget_areas` (`id`, `code`, `template_id`, `owner_id`, `owner_
 (6, 'sidebar', 4, NULL, '', 3, 1442475541, 1444724127),
 (7, 'footer', 4, NULL, '', 3, 1442475541, 1444724127),
 (8, 'sidebar', 5, NULL, '', 3, 1442475562, 1443438013),
-(9, 'footer', 5, NULL, '', 3, 1442475562, 1443438013);
+(9, 'footer', 5, NULL, '', 3, 1442475562, 1443438013),
+(10, 'footer', 6, NULL, '', 3, 1445438062, 1445438062);
 
 -- --------------------------------------------------------
 

@@ -23,6 +23,7 @@ use yii\helpers\Url;
  * @property string $name
  * @property string $slug
  * @property string $description
+ * @property bool $status
  *
  * @method CategoryQuery parents(integer $depth = null)
  * @method CategoryQuery children(integer $depth = null)

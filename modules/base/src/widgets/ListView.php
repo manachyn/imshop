@@ -296,7 +296,9 @@ class ListView extends \yii\widgets\ListView
     {
         if ($this->clientOptions !== false) {
             $options = empty($this->clientOptions) ? '' : Json::htmlEncode($this->clientOptions);
-            $this->getView()->registerJs("jQuery('#$id').sortable($options);");
+            if ($this->sortable) {
+                $this->getView()->registerJs("jQuery('#$id').sortable($options);");
+            }
             $this->getView()->registerJs("jQuery('#$id').listView($options);");
         }
     }

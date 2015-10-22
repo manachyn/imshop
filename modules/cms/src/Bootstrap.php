@@ -17,11 +17,39 @@ class Bootstrap implements BootstrapInterface
     {
         //$layoutManager->registerOwner('im\cms\models\Page', 'page');
         //$layoutManager->registerConfigurableComponent($this);
+        $this->addRules($app);
         $this->registerTranslations($app);
         $this->registerDefinitions();
         $this->registerEntityTypes();
         $this->registerPageTypes();
         $this->registerWidgets($app);
+    }
+
+    /**
+     * Adds module rules.
+     *
+     * @param Application $app
+     */
+    public function addRules($app)
+    {
+        $app->getUrlManager()->addRules([
+            [
+                'class' => 'yii\rest\UrlRule',
+                'prefix' => 'api/v1',
+                'extraPatterns' => [
+                    'GET,HEAD roots' => 'roots',
+                    'GET,HEAD leaves' => 'leaves',
+                    'GET,HEAD {id}/children' => 'children',
+                    'GET,HEAD {id}/descendants' => 'descendants',
+                    'GET,HEAD {id}/leaves' => 'leaves',
+                    'GET,HEAD {id}/ancestors' => 'ancestors',
+                    'GET,HEAD {id}/parent' => 'parent',
+                    'PUT,PATCH {id}/move' => 'move',
+                    'POST search' => 'search'
+                ],
+                'controller' => ['menu-items' => 'cms/rest/menu-item']
+            ]
+        ], false);
     }
 
     /**

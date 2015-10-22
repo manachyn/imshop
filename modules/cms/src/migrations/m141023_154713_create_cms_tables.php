@@ -49,6 +49,7 @@ class m141023_154713_create_cms_tables extends Migration
         );
         $this->addForeignKey('FK_page_meta_entity_id', '{{%page_meta}}', 'entity_id', '{{%pages}}', 'id', 'CASCADE', 'CASCADE');
 
+        // Menus
         $this->createTable(
             '{{%menus}}',
             [
@@ -58,25 +59,57 @@ class m141023_154713_create_cms_tables extends Migration
             $tableOptions
         );
 
+        // Menu item files
+        $this->createTable(
+            '{{%menu_item_files}}',
+            [
+                'id' => $this->primaryKey(),
+                'menu_item_id' => $this->integer()->defaultValue(null),
+                'attribute' => $this->string(100)->notNull(),
+                'filesystem' => $this->string(100)->notNull(),
+                'path' => $this->string()->notNull(),
+                'title' => $this->string()->notNull(),
+                'size' => $this->integer(),
+                'mime_type' => $this->string()->notNull(),
+                'created_at' => $this->integer()->defaultValue(null),
+                'updated_at' => $this->integer()->defaultValue(null)
+            ],
+            $tableOptions
+        );
+
+        // Menu items
         $this->createTable(
             '{{%menus_items}}',
             [
                 'id' => $this->primaryKey(),
-                'menu_id' => $this->integer()->defaultValue(null),
-                'label' => $this->string(100)->notNull(),
+                'tree' => $this->integer()->defaultValue(null),
+                'lft' => $this->integer()->notNull(),
+                'rgt' => $this->integer()->notNull(),
+                'depth' => $this->integer()->notNull(),
+                'menu_id' => $this->integer()->notNull(),
+                'label' => $this->string()->notNull(),
                 'url' => $this->string()->notNull(),
                 'page_id' => $this->integer()->defaultValue(null),
-                'status' => $this->boolean()->defaultValue(0)
+                'status' => $this->boolean()->defaultValue(1),
+                'icon_id' => $this->integer()->defaultValue(null),
+                'active_icon_id' => $this->integer()->defaultValue(null),
+                'video_id' => $this->integer()->defaultValue(null)
             ],
             $tableOptions
         );
 
         // Indexes
+        $this->createIndex('lft_rgt', '{{%menus_items}}', 'lft, rgt');
+        $this->createIndex('depth', '{{%menus_items}}', 'depth');
+        $this->createIndex('tree', '{{%menus_items}}', 'tree');
+        $this->createIndex('name', '{{%menus_items}}', 'label');
         $this->createIndex('status', '{{%menus_items}}', 'status');
-
         // Foreign Keys
-        $this->addForeignKey('FK_menu_item_page', '{{%menus_items}}', 'page_id', '{{%pages}}', 'id', 'SET NULL', 'CASCADE');
-        $this->addForeignKey('FK_menu_item_menu', '{{%menus_items}}', 'menu_id', '{{%menus}}', 'id', 'CASCADE', 'CASCADE');
+        $this->addForeignKey('FK_menus_items_menu_id', '{{%menus_items}}', 'menu_id', '{{%menus}}', 'id', 'CASCADE', 'CASCADE');
+        $this->addForeignKey('FK_menus_items_icon_id', '{{%menus_items}}', 'icon_id', '{{%menu_item_files}}', 'id', 'SET NULL', 'CASCADE');
+        $this->addForeignKey('FK_menus_items_active_icon_id', '{{%menus_items}}', 'active_icon_id', '{{%menu_item_files}}', 'id', 'SET NULL', 'CASCADE');
+        $this->addForeignKey('FK_menus_items_video_id', '{{%menus_items}}', 'video_id', '{{%menu_item_files}}', 'id', 'SET NULL', 'CASCADE');
+
 
         // Templates
         $this->createTable(

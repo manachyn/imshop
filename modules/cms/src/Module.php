@@ -30,6 +30,9 @@ class Module extends \yii\base\Module
             'backend' => [
                 'class' => 'im\cms\backend\Module'
             ],
+            'rest' => [
+                'class' => 'im\cms\rest\Module'
+            ],
         ];
     }
 }
