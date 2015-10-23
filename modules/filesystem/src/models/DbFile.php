@@ -249,12 +249,24 @@ class DbFile extends ActiveRecord implements FileInterface
         ]);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function beforeSave($insert)
     {
         if ($this->isAttributeChanged('path') && $oldPath = $this->getOldAttribute('path')) {
             $this->getFilesystemComponent()->get($this->getFilesystemName())->rename($oldPath, $this->getPath());
         }
         return parent::beforeSave($insert);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function afterDelete()
+    {
+        $this->getFilesystemComponent()->deleteFile($this);
+        parent::afterDelete();
     }
 
     /**

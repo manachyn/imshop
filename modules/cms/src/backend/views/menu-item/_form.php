@@ -22,8 +22,13 @@ use yii\widgets\ActiveForm;
 
 <?php $main = Block::begin(); ?>
     <?= $form->field($model, 'label')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
     <?= $form->field($model, 'url')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'target_blank')->checkbox() ?>
+    <?= $form->field($model, 'css_classes')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'rel')->textInput(['maxlength' => true]) ?>
     <?= $form->field($model, 'status')->dropDownList($model::getStatusesList()) ?>
+    <?= $form->field($model, 'visibility')->textInput(['maxlength' => true]) ?>
 <?php Block::end(); ?>
 
 <?php $display = Block::begin(); ?>
@@ -31,23 +36,38 @@ use yii\widgets\ActiveForm;
     <div class="col-sm-4">
         <?= $form->field($model, 'uploadedIcon')->fileInput(['accept' => 'image/*']) ?>
         <?= Html::hiddenInput('uploadedIcon') ?>
-        <?php if ($icon = $model->icon) : ?>
-        <?= $this->render('@im/cms/backend/views/menu-item-file/_form', ['model' => $icon, 'form' => $form]) ?>
-        <?php endif ?>
+        <?= ListView::widget([
+            'dataProvider' => new ActiveDataProvider([
+                'query' => $model->iconRelation()
+            ]),
+            'itemView' => '@im/cms/backend/views/menu-item-file/_form',
+            'addLabel' => false,
+            'viewParams' => ['form' => $form, 'fieldConfig' => ['namePrefix' => 'uploadedIcon']]
+        ]); ?>
     </div>
     <div class="col-sm-4">
         <?= $form->field($model, 'uploadedActiveIcon')->fileInput(['accept' => 'image/*']) ?>
         <?= Html::hiddenInput('uploadedActiveIcon') ?>
-        <?php if ($activeIcon = $model->icon) : ?>
-        <?= $this->render('@im/cms/backend/views/menu-item-file/_form', ['model' => $activeIcon, 'form' => $form]) ?>
-        <?php endif ?>
+        <?= ListView::widget([
+            'dataProvider' => new ActiveDataProvider([
+                'query' => $model->activeIconRelation()
+            ]),
+            'itemView' => '@im/cms/backend/views/menu-item-file/_form',
+            'addLabel' => false,
+            'viewParams' => ['form' => $form, 'fieldConfig' => ['namePrefix' => 'uploadedActiveIcon']]
+        ]); ?>
     </div>
     <div class="col-sm-4">
         <?= $form->field($model, 'uploadedVideo')->fileInput(['accept' => 'video/*']) ?>
         <?= Html::hiddenInput('uploadedVideo') ?>
-        <?php if ($video = $model->video) : ?>
-        <?= $this->render('@im/cms/backend/views/menu-item-file/_form', ['model' => $video, 'form' => $form]) ?>
-        <?php endif ?>
+        <?= ListView::widget([
+            'dataProvider' => new ActiveDataProvider([
+                'query' => $model->videoRelation()
+            ]),
+            'itemView' => '@im/cms/backend/views/menu-item-file/_form',
+            'addLabel' => false,
+            'viewParams' => ['form' => $form, 'fieldConfig' => ['namePrefix' => 'uploadedVideo']]
+        ]); ?>
     </div>
 </div>
 <?php Block::end();

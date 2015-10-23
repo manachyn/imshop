@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Хост: localhost
--- Время создания: Окт 22 2015 г., 19:05
+-- Время создания: Окт 23 2015 г., 18:52
 -- Версия сервера: 5.5.44-0ubuntu0.14.04.1
 -- Версия PHP: 5.5.9-1ubuntu4.13
 
@@ -508,8 +508,18 @@ INSERT INTO `tbl_index_attributes` (`id`, `index_type`, `name`, `index_name`, `t
 CREATE TABLE IF NOT EXISTS `tbl_menus` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
+  `created_at` int(11) NOT NULL,
+  `updated_at` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=3 ;
+
+--
+-- Дамп данных таблицы `tbl_menus`
+--
+
+INSERT INTO `tbl_menus` (`id`, `name`, `created_at`, `updated_at`) VALUES
+(1, 'top', 1445601056, 1445601056),
+(2, 'bottom', 1445601289, 1445601289);
 
 -- --------------------------------------------------------
 
@@ -542,9 +552,15 @@ CREATE TABLE IF NOT EXISTS `tbl_menu_items` (
   `lft` int(11) NOT NULL,
   `rgt` int(11) NOT NULL,
   `depth` int(11) NOT NULL,
+  `menu_id` int(11) NOT NULL,
   `label` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `title` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `url` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `target_blank` tinyint(1) NOT NULL DEFAULT '0',
+  `css_classes` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
+  `rel` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
   `status` tinyint(1) NOT NULL DEFAULT '1',
+  `visibility` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
   `icon_id` int(11) NOT NULL,
   `active_icon_id` int(11) NOT NULL,
   `video_id` int(11) NOT NULL,
@@ -553,14 +569,20 @@ CREATE TABLE IF NOT EXISTS `tbl_menu_items` (
   KEY `depth` (`depth`),
   KEY `tree` (`tree`),
   KEY `label` (`label`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=2 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=8 ;
 
 --
 -- Дамп данных таблицы `tbl_menu_items`
 --
 
-INSERT INTO `tbl_menu_items` (`id`, `tree`, `lft`, `rgt`, `depth`, `label`, `url`, `status`, `icon_id`, `active_icon_id`, `video_id`) VALUES
-(1, 1, 1, 2, 0, 'fsdfsdf', '', 1, 0, 0, 0);
+INSERT INTO `tbl_menu_items` (`id`, `tree`, `lft`, `rgt`, `depth`, `menu_id`, `label`, `title`, `url`, `target_blank`, `css_classes`, `rel`, `status`, `visibility`, `icon_id`, `active_icon_id`, `video_id`) VALUES
+(1, 1, 1, 4, 0, 1, 'fsdfsdf', '', '', 0, '', '', 1, '', 13, 14, 15),
+(2, 1, 2, 3, 1, 1, 'fdsfsdfsdfsdf', '', '', 0, '', '', 1, '', 16, 17, 0),
+(3, 3, 1, 2, 0, 1, 'Test', 'fsdsdfsdf', 'sdfsdfsdf', 1, 'css', 'nofollow', 1, 'visiblr', 18, 0, 0),
+(4, 4, 1, 6, 0, 1, 'gffdgdfg', '', '', 0, '', '', 1, '', 0, 0, 0),
+(5, 4, 2, 3, 1, 1, 'dfdsfsdfsdf', '', '', 0, '', '', 1, '', 0, 0, 0),
+(6, 4, 4, 5, 1, 1, 'fdgfdgdfg', '', '', 0, '', '', 1, '', 0, 0, 0),
+(7, 7, 1, 2, 0, 1, 'gfdgdfgfdsdfsdf', '', '', 0, '', '', 1, '', 0, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -585,7 +607,19 @@ CREATE TABLE IF NOT EXISTS `tbl_menu_item_files` (
   KEY `created_at` (`created_at`),
   KEY `updated_at` (`updated_at`),
   KEY `menu_item_id` (`menu_item_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=9 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=19 ;
+
+--
+-- Дамп данных таблицы `tbl_menu_item_files`
+--
+
+INSERT INTO `tbl_menu_item_files` (`id`, `menu_item_id`, `attribute`, `filesystem`, `path`, `title`, `size`, `mime_type`, `created_at`, `updated_at`) VALUES
+(13, 0, '', 'local', '/menus/menu1.png', '', 2964596, 'image/png', 1445595300, 1445595345),
+(14, 0, '', 'local', '/menus/menu2.png', '', 390088, 'image/png', 1445595300, 1445595345),
+(15, 0, '', 'local', '/menus/menu3.mp4', '', 1822505, 'video/mp4', 1445595300, 1445595345),
+(16, 0, '', 'local', '/menus/fdsfsdfsdfsdf.png', '', 2964596, 'image/png', 1445607249, 1445607249),
+(17, 0, '', 'local', '/menus/fdsfsdfsdfsdf-active.png', '', 390088, 'image/png', 1445607249, 1445607249),
+(18, 0, '', 'local', '/menus/test.png', '1111', 2964596, 'image/png', 1445615331, 1445615357);
 
 -- --------------------------------------------------------
 
@@ -813,7 +847,7 @@ CREATE TABLE IF NOT EXISTS `tbl_product_categories` (
 --
 
 INSERT INTO `tbl_product_categories` (`id`, `tree`, `lft`, `rgt`, `depth`, `name`, `slug`, `description`, `status`, `created_at`, `updated_at`, `image_id`, `template_id`, `video_data`) VALUES
-(11, NULL, 1, 26, 0, 'Catalog', 'catalog', '', 1, 1442235217, 1444725373, 0, 5, ''),
+(11, NULL, 1, 26, 0, 'Catalog', 'store', '', 1, 1442235217, 1445589814, 32, 5, ''),
 (12, NULL, 2, 19, 1, '1', '1', '', 1, 1442235228, 1442235228, 0, 0, ''),
 (13, NULL, 20, 25, 1, '2', '2', '', 1, 1442235236, 1442235236, 0, 0, ''),
 (14, NULL, 21, 22, 2, '2.1', '21', '', 1, 1442235246, 1442235246, 0, 0, ''),
@@ -852,7 +886,7 @@ CREATE TABLE IF NOT EXISTS `tbl_product_category_files` (
   KEY `updated_at` (`updated_at`),
   KEY `sort` (`sort`),
   KEY `category_id` (`category_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=31 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=33 ;
 
 --
 -- Дамп данных таблицы `tbl_product_category_files`
@@ -869,7 +903,8 @@ INSERT INTO `tbl_product_category_files` (`id`, `category_id`, `attribute`, `fil
 (27, 0, '', 'local', '/categories/7.png', '', 100483, 'image/png', 1442501820, 1442501820, 0),
 (28, 0, '', 'local', '/categories/8.png', '', 178168, 'image/png', 1442501830, 1442501830, 0),
 (29, 0, '', 'local', '/categories/3.png', '', 143480, 'image/png', 1442502969, 1442502969, 0),
-(30, 0, '', 'local', '/categories/6.png', '', 163905, 'image/png', 1442502983, 1442502983, 0);
+(30, 0, '', 'local', '/categories/6.png', '', 163905, 'image/png', 1442502983, 1442502983, 0),
+(32, 0, '', 'local', '/categories/store-1.png', 'sdfsdfsdf', 2964596, 'image/png', 1445586342, 1445589814, 0);
 
 -- --------------------------------------------------------
 

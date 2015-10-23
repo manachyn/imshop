@@ -1,7 +1,7 @@
 <?php
 
 use im\base\widgets\ListViewAsset;
-use im\catalog\Module;
+use im\cms\Module;
 use im\tree\widgets\JsTree;
 use im\tree\widgets\JsTreeToolbar;
 use im\tree\widgets\TreeDetails;
@@ -12,16 +12,14 @@ use yii\widgets\ActiveFormAsset;
 use yii\widgets\PjaxAsset;
 
 /* @var $this yii\web\View */
+/* @var $menu im\cms\models\Menu */
 
-$this->title = Module::t('category', 'Categories');
-$this->params['subtitle'] = Module::t('category', 'Categories list');
-$this->params['breadcrumbs'][] = $this->title;
 ActiveFormAsset::register($this);
 JqueryAsset::register($this);
 PjaxAsset::register($this);
 ListViewAsset::register($this);
-$treeId = 'categories-tree';
-$treeDetailsId = 'category-details';
+$treeId = 'menu-items-tree';
+$treeDetailsId = 'menu-item-details';
 $confirmationModalId = 'confirmation-modal';
 ?>
 <div class="row">
@@ -46,14 +44,16 @@ $confirmationModalId = 'confirmation-modal';
                     'treeDetails' => $treeDetailsId,
                     'confirmationModal' => $confirmationModalId,
                     'apiOptions' => [
-                        'rootsUrl' => Url::to(['/api/v1/product-categories/roots']),
-                        'childrenUrl' => Url::to(['/api/v1/product-categories/{id}/children']),
-                        'updateUrl' => Url::to(['/api/v1/product-categories/{id}']),
-                        'deleteUrl' => Url::to(['/api/v1/product-categories/{id}']),
-                        'moveUrl' => Url::to(['/api/v1/product-categories/{id}/move']),
-                        'searchUrl' => Url::to(['/api/v1/product-categories/search']),
-                        'searchableAttributes' => ['text', 'data.description'],
-                        'attributesMap' => ['id' => 'id', 'text' => 'name', 'children' => 'hasChildren', 'str' => 'string']
+                        'rootsUrl' => $menu ? Url::to(["/api/v1/menus/{$menu->id}/items/roots"]) : Url::to(['/api/v1/menu-items/roots']),
+                        'childrenUrl' => Url::to(['/api/v1/menu-items/{id}/children']),
+                        'createUrl' => Url::to(['menu-item/create-node']),
+                        'editUrl' => Url::to(['menu-item/update', 'id' => '{id}']),
+                        'updateUrl' => Url::to(['/api/v1/menu-items/{id}']),
+                        'deleteUrl' => Url::to(['/api/v1/menu-items/{id}']),
+                        'moveUrl' => Url::to(['/api/v1/menu-items/{id}/move']),
+                        'searchUrl' => $menu ? Url::to(["/api/v1/menus/{$menu->id}/items/search"]) : Url::to(['/api/v1/menu-items/search']),
+                        'searchableAttributes' => ['text', 'data.label'],
+                        'attributesMap' => ['id' => 'id', 'text' => 'label', 'children' => 'hasChildren', 'str' => 'string']
                     ]
                 ]); ?>
             </div>

@@ -484,7 +484,7 @@ class RelationsBehavior extends Behavior
                     $model = $this->createModel($relation->modelClass, $data[0]);
                 }
             }
-            if (!empty($model) && $model->getIsNewRecord() && !$model->save()) {
+            if (!empty($model)/* && $model->getIsNewRecord()*/ && !$model->save()) {
                 return;
             }
             if (!empty($model) || $this->isPrimaryKey($relation, $this->relatedData[$name])) {

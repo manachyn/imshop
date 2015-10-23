@@ -11,13 +11,19 @@ use im\filesystem\components\FilesBehavior;
 use im\tree\models\Tree;
 use Intervention\Image\Constraint;
 use Intervention\Image\ImageManagerStatic;
+use yii\helpers\Inflector;
 
 /**
  * Menu item model class.
  *
  * @property integer $id
  * @property string $label
+ * @property string $title
  * @property string $url
+ * @property bool $target_blank
+ * @property string $rel
+ * @property string $css_classes
+ * @property string $visibility
  * @property bool $status
  *
  * @method MenuItemQuery parents(integer $depth = null)
@@ -58,7 +64,9 @@ class MenuItem extends Tree
                     'uploadedIcon' => [
                         'filesystem' => 'local',
                         'path' => '/menus',
-                        'fileName' => '{model.id}.{file.extension}',
+                        'fileName' => function ($fileName, MenuItem $model) {
+                            return Inflector::slug($model->label) . '.' . pathinfo($fileName, PATHINFO_EXTENSION);
+                        },
                         'relation' => 'icon',
                         'deleteOnUnlink' => true,
                         'on beforeSave' => function (FileInterface $file) {
@@ -73,7 +81,9 @@ class MenuItem extends Tree
                     'uploadedActiveIcon' => [
                         'filesystem' => 'local',
                         'path' => '/menus',
-                        'fileName' => '{model.id}-active.{file.extension}',
+                        'fileName' => function ($fileName, MenuItem $model) {
+                            return Inflector::slug($model->label) . '-active.' . pathinfo($fileName, PATHINFO_EXTENSION);
+                        },
                         'relation' => 'activeIcon',
                         'deleteOnUnlink' => true,
                         'on beforeSave' => function (FileInterface $file) {
@@ -88,7 +98,9 @@ class MenuItem extends Tree
                     'uploadedVideo' => [
                         'filesystem' => 'local',
                         'path' => '/menus',
-                        'fileName' => '{model.id}.{file.extension}',
+                        'fileName' => function ($fileName, MenuItem $model) {
+                            return Inflector::slug($model->label) . '.' . pathinfo($fileName, PATHINFO_EXTENSION);
+                        },
                         'relation' => 'video',
                         'deleteOnUnlink' => true
                     ]
@@ -117,7 +129,9 @@ class MenuItem extends Tree
     {
         return [
             [['label'], 'required'],
-            [['status'], 'safe']
+            [['label', 'title', 'url'], 'string', 'max' => 255],
+            [['css_classes', 'rel', 'visibility'], 'string', 'max' => 100],
+            [['target_blank', 'status'], 'safe']
         ];
     }
 
@@ -129,8 +143,13 @@ class MenuItem extends Tree
         return [
             'id' => Module::t('menu-item', 'ID'),
             'label' => Module::t('menu-item', 'Label'),
+            'title' => Module::t('menu-item', 'Title'),
             'url' => Module::t('menu-item', 'URL'),
+            'target_blank' => Module::t('menu-item', ' Open in a new window/tab'),
+            'rel' => Module::t('menu-item', ' Link relationship (XFN)'),
+            'css_classes' => Module::t('menu-item', 'CSS classes'),
             'status' => Module::t('menu-item', 'Status'),
+            'visibility' => Module::t('menu-item', 'Visibility'),
             'uploadedIcon' => Module::t('menu-item', 'Icon'),
             'uploadedActiveIcon' => Module::t('menu-item', 'Active icon'),
             'uploadedVideo' => Module::t('menu-item', 'Video')

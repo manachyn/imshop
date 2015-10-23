@@ -48,6 +48,15 @@ class Bootstrap implements BootstrapInterface
                     'POST search' => 'search'
                 ],
                 'controller' => ['menu-items' => 'cms/rest/menu-item']
+            ],
+            [
+                'class' => 'yii\rest\UrlRule',
+                'prefix' => 'api/v1',
+                'extraPatterns' => [
+                    'GET,HEAD {id}/items/roots' => 'roots',
+                    'POST {id}/items/search' => 'search',
+                ],
+                'controller' => ['menus' => 'cms/rest/menu']
             ]
         ], false);
     }
