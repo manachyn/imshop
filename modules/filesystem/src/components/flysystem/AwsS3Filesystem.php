@@ -89,4 +89,12 @@ class AwsS3Filesystem extends Filesystem
 
         return new AwsS3Adapter($client, $this->bucket);
     }
+
+    /**
+     * @return \League\Flysystem\FilesystemInterface
+     */
+    public function getFilesystem()
+    {
+        return $this->filesystem;
+    }
 }

@@ -12,6 +12,9 @@ class ServerFactory extends \League\Glide\ServerFactory
     public function __construct(array $config = [])
     {
         $this->config = $config;
+        if (isset($this->config['filesystem'])) {
+            $this->config['source'] = Yii::$app->get('filesystem')->get($this->config['filesystem'])->getFilesystem();
+        }
         if (isset($this->config['source']) && is_string($this->config['source'])) {
             $this->config['source'] = Yii::getAlias($this->config['source']);
         }
@@ -24,5 +27,13 @@ class ServerFactory extends \League\Glide\ServerFactory
         if (!isset($this->config['driver'])) {
             $this->config['driver'] = extension_loaded('imagick') ? 'imagick' : 'gd';
         }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function create(array $config = [])
+    {
+        return (new self($config))->getServer();
     }
 } 

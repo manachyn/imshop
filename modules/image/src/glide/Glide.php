@@ -3,12 +3,14 @@
 namespace im\image\glide;
 
 use League\Glide\Server;
+use League\Glide\Signatures\SignatureException;
 use League\Glide\Signatures\SignatureFactory;
 use yii\base\Component;
 use yii\base\InvalidConfigException;
 use yii\base\InvalidParamException;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
+use yii\web\Request;
 
 class Glide extends Component
 {
@@ -27,6 +29,13 @@ class Glide extends Component
      */
     protected $httpSignature;
 
+    /**
+     * Returns server by name.
+     *
+     * @param string $name
+     * @throws InvalidParamException
+     * @return Server
+     */
     public function getServer($name)
     {
         if (!isset($this->servers[$name])) {
@@ -35,6 +44,8 @@ class Glide extends Component
         if (!$this->servers[$name] instanceof Server) {
             $this->servers[$name] = ServerFactory::create($this->servers[$name]);
         }
+
+        return $this->servers[$name];
     }
 
     public function createUrl(array $params, $scheme = false)
@@ -51,6 +62,8 @@ class Glide extends Component
     }
 
     /**
+     * Returns signature.
+     *
      * @return \League\Glide\Signatures\Signature
      * @throws InvalidConfigException
      */
@@ -64,5 +77,25 @@ class Glide extends Component
         }
 
         return $this->httpSignature;
+    }
+
+    /**
+     * @param \yii\web\Request $request
+     * @return bool
+     */
+    public function validateParams(Request $request)
+    {
+        if ($this->signKey !== null) {
+            $httpSignature = $this->getHttpSignature();
+            $path = urldecode(parse_url($request->getUrl(), PHP_URL_PATH));
+            parse_str(parse_url($request->getUrl(), PHP_URL_QUERY), $urlParams);
+            try {
+                $httpSignature->validateRequest($path, $urlParams);
+            } catch (SignatureException $e) {
+                return false;
+            }
+        }
+
+        return true;
     }
 } 

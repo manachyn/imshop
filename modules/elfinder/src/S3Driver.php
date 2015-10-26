@@ -7,6 +7,7 @@ use elFinderVolumeDriver;
 use InvalidArgumentException;
 use League\Flysystem\AwsS3v3\AwsS3Adapter;
 use League\Flysystem\Config;
+use League\Glide\Urls\UrlBuilderFactory;
 
 class S3Driver extends elFinderVolumeDriver
 {
@@ -24,6 +25,11 @@ class S3Driver extends elFinderVolumeDriver
      * @var AwsS3Adapter
      */
     protected $s3Adapter;
+
+    /**
+     * @var \League\Glide\Urls\UrlBuilder $urlBuilder
+     */
+    protected $urlBuilder = null;
 
     /**
      * @var array
@@ -67,7 +73,8 @@ class S3Driver extends elFinderVolumeDriver
     /**
      * @inheritdoc
      */
-    protected function init() {
+    protected function init()
+    {
         if (!$this->options['key']
             ||  !$this->options['secret']
             ||  !$this->options['region']
@@ -85,10 +92,12 @@ class S3Driver extends elFinderVolumeDriver
         ]);
 
         $this->s3Adapter = new AwsS3Adapter($this->s3Client, $this->options['bucket'], $this->options['prefix'] ?: '');
-
         $this->root = $this->options['path'];
-
         $this->rootName = 's3';
+
+        if ($this->options['glideURL']) {
+            $this->urlBuilder = UrlBuilderFactory::create($this->options['glideURL'], $this->options['glideKey']);
+        }
 
         return true;
     }
@@ -96,7 +105,8 @@ class S3Driver extends elFinderVolumeDriver
     /**
      * @inheritdoc
      */
-    protected function configure() {
+    protected function configure()
+    {
         parent::configure();
         $this->mimeDetect = 'internal';
     }
@@ -184,16 +194,13 @@ class S3Driver extends elFinderVolumeDriver
             'mime' => 'directory',
         );
 
-
         if ($this->root == $path) {
             $stat['name'] = $this->root;
             return $stat;
         }
 
         $path = $this->_normpath($path);
-
         $meta = $this->s3Adapter->getMetadata($path);
-
         $meta = $meta === false ? $this->s3Adapter->getMetadata($path . '/') : $meta;
 
         if ($meta === false) {
@@ -205,16 +212,16 @@ class S3Driver extends elFinderVolumeDriver
 
         if ($meta['type'] == 'file') {
             $stat['mime'] = isset($meta['mimetype']) ? $meta['mimetype'] : $this->s3Adapter->getMimetype($path);
-//            $imgMimes = ['image/jpeg', 'image/png', 'image/gif'];
-//            if ($this->urlBuilder && in_array($stat['mime'], $imgMimes)) {
-//                $stat['url'] = $this->urlBuilder->getUrl($path, ['ts' => $stat['ts']]);
-//                $stat['tmb'] = $this->urlBuilder->getUrl($path, [
-//                    'ts' => $stat['ts'],
-//                    'w' => $this->tmbSize,
-//                    'h' => $this->tmbSize,
-//                    'fit' => $this->options['tmbCrop'] ? 'crop' : 'contain',
-//                ]);
-//            }
+            $imgMimes = ['image/jpeg', 'image/png', 'image/gif'];
+            if ($this->urlBuilder && in_array($stat['mime'], $imgMimes)) {
+                $stat['url'] = $this->urlBuilder->getUrl($path, ['ts' => $stat['ts']]);
+                $stat['tmb'] = $this->urlBuilder->getUrl($path, [
+                    'ts' => $stat['ts'],
+                    'w' => $this->tmbSize,
+                    'h' => $this->tmbSize,
+                    'fit' => $this->options['tmbCrop'] ? 'crop' : 'contain',
+                ]);
+            }
         }
 
 //        if (!isset($stat['url']) && $this->s3Adapter->getUrl()) {

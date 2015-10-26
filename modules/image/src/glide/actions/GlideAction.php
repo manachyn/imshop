@@ -25,21 +25,21 @@ class GlideAction extends Action
      */
     public function run($server, $path, Request $request)
     {
+
         if (!$this->getServer($server)->sourceFileExists($path)) {
             throw new NotFoundHttpException;
         }
         if ($this->getComponent()->signKey) {
-            $request = Request::create(Yii::$app->request->getUrl());
             if (!$this->validateRequest($request)) {
                 throw new BadRequestHttpException;
             };
         }
 
-//        try {
-//            $this->getServer()->outputImage($path, Yii::$app->request->get());
-//        } catch (\Exception $e) {
-//            throw new NotSupportedException;
-//        }
+        try {
+            $this->getServer($server)->outputImage($path, Yii::$app->request->get());
+        } catch (\Exception $e) {
+            throw new NotSupportedException;
+        }
     }
 
     /**
@@ -62,11 +62,13 @@ class GlideAction extends Action
     }
 
     /**
-     * @param $request
+     * Validates request.
+     *
+     * @param \yii\web\Request $request
      * @return bool
      */
-    public function validateRequest($request)
+    public function validateRequest(Request $request)
     {
-        return $this->getComponent()->validateRequest($request);
+        return $this->getComponent()->validateParams($request);
     }
 }

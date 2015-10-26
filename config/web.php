@@ -81,7 +81,7 @@ $config = [
             'showScriptName' => false,
             'cache' => false,
             'rules' => [
-                ['pattern' => 'storage/<server:(.*)>/<path:(.*)>', 'route' => 'glide/index', 'encodeParams' => false],
+                ['pattern' => 'storage/<server:\w+>/<path:(.*)>', 'route' => 'glide/index', 'encodeParams' => false],
                 [
                     'class' => 'im\base\routing\GroupUrlRule',
                     'pattern' => '<path:[a-zA-Z0-9_\-]+>/<query:.+>',
@@ -145,7 +145,9 @@ $config = [
                 [
                     'driver' => 'S3',
                     'options' => array_merge(require(__DIR__ . '/s3.php'), [
-                        'alias' => 'S3'
+                        'alias' => 'S3',
+                        'glideURL' => '/storage/s3',
+                        'glideKey' => 'fsdsadasd'
                     ])
                 ]
             ],
@@ -197,6 +199,10 @@ $config = [
                 'local' => [
                     'source' => '@app/web/files',
                     'cache' => '@app/runtime/cache/glide'
+                ],
+                's3' => [
+                    'filesystem' => 's3',
+                    'cache' => '@app/runtime/cache/glide'
                 ]
             ]
         ],
@@ -212,7 +218,7 @@ $config = [
         ]
     ],
     'controllerMap' => [
-        'glide' => '\trntv\glide\controllers\GlideController',
+        'glide' => 'im\image\glide\controllers\GlideController',
         'elfinder' => [
             'class' => 'im\elfinder\ElFinderController',
             'enableCsrfValidation' => false,
