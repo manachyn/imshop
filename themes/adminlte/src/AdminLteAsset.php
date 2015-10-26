@@ -37,6 +37,7 @@ class AdminLteAsset extends AssetBundle
         'im\adminlte\FontAwesomeAsset',
         'im\adminlte\IoniconsAsset',
         'yii\web\YiiAsset',
+        'yii\bootstrap\BootstrapAsset',
         'yii\bootstrap\BootstrapPluginAsset'
     ];
 }

@@ -200,7 +200,16 @@ $config = [
                 ]
             ]
         ],
-        'cms' => 'im\cms\components\Cms'
+        'cms' => 'im\cms\components\Cms',
+        'assetManager' => [
+            'bundles' => [
+                'yii\bootstrap\BootstrapPluginAsset' => [
+                    'depends' => [
+                        'yii\web\JqueryAsset'
+                    ]
+                ],
+            ],
+        ]
     ],
     'controllerMap' => [
         'glide' => '\trntv\glide\controllers\GlideController',

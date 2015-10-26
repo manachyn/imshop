@@ -24,6 +24,7 @@ use yii\helpers\Inflector;
  * @property string $rel
  * @property string $css_classes
  * @property string $visibility
+ * @property string $items_display
  * @property bool $status
  *
  * @method MenuItemQuery parents(integer $depth = null)
@@ -40,6 +41,9 @@ class MenuItem extends Tree
     const STATUS_INACTIVE = 0;
 
     const DEFAULT_STATUS = self::STATUS_ACTIVE;
+
+    const DISPLAY_DROPDOWN = 1;
+    const DISPLAY_FULL_WIDTH_DROPDOWN = 2;
 
     /**
      * @inheritdoc
@@ -156,6 +160,29 @@ class MenuItem extends Tree
         ];
     }
 
+    public function isVisible()
+    {
+        return $this->status === self::STATUS_ACTIVE;
+    }
+
+    public function getHtmlAttributes()
+    {
+        return $this->css_classes ? ['class' => explode(' ', $this->css_classes)] : [];
+    }
+
+    public function getLinkHtmlAttributes()
+    {
+        $attributes = [];
+        if ($this->target_blank) {
+            $attributes['target'] = '_blank';
+        }
+        if ($this->rel) {
+            $attributes['rel'] = $this->rel;
+        }
+
+        return $attributes;
+    }
+
     /**
      * @inheritdoc
      */
@@ -172,6 +199,17 @@ class MenuItem extends Tree
         return [
             self::STATUS_ACTIVE => Module::t('menu-item', 'Active'),
             self::STATUS_INACTIVE => Module::t('menu-item', 'Inactive')
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public static function getDisplayList()
+    {
+        return [
+            self::DISPLAY_DROPDOWN => Module::t('menu-item', 'Dropdown'),
+            self::DISPLAY_FULL_WIDTH_DROPDOWN => Module::t('menu-item', 'Full width dropdown')
         ];
     }
 }
