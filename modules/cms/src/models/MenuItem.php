@@ -44,6 +44,7 @@ class MenuItem extends Tree
 
     const DISPLAY_DROPDOWN = 1;
     const DISPLAY_FULL_WIDTH_DROPDOWN = 2;
+    const DISPLAY_GRID = 3;
 
     /**
      * @inheritdoc
