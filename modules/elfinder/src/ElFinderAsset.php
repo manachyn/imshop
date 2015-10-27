@@ -32,6 +32,7 @@ class ElFinderAsset extends AssetBundle
      * @inheritdoc
      */
     public $depends = [
+        'yii\bootstrap\BootstrapPluginAsset',
         'yii\jui\JuiAsset',
         'im\elfinder\JqueryMigrateAsset'
     ];

@@ -151,7 +151,10 @@ $config = [
                     ])
                 ]
             ],
-            'filesystems' => ['local'/*, 'dropbox', 's3'*/]
+            'filesystems' => ['local' => [
+                'glideURL' => '/storage/local',
+                'glideKey' => 'fsdsadasd'
+            ]/*, 'dropbox', 's3'*/]
         ],
         'seo' => [
             'class' => 'im\seo\components\Seo',

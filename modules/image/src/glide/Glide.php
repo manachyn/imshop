@@ -89,6 +89,9 @@ class Glide extends Component
             $httpSignature = $this->getHttpSignature();
             $path = urldecode(parse_url($request->getUrl(), PHP_URL_PATH));
             parse_str(parse_url($request->getUrl(), PHP_URL_QUERY), $urlParams);
+            if (isset($urlParams['_'])) {
+                unset($urlParams['_']);
+            }
             try {
                 $httpSignature->validateRequest($path, $urlParams);
             } catch (SignatureException $e) {

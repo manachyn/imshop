@@ -5,13 +5,15 @@ namespace im\elfinder;
 use elFinder;
 use elFinderVolumeDriver;
 use im\filesystem\components\flysystem\plugins\UrlPlugin;
+use Intervention\Image\Constraint;
+use Intervention\Image\ImageManager;
 use League\Flysystem\Adapter\AbstractFtpAdapter;
 use League\Flysystem\Dropbox\DropboxAdapter;
 use League\Flysystem\FileNotFoundException;
 use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemInterface;
 use League\Flysystem\Util;
-use League\Glide\Http\UrlBuilderFactory;
+use League\Glide\Urls\UrlBuilderFactory;
 
 class FlysystemDriver extends elFinderVolumeDriver
 {
@@ -26,7 +28,7 @@ class FlysystemDriver extends elFinderVolumeDriver
     protected $fs;
 
     /**
-     * @var \League\Glide\Http\UrlBuilder $urlBuilder
+     * @var \League\Glide\Urls\UrlBuilder $urlBuilder
      */
     protected $urlBuilder = null;
 
@@ -104,7 +106,7 @@ class FlysystemDriver extends elFinderVolumeDriver
         if ($this->options['imageManager']) {
             $this->imageManager = $this->options['imageManager'];
         } else {
-//            $this->imageManager = new ImageManager();
+            $this->imageManager = new ImageManager();
         }
 
         return true;
@@ -184,9 +186,9 @@ class FlysystemDriver extends elFinderVolumeDriver
             }
         }
 
-        if (!isset($stat['url']) && $this->fs->getUrl()) {
-            $stat['url'] = 1;
-        }
+//        if (!isset($stat['url']) && $this->fs->getUrl()) {
+//            $stat['url'] = 1;
+//        }
 
         return $stat;
     }
@@ -448,15 +450,15 @@ class FlysystemDriver extends elFinderVolumeDriver
             return $this->setError(elFinder::ERROR_PERM_DENIED);
         }
         $path = $this->decode($hash);
-        if (!$this->canResize($path, $file)) {
-            return $this->setError(elFinder::ERROR_UNSUPPORT_TYPE);
-        }
+//        if (!$this->canResize($path, $file)) {
+//            return $this->setError(elFinder::ERROR_UNSUPPORT_TYPE);
+//        }
         if (!$image = $this->imageManager->make($this->_getContents($path))) {
             return false;
         }
         switch($mode) {
             case 'propresize':
-                $image->resize($width, $height, function($constraint){
+                $image->resize($width, $height, function(Constraint $constraint) {
                     $constraint->aspectRatio();
                 });
                 break;
