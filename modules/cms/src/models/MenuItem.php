@@ -24,7 +24,8 @@ use yii\helpers\Inflector;
  * @property string $rel
  * @property string $css_classes
  * @property string $visibility
- * @property string $items_display
+ * @property integer $items_display
+ * @property string $items_css_classes
  * @property bool $status
  *
  * @method MenuItemQuery parents(integer $depth = null)
@@ -135,8 +136,8 @@ class MenuItem extends Tree
         return [
             [['label'], 'required'],
             [['label', 'title', 'url'], 'string', 'max' => 255],
-            [['css_classes', 'rel', 'visibility'], 'string', 'max' => 100],
-            [['target_blank', 'status'], 'safe']
+            [['css_classes', 'rel', 'visibility', 'items_css_classes'], 'string', 'max' => 100],
+            [['target_blank', 'status', 'items_display'], 'safe']
         ];
     }
 
@@ -155,6 +156,9 @@ class MenuItem extends Tree
             'css_classes' => Module::t('menu-item', 'CSS classes'),
             'status' => Module::t('menu-item', 'Status'),
             'visibility' => Module::t('menu-item', 'Visibility'),
+            'visibility' => Module::t('menu-item', 'Visibility'),
+            'items_display' => Module::t('menu-item', 'Items display'),
+            'items_css_classes' => Module::t('menu-item', 'Items CSS classes'),
             'uploadedIcon' => Module::t('menu-item', 'Icon'),
             'uploadedActiveIcon' => Module::t('menu-item', 'Active icon'),
             'uploadedVideo' => Module::t('menu-item', 'Video')
@@ -210,7 +214,8 @@ class MenuItem extends Tree
     {
         return [
             self::DISPLAY_DROPDOWN => Module::t('menu-item', 'Dropdown'),
-            self::DISPLAY_FULL_WIDTH_DROPDOWN => Module::t('menu-item', 'Full width dropdown')
+            self::DISPLAY_FULL_WIDTH_DROPDOWN => Module::t('menu-item', 'Full width dropdown'),
+            self::DISPLAY_GRID => Module::t('menu-item', 'Grid (requires css class for items)')
         ];
     }
 }
