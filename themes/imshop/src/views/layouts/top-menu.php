@@ -12,5 +12,8 @@ $assetsPublishUrl = Yii::$app->assetManager->getPublishedUrl('@im/imshop/assets'
 ?>
 
 <?php NavBar::begin(['brandLabel' => '<i class="fa fa-home"></i>', 'options' => ['class' => ['navbar-default', 'navbar-mega']]]);
-    echo Menu::widget(['options' => ['class' => 'navbar-nav']]);
+    echo Menu::widget([
+        'itemView' => '@im/imshop/views/layouts/top_menu_item',
+        'options' => ['class' => 'navbar-nav']
+    ]);
 NavBar::end(); ?>

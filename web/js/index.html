@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<script src="node_modules/systemjs/dist/system.js"></script>
+<script>
+    System.config({
+        baseURL: 'frontend',
+        transpiler: 'babel',
+        map: {
+            babel: '/js/node_modules/babel-core/browser.js'
+        }
+    });
+    //System.import('main.js'); // import is a reserved word in ES3 (IE8)
+    System['import']('main.js');
+</script>
+</body>
+</html>

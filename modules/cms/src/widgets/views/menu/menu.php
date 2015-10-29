@@ -11,7 +11,7 @@ use yii\helpers\Html;
 
 $parent = isset($parent) ? $parent : null;
 $tag = 'li';
-$itemOptions = [];
+$itemsOptions = [];
 if ($parent) {
     switch ($parent->items_display) {
         case MenuItem::DISPLAY_DROPDOWN:
@@ -22,7 +22,7 @@ if ($parent) {
             break;
         case MenuItem::DISPLAY_GRID:
             $tag = 'div';
-            $itemOptions['class'] = $parent->items_css_classes;
+            $itemsOptions['class'] = $parent->items_css_classes;
             break;
     }
 }
@@ -32,7 +32,10 @@ if ($parent) {
 <?= $this->render('menu_items_start', ['parent' => $parent, 'widget' => $widget, 'level' => $level]) ?>
 <?php foreach ($items as $item) : ?>
     <?php if ($item->isVisible()) :
-        $itemOptions = array_merge_recursive($itemOptions, $item->getHtmlAttributes());
+        $itemOptions = array_merge_recursive($itemsOptions, $item->getHtmlAttributes());
+        if ($isActive = $widget->isItemActive($item)) {
+            Html::addCssClass($itemOptions, 'active');
+        }
         $linkOptions = [];
         $children = $item->children;
         switch ($item->items_display) {
@@ -69,7 +72,7 @@ if ($parent) {
         }
         ?>
         <?= Html::beginTag($tag, $itemOptions) ?>
-        <?= $this->render($widget->itemView, ['model' => $item, 'widget' => $widget, 'level' => $level, 'linkOptions' => $linkOptions]) ?>
+        <?= $this->render($widget->itemView, ['model' => $item, 'widget' => $widget, 'level' => $level, 'linkOptions' => $linkOptions, 'isActive' => $isActive], $widget) ?>
         <?php if (!$widget->depth || $level < $widget->depth) : ?>
             <?= $this->render('menu', ['widget' => $widget, 'items' => $item->children, 'parent' => $item, 'level' => $level + 1]) ?>
         <?php endif ?>

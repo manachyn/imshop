@@ -16,6 +16,7 @@ class Theme extends \yii\base\Theme
      */
     public $pathMap = [
         '@app/views' => '@im/imshop/views',
-        '@app/modules' => '@im/imshop/modules'
+        '@app/modules' => '@im/imshop/modules',
+        '@app/widgets' => '@im/imshop/widgets'
     ];
 }

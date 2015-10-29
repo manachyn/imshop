@@ -12,8 +12,12 @@ use yii\helpers\Html;
 $isActive = isset($isActive) ? $isActive : false;
 $linkOptions = isset($linkOptions) ? array_merge_recursive($linkOptions, $model->getLinkHtmlAttributes()) : $model->getLinkHtmlAttributes();
 $icon = ($isActive && $activeIcon = $model->activeIcon) ? $activeIcon : (($icon = $model->icon) ? $icon : false);
+if ($icon) {
+    if ($level === 1) {
+        $model->label = '<img src="' . $icon . '" alt="' . ($icon->title ?: $model->title) . '" height="18"> ' . $model->label;
+    } else {
+        $model->label = '<img src="' . $icon . '" alt="' . ($icon->title ?: $model->title) . '" class="img-responsive"> ' . $model->label;
+    }
+}
 ?>
-<?php if ($icon) :
-    $model->label = '<img src="' . $icon . '" alt="' . ($icon->title ?: $model->title) . '"> ' . $model->label;
-endif ?>
 <?= Html::a($model->label, $model->url, $linkOptions) ?>

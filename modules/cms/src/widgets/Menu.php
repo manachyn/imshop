@@ -4,6 +4,7 @@ namespace im\cms\widgets;
 
 use im\cms\models\MenuItem;
 use im\tree\components\TreeHelper;
+use Yii;
 use yii\base\Widget;
 use yii\helpers\Html;
 
@@ -17,7 +18,7 @@ class Menu extends Widget
     /**
      * @var string
      */
-    public $itemView = 'menu_item';
+    public $itemView = 'menu/menu_item';
 
     /**
      * @inheritdoc
@@ -51,5 +52,10 @@ class Menu extends Widget
             'items' => $items,
             'level' => 1
         ]);
+    }
+
+    public function isItemActive(MenuItem $item)
+    {
+        return $item->url && trim(Yii::$app->request->getUrl(), '/') === trim($item->url, '/');
     }
 }
