@@ -13,7 +13,8 @@
     ],
     "require": {
         "yiisoft/yii2": "*",
-        "studio-42/elfinder": "2.1.*"
+        "studio-42/elfinder": "2.1.*",
+        "mihaildev/yii2-elfinder": "*"
     },
     "autoload": {
         "classmap": ["elFinderVolumeFlysystem.php"],

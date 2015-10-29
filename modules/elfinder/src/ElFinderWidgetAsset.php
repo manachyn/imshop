@@ -3,13 +3,15 @@
 namespace im\elfinder;
 
 use yii\web\AssetBundle;
+use yii\web\JqueryAsset;
 
-class ElFinderAsset extends AssetBundle
+class ElFinderWidgetAsset extends AssetBundle
 {
     /**
      * @inheritdoc
      */
-    public $sourcePath = '@im/elfinder/assets';
+    //public $sourcePath = '@im/elfinder/assets';
+    public $sourcePath = '@app/modules/elfinder/src/assets';
 
     /**
      * @inheritdoc
@@ -30,7 +32,9 @@ class ElFinderAsset extends AssetBundle
      * @inheritdoc
      */
     public $depends = [
-        'yii\jui\JuiAsset'
+        'yii\bootstrap\BootstrapPluginAsset',
+        'yii\jui\JuiAsset',
+        'im\elfinder\JqueryMigrateAsset'
     ];
 
     /**

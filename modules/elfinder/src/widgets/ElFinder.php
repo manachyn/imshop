@@ -2,7 +2,7 @@
 
 namespace im\elfinder\widgets;
 
-use im\elfinder\ElFinderAsset;
+use im\elfinder\ElFinderWidgetAsset;
 use yii\base\Widget;
 use Yii;
 use yii\helpers\ArrayHelper;
@@ -132,7 +132,7 @@ class ElFinder extends Widget
     {
         $id = $this->options['id'];
         $view = $this->getView();
-        ElFinderAsset::register($view);
+        ElFinderWidgetAsset::register($view);
         $options = Json::encode($this->clientOptions);
         $view->registerJs("$('#$id').elfinder($options);");
     }
