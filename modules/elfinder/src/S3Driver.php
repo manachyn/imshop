@@ -4,8 +4,8 @@ namespace im\elfinder;
 
 use Aws\S3\S3Client;
 use elFinderVolumeDriver;
+use im\filesystem\components\flysystem\adapters\AwsS3Adapter;
 use InvalidArgumentException;
-use League\Flysystem\AwsS3v3\AwsS3Adapter;
 use League\Flysystem\Config;
 use League\Glide\Urls\UrlBuilderFactory;
 
@@ -209,12 +209,16 @@ class S3Driver extends elFinderVolumeDriver
 
         $stat['ts'] = isset($meta['timestamp'])? $meta['timestamp'] : $this->s3Adapter->getTimestamp($path);
         $stat['size'] = isset($meta['size'])? $meta['size'] : $this->s3Adapter->getSize($path);
-
+        if (!isset($stat['url']) && method_exists($this->s3Adapter, 'getUrl') && $url = $this->s3Adapter->getUrl($path)) {
+            $stat['url'] = $url;
+        }
         if ($meta['type'] == 'file') {
             $stat['mime'] = isset($meta['mimetype']) ? $meta['mimetype'] : $this->s3Adapter->getMimetype($path);
             $imgMimes = ['image/jpeg', 'image/png', 'image/gif'];
             if ($this->urlBuilder && in_array($stat['mime'], $imgMimes)) {
-                $stat['url'] = $this->urlBuilder->getUrl($path, ['ts' => $stat['ts']]);
+                if (!isset($stat['url'])) {
+                    $stat['url'] = $this->urlBuilder->getUrl($path, ['ts' => $stat['ts']]);
+                }
                 $stat['tmb'] = $this->urlBuilder->getUrl($path, [
                     'ts' => $stat['ts'],
                     'w' => $this->tmbSize,
@@ -223,10 +227,6 @@ class S3Driver extends elFinderVolumeDriver
                 ]);
             }
         }
-
-//        if (!isset($stat['url']) && $this->s3Adapter->getUrl()) {
-//            $stat['url'] = 1;
-//        }
 
         return $stat;
     }

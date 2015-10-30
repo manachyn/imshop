@@ -41,7 +41,8 @@ use yii\widgets\Pjax;
             $form->field($model, 'content')->widget(CKEditor::className(), [
                 'options' => ['rows' => 6],
                 'clientOptions' => [
-                    'filebrowserBrowseUrl' => '/elfinder'
+                    'filebrowserBrowseUrl' => Url::to(['/elfinder/manager']),
+                    'filebrowserImageBrowseUrl' => Url::to(['/elfinder/manager', 'filter'=>'image'])
                 ]
             ]),
 //            $form->field($model, 'content')->widget(\mihaildev\ckeditor\CKEditor::className(),[
