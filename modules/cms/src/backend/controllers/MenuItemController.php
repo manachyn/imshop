@@ -5,6 +5,7 @@ namespace im\cms\backend\controllers;
 use im\cms\models\MenuItem;
 use im\cms\Module;
 use im\tree\controllers\CrudTreeController;
+use Yii;
 
 /**
  * MenuItemController implements the CRUD actions for MenuItem model.
@@ -54,6 +55,12 @@ class MenuItemController extends CrudTreeController
      */
     protected function createModel()
     {
-        return \Yii::createObject($this->getModelClass());
+        /** @var MenuItem $model */
+        $model = Yii::createObject($this->getModelClass());
+        if ($menu = Yii::$app->request->get('menu')) {
+            $model->menu_id = $menu;
+        }
+
+        return $model;
     }
 }

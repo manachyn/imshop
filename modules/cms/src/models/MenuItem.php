@@ -17,6 +17,7 @@ use yii\helpers\Inflector;
  * Menu item model class.
  *
  * @property integer $id
+ * @property integer $menu_id
  * @property string $label
  * @property string $title
  * @property string $url
@@ -134,7 +135,7 @@ class MenuItem extends Tree
     public function rules()
     {
         return [
-            [['label'], 'required'],
+            [['menu_id', 'label'], 'required'],
             [['label', 'title', 'url'], 'string', 'max' => 255],
             [['css_classes', 'rel', 'visibility', 'items_css_classes'], 'string', 'max' => 100],
             [['target_blank', 'status', 'items_display'], 'safe']
@@ -155,7 +156,6 @@ class MenuItem extends Tree
             'rel' => Module::t('menu-item', ' Link relationship (XFN)'),
             'css_classes' => Module::t('menu-item', 'CSS classes'),
             'status' => Module::t('menu-item', 'Status'),
-            'visibility' => Module::t('menu-item', 'Visibility'),
             'visibility' => Module::t('menu-item', 'Visibility'),
             'items_display' => Module::t('menu-item', 'Items display'),
             'items_css_classes' => Module::t('menu-item', 'Items CSS classes'),

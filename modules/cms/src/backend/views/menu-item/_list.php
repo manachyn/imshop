@@ -46,7 +46,7 @@ $confirmationModalId = 'confirmation-modal';
                     'apiOptions' => [
                         'rootsUrl' => $menu ? Url::to(["/api/v1/menus/{$menu->id}/items/roots"]) : Url::to(['/api/v1/menu-items/roots']),
                         'childrenUrl' => Url::to(['/api/v1/menu-items/{id}/children']),
-                        'createUrl' => Url::to(['menu-item/create-node']),
+                        'createUrl' => Url::to(['menu-item/create-node', 'menu' => $menu->id]),
                         'editUrl' => Url::to(['menu-item/update', 'id' => '{id}']),
                         'updateUrl' => Url::to(['/api/v1/menu-items/{id}']),
                         'deleteUrl' => Url::to(['/api/v1/menu-items/{id}']),

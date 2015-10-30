@@ -212,6 +212,14 @@ $config = [
         'cms' => 'im\cms\components\Cms',
         'assetManager' => [
             'bundles' => [
+                'yii\web\JqueryAsset' =>  [
+                    'depends' => [
+                        'im\imshop\IEJqueryAsset',
+                    ],
+                    'jsOptions' => [
+                        'condition' => '(!IE)|(gte IE 9)'
+                    ]
+                ],
                 'yii\bootstrap\BootstrapPluginAsset' => [
                     'depends' => [
                         'yii\web\JqueryAsset'
