@@ -351,6 +351,17 @@ class Product extends ActiveRecord implements ProductInterface
         return Url::to(['/catalog/product/view', 'path' => $this->slug], $scheme);
     }
 
+    /**
+     * @inheritdoc
+     */
+    public static function find()
+    {
+        return new ProductQuery(get_called_class());
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function afterFind()
     {
         if (!$this->getSku()) {
@@ -365,5 +376,16 @@ class Product extends ActiveRecord implements ProductInterface
     public function load($data, $formName = null)
     {
         return parent::load($data, $formName) && $this->loadBehaviors($data) && $this->loadEAttributes($data);
+    }
+
+    /**
+     * Finds product by path.
+     *
+     * @param string $path
+     * @return ProductQuery
+     */
+    public static function findByPath($path)
+    {
+        return static::find()->andWhere(['slug' => $path]);
     }
 }

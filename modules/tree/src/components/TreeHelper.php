@@ -19,7 +19,7 @@ class TreeHelper
             return $node->{$node->leftAttribute} > $parent->{$parent->leftAttribute}
             && $node->{$node->rightAttribute} < $parent->{$parent->rightAttribute} && ($depth === null
                 || $node->{$node->depthAttribute} <= $parent->{$parent->depthAttribute} + $depth)
-            && ($parent->{$parent->treeAttribute} === false || $node->{$node->treeAttribute} === $parent->{$parent->treeAttribute});
+            && ($parent->treeAttribute === false || $node->{$node->treeAttribute} === $parent->{$parent->treeAttribute});
         });
         usort($children, function ($node1, $node2) {
             return $node1->{$node1->leftAttribute} > $node2->{$node2->leftAttribute};

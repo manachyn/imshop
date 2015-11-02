@@ -4,6 +4,7 @@ namespace im\catalog\models;
 
 use creocoder\nestedsets\NestedSetsBehavior;
 use im\search\components\query\facet\TermsFacetInterface;
+use im\search\components\query\facet\TreeFacetHelper;
 use im\search\components\query\facet\TreeFacetInterface;
 use im\search\models\Facet;
 use Yii;
@@ -86,7 +87,7 @@ class CategoriesFacet extends Facet implements TermsFacetInterface, TreeFacetInt
      */
     public function getValuesTree()
     {
-        return $this->buildTree($this->getValues());
+        return TreeFacetHelper::buildValuesTree($this->getValues());
     }
 
     /**

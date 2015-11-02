@@ -15,6 +15,7 @@ use yii\helpers\ArrayHelper;
  * @property integer $id
  * @property string $name
  * @property string $layout_id
+ * @property bool $default
  * @property Layout $layout
  * @property WidgetArea[] $widgetAreas
  */
@@ -75,8 +76,7 @@ class Template extends ActiveRecord
     public function getLayoutsList()
     {
         $layouts = ArrayHelper::map(Yii::$app->get('layoutManager')->getLayouts(), 'id', 'name');
-        $defaultLayout = Yii::$app->get('layoutManager')->getDefaultLayout();
-        unset($layouts[$defaultLayout->id]);
+
         return $layouts;
     }
 

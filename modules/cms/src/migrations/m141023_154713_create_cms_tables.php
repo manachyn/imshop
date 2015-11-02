@@ -122,11 +122,13 @@ class m141023_154713_create_cms_tables extends Migration
             [
                 'id' => $this->primaryKey(),
                 'name' => Schema::TYPE_STRING . '(100) NOT NULL',
-                'layout_id' => Schema::TYPE_STRING . '(50) NOT NULL'
+                'layout_id' => Schema::TYPE_STRING . '(50) NOT NULL',
+                'default' => $this->boolean()->defaultValue(0)
             ],
             $tableOptions
         );
         $this->createIndex('layout_id', '{{%templates}}', 'layout_id');
+        $this->createIndex('default', '{{%templates}}', 'default');
 
         // Widget Area
         $this->createTable(

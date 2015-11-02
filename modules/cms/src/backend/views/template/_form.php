@@ -22,9 +22,9 @@ if ($model->widgetAreas) {
 
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'layout_id')->dropDownList($model->getLayoutsList(),
-        ['prompt' => $model->getDefaultLayout()->getName()]
-    ) ?>
+    <?= $form->field($model, 'layout_id')->dropDownList($model->getLayoutsList()) ?>
+
+    <?= $form->field($model, 'default')->checkbox() ?>
 
     <?php
         Pjax::begin(['id' => 'layout-editor', 'enablePushState' => false]);

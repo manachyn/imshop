@@ -66,7 +66,8 @@ class Layout extends Object
      */
     public function getName()
     {
-        return $this->default ? $this->_name . ' (' . Module::t('module', 'default') . ')' : $this->_name;
+        //return $this->default ? $this->_name . ' (' . Module::t('module', 'default') . ')' : $this->_name;
+        return $this->_name;
     }
 
     /**

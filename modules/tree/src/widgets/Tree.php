@@ -12,6 +12,11 @@ use yii\base\Widget;
 class Tree extends Widget
 {
     /**
+     * @var array the HTML attributes for the widget container tag.
+     */
+    public $options = [];
+
+    /**
      * @var Tree[]
      */
     public $items;
@@ -25,6 +30,16 @@ class Tree extends Widget
      * @var array
      */
     public $itemViewParams = [];
+
+    /**
+     * @var array the HTML attributes for the tree item tag.
+     */
+    public $itemOptions = [];
+
+    /**
+     * @var \Closure
+     */
+    public $itemVisibility;
 
     /**
      * @var int

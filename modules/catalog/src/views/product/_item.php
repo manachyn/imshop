@@ -5,11 +5,12 @@
 /* @var $image \im\catalog\models\ProductCategoryFile */
 
 ?>
-
-<a href="<?= $model->getUrl() ?>" title="<?= $model->title ?>">
-    <?php if ($image = $model->imagesRelation()->where(['type' => 1])->one()) : ?>
-        <img src="<?= $image ?>" class="img-responsive" alt="<?= $image->title ?: $model->title ?>" style="width: 100%">
-    <?php endif ?>
-    <?= $model->title ?>
-</a>
+<div class="thumbnail">
+    <a href="<?= $model->getUrl() ?>" title="<?= $model->title ?>">
+        <?php if ($image = $model->imagesRelation()->where(['type' => 1])->one()) : ?>
+            <img src="<?= $image ?>" class="img-responsive" alt="<?= $image->title ?: $model->title ?>" style="width: 100%">
+        <?php endif ?>
+        <?= $model->title ?>
+    </a>
+</div>
 

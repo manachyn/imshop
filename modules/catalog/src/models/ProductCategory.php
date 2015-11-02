@@ -77,7 +77,7 @@ class ProductCategory extends Category
      */
     public function getUrl($scheme = false)
     {
-        return Url::to(['/catalog/product-category/view', 'path' => $this->slug], $scheme);
+        return Url::to(['/catalog/product-category/view', 'path' => $this->slug, 'query' => ''], $scheme);
     }
 
     /**
@@ -87,12 +87,4 @@ class ProductCategory extends Category
     {
         return $this->hasMany(Product::className(), ['id' => 'product_id'])->viaTable('{{%products_categories}}', ['category_id' => 'id']);
     }
-
-//    /**
-//     * @return \yii\db\ActiveQuery
-//     */
-//    public function getImage()
-//    {
-//        return $this->hasOne(ProductCategoryFile::className(), ['category_id' => 'id'])->where(['attribute' => 'image']);
-//    }
 }

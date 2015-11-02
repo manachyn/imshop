@@ -65,7 +65,7 @@ class FacetsWidget extends Widget
                     }
                 }
             }
-            return $this->render('facets', [
+            return $this->render('facets/facets', [
                 'facets' => $result->getFacets(),
                 //'selectedFacets' => $result->getSelectedFacets(),
                 'selectedFacets' => $selectedFacets,

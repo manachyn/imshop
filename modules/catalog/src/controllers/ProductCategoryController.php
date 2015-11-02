@@ -59,6 +59,7 @@ class ProductCategoryController extends CategoryController implements SearchResu
         } else {
             $categoryQuery = new Term('categoriesRelation.id', $model->id);
         }
+
         if ($query) {
             $searchQuery = SearchQueryHelper::includeQuery($searchComponent->parseQuery($query), $categoryQuery);
         } else {
@@ -74,33 +75,17 @@ class ProductCategoryController extends CategoryController implements SearchResu
         $facets = $this->_searchResult->getFacets();
         foreach ($facets as $facet) {
             if ($facet instanceof ProductCategoriesFacet) {
-                foreach ($facet->getValues() as $value) {
+                $values = $facet->getValues();
+                foreach ($values as $key => $value) {
+                    if ($model->equals($value->getEntity())) {
+                        unset($values[$key]);
+                        continue;
+                    }
                     $value->setRouteParams(['path' => $value->getEntity()->slug]);
                 }
+                $facet->setValues($values);
             }
         }
-
-
-//        $facets = $this->_searchResult->getFacets();
-//        $selectedFacets = $this->_searchResult->getSelectedFacets();
-//        foreach ($facets as $facet) {
-//            $values = $facet->getValues();
-//            if ($facet->getName() === 'category') {
-//                $keys = array_map(function (FacetValueInterface $value) {
-//                    return $value->getKey();
-//                }, $values);
-//                $categories = ProductCategory::buildNodeTree($model, $model->children()->active()->where(['id' => $keys])->all());
-//                $a = 1;
-//            }
-//            foreach ($values as $value) {
-//                $value->setSearchQuery(SearchQueryHelper::excludeQuery($value->getSearchQuery(), $categoryQuery));
-//            }
-//        }
-//        foreach ($selectedFacets as $facet) {
-//            foreach ($facet->getValues() as $value) {
-//                $value->setSearchQuery(SearchQueryHelper::excludeQuery($value->getSearchQuery(), $categoryQuery));
-//            }
-//        }
 
         return $this->render('view', [
             'model' => $model,
@@ -117,7 +102,7 @@ class ProductCategoryController extends CategoryController implements SearchResu
     }
 
     /**
-     * Finds the Category model based on its path.
+     * FiCategory ategory model based on its path.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param string $path
      * @throws \yii\web\NotFoundHttpException

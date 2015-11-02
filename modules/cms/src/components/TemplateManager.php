@@ -108,6 +108,17 @@ class TemplateManager extends Component
     }
 
     /**
+     * Returns default template for layout.
+     *
+     * @param string $layout
+     * @return Template
+     */
+    public function getDefaultTemplate($layout)
+    {
+        return Template::find()->where(['layout_id' => $layout, 'default' => 1])->one();
+    }
+
+    /**
      * Link widgets with widget areas.
      *
      * @param WidgetArea[] $areas

@@ -66,6 +66,11 @@ class WidgetArea extends Widget
             /** @var TemplateBehavior $model */
             $this->template = $model->template;
         }
+        if (!$this->template) {
+            /** @var \im\cms\components\TemplateManager $templateManager */
+            $templateManager = Yii::$app->get('templateManager');
+            $this->template = $templateManager->getDefaultTemplate($this->layout);
+        }
         $this->setWidgets();
     }
 
