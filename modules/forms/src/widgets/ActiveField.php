@@ -39,4 +39,16 @@ class ActiveField extends \yii\widgets\ActiveField
             $this->attribute = "[$this->tabularIndex]" . $this->attribute;
         }
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function checkbox($options = [], $enclosedByLabel = true)
+    {
+        if (isset($this->inputOptions['name'])) {
+            $options['name'] = $this->inputOptions['name'];
+        }
+
+        return parent::checkbox($options, $enclosedByLabel);
+    }
 } 

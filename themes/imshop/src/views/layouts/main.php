@@ -24,10 +24,10 @@ use im\imshop\widgets\FlashMessages;
 <?= $this->render('//layouts/top-menu') ?>
 <div class="container">
     <div class="row">
-        <div class="col-md-9 col-md-push-3">
+        <div class="col-md-10 col-md-push-2">
             <?= $this->render('//layouts/content', ['content' => $content]) ?>
         </div>
-        <div class="col-md-3 col-md-pull-9">
+        <div class="col-md-2 col-md-pull-10">
             <?= WidgetArea::widget([
                 'code' => 'sidebar',
                 'layout' => 'main',

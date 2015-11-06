@@ -20,8 +20,6 @@ $this->params['breadcrumbs'] = [['label' => $this->title, 'url' => ['index']], $
         </div>
     </div>
     <div class="box-body">
-        <?= $this->render('_form', [
-            'model' => $model,
-        ]) ?>
+        <?= $model->getEditView() ? $this->render($model->getEditView(), ['model' => $model]) : '' ?>
     </div>
 </div>

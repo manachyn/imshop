@@ -53,6 +53,22 @@ class m150806_091325_create_search_tables extends Migration
 
         $this->addForeignKey('FK_facets_attribute_id', '{{%facets}}', 'attribute_id', '{{%eav_attributes}}', 'id', 'CASCADE', 'CASCADE');
 
+        // Facet values
+        $this->createTable('{{%facet_values}}', [
+            'id' => $this->primaryKey(),
+            'type' => $this->string(100)->notNull(),
+            'facet_id' => $this->integer()->notNull(),
+            'term' => $this->string()->notNull(),
+            'from' => $this->string()->notNull(),
+            'to' => $this->string()->notNull(),
+            'include_lower_bound' => $this->boolean()->defaultValue(1),
+            'include_upper_bound' => $this->boolean()->defaultValue(0),
+            'display' => $this->string()->notNull(),
+            'sort' => $this->integer()->defaultValue(null)
+        ], $tableOptions);
+
+        $this->addForeignKey('FK_facet_values_facet_id', '{{%facet_values}}', 'facet_id', '{{%facets}}', 'id', 'CASCADE', 'CASCADE');
+
         // Facet ranges
         $this->createTable('{{%facet_ranges}}', [
             'id' => $this->primaryKey(),

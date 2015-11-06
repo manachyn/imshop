@@ -88,5 +88,7 @@ class Bootstrap implements BootstrapInterface
         $typesRegister->registerEntityType(new EntityType('terms_facet', 'im\search\models\TermsFacet', 'facets', Module::t('facet', 'Terms facet')));
         $typesRegister->registerEntityType(new EntityType('range_facet', 'im\search\models\RangeFacet', 'facets', Module::t('facet', 'Range facet')));
         $typesRegister->registerEntityType(new EntityType('interval_facet', 'im\search\models\IntervalFacet', 'facets', Module::t('facet', 'Interval facet')));
+        $typesRegister->registerEntityType(new EntityType('facet_term', 'im\search\models\FacetTerm', 'facet_values', Module::t('facet', 'Term')));
+        $typesRegister->registerEntityType(new EntityType('facet_range', 'im\search\models\FacetRange', 'facet_values', Module::t('facet', 'Range')));
     }
 }

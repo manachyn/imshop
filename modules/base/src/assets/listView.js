@@ -17,6 +17,11 @@
         this.$list = this.$element.find(list);
         this.$element.on('click', add, $.proxy(this.onAdd, this));
         this.$element.on('click', remove, $.proxy(this.onRemove, this));
+        var id;
+        if (id = this.$element.attr('id')) {
+            var $toolbar = $('[data-toolbar="' + id + '"]');
+            $toolbar.on('click', add, $.proxy(this.onAdd, this));
+        }
         if (this.options.sortable) {
             this.sortable = this.$element.sortable('instance');
             this.sortable.element.on('sortupdate', $.proxy(this.onSortUpdate, this));
@@ -29,17 +34,22 @@
 
     ListView.prototype.onAdd = function (event) {
         event.preventDefault();
+        var actionParams = $(event.target).data('actionParams');
+        var data = {
+            itemClass: this.options.itemClass,
+            itemView: this.options.itemView,
+            viewParams: this.options.viewParams,
+            itemContainerView: this.options.itemContainerView
+        }
+        if (actionParams) {
+            $.extend(data, actionParams)
+        }
         var settings = {
             type: 'POST',
             url: this.options.addUrl,
             push: false,
             container: temp,
-            data: {
-                itemClass: this.options.itemClass,
-                itemView: this.options.itemView,
-                viewParams: this.options.viewParams,
-                itemContainerView: this.options.itemContainerView
-            }
+            data: data
         };
         settings.data.viewParams.fieldConfig = settings.data.viewParams.fieldConfig || {};
         settings.data.viewParams.fieldConfig.tabularIndex = this.getItemsCount() + 1;

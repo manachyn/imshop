@@ -2,44 +2,30 @@
 
 namespace im\search\models;
 
-use im\search\components\query\facet\FacetInterface;
-use im\search\components\query\facet\FacetValueTrait;
+use im\search\components\query\facet\EditableFacetValueInterface;
 use im\search\components\query\facet\RangeFacetValueInterface;
+use im\search\Module;
 use Yii;
-use yii\db\ActiveRecord;
 
 /**
  * Facet range model class.
  *
- * @property integer $id
- * @property integer $facet_id
  * @property string $lower_bound
  * @property string $upper_bound
  * @property integer $include_lower_bound
  * @property integer $include_upper_bound
- * @property string $display
- * @property integer $sort
- *
- * @property Facet $facetRelation
  */
-class FacetRange extends ActiveRecord implements RangeFacetValueInterface
+class FacetRange extends FacetValue implements RangeFacetValueInterface, EditableFacetValueInterface
 {
-    use FacetValueTrait;
+    const TYPE = 'facet_range';
 
     /**
      * @inheritdoc
      */
     public function init()
     {
+        parent::init();
         $this->include_lower_bound = true;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public static function tableName()
-    {
-        return '{{%facet_ranges}}';
     }
 
     /**
@@ -47,11 +33,10 @@ class FacetRange extends ActiveRecord implements RangeFacetValueInterface
      */
     public function rules()
     {
-        return [
-            [['facet_id'], 'required'],
-            [['facet_id', 'include_lower_bound', 'include_upper_bound', 'sort'], 'integer'],
-            [['lower_bound', 'upper_bound', 'display'], 'string', 'max' => 255]
-        ];
+        return array_merge(parent::rules(), [
+            [['include_lower_bound', 'include_upper_bound'], 'integer'],
+            [['lower_bound', 'upper_bound'], 'string', 'max' => 255]
+        ]);
     }
 
     /**
@@ -59,42 +44,12 @@ class FacetRange extends ActiveRecord implements RangeFacetValueInterface
      */
     public function attributeLabels()
     {
-        return [
-            'id' => Yii::t('app', 'ID'),
-            'facet_id' => Yii::t('app', 'Facet ID'),
-            'lower_bound' => Yii::t('app', 'From'),
-            'upper_bound' => Yii::t('app', 'To'),
-            'include_lower_bound' => Yii::t('app', 'Include lower bound'),
-            'include_upper_bound' => Yii::t('app', 'Include upper bound'),
-            'display' => Yii::t('app', 'Display'),
-            'sort' => Yii::t('app', 'Sort')
-        ];
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getFacetRelation()
-    {
-        return $this->hasOne(Facet::className(), ['id' => 'facet_id']);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getFacet()
-    {
-        return $this->facetRelation;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function setFacet(FacetInterface $facet)
-    {
-        /** @var Facet $facet */
-        $this->facet_id = $facet->id;
-        $this->populateRelation('facetRelation', $facet);
+        return array_merge(parent::attributeLabels(), [
+            'lower_bound' => Module::t('facet-value', 'Lower bound'),
+            'upper_bound' => Module::t('facet-value', 'Upper bound'),
+            'include_lower_bound' => Module::t('facet-value', 'Include lower bound'),
+            'include_upper_bound' => Module::t('facet-value', 'Include upper bound')
+        ]);
     }
 
     /**
@@ -140,8 +95,8 @@ class FacetRange extends ActiveRecord implements RangeFacetValueInterface
     /**
      * @inheritdoc
      */
-    public function getLabel()
+    public function getEditView()
     {
-        return $this->display ?: $this->getKey();
+        return '@im/search/backend/views/facet-range/_form';
     }
 }

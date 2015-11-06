@@ -34,6 +34,8 @@ $fieldConfig = isset($fieldConfig) ? $fieldConfig : [];
 
     <?= $form->field($model, 'sort', $fieldConfig)->hiddenInput(['data-field' => 'sort'])->label(false) ?>
 
+    <?= $form->field($model, 'type', $fieldConfig)->hiddenInput()->label(false) ?>
+
     <?= $form->field($model, 'id', $fieldConfig)->hiddenInput()->label(false) ?>
 </div>
 

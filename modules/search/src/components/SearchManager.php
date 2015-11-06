@@ -2,8 +2,10 @@
 
 namespace im\search\components;
 
+use im\base\types\EntityType;
 use im\search\components\index\IndexManager;
 use im\search\components\query\facet\FacetInterface;
+use im\search\components\query\facet\FacetValueInterface;
 use im\search\components\search\SearchComponent;
 use im\search\components\searchable\AttributeDescriptor;
 use im\search\components\searchable\SearchableInterface;
@@ -250,6 +252,37 @@ class SearchManager extends Component
     public function getFacetInstance($type)
     {
         return Yii::createObject(['class' => Yii::$app->get('typesRegister')->getEntityClass($type)]);
+    }
+
+    /**
+     * Create facet value instance by type.
+     *
+     * @param string $type
+     * @return FacetValueInterface
+     */
+    public function getFacetValueInstance($type)
+    {
+        return Yii::createObject(['class' => Yii::$app->get('typesRegister')->getEntityClass($type)]);
+    }
+
+    /**
+     * Return facet types.
+     *
+     * @return EntityType[]
+     */
+    public function getFacetTypes()
+    {
+        return Yii::$app->get('typesRegister')->getEntityTypes('facets');
+    }
+
+    /**
+     * Return facet value types.
+     *
+     * @return EntityType[]
+     */
+    public function getFacetValueTypes()
+    {
+        return Yii::$app->get('typesRegister')->getEntityTypes('facet_values');
     }
 
     /**

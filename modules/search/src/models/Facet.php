@@ -2,7 +2,9 @@
 
 namespace im\search\models;
 
+use im\base\behaviors\RelationsBehavior;
 use im\search\components\query\facet\FacetInterface;
+
 use im\search\components\searchable\AttributeDescriptor;
 use im\search\Module;
 use Yii;
@@ -22,18 +24,21 @@ use yii\helpers\Inflector;
  * @property string $type
  * @property string $operator
  * @property bool $multivalue
+ *
+ * @property FacetValue[] $valuesRelation
  */
 class Facet extends ActiveRecord implements FacetInterface
 {
-    const TYPE_TERMS = 'terms';
-    const TYPE_RANGE = 'range';
-    const TYPE_INTERVAL = 'interval';
+    const TYPE_TERMS = 'terms_facet';
+    const TYPE_RANGE = 'range_facet';
+    const TYPE_INTERVAL = 'interval_facet';
     const TYPE_DEFAULT = self::TYPE_TERMS;
 
     const TYPE = self::TYPE_DEFAULT;
 
     const OPERATOR_OR = 'or';
     const OPERATOR_AND = 'and';
+    const OPERATOR_DEFAULT = self::OPERATOR_OR;
 
     /**
      * @inheritdoc
@@ -41,6 +46,7 @@ class Facet extends ActiveRecord implements FacetInterface
     public function init()
     {
         $this->type = static::TYPE;
+        $this->multivalue = true;
     }
 
     /**
@@ -51,6 +57,21 @@ class Facet extends ActiveRecord implements FacetInterface
         $row['type'] ?: self::TYPE_DEFAULT;
 
         return Yii::$app->get('searchManager')->getFacetInstance($row['type']);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function behaviors()
+    {
+        return [
+            'relations' => [
+                'class' => RelationsBehavior::className(),
+                'settings' => [
+                    'values' => ['deleteOnUnlink' => true]
+                ]
+            ]
+        ];
     }
 
     /**
@@ -67,10 +88,11 @@ class Facet extends ActiveRecord implements FacetInterface
     public function rules()
     {
         return [
-            [['name', 'entity_type', 'attribute_name', 'index_name', 'type'], 'required'],
-            [['name'], 'string', 'max' => 255],
-            [['entity_type', 'type'], 'string', 'max' => 100],
-            [['searchableAttribute'], 'safe']
+            [['name', 'index_name'/*, 'entity_type', 'attribute_name'*/, 'type'], 'required'],
+            [['label'], 'string', 'max' => 255],
+            [['name', 'index_name', 'entity_type', 'type'], 'string', 'max' => 100],
+            [['operator'], 'string', 'max' => 3],
+            [['multivalue'], 'integer']
         ];
     }
 
@@ -82,15 +104,26 @@ class Facet extends ActiveRecord implements FacetInterface
         return [
             'id' => Module::t('facet', 'ID'),
             'name' => Module::t('facet', 'Name'),
+            'label' => Module::t('facet', 'Label'),
             'entity_type' => Module::t('facet', 'Entity type'),
             'attribute_name' => Module::t('facet', 'Attribute name'),
-            'index_name' => Module::t('facet', 'Index name'),
-            'searchableAttribute' => Module::t('facet', 'Attribute'),
+            'index_name' => Module::t('facet', 'Attribute name in index'),
             'type' => Module::t('facet', 'Type'),
+            'operator' => Module::t('facet', 'Operator'),
+            'multivalue' => Module::t('facet', 'Multivalue'),
             'from' => Module::t('facet', 'From'),
             'to' => Module::t('facet', 'To'),
-            'interval' => Module::t('facet', 'Interval')
+            'interval' => Module::t('facet', 'Interval'),
+            'values' => Module::t('facet', 'Values')
         ];
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getValuesRelation()
+    {
+        return $this->hasMany(FacetValue::className(), ['facet_id' => 'id'])->inverseOf('facetRelation');
     }
 
     /**
@@ -99,11 +132,16 @@ class Facet extends ActiveRecord implements FacetInterface
      */
     public static function getTypesList()
     {
-        return [
-            self::TYPE_TERMS => Module::t('facet', 'Terms'),
-            self::TYPE_RANGE => Module::t('facet', 'Range'),
-            self::TYPE_INTERVAL => Module::t('facet', 'Interval')
-        ];
+        return ArrayHelper::map(Yii::$app->get('searchManager')->getFacetTypes(), 'type', 'name');
+    }
+
+    /**
+     * Returns array of available facet value types
+     * @return array
+     */
+    public static function getValueTypesList()
+    {
+        return ArrayHelper::map(Yii::$app->get('searchManager')->getFacetValueTypes(), 'type', 'name');
     }
 
     /**
@@ -134,6 +172,18 @@ class Facet extends ActiveRecord implements FacetInterface
         $searchManager = Yii::$app->get('searchManager');
 
         return $searchManager->getSearchableTypeNames();
+    }
+
+    /**
+     * Returns array of facet operators
+     * @return array
+     */
+    public static function getOperatorsList()
+    {
+        return [
+            self::OPERATOR_OR => Module::t('facet', 'OR'),
+            self::OPERATOR_AND => Module::t('facet', 'AND')
+        ];
     }
 
     /**
@@ -177,7 +227,7 @@ class Facet extends ActiveRecord implements FacetInterface
      */
     public function getField()
     {
-        return $this->index_name;
+        return $this->index_name ?: $this->attribute_name;
     }
 
     /**
@@ -193,7 +243,7 @@ class Facet extends ActiveRecord implements FacetInterface
      */
     public function getOperator()
     {
-        return $this->operator;
+        return $this->operator ?: self::OPERATOR_DEFAULT;
     }
 
     /**
@@ -201,7 +251,12 @@ class Facet extends ActiveRecord implements FacetInterface
      */
     public function getValues()
     {
-        return [];
+        if (!$this->isRelationPopulated('values')) {
+            $values = $this->getValuesRelation()->orderBy('sort')->findFor('values', $this);
+            $this->populateRelation('values', $values);
+        }
+
+        return $this->getRelatedRecords()['values'];
     }
 
     /**
@@ -212,6 +267,7 @@ class Facet extends ActiveRecord implements FacetInterface
         foreach ($values as $value) {
             $value->setFacet($this);
         }
+        $this->populateRelation('values', $values);
     }
 
     /**
@@ -233,5 +289,96 @@ class Facet extends ActiveRecord implements FacetInterface
         }
 
         return $instances;
+    }
+
+    /**
+     * The name of the facet edit view
+     * This should be in the format of 'path/to/view'.
+     * @return string
+     */
+    public function getEditView()
+    {
+        return '';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function load($data, $formName = null)
+    {
+        return parent::load($data, $formName) && $this->loadValues($data);
+    }
+
+    /**
+     * Populates the facet values with the data array.
+     *
+     * @param array $data
+     * @param string $formName
+     * @return boolean
+     */
+    public function loadValues($data, $formName = null)
+    {
+        if ($formName === null) {
+            $formName = 'FacetValues';
+        }
+        $values = $this->getValuesFromData($data, $formName);
+        $loaded = [];
+        $isLoaded = true;
+        if (!empty($data[$formName])) {
+            foreach ($data[$formName] as $key => $valueData) {
+                $value = null;
+                if (isset($values[$key])) {
+                    $value = $values[$key];
+                    if ($value->load($valueData, '')) {
+                        $loaded[] = $value;
+                    } else {
+                        $isLoaded = false;
+                    }
+                }
+            }
+        }
+        if (isset($data[$formName])) {
+            $this->valuesRelation = $loaded ?: null;
+        }
+
+        return $isLoaded;
+    }
+
+    /**
+     * Gets facet values from data array.
+     *
+     * @param array $data
+     * @param string $formName
+     * @return FacetValue[]
+     */
+    protected function getValuesFromData($data, $formName = null)
+    {
+        if ($formName === null) {
+            $formName = 'FacetValues';
+        }
+        $values = [];
+        if (!empty($data[$formName])) {
+            $pks = [];
+            $existingValues = [];
+            foreach ($data[$formName] as $valueData) {
+                if (!empty($valueData['id'])) {
+                    $pks[] = $valueData['id'];
+                }
+            }
+            if ($pks) {
+                $existingValues = FacetValue::find(['id' => $pks])->indexBy('id')->all();
+            }
+            /** @var \im\search\components\SearchManager $searchManager */
+            $searchManager = Yii::$app->get('searchManager');
+            foreach ($data[$formName] as $key => $valueData) {
+                if (!empty($valueData['id']) && isset($existingValues[$valueData['id']])) {
+                    $values[$key] = $existingValues[$valueData['id']];
+                } else {
+                    $values[$key] = isset($valueData['type']) ? $searchManager->getFacetValueInstance($valueData['type']) : new FacetValue();
+                }
+            }
+        }
+
+        return $values;
     }
 }

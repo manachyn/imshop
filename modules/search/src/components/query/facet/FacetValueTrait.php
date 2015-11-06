@@ -131,7 +131,6 @@ trait FacetValueTrait
      */
     public function isSelected(SearchQueryInterface $searchQuery = null)
     {
-        //return SearchQueryHelper::isIncludeQuery($this->getSearchQuery(), $this->getValueSearchQuery(), $this->getValueOperator());
         return $searchQuery ? SearchQueryHelper::isIncludeQuery($searchQuery, $this->getValueSearchQuery(), $this->getValueOperator()) : false;
     }
 
@@ -144,7 +143,9 @@ trait FacetValueTrait
     }
 
     /**
-     * @inheritdoc
+     * Sets route params.
+     *
+     * @param array $params
      */
     public function setRouteParams(array $params)
     {
@@ -197,6 +198,9 @@ trait FacetValueTrait
         return SearchQueryHelper::getQueryInstanceFromFacetValue($value);
     }
 
+    /**
+     * @return bool|null
+     */
     protected function getValueOperator()
     {
         return $this->getFacet()->getOperator() === Facet::OPERATOR_AND ? true : null;

@@ -2,45 +2,28 @@
 
 namespace im\search\models;
 
-use im\search\components\query\facet\FacetInterface;
-use im\search\components\query\facet\FacetValueInterface;
-use im\search\components\query\facet\FacetValueTrait;
+use im\search\components\query\facet\EditableFacetValueInterface;
+use im\search\Module;
 use Yii;
-use yii\db\ActiveRecord;
 
 /**
  * Facet range model class.
  *
- * @property integer $id
- * @property integer $facet_id
  * @property string $term
- * @property string $display
- * @property integer $sort
- *
- * @property Facet $facetRelation
  */
-class FacetTerm extends ActiveRecord implements FacetValueInterface
+class FacetTerm extends FacetValue implements EditableFacetValueInterface
 {
-    use FacetValueTrait;
-
-    /**
-     * @inheritdoc
-     */
-    public static function tableName()
-    {
-        return '{{%facet_terms}}';
-    }
+    const TYPE = 'facet_term';
 
     /**
      * @inheritdoc
      */
     public function rules()
     {
-        return [
-            [['facet_id', 'term'], 'required'],
-            [['facet_id', 'sort'], 'integer'],
-            [['term', 'display'], 'string', 'max' => 255]
-        ];
+        return array_merge(parent::rules(), [
+            [['term'], 'required'],
+            [['term'], 'string', 'max' => 255]
+        ]);
     }
 
     /**
@@ -48,39 +31,9 @@ class FacetTerm extends ActiveRecord implements FacetValueInterface
      */
     public function attributeLabels()
     {
-        return [
-            'id' => Yii::t('app', 'ID'),
-            'facet_id' => Yii::t('app', 'Facet ID'),
-            'term' => Yii::t('app', 'Term'),
-            'display' => Yii::t('app', 'Display'),
-            'sort' => Yii::t('app', 'Sort')
-        ];
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getFacetRelation()
-    {
-        return $this->hasOne(Facet::className(), ['id' => 'facet_id']);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getFacet()
-    {
-        return $this->facetRelation;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function setFacet(FacetInterface $facet)
-    {
-        /** @var Facet $facet */
-        $this->facet_id = $facet->id;
-        $this->populateRelation('facetRelation', $facet);
+        return array_merge(parent::attributeLabels(), [
+            'term' => Module::t('facet-value', 'Term')
+        ]);
     }
 
     /**
@@ -102,23 +55,8 @@ class FacetTerm extends ActiveRecord implements FacetValueInterface
     /**
      * @inheritdoc
      */
-    public function getLabel()
+    public function getEditView()
     {
-        return $this->display ?: $this->getKey();
+        return '@im/search/backend/views/facet-term/_form';
     }
-
-//    /**
-//     * @inheritdoc
-//     */
-//    public function createUrl($route = null, $scheme = false)
-//    {
-//        if (!$route) {
-//            $currentParams = Yii::$app->getRequest()->getQueryParams();
-//            $currentParams[0] = '/' . Yii::$app->controller->getRoute();
-//            $route = ArrayHelper::merge($currentParams, []);
-//        }
-//        if ($searchQuery = $this->getSearchQuery()) {
-//            $route['query'] = $searchComponent->queryConverter->toString($searchQuery);
-//        }
-//    }
 }

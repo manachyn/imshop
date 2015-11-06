@@ -3,9 +3,11 @@
 namespace im\search\backend\controllers;
 
 use im\base\controllers\BackendController;
-use im\search\backend\Module;
+use im\forms\components\DynamicActiveForm;
+use im\search\components\query\facet\EditableFacetValueInterface;
 use im\search\models\Facet;
 use im\search\models\FacetSearch;
+use im\search\Module;
 use Yii;
 use yii\helpers\Html;
 use yii\web\NotFoundHttpException;
@@ -16,17 +18,17 @@ use yii\filters\VerbFilter;
  */
 class FacetController extends BackendController
 {
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['post'],
-                ],
-            ],
-        ];
-    }
+//    public function behaviors()
+//    {
+//        return [
+//            'verbs' => [
+//                'class' => VerbFilter::className(),
+//                'actions' => [
+//                    'delete' => ['post'],
+//                ],
+//            ],
+//        ];
+//    }
 
     /**
      * Lists all Facet models.
@@ -63,7 +65,11 @@ class FacetController extends BackendController
      */
     public function actionCreate($type = '')
     {
-        $model = Facet::getInstance($type);
+        /** @var \im\search\components\SearchManager $searchManager */
+        $searchManager = Yii::$app->get('searchManager');
+        $type = $type ?: Facet::TYPE_DEFAULT;
+        /** @var Facet $model */
+        $model = $searchManager->getFacetInstance($type);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             Yii::$app->session->setFlash('success', Module::t('facet', 'Facet has been successfully created.'));
@@ -120,6 +126,36 @@ class FacetController extends BackendController
         $options = ['prompt' => ''];
 
         return Html::renderSelectOptions(null, $attributes, $options);
+    }
+
+    public function actionAddValue()
+    {
+        $content = '';
+        if ($type = Yii::$app->request->post('itemType')) {
+            /** @var \im\search\components\SearchManager $searchManager */
+            $searchManager = Yii::$app->get('searchManager');
+            $model = $searchManager->getFacetValueInstance($type);
+            $itemView = Yii::$app->request->post('itemView');
+            if (!$itemView && $model instanceof EditableFacetValueInterface) {
+                $itemView = $model->getEditView();
+            }
+            if ($itemView) {
+                $viewParams = Yii::$app->request->post('viewParams', []);
+                $viewParams['model'] = $model;
+                if (isset($viewParams['form'])) {
+                    $viewParams['form'] = new DynamicActiveForm(['config' => $viewParams['form']]);
+                }
+                if (isset($viewParams['widget'])) {
+                    $viewParams['widget'] = (object) $viewParams['widget'];
+                }
+                $content = $this->renderAjax($itemView, $viewParams);
+                if ($itemContainerView = Yii::$app->request->post('itemContainerView')) {
+                    $content = $this->renderAjax($itemContainerView, array_merge($viewParams, ['itemContent' => $content]));
+                }
+            }
+        }
+
+        return $content;
     }
 
     /**

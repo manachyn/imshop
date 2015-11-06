@@ -231,7 +231,7 @@ class ListView extends \yii\widgets\ListView
      */
     public function renderToolbar()
     {
-        return $this->getView()->render($this->toolbarView, ['widget' => $this]);
+        return $this->toolbarView ? $this->getView()->render($this->toolbarView, ['widget' => $this]) : '';
     }
 
     /**

@@ -6,7 +6,6 @@ use im\catalog\models\Product;
 use im\catalog\models\ProductCategoriesFacet;
 use im\catalog\models\ProductCategory;
 use im\search\components\index\IndexableInterface;
-use im\search\components\query\facet\FacetValueInterface;
 use im\search\components\query\QueryResultInterface;
 use im\search\components\query\SearchQueryHelper;
 use im\search\components\query\Term;
@@ -14,7 +13,6 @@ use im\search\components\search\SearchDataProvider;
 use im\search\components\search\SearchResultContextInterface;
 use im\search\models\FacetSet;
 use Yii;
-use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
 use yii\web\Request;
 

@@ -2,8 +2,6 @@
 
 namespace im\catalog\models;
 
-use creocoder\nestedsets\NestedSetsBehavior;
-use im\search\components\query\facet\TermsFacetInterface;
 use im\search\components\query\facet\TreeFacetHelper;
 use im\search\components\query\facet\TreeFacetInterface;
 use im\search\models\Facet;
@@ -11,7 +9,7 @@ use Yii;
 use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
 
-class CategoriesFacet extends Facet implements TermsFacetInterface, TreeFacetInterface
+class CategoriesFacet extends Facet implements TreeFacetInterface
 {
     const TYPE = 'categories_facet';
 
@@ -33,7 +31,9 @@ class CategoriesFacet extends Facet implements TermsFacetInterface, TreeFacetInt
      */
     public function setValues($values)
     {
-        parent::setValues($values);
+        foreach ($values as $value) {
+            $value->setFacet($this);
+        }
         $this->values = $values;
     }
 
@@ -111,25 +111,10 @@ class CategoriesFacet extends Facet implements TermsFacetInterface, TreeFacetInt
     }
 
     /**
-     * @param CategoriesFacetValue[]|NestedSetsBehavior[] $nodes
-     * @param int $left
-     * @param int $right
-     * @return CategoriesFacetValue[]
+     * @inheritdoc
      */
-    protected function buildTree($nodes, $left = 0, $right = null) {
-        $tree = [];
-        foreach ($nodes as $key => $node) {
-            if ($node->getEntity()->{$node->getEntity()->leftAttribute} == $left + 1 && (is_null($right) || $node->getEntity()->{$node->getEntity()->rightAttribute} < $right)) {
-                $tree[$key] = $node;
-                if ($node->getEntity()->{$node->getEntity()->rightAttribute} - $node->getEntity()->{$node->getEntity()->leftAttribute} > 1) {
-                    $node->setChildren($this->buildTree($nodes, $node->getEntity()->{$node->getEntity()->leftAttribute}, $node->getEntity()->{$node->getEntity()->rightAttribute}));
-                } else {
-                    $node->setChildren([]);
-                }
-                $left = $node->getEntity()->{$node->getEntity()->rightAttribute};
-            }
-        }
-
-        return $tree;
+    public function getEditView()
+    {
+        return '@im/catalog/backend/views/categories-facet/_form.php';
     }
 }
