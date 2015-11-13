@@ -51,3 +51,8 @@ https://lucidworks.com/blog/why-not-and-or-and-not/
 
 FSM
 http://pear.github.io/FSM/
+
+
+
+
+http://kempe.net/blog/2015/02/25/elasticsearch-query-full-text-search.html

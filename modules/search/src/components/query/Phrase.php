@@ -63,5 +63,13 @@ class Phrase extends SearchQuery implements FieldQueryInterface
         $this->_phrase = $phrase;
     }
 
+    /**
+     * @inheritdoc
+     */
+    public function equals(SearchQueryInterface $query)
+    {
+        $sameField = $query instanceof Phrase && $this->getField() === $query->getField();
 
-} 
+        return $sameField && $this->getPhrase() === $query->getPhrase() ? 1 : ($sameField ? 0 : -1);
+    }
+}

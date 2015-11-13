@@ -1,6 +1,7 @@
 <?php
 
 namespace im\search\components\query\facet;
+use im\search\components\query\SearchQueryInterface;
 
 /**
  * Interface FacetInterface
@@ -53,6 +54,20 @@ interface FacetInterface
     public function getOperator();
 
     /**
+     * Sets facet filter.
+     *
+     * @param SearchQueryInterface $filter
+     */
+    public function setFilter(SearchQueryInterface $filter);
+
+    /**
+     * Returns facet filter.
+     *
+     * @return SearchQueryInterface
+     */
+    public function getFilter();
+
+    /**
      * Creates facet value instance by config.
      *
      * @param array $config
@@ -67,4 +82,19 @@ interface FacetInterface
      * @return FacetValueInterface[]
      */
     public function getValueInstances(array $configs);
+
+
+    /**
+     * Sets facet context.
+     *
+     * @param mixed $context
+     */
+    public function setContext($context);
+
+    /**
+     * Returns facet context.
+     *
+     * @return mixed
+     */
+    public function getContext();
 }

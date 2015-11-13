@@ -10,8 +10,8 @@ use ReflectionClass;
 use Yii;
 use yii\base\Model;
 use yii\base\Object;
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
-use yii\elasticsearch\ActiveQuery;
 use yii\helpers\Inflector;
 
 /**
@@ -82,30 +82,12 @@ class SearchableType extends Object implements SearchableInterface
             return [];
         }
         $entityType = $typesRegister->getEntityType($model);
-        $attributes = $model->attributes();
-        $labels = $model->attributeLabels();
-        $searchableAttributes = [];
-        $key = 0;
-        // Attributes
-        foreach ($attributes as $attribute) {
-            $searchableAttributes[$key] = new AttributeDescriptor([
-                'entity_type' => $entityType,
-                'name' => $attribute,
-                'label' => isset($labels[$attribute]) ? $labels[$attribute] : $model->generateAttributeLabel($attribute)
-            ]);
-            $key++;
-        }
 
+        $searchableAttributes = [];
+        // Attributes
+        $searchableAttributes = array_merge($searchableAttributes, $this->getSearchableModelAttributes($model));
         // EAV
-        $eavAttributes = Attribute::findByEntityType($entityType);
-        foreach ($eavAttributes as $attribute) {
-            $searchableAttributes[$key] = new AttributeDescriptor([
-                'entity_type' => $entityType,
-                'name' => $attribute->getName() . '_attr',
-                'label' => $attribute->getPresentation()
-            ]);
-            $key++;
-        }
+        $searchableAttributes = array_merge($searchableAttributes, $this->getSearchableEAVAttributes($entityType));
 
         // Relations
         $class = new \ReflectionClass($model);
@@ -113,15 +95,15 @@ class SearchableType extends Object implements SearchableInterface
             if ($method->isPublic()) {
                 $methodName = $method->getName();
                 if (strpos($methodName, 'get') === 0) {
-                    $math = false;
+                    $match = false;
                     $name = substr($methodName, 3);
                     if (substr($name, -8) === 'Relation') {
                         $name = substr($name, 0, -8);
-                        $math = true;
+                        $match = true;
                     } elseif (preg_match('/@return.*ActiveQuery/i', $method->getDocComment())) {
-                        $math = true;
+                        $match = true;
                     }
-                    if ($math && $name) {
+                    if ($match && $name) {
                         /** @var ActiveQuery $relation */
                         $relation = $model->$methodName();
                         $modelClass = $relation->modelClass;
@@ -135,8 +117,7 @@ class SearchableType extends Object implements SearchableInterface
                                 'modelClass' => $modelClass
                             ]);
                         }
-                        $searchableAttributes[$key] = new AttributeDescriptor([
-                            'entity_type' => $entityType,
+                        $searchableAttributes[] = new AttributeDescriptor([
                             'name' => Inflector::variablize(substr($methodName, 3)),
                             'label' => Inflector::titleize($name),
                             'value' => function ($model) use ($methodName) {
@@ -144,17 +125,98 @@ class SearchableType extends Object implements SearchableInterface
                             },
                             'type' => $searchableType->getType()
                         ]);
-                        $key++;
                         if ($recursive) {
                             foreach ($searchableType->getSearchableAttributes(false) as $attribute) {
                                 $attribute->label = Inflector::titleize($name) . ' >> ' . $attribute->label;
                                 $attribute->name = Inflector::variablize(substr($methodName, 3)) . '.' . $attribute->name;
-                                $searchableAttributes[$key] = $attribute;
-                                $key++;
+                                $searchableAttributes[] = $attribute;
                             }
                         }
                     }
                 }
+            }
+        }
+
+        return $searchableAttributes;
+    }
+
+    /**
+     * @param ActiveRecord $model
+     * @param array $except
+     * @return \im\search\components\searchable\AttributeDescriptor[]
+     */
+    protected function getSearchableModelAttributes($model, $except = [])
+    {
+        $searchableAttributes = [];
+        $attributes = $model->attributes();
+        $labels = $model->attributeLabels();
+        foreach ($attributes as $attribute) {
+            if (!in_array($attribute, $except)) {
+                $searchableAttributes[] = new AttributeDescriptor([
+                    'name' => $attribute,
+                    'label' => isset($labels[$attribute]) ? $labels[$attribute] : $model->generateAttributeLabel($attribute)
+                ]);
+            }
+        }
+
+        return $searchableAttributes;
+    }
+
+    /**
+     * @param string $entityType
+     * @return AttributeDescriptor[]
+     */
+    protected function getSearchableEAVAttributes($entityType)
+    {
+        $searchableAttributes = [];
+        $eavAttributes = Attribute::findByEntityType($entityType);
+        foreach ($eavAttributes as $attribute) {
+            $searchableAttributes[] = new AttributeDescriptor([
+                'name' => $attribute->getName() . '_attr',
+                'label' => $attribute->getPresentation()
+            ]);
+        }
+
+        return $searchableAttributes;
+    }
+
+    /**
+     * @param ActiveQuery $relation
+     * @param string $name
+     * @param string $label
+     * @param bool $recursive
+     * @return AttributeDescriptor[]
+     */
+    protected function getRelationAttributes(ActiveQuery $relation, $name, $label = '', $recursive = true)
+    {
+        $searchableAttributes = [];
+        $label = $label ?: $name;
+        /** @var \im\search\components\SearchManager $searchManager */
+        $searchManager = Yii::$app->get('searchManager');
+        $modelClass = $relation->modelClass;
+        $searchableType = $searchManager->getSearchableTypeByClass($modelClass);
+        if (!$searchableType) {
+            $reflector = new ReflectionClass($modelClass);
+            /** @var SearchableInterface $searchableType */
+            $searchableType = Yii::createObject([
+                'class' => 'im\search\components\service\db\SearchableType',
+                'type' => Inflector::camel2id($reflector->getShortName(), '_'),
+                'modelClass' => $modelClass
+            ]);
+        }
+        $searchableAttributes[] = new AttributeDescriptor([
+            'name' => Inflector::variablize($name),
+            'label' => Inflector::titleize($label),
+            'value' => function ($model) use ($relation) {
+                return $relation;
+            },
+            'type' => $searchableType->getType()
+        ]);
+        if ($recursive) {
+            foreach ($searchableType->getSearchableAttributes(false) as $attribute) {
+                $attribute->label = Inflector::titleize($name) . ' >> ' . $attribute->label;
+                $attribute->name = Inflector::variablize($label) . '.' . $attribute->name;
+                $searchableAttributes[] = $attribute;
             }
         }
 

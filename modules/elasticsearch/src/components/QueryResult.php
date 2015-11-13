@@ -5,8 +5,8 @@ namespace im\elasticsearch\components;
 use im\search\components\index\Document;
 use im\search\components\query\IndexQueryResultInterface;
 use im\search\components\query\QueryInterface;
-use im\search\components\query\SearchQueryHelper;
-use im\search\models\Facet;
+use ReflectionClass;
+use yii\helpers\Inflector;
 
 /**
  * Class QueryResult
@@ -75,6 +75,11 @@ class QueryResult extends \im\search\components\query\QueryResult implements Ind
         return $this->documents;
     }
 
+    /**
+     * Init result.
+     *
+     * @param array $response
+     */
     protected function init(array $response)
     {
         $this->_response = $response;
@@ -88,85 +93,59 @@ class QueryResult extends \im\search\components\query\QueryResult implements Ind
             }
         }
         if (isset($response['aggregations'])) {
-            $this->parseFacets($response['aggregations']);
+            $aggregations = [];
+            foreach ($response['aggregations'] as $name => $aggregation) {
+                if (substr($name, -9) === '_filtered') {
+                    if (isset($aggregation['doc_count'])) {
+                        unset($aggregation['doc_count']);
+                    }
+                    $aggregations = array_merge($aggregations, $aggregation);
+                } else {
+                    $aggregations[$name] = $aggregation;
+                }
+            }
+            $this->parseFacets($aggregations);
         }
     }
 
+    /**
+     * Creates result facets from response.
+     *
+     * @param $responseFacets
+     */
     private function parseFacets($responseFacets)
     {
-        $searchQuery = $this->getQuery()->getSearchQuery();
         foreach ($this->getQuery()->getFacets() as $facet) {
-            if (isset($responseFacets[$facet->getName()])) {
-                $facetValues = $facet->getValues();
-//                $operator = $facet->getOperator() === Facet::OPERATOR_AND ? true : null;
-//                $selectedValues = [];
-                if ($facetValues) {
-                    foreach ($facetValues as $value) {
-                        foreach ($responseFacets[$facet->getName()]['buckets'] as $bucket) {
+            $values = $facet->getValues();
+            if ($values) {
+                foreach ($values as $value) {
+                    $type = Inflector::camel2id((new ReflectionClass($value))->getShortName(), '_');
+                    $facetName = $facet->getName() . '_' . $type;
+                    if (isset($responseFacets[$facetName])) {
+                        foreach ($responseFacets[$facetName]['buckets'] as $bucket) {
                             if ($bucket['key'] == $value->getKey()) {
                                 $value->setResultsCount($bucket['doc_count']);
                             }
                         }
-//                        SearchQueryHelper::getQueryInstanceFromFacetValue($value);
-//                        $valueQuery = SearchQueryHelper::getQueryInstanceFromFacetValue($value);
-//                        if ($searchQuery) {
-//                            $value->setSelected(SearchQueryHelper::isIncludeQuery($searchQuery, $valueQuery, $operator));
-//                            if ($value->isSelected()) {
-//                                $selectedValue = clone $value;
-//                                $selectedValueQuery = SearchQueryHelper::excludeQuery(clone $searchQuery, $valueQuery, $operator);
-//                                $selectedValue->setSearchQuery($selectedValueQuery);
-//                                $selectedValues[] = $selectedValue;
-//                            }
-//                            $valueQuery = SearchQueryHelper::includeQuery(clone $searchQuery, $valueQuery, $operator);
-//                        } else {
-//                            $value->setSelected(false);
-//                        }
-//                        $value->setSearchQuery($valueQuery);
                     }
-                } else {
-                    $configs = [];
-                    foreach ($responseFacets[$facet->getName()]['buckets'] as $bucket) {
-                        $config = [
-                            'key' => $bucket['key'],
-                            'resultsCount' => $bucket['doc_count']
-                        ];
-                        if (isset($bucket['from'])) {
-                            $config['from'] = $bucket['from'];
-                        }
-                        if (isset($bucket['to'])) {
-                            $config['to'] = $bucket['to'];
-                        }
-                        $configs[] = $config;
-                    }
-                    $facetValues = $facet->getValueInstances($configs);
-                    $facet->setValues($facetValues);
-//                    foreach ($facetValues as $value) {
-//                        $valueQuery = SearchQueryHelper::getQueryInstanceFromFacetValue($value);
-//                        if ($searchQuery) {
-//                            $value->setSelected(SearchQueryHelper::isIncludeQuery($searchQuery, $valueQuery, $operator));
-//                            if ($value->isSelected()) {
-//                                $selectedValue = clone $value;
-//                                $selectedValueQuery = SearchQueryHelper::excludeQuery(clone $searchQuery, $valueQuery, $operator);
-//                                $selectedValue->setSearchQuery($selectedValueQuery);
-//                                $selectedValues[] = $selectedValue;
-//                            }
-//                            if (!$facet->isMultivalue()) {
-//                                $excludedQuery = SearchQueryHelper::excludeQueryByFieldName(clone $searchQuery, $valueQuery->getField());
-//                                $valueQuery = SearchQueryHelper::includeQuery($excludedQuery, $valueQuery, $operator);
-//                            } else {
-//                                $valueQuery = SearchQueryHelper::includeQuery(clone $searchQuery, $valueQuery, $operator);
-//                            }
-//                        } else {
-//                            $value->setSelected(false);
-//                        }
-//                        $value->setSearchQuery($valueQuery);
-//                    }
                 }
-//                if ($selectedValues) {
-//                    $selectedFacet = clone $facet;
-//                    $selectedFacet->setValues($selectedValues);
-//                    $this->_selectedFacets[] = $selectedFacet;
-//                }
+            } else {
+                $configs = [];
+                foreach ($responseFacets[$facet->getName()]['buckets'] as $bucket) {
+                    $config = [
+                        'key' => $bucket['key'],
+                        'resultsCount' => $bucket['doc_count']
+                    ];
+                    if (isset($bucket['from'])) {
+                        $config['from'] = $bucket['from'];
+                    }
+                    if (isset($bucket['to'])) {
+                        $config['to'] = $bucket['to'];
+                    }
+                    $configs[] = $config;
+                }
+                $values = $facet->getValueInstances($configs);
+                $facet->setValues($values);
             }
         }
     }

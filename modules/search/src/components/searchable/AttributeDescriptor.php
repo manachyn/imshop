@@ -9,11 +9,6 @@ class AttributeDescriptor extends Object
     /**
      * @var string
      */
-    public $entity_type;
-
-    /**
-     * @var string
-     */
     public $name;
 
     /**
@@ -30,4 +25,9 @@ class AttributeDescriptor extends Object
      * @var string
      */
     public $type;
+
+    /**
+     * @var array
+     */
+    public $params = [];
 }

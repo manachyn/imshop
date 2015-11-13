@@ -59,27 +59,6 @@ interface FacetValueInterface
     public function getLabel();
 
     /**
-     * Returns search query for facet value.
-     *
-     * @return SearchQueryInterface
-     */
-    public function getSearchQuery();
-
-    /**
-     * Sets search query for facet value.
-     *
-     * @param SearchQueryInterface $searchQuery
-     */
-    public function setSearchQuery(SearchQueryInterface $searchQuery);
-
-    /**
-     * Sets selected flag.
-     *
-     * @param bool $selected
-     */
-    public function setSelected($selected);
-
-    /**
      * Returns whether the facet value is selected.
      *
      * @param SearchQueryInterface $searchQuery

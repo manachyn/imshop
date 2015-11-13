@@ -38,6 +38,27 @@ $this->params['breadcrumbs'] = [['label' => $this->title, 'url' => ['index']], $
                         },
                 ],
                 [
+                    'attribute' => 'type',
+                    'format' => 'raw',
+                    'value' => function (IndexAttribute $attribute, $key) use ($form) {
+                        return $form->field($attribute, "[$key]type")->dropDownList($attribute::getTypesList(), ['prompt' => ''])->label(false);
+                    },
+                ],
+                [
+                    'attribute' => 'full_text_search',
+                    'format' => 'raw',
+                    'value' => function (IndexAttribute $attribute, $key) use ($form) {
+                        return $form->field($attribute, "[$key]full_text_search")->checkbox(['data-field' => 'full_text_search'], false)->label(false);
+                    },
+                ],
+                [
+                    'attribute' => 'boost',
+                    'format' => 'raw',
+                    'value' => function (IndexAttribute $attribute, $key) use ($form) {
+                        return $form->field($attribute, "[$key]boost")->textInput(['disabled' => !$attribute->full_text_search, 'data-field' => 'boost'])->label(false);
+                    },
+                ],
+                [
                     'attribute' => 'indexable',
                     'format' => 'raw',
                     'value' => function (IndexAttribute $attribute, $key) use ($form) {
@@ -56,4 +77,22 @@ $this->params['breadcrumbs'] = [['label' => $this->title, 'url' => ['index']], $
         <?php ActiveForm::end(); ?>
     </div>
 </div>
+
+<?php
+
+$script = <<<JS
+    var fullTextSearch = '[data-field="full_text_search"]';
+    var boost = '[data-field="boost"]';
+    $(document).on('change', fullTextSearch, function() {
+        var field = $(this);
+        var boostField = field.closest('[data-key]').find(boost);
+        if (field.is(':checked')) {
+            boostField.prop('disabled', false);
+        } else {
+            boostField.prop('disabled', true);
+        }
+    });
+JS;
+$this->registerJs($script);
+?>
 

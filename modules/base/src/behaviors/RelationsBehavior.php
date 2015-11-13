@@ -44,6 +44,8 @@ class RelationsBehavior extends Behavior
      */
     private $_pks = [];
 
+    private $_cycling = false;
+
     /**
      * @inheritdoc
      */
@@ -59,15 +61,23 @@ class RelationsBehavior extends Behavior
 
     public function beforeInsert(ModelEvent $event)
     {
-        $this->beforeSave();
-        if (!$this->owner->getIsNewRecord()) {
-            $event->isValid = false;
+        if (!$this->_cycling) {
+            $this->_cycling = true;
+            $this->beforeSave();
+            if (!$this->owner->getIsNewRecord()) {
+                $event->isValid = false;
+            }
+            $this->_cycling = false;
         }
     }
 
     public function beforeUpdate()
     {
-        $this->beforeSave();
+        if (!$this->_cycling) {
+            $this->_cycling = true;
+            $this->beforeSave();
+            $this->_cycling = false;
+        }
     }
 
     public function beforeSave()
@@ -86,13 +96,17 @@ class RelationsBehavior extends Behavior
      */
     public function afterSave()
     {
-        foreach (array_keys($this->relatedData) as $name) {
-            $relation = $this->getOwnerRelation($name);
-            if ($relation->multiple) {
-                $this->saveMany($name);
-                $this->owner->populateRelation($name, $this->relatedModels[$name]);
-                unset($this->relatedData[$name]);
+        if (!$this->_cycling) {
+            $this->_cycling = true;
+            foreach (array_keys($this->relatedData) as $name) {
+                $relation = $this->getOwnerRelation($name);
+                if ($relation->multiple) {
+                    $this->saveMany($name);
+                    $this->owner->populateRelation($name, $this->relatedModels[$name]);
+                    unset($this->relatedData[$name]);
+                }
             }
+            $this->_cycling = false;
         }
     }
 
@@ -484,10 +498,11 @@ class RelationsBehavior extends Behavior
                     $model = $this->createModel($relation->modelClass, $data[0]);
                 }
             }
-            if (!empty($model)/* && $model->getIsNewRecord()*/ && !$model->save()) {
+            if (!empty($model) && ($model->getIsNewRecord() || $model->getOldAttributes()) && !$model->save()) {
                 return;
             }
             if (!empty($model) || $this->isPrimaryKey($relation, $this->relatedData[$name])) {
+                $this->unlinkOne($name, $this->getRelationSetting($name, 'deleteOnUnlink', false));
                 foreach ($relation->link as $pk => $fk) {
                     if (!empty($model)) {
                         $value = $model->$pk;

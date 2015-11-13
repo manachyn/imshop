@@ -191,12 +191,12 @@ class SearchManager extends Component
      * @param string $type
      * @return AttributeDescriptor[]
      */
-    public function getSearchableAttributes($type = null)
+    public function getSearchableAttributes($type)
     {
         $attributes = [];
         foreach ($this->getSearchableTypes() as $itemType => $item) {
             $itemAttributes = $item->getSearchableAttributes();
-            if ($type && $itemType === $type) {
+            if ($itemType === $type) {
                 $attributes = $itemAttributes;
                 break;
             } else {
@@ -213,7 +213,7 @@ class SearchManager extends Component
      * @param string $type
      * @return IndexAttribute[]
      */
-    public function getIndexAttributes($type = null)
+    public function getIndexAttributes($type)
     {
         $searchableAttributes = $this->getSearchableAttributes($type);
         $indexAttributes = IndexAttribute::findByIndexType($type);
@@ -232,7 +232,7 @@ class SearchManager extends Component
                 $indexAttribute->label = $searchableAttribute->label;
             } else {
                 $indexAttribute = new IndexAttribute([
-                    'index_type' => $type ?: $searchableAttribute->entity_type,
+                    'index_type' => $type,
                     'name' => $searchableAttribute->name,
                     'label' => $searchableAttribute->label
                 ]);

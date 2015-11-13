@@ -31,8 +31,8 @@ class SearchQueryHelper
             if ($toQuery instanceof BooleanQueryInterface) {
                 $signs = $toQuery->getSigns();
                 $sameSigns = true;
-                foreach ($signs as $sign) {
-                    if ($sign !== $topLevelSign) {
+                foreach ($signs as $toQuerySign) {
+                    if ($toQuerySign !== $topLevelSign) {
                         $sameSigns = false;
                         break;
                     }

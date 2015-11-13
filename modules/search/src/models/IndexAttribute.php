@@ -14,7 +14,9 @@ use yii\db\ActiveRecord;
  * @property string $name
  * @property string $index_name
  * @property string $type
- *
+ * @property bool $full_text_search
+ * @property int $boost
+
  */
 class IndexAttribute extends ActiveRecord
 {
@@ -43,7 +45,8 @@ class IndexAttribute extends ActiveRecord
     {
         return [
             [['index_type', 'name'], 'required'],
-            [['index_type', 'name', 'type'], 'string', 'max' => 100]
+            [['index_type', 'name', 'index_name', 'type'], 'string', 'max' => 100],
+            [['full_text_search', 'boost'], 'integer']
         ];
     }
 
@@ -59,7 +62,24 @@ class IndexAttribute extends ActiveRecord
             'type' => Module::t('indexAttribute', 'Type'),
             'index_type' => Module::t('indexAttribute', 'Index type'),
             'label' => Module::t('indexAttribute', 'Label'),
-            'indexable' => Module::t('indexAttribute', 'Indexable')
+            'indexable' => Module::t('indexAttribute', 'Indexable'),
+            'full_text_search' => Module::t('indexAttribute', 'Full text search'),
+            'boost' => Module::t('indexAttribute', 'Search boost')
+        ];
+    }
+
+    /**
+     * Returns value types list.
+     *
+     * @return array
+     */
+    public static function getTypesList()
+    {
+        return [
+            'string' => Module::t('indexAttribute', 'String'),
+            'int' => Module::t('indexAttribute', 'Integer'),
+            'float' => Module::t('indexAttribute', 'Floating point number'),
+            'bool' => Module::t('indexAttribute', 'Boolean'),
         ];
     }
 
@@ -70,12 +90,9 @@ class IndexAttribute extends ActiveRecord
      * @param string|array $orderBy
      * @return static[]
      */
-    public static function findByIndexType($indexType = null, $orderBy = null)
+    public static function findByIndexType($indexType, $orderBy = null)
     {
-        $query = static::find();
-        if ($indexType) {
-            $query->where(['index_type' => $indexType]);
-        }
+        $query = static::find()->where(['index_type' => $indexType]);
         if ($orderBy) {
             $query->orderBy($orderBy);
         }
@@ -98,7 +115,7 @@ class IndexAttribute extends ActiveRecord
                 $indexable = false;
                 foreach ($indexableAttributes as $indexableItem) {
                     if ($item['index_type'] === $indexableItem['index_type'] && $item['name'] === $indexableItem['name']) {
-                        $indexableItem->load($item);
+                        $indexableItem->load($item, '');
                         $indexable = true;
                         break;
                     }

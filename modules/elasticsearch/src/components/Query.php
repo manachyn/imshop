@@ -4,14 +4,19 @@ namespace im\elasticsearch\components;
 
 use im\search\components\query\Boolean;
 use im\search\components\query\facet\FacetInterface;
+use im\search\components\query\facet\FacetValueInterface;
 use im\search\components\query\facet\IntervalFacetInterface;
 use im\search\components\query\facet\RangeFacetInterface;
+use im\search\components\query\facet\RangeFacetValueInterface;
 use im\search\components\query\QueryInterface;
 use im\search\components\query\QueryResultInterface;
 use im\search\components\query\Range;
 use im\search\components\query\SearchQueryInterface;
 use im\search\components\query\Term;
 use im\search\components\transformer\DocumentToObjectTransformerInterface;
+use ReflectionClass;
+use yii\helpers\ArrayHelper;
+use yii\helpers\Inflector;
 
 /**
  * Class Query
@@ -40,6 +45,31 @@ class Query extends \yii\elasticsearch\Query implements QueryInterface
     private $_searchQuery;
 
     /**
+     * @var SearchQueryInterface
+     */
+    private $_facetsFilter;
+
+    /**
+     * @inheritdoc
+     */
+    public function createCommand($db = null)
+    {
+        $this->normalizeFacets();
+        $searchQuery = $this->getSearchQuery();
+
+        if ($searchQuery && $this->_facetsFilter && $searchQuery === $this->_facetsFilter) {
+            $this->query = ['filtered' => ['filter' => $this->mapQuery($searchQuery)]];
+        } elseif ($searchQuery && $this->_facetsFilter) {
+            $this->filter = $this->mapQuery($searchQuery);
+            $this->aggregations = ['aggregations_filtered' => ['filter' => $this->mapQuery($this->_facetsFilter), 'aggs' => $this->aggregations]];
+        } elseif ($searchQuery) {
+            $this->filter = $this->mapQuery($searchQuery);
+        }
+
+        return parent::createCommand($db);
+    }
+
+    /**
      * @inheritdoc
      */
     public function result($db = null)
@@ -58,19 +88,6 @@ class Query extends \yii\elasticsearch\Query implements QueryInterface
     public function addFacet(FacetInterface $facet)
     {
         $this->_facets[$facet->getName()] = $facet;
-        $options = ['field' => $facet->getField()];
-        if ($facet instanceof RangeFacetInterface) {
-            $options = array_merge($options, $this->getRangeAggregationOptions($facet));
-            if (!empty($options['ranges'])) {
-                $this->addAggregation($facet->getName(), 'range', $options);
-            }
-        } elseif ($facet instanceof IntervalFacetInterface) {
-            $options = array_merge($options, $this->getIntervalAggregationOptions($facet));
-            $this->addAggregation($facet->getName(), 'histogram', $options);
-        } else {
-            $options = array_merge($options, $this->getTermsAggregationOptions($facet));
-            $this->addAggregation($facet->getName(), 'terms', $options);
-        }
 
         return $this;
     }
@@ -110,10 +127,9 @@ class Query extends \yii\elasticsearch\Query implements QueryInterface
     /**
      * @inheritdoc
      */
-    public function setSearchQuery(SearchQueryInterface $searchQuery)
+    public function setSearchQuery($searchQuery)
     {
         $this->_searchQuery = $searchQuery;
-        $this->query = $this->mapQuery($searchQuery);
     }
 
     /**
@@ -128,31 +144,27 @@ class Query extends \yii\elasticsearch\Query implements QueryInterface
             $boolean = [];
             foreach ($query->getSubQueries() as $key => $subQuery) {
                 $sign = isset($signs[$key]) ? $signs[$key] : null;
-                switch ($sign) {
-                    case true:
-                        if ($subQueryArr = $this->mapQuery($subQuery)) {
-                            if (!isset($boolean['must'])) {
-                                $boolean['must'] = [];
-                            }
-                            $boolean['must'][] = $this->mapQuery($subQuery);
+                if ($sign === true) {
+                    if ($subQueryArr = $this->mapQuery($subQuery)) {
+                        if (!isset($boolean['must'])) {
+                            $boolean['must'] = [];
                         }
-                        break;
-                    case false:
-                        if ($subQueryArr = $this->mapQuery($subQuery)) {
-                            if (!isset($booleanr['must_not'])) {
-                                $boolean['must_not'] = [];
-                            }
-                            $boolean['must_not'][] = $this->mapQuery($subQuery);
+                        $boolean['must'][] = $this->mapQuery($subQuery);
+                    }
+                } elseif ($sign === false) {
+                    if ($subQueryArr = $this->mapQuery($subQuery)) {
+                        if (!isset($booleanr['must_not'])) {
+                            $boolean['must_not'] = [];
                         }
-                        break;
-                    case null:
-                        if ($subQueryArr = $this->mapQuery($subQuery)) {
-                            if (!isset($boolean['should'])) {
-                                $boolean['should'] = [];
-                            }
-                            $boolean['should'][] = $this->mapQuery($subQuery);
+                        $boolean['must_not'][] = $this->mapQuery($subQuery);
+                    }
+                } elseif ($sign === null) {
+                    if ($subQueryArr = $this->mapQuery($subQuery)) {
+                        if (!isset($boolean['should'])) {
+                            $boolean['should'] = [];
                         }
-                        break;
+                        $boolean['should'][] = $this->mapQuery($subQuery);
+                    }
                 }
             }
             if ($boolean) {
@@ -174,12 +186,151 @@ class Query extends \yii\elasticsearch\Query implements QueryInterface
         return $queryArr;
     }
 
-    protected function getRangeAggregationOptions(RangeFacetInterface $facet)
+    protected function normalizeFacets()
+    {
+        if ($facets = $this->getFacets()) {
+            $this->_facetsFilter = $this->getFacetsCommonFilter($facets);
+            if ($this->_facetsFilter) {
+                foreach ($facets as $facet) {
+                    $this->addFacetAggregation($this->getAggregationConfig($facet));
+                }
+            } else {
+                $facetsByFilter = [];
+                $facetsWithoutFilter = [];
+                foreach ($facets as $facet) {
+                    $filter = $facet->getFilter();
+                    if ($filter) {
+                        $filterHash = spl_object_hash($filter);
+                        if (!isset($facetsByFilter[$filterHash])) {
+                            $facetsByFilter[$filterHash] = ['facets' => []];
+                        }
+                        $facetsByFilter[$filterHash]['filter'] = $filter;
+                        $facetsByFilter[$filterHash]['facets'][] = $facet;
+                    } else {
+                        $facetsWithoutFilter[] = $facet;
+                    }
+                }
+                foreach ($facetsByFilter as $key => $item) {
+                    $aggregationsConfig = [];
+                    foreach ($item['facets'] as $facet) {
+                        $facetAggregationConfig = $this->getAggregationConfig($facet);
+                        $aggregationsConfig = array_merge($aggregationsConfig, ArrayHelper::isAssociative($facetAggregationConfig) ? [$facetAggregationConfig] : $facetAggregationConfig);
+                    }
+                    /** @var SearchQueryInterface $filter */
+                    $filter = $item['filter'];
+                    if (!$filter->isEmpty()) {
+                        $aggregationsConfig = [
+                            'name' => $key . '_filtered',
+                            'options' => [
+                                'filter' => $this->mapQuery($item['filter']),
+                                'aggs' => ArrayHelper::map($aggregationsConfig, function ($agg) {
+                                    return $agg['name'];
+                                }, function ($agg) {
+                                    return [$agg['type'] => $agg['options']];
+                                })
+                            ]
+                        ];
+                    }
+                    $this->addFacetAggregation($aggregationsConfig);
+                }
+                foreach ($facetsWithoutFilter as $facet) {
+                    $this->addFacetAggregation($this->getAggregationConfig($facet));
+                }
+            }
+        }
+    }
+
+    /**
+     * @param FacetInterface[] $facets
+     * @return SearchQueryInterface|null
+     */
+    protected function getFacetsCommonFilter($facets)
+    {
+        $commonFilter = null;
+        foreach ($facets as $facet) {
+            if (!$commonFilter) {
+                $commonFilter = $facet->getFilter();
+            } elseif ($facet->getFilter() !== $commonFilter) {
+                $commonFilter = null;
+                break;
+            }
+        }
+
+        return $commonFilter;
+    }
+
+    /**
+     * @param FacetInterface $facet
+     * @return array
+     */
+    protected function getAggregationConfig(FacetInterface $facet)
+    {
+        $aggregation = [];
+        $options = ['field' => $facet->getField()];
+        $values = $facet->getValues();
+        if ($values) {
+            $valuesByType = [];
+            foreach ($values as $value) {
+                $valuesByType[Inflector::camel2id((new ReflectionClass($value))->getShortName(), '_')][] = $value;
+            }
+            foreach ($valuesByType as $type => $values) {
+                $value = $values[0];
+                if ($value instanceof RangeFacetValueInterface) {
+                    $aggregationOptions = $this->getRangeAggregationOptions($values);
+                    $aggregationType = 'range';
+                } else {
+                    $aggregationOptions = $this->getTermsAggregationOptions($values);
+                    $aggregationType = 'terms';
+                }
+                $aggregation[] = [
+                    'name' => $facet->getName() . '_' . $type,
+                    'type' => $aggregationType,
+                    'options' => array_merge($options, $aggregationOptions)
+                ];
+            }
+        } elseif ($facet instanceof IntervalFacetInterface) {
+            $aggregation = [
+                'name' => $facet->getName(),
+                'type' => 'histogram',
+                'options' => array_merge($options, $this->getIntervalAggregationOptions($facet))
+            ];
+        } else {
+            $aggregation = [
+                'name' => $facet->getName(),
+                'type' => 'terms',
+                'options' => array_merge($options, $this->getTermsAggregationOptions())
+            ];
+        }
+
+        return $aggregation;
+    }
+
+    /**
+     * @param array $aggregation
+     */
+    public function addFacetAggregation($aggregation)
+    {
+        if ($aggregation) {
+            $aggregations = ArrayHelper::isAssociative($aggregation) ? [$aggregation] : $aggregation;
+            foreach ($aggregations as $aggregation) {
+                if (isset($aggregation['type'])) {
+                    $this->addAggregation($aggregation['name'], $aggregation['type'], $aggregation['options']);
+                } else {
+                    $this->aggregations = array_merge($this->aggregations, [$aggregation['name'] => $aggregation['options']]);
+                }
+            }
+        }
+    }
+
+    /**
+     * @param RangeFacetValueInterface[] $values
+     * @return array
+     */
+    protected function getRangeAggregationOptions($values = [])
     {
         $options = ['ranges' => []];
-        $ranges = $facet->getRanges();
-        if ($ranges) {
-            foreach ($ranges as $range) {
+        if ($values) {
+            foreach ($values as $range) {
                 $optionsRange = [];
                 if ($from = $range->getLowerBound()) {
                     $optionsRange['from'] = $from;
@@ -202,8 +353,19 @@ class Query extends \yii\elasticsearch\Query implements QueryInterface
         return ['interval' => $facet->getInterval(), 'min_doc_count' => 0];
     }
 
-    protected function getTermsAggregationOptions(FacetInterface $facet)
+    /**
+     * @param FacetValueInterface[] $values
+     * @return array
+     */
+    protected function getTermsAggregationOptions($values = [])
     {
-        return ['min_doc_count' => 0];
+        $options = ['min_doc_count' => 0];
+        if ($values) {
+            $options['include'] = array_map(function (FacetValueInterface $value) {
+                return $value->getKey();
+            }, $values);
+        }
+
+        return $options;
     }
 }

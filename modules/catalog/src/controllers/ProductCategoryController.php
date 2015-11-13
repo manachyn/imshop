@@ -2,15 +2,20 @@
 
 namespace im\catalog\controllers;
 
+use im\catalog\models\CategoriesFacet;
 use im\catalog\models\Product;
 use im\catalog\models\ProductCategoriesFacet;
+use im\catalog\models\ProductCategoriesFacetValue;
 use im\catalog\models\ProductCategory;
 use im\search\components\index\IndexableInterface;
+use im\search\components\query\Boolean;
+use im\search\components\query\FieldQueryInterface;
 use im\search\components\query\QueryResultInterface;
 use im\search\components\query\SearchQueryHelper;
 use im\search\components\query\Term;
 use im\search\components\search\SearchDataProvider;
 use im\search\components\search\SearchResultContextInterface;
+use im\search\components\SearchManager;
 use im\search\models\FacetSet;
 use Yii;
 use yii\web\NotFoundHttpException;
@@ -24,6 +29,11 @@ class ProductCategoryController extends CategoryController implements SearchResu
     private $_searchResult;
 
     /**
+     * @var SearchManager
+     */
+    private $_searchManager;
+
+    /**
      * Displays product category page.
      *
      * @param string $path
@@ -35,53 +45,60 @@ class ProductCategoryController extends CategoryController implements SearchResu
     {
         $model = $this->findModel($path);
         $this->setModel($model);
-        /** @var \im\search\components\SearchManager $searchManager */
-        $searchManager = Yii::$app->get('searchManager');
-        $query = $request->get('query', '');
+        $searchManager = $this->getSearchManager();
         $searchComponent = $searchManager->getSearchComponent();
+        $queryParam = $request->get('query', '');
 
+        // Get model facets
         /** @var FacetSet $facetSet */
         $facetSet = FacetSet::findOne(1);
         $facets = $facetSet->facets;
 
-        $searchableType = $searchManager->getSearchableTypeByClass(Product::className());
-        if ($searchableType instanceof IndexableInterface) {
-            $mapping = $searchableType->getIndexMapping();
-            foreach ($mapping as $name => $attribute) {
-                $nameParts = explode('.', $name);
-                if (count($nameParts) == 2 && $nameParts[0] == 'categoriesRelation') {
-                    $categoryQuery = new Term($attribute->name, $model->{$nameParts[1]});
-                    break;
-                }
-            }
-        } else {
-            $categoryQuery = new Term('categoriesRelation.id', $model->id);
+        //text:"test1 test2"~10^100 OR test3
+        //$searchQuery = \ZendSearch\Lucene\Search\QueryParser::parse($queryParam);
+
+        $searchQuery = null;
+        // Parse search query
+        if ($queryParam) {
+            $searchQuery = $searchComponent->parseQuery($queryParam);
         }
 
-        if ($query) {
-            $searchQuery = SearchQueryHelper::includeQuery($searchComponent->parseQuery($query), $categoryQuery);
-        } else {
-            $searchQuery = $categoryQuery;
+        // Add category query to search query
+        list($categoryQuery, $categoryParentsQuery) = $this->getSearchQueries($model);
+        if ($categoryQuery) {
+            $categoryQuery = $searchQuery ? SearchQueryHelper::includeQuery(clone $searchQuery, $categoryQuery) : $categoryQuery;
+            if ($categoryParentsQuery) {
+                $categoryParentsQuery = $searchQuery ? SearchQueryHelper::includeQuery(clone $searchQuery, $categoryParentsQuery) : $categoryParentsQuery;
+            }
         }
-        $query = $searchComponent->getQuery('product', $searchQuery, $facets);
+        // Add filter to facets
+        if (array_filter($facets, function ($facet) { return $facet instanceof CategoriesFacet; })) {
+            foreach ($facets as $facet) {
+                if ($facet instanceof CategoriesFacet) {
+                    $facet->setFilter($categoryParentsQuery ?: $searchQuery);
+                } else {
+                    $facet->setFilter($categoryQuery);
+                }
+            }
+        }
+
+        // Create query for data provider
+        $query = $searchComponent->getQuery('product', $categoryQuery ?: $searchQuery, $facets);
         $dataProvider = new SearchDataProvider([
             'query' => $query
         ]);
         $dataProvider->prepare();
         $this->_searchResult = $dataProvider->query->result();
-        $query->setSearchQuery(SearchQueryHelper::excludeQuery($query->getSearchQuery(), $categoryQuery));
+        $query->setSearchQuery($searchQuery);
+
+        // Set context and route params for categories facets
         $facets = $this->_searchResult->getFacets();
         foreach ($facets as $facet) {
+            $facet->setContext($model);
             if ($facet instanceof ProductCategoriesFacet) {
-                $values = $facet->getValues();
-                foreach ($values as $key => $value) {
-                    if ($model->equals($value->getEntity())) {
-                        unset($values[$key]);
-                        continue;
-                    }
-                    $value->setRouteParams(['path' => $value->getEntity()->slug]);
-                }
-                $facet->setValues($values);
+                $facet->setValueRouteParams(function (ProductCategoriesFacetValue $value) {
+                    return ['path' => $value->getEntity()->slug];
+                });
             }
         }
 
@@ -114,4 +131,45 @@ class ProductCategoryController extends CategoryController implements SearchResu
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
+    /**
+     * @param ProductCategory $model
+     * @return FieldQueryInterface[]
+     */
+    protected function getSearchQueries(ProductCategory $model)
+    {
+        $categoryQuery = null;
+        $categoryParentsQuery = null;
+        $searchableType = $this->getSearchManager()->getSearchableTypeByClass(Product::className());
+        if ($searchableType instanceof IndexableInterface) {
+            $mapping = $searchableType->getIndexMapping();
+            foreach ($mapping as $name => $attribute) {
+                if ($name == 'all_categories') {
+                    $categoryParentsQuery = new Term($attribute->name, $model->id);
+                } else {
+                    $nameParts = explode('.', $name);
+                    if (count($nameParts) == 2 && $nameParts[0] == 'categories') {
+                        $categoryQuery = new Term($attribute->name, $model->{$nameParts[1]});
+                    }
+                }
+            }
+        } else {
+            $categoryQuery = new Term('categoriesRelation.id', $model->id);
+        }
+
+        return [$categoryQuery, $categoryParentsQuery];
+    }
+
+    /**
+     * @return SearchManager
+     */
+    protected function getSearchManager()
+    {
+        if (!$this->_searchManager) {
+            $this->_searchManager = Yii::$app->get('searchManager');
+        }
+
+        return $this->_searchManager;
+    }
+
 }

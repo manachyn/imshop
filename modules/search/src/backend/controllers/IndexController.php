@@ -127,7 +127,7 @@ class IndexController extends BackendController
         $dataProvider = new ArrayDataProvider([
             'allModels' => $attributes,
             'sort' => [
-                'attributes' => ['name', 'label', 'indexable']
+                'attributes' => ['name', 'label', 'index_name', 'indexable']
             ]
         ]);
 

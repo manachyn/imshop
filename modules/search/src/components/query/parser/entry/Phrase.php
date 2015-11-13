@@ -34,6 +34,6 @@ class Phrase implements QueryEntryInterface
      */
     public function getQuery()
     {
-        return new Phrase($this->_field, $this->_phrase);
+        return new \im\search\components\query\Phrase($this->_field, $this->_phrase);
     }
 }

@@ -132,6 +132,9 @@ class QueryToken
             case self::TYPE_DATE:
                 $this->type = self::TYPE_WORD;
                 break;
+            case self::TYPE_PHRASE:
+                $this->type = self::TYPE_PHRASE;
+                break;
             default:
                 throw new InvalidParamException("Unrecognized lexeme type: '{$type}'");
         }

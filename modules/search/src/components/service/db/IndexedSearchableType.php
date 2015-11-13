@@ -90,6 +90,13 @@ class IndexedSearchableType extends SearchableType implements IndexableInterface
                     if ($indexableAttribute->index_name) {
                         $searchableAttribute->name = $indexableAttribute->index_name;
                     }
+                    $searchableAttribute->params = [];
+                    if ($indexableAttribute->full_text_search) {
+                        $searchableAttribute->params['fullTextSearch'] = (bool) $indexableAttribute->full_text_search;
+                    }
+                    if ($indexableAttribute->boost) {
+                        $searchableAttribute->params['boost'] = (int) $indexableAttribute->boost;
+                    }
                     $attributes[$name] = $searchableAttribute;
                 }
             }

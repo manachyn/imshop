@@ -60,8 +60,12 @@ class TreeFacetHelper
     public static function getRootValues($values)
     {
         $depth = self::getMinDepth($values);
+        $values = array_filter($values, function (EntityFacetValueInterface $value) use ($depth) { return $value->getEntity()->{$value->getEntity()->depthAttribute} === $depth; });
+        usort($values, function (EntityFacetValueInterface $value1, EntityFacetValueInterface $value2) {
+            return $value1->getEntity()->{$value1->getEntity()->leftAttribute} > $value2->getEntity()->{$value2->getEntity()->leftAttribute};
+        });
 
-        return array_filter($values, function (EntityFacetValueInterface $value) use ($depth) { return $value->getEntity()->{$value->getEntity()->depthAttribute} === $depth; });
+        return $values;
     }
 
     /**

@@ -14,22 +14,16 @@ class m150208_123637_create_catalog_tables extends Migration
             '{{%category_files}}',
             [
                 'id' => Schema::TYPE_PK,
-                'category_id' => Schema::TYPE_INTEGER,
-                'attribute' => Schema::TYPE_STRING . '(100) NOT NULL',
                 'filesystem' => Schema::TYPE_STRING . '(100) NOT NULL',
                 'path' => Schema::TYPE_STRING . ' NOT NULL',
                 'title' => Schema::TYPE_STRING . ' NOT NULL',
                 'size' => Schema::TYPE_INTEGER,
                 'mime_type' => Schema::TYPE_STRING . ' NOT NULL',
                 'created_at' => Schema::TYPE_INTEGER,
-                'updated_at' => Schema::TYPE_INTEGER,
-                'sort' => Schema::TYPE_INTEGER
+                'updated_at' => Schema::TYPE_INTEGER
             ],
             $tableOptions
         );
-
-        $this->createIndex('attribute', '{{%category_files}}', 'attribute');
-        $this->createIndex('sort', '{{%category_files}}', 'sort');
 
         // Categories
         $this->createTable(
@@ -58,7 +52,6 @@ class m150208_123637_create_catalog_tables extends Migration
         $this->createIndex('name', '{{%categories}}', 'name');
         $this->createIndex('description', '{{%categories}}', 'description');
         $this->addForeignKey('FK_categories_image_id', '{{%categories}}', 'image_id', '{{%category_files}}', 'id', 'SET NULL', 'CASCADE');
-        $this->addForeignKey('FK_category_files_category_id', '{{%category_files}}', 'category_id', '{{%categories}}', 'id', 'CASCADE', 'CASCADE');
 
         // Category meta
         $this->createTable(
@@ -80,22 +73,16 @@ class m150208_123637_create_catalog_tables extends Migration
             '{{%product_category_files}}',
             [
                 'id' => Schema::TYPE_PK,
-                'category_id' => Schema::TYPE_INTEGER,
-                'attribute' => Schema::TYPE_STRING . '(100) NOT NULL',
                 'filesystem' => Schema::TYPE_STRING . '(100) NOT NULL',
                 'path' => Schema::TYPE_STRING . ' NOT NULL',
                 'title' => Schema::TYPE_STRING . ' NOT NULL',
                 'size' => Schema::TYPE_INTEGER,
                 'mime_type' => Schema::TYPE_STRING . ' NOT NULL',
                 'created_at' => Schema::TYPE_INTEGER,
-                'updated_at' => Schema::TYPE_INTEGER,
-                'sort' => Schema::TYPE_INTEGER
+                'updated_at' => Schema::TYPE_INTEGER
             ],
             $tableOptions
         );
-
-        $this->createIndex('attribute', '{{%product_category_files}}', 'attribute');
-        $this->createIndex('sort', '{{%product_category_files}}', 'sort');
 
         // Product categories
         $this->createTable(
@@ -124,7 +111,6 @@ class m150208_123637_create_catalog_tables extends Migration
         $this->createIndex('name', '{{%product_categories}}', 'name');
         $this->createIndex('description', '{{%product_categories}}', 'description');
         $this->addForeignKey('FK_product_categories_image_id', '{{%product_categories}}', 'image_id', '{{%product_category_files}}', 'id', 'SET NULL', 'CASCADE');
-        $this->addForeignKey('FK_product_category_files_category_id', '{{%product_category_files}}', 'category_id', '{{%product_categories}}', 'id', 'CASCADE', 'CASCADE');
 
         // Product category meta
         $this->createTable(

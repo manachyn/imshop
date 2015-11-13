@@ -42,14 +42,18 @@ class ActiveRecordToDocumentTransformer implements ObjectToDocumentTransformerIn
                 $fromNameParts = explode('.', $name);
                 $value = null;
                 foreach ($fromNameParts as $key => $fromNamePart) {
-                    if (is_array($value)) {
-                        $newValue = [];
-                        foreach ($value as $item) {
-                            $newValue[] = is_object($item) ? $item->$fromNamePart : (is_array($item) ? $item[$fromNamePart] : $fromNamePart);
-                        }
-                        $value = $newValue;
-                    } else {
+                    if ($key === 0) {
                         $value = $object->$fromNamePart;
+                    } elseif ($value !== null) {
+                        if (is_array($value)) {
+                            $newValue = [];
+                            foreach ($value as $item) {
+                                $newValue[] = is_object($item) ? $item->$fromNamePart : (is_array($item) ? $item[$fromNamePart] : $fromNamePart);
+                            }
+                            $value = $newValue;
+                        } else {
+                            $value = $value->$fromNamePart;
+                        }
                     }
                 }
                 $toNameParts = explode('.', $toName);

@@ -20,16 +20,14 @@ use yii\helpers\Inflector;
  * @property string $entity_type
  * @property string $field_config_data
  * @property string $rules_config_data
+ * @property bool $predefined_values
  *
  * @property FormField $formField
- * @property Value[] $values
  */
 class Attribute extends ActiveRecord implements AttributeInterface
 {
     const DEFAULT_TYPE = AttributeTypes::STRING_TYPE;
     const DEFAULT_FIELD = AttributeTypes::TEXT_INPUT_FIELD;
-
-    public $predefinedValues = true;
 
     /**
      * @inheritdoc
@@ -62,7 +60,7 @@ class Attribute extends ActiveRecord implements AttributeInterface
             [['name', 'presentation', 'type'], 'required'],
             //['name', 'unique'],
             ['type', 'default', 'value' => self::DEFAULT_TYPE],
-            [['fieldConfig', 'rulesConfig'], 'safe'],
+            [['fieldConfig', 'rulesConfig', 'predefined_values'], 'safe'],
         ];
     }
 
@@ -78,6 +76,7 @@ class Attribute extends ActiveRecord implements AttributeInterface
             'type' => Module::t('attribute', 'Type'),
             'fieldConfig' => Module::t('attribute', 'Filed Config'),
             'rulesConfig' => Module::t('attribute', 'Validators'),
+            'predefined_values' => Module::t('attribute', 'Predefined values')
         ];
     }
 
@@ -137,6 +136,14 @@ class Attribute extends ActiveRecord implements AttributeInterface
         $this->type = $type;
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function isValuesPredefined()
+    {
+        return (bool) $this->predefined_values;
+    }
+
     public function getFieldConfig()
     {
         $config = unserialize($this->field_config_data);
@@ -168,9 +175,17 @@ class Attribute extends ActiveRecord implements AttributeInterface
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getValues()
+    public function getValuesRelation()
     {
         return $this->hasMany(Value::className(), ['attribute_id' => 'id']);
+    }
+
+    /**
+     * @return Value[]
+     */
+    public function getValues()
+    {
+        return $this->getValuesRelation()->all();
     }
 
     /**

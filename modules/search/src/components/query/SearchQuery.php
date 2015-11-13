@@ -9,4 +9,11 @@ namespace im\search\components\query;
  */
 class SearchQuery implements SearchQueryInterface
 {
+    /**
+     * @inheritdoc
+     */
+    public function isEmpty()
+    {
+        return false;
+    }
 }

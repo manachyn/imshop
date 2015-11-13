@@ -24,7 +24,7 @@ class FacetValue extends ActiveRecord implements FacetValueInterface
 {
     use FacetValueTrait;
 
-    const TYPE = 'facet_term';
+    const TYPE = 'facet_value';
 
     /**
      * @inheritdoc

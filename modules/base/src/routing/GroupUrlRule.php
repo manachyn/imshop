@@ -35,10 +35,14 @@ class GroupUrlRule extends UrlRule
      */
     public function parseRequest($manager, $request)
     {
-        list(, $params) = parent::parseRequest($manager, $request);
-        foreach ($this->resolvers as $resolver) {
-            if ($route = $resolver->resolve($params)) {
-                return [$route, $params];
+        $pathInfo = $request->getPathInfo();
+        $controller = Yii::$app->createController($pathInfo);
+        if (!$controller) {
+            list(, $params) = parent::parseRequest($manager, $request);
+            foreach ($this->resolvers as $resolver) {
+                if ($route = $resolver->resolve($params)) {
+                    return [$route, $params];
+                }
             }
         }
 

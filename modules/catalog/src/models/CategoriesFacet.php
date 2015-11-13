@@ -2,6 +2,9 @@
 
 namespace im\catalog\models;
 
+use Closure;
+use creocoder\nestedsets\NestedSetsBehavior;
+use im\search\components\query\facet\EntityFacetValueInterface;
 use im\search\components\query\facet\TreeFacetHelper;
 use im\search\components\query\facet\TreeFacetInterface;
 use im\search\models\Facet;
@@ -19,11 +22,16 @@ class CategoriesFacet extends Facet implements TreeFacetInterface
     protected $values = [];
 
     /**
+     * @var array|Closure
+     */
+    protected $valueRouteParams;
+
+    /**
      * @inheritdoc
      */
     public function getValues()
     {
-        return $this->values;
+        return $this->applyContext($this->values);
     }
 
     /**
@@ -47,10 +55,13 @@ class CategoriesFacet extends Facet implements TreeFacetInterface
         }
         /** @var ActiveRecord $modelClass */
         $modelClass = $this->getModelClass();
+        /** @var EntityFacetValueInterface $instance */
         $instance = Yii::createObject($config);
         $attribute = $this->attribute_name ?: 'id';
-        $category = $modelClass::findOne([$attribute => $instance->getKey()]);
-        $instance->setEntity($category);
+        if (!$instance->getEntity()) {
+            $category = $modelClass::findOne([$attribute => $instance->getKey()]);
+            $instance->setEntity($category);
+        }
 
         return $instance;
     }
@@ -87,7 +98,81 @@ class CategoriesFacet extends Facet implements TreeFacetInterface
      */
     public function getValuesTree()
     {
-        return TreeFacetHelper::buildValuesTree($this->getValues());
+        $values = $this->getValues();
+        if ($values) {
+            /** @var Category[]|NestedSetsBehavior[] $categories */
+            $categories = array_map(function (EntityFacetValueInterface $value) {
+                return $value->getEntity();
+            }, $values);
+            /** @var \im\catalog\models\CategoryQuery $query */
+            $query = null;
+            /** @var Category|NestedSetsBehavior $root */
+            $root = ($context = $this->getContext()) && $context instanceof Category ? $context : null;
+            foreach ($categories as $category) {
+                $parentsQuery = $category->parents();
+                if ($root) {
+                    $parentsQuery->andWhere(['and',
+                        ['>', $category->leftAttribute, $root->getAttribute($root->leftAttribute)],
+                        ['<', $category->rightAttribute, $root->getAttribute($root->rightAttribute)]
+                    ]);
+                }
+                $query = $query ? $query->union($parentsQuery) : $parentsQuery;
+            }
+            $parents = $query->all();
+            $parentsValues = [];
+            $attribute = $this->attribute_name ?: 'id';
+            foreach ($parents as $parent) {
+                $parentsValues[] = $this->getValueInstance([
+                    'entity' => $parent,
+                    'key' => $parent->$attribute,
+                    'facet' => $this
+                ]);
+            }
+            $parentsValues = $this->applyContext($parentsValues);
+            $values = array_merge($values, $parentsValues);
+        }
+
+        return $values ? TreeFacetHelper::buildValuesTree($values) : [];
+    }
+
+    /**
+     * @param array|Closure $params
+     */
+    public function setValueRouteParams($params)
+    {
+        $this->valueRouteParams = $params;
+    }
+
+    /**
+     * @return array|Closure
+     */
+    public function getValueRouteParams()
+    {
+        return $this->valueRouteParams;
+    }
+
+    /**
+     * @param CategoriesFacetValue[] $values
+     * @return CategoriesFacetValue[]
+     */
+    protected function applyContext($values)
+    {
+        if (($context = $this->getContext()) && $context instanceof Category) {
+            foreach ($values as $key => $value) {
+//                if ($context->equals($value->getEntity())) {
+//                    unset($values[$key]);
+//                    continue;
+//                }
+                if ($valueRouteParams = $this->getValueRouteParams()) {
+                    if ($valueRouteParams instanceof Closure) {
+                        $valueRouteParams = call_user_func($valueRouteParams, $value);
+                    }
+                    $value->setRouteParams($valueRouteParams);
+                }
+            }
+        }
+
+        return $values;
     }
 
     /**

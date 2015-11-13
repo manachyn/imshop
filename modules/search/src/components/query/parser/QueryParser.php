@@ -5,6 +5,7 @@ namespace im\search\components\query\parser;
 use im\fsm\FSM;
 use im\fsm\FSMAction;
 use im\search\components\query\parser\entry\Condition;
+use im\search\components\query\parser\entry\Phrase;
 use im\search\components\query\parser\entry\SubQuery;
 use im\search\components\query\Range;
 use Yii;
@@ -150,6 +151,7 @@ class QueryParser extends FSM implements QueryParserInterface
         ]);
 
         $addTermEntryAction = new FSMAction($this, 'addTermEntry');
+        $addPhraseEntryAction = new FSMAction($this, 'addPhraseEntry');
         $operatorAction = new FSMAction($this, 'operator');
         $logicalOperatorAction = new FSMAction($this, 'logicalOperator');
         $subQueryStartAction = new FSMAction($this, 'subQueryStart');
@@ -158,6 +160,7 @@ class QueryParser extends FSM implements QueryParserInterface
         $includedRangeLastTermAction = new FSMAction($this, 'includedRangeLastTerm');
 
         $this->addInputAction(self::STATE_QUERY_ELEMENT, QueryToken::TYPE_WORD, $addTermEntryAction);
+        $this->addInputAction(self::STATE_QUERY_ELEMENT, QueryToken::TYPE_PHRASE, $addPhraseEntryAction);
         $this->addInputAction(self::STATE_QUERY_ELEMENT, QueryToken::TYPE_OPERATOR, $operatorAction);
         $this->addInputAction(self::STATE_QUERY_ELEMENT, QueryToken::TYPE_AND_OPERATOR, $logicalOperatorAction);
         $this->addInputAction(self::STATE_QUERY_ELEMENT, QueryToken::TYPE_OR_OPERATOR, $logicalOperatorAction);
@@ -200,6 +203,15 @@ class QueryParser extends FSM implements QueryParserInterface
     public function addTermEntry()
     {
         $entry = new Condition($this->_context->getField(), $this->_currentToken->text, $this->_context->getOperator());
+        $this->_context->addEntry($entry);
+    }
+
+    /**
+     * Add phrase to a query
+     */
+    public function addPhraseEntry()
+    {
+        $entry = new Phrase($this->_context->getField(), $this->_currentToken->text);
         $this->_context->addEntry($entry);
     }
 

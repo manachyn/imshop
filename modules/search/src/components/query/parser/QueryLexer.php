@@ -31,7 +31,7 @@ class QueryLexer implements QueryLexerInterface
             }
             foreach ($patterns as $pattern => $type) {
                 if (preg_match($pattern, $string, $match, null, $cursor)) {
-                    $tokens[] = new QueryToken($type, $match[0], $cursor);
+                    $tokens[] = new QueryToken($type, $type == QueryToken::TYPE_PHRASE ? substr($match[0], 1, -1) : $match[0], $cursor);
                     $cursor += strlen($match[0]);
                     continue 2;
                 }

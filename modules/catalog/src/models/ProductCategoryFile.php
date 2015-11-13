@@ -4,8 +4,6 @@ namespace im\catalog\models;
 
 /**
  * Product category file model class.
- *
- * @property string $attribute
  */
 class ProductCategoryFile extends CategoryFile
 {

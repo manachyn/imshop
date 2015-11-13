@@ -89,7 +89,11 @@ class FacetRange extends FacetValue implements RangeFacetValueInterface, Editabl
      */
     public function getKey()
     {
-        return $this->_key ?: (($this->lower_bound ?: '*') . '-' . ($this->upper_bound ?: '*'));
+        if ($key = parent::getKey()) {
+            return $key;
+        } else {
+            return ($this->lower_bound ?: '*') . '-' . ($this->upper_bound ?: '*');
+        }
     }
 
     /**

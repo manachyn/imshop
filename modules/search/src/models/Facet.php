@@ -5,6 +5,7 @@ namespace im\search\models;
 use im\base\behaviors\RelationsBehavior;
 use im\search\components\query\facet\FacetInterface;
 
+use im\search\components\query\SearchQueryInterface;
 use im\search\components\searchable\AttributeDescriptor;
 use im\search\Module;
 use Yii;
@@ -39,6 +40,16 @@ class Facet extends ActiveRecord implements FacetInterface
     const OPERATOR_OR = 'or';
     const OPERATOR_AND = 'and';
     const OPERATOR_DEFAULT = self::OPERATOR_OR;
+
+    /**
+     * @var SearchQueryInterface
+     */
+    private $_filter;
+
+    /**
+     * @var mixed
+     */
+    private $_context;
 
     /**
      * @inheritdoc
@@ -273,6 +284,22 @@ class Facet extends ActiveRecord implements FacetInterface
     /**
      * @inheritdoc
      */
+    public function setFilter(SearchQueryInterface $filter)
+    {
+        $this->_filter = $filter;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getFilter()
+    {
+        return $this->_filter;
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function getValueInstance(array $config)
     {
         return null;
@@ -289,6 +316,22 @@ class Facet extends ActiveRecord implements FacetInterface
         }
 
         return $instances;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setContext($context)
+    {
+        $this->_context = $context;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getContext()
+    {
+        return $this->_context;
     }
 
     /**

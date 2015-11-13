@@ -15,15 +15,13 @@ $fieldConfig = isset($fieldConfig) ? $fieldConfig : [];
 
 <?php if (!isset($form)) { $form = ActiveForm::begin(); } ?>
 
-<?php if ($url = $model->getUrl(['w' => 225, 'h' => 126, 'fit' => 'crop'])) : ?>
+<?php if ($url = $model->getUrl(['w' => 225, 'fit' => 'crop'])) : ?>
     <img src="<?= $url ?>" class="img-responsive">
 <?php endif ?>
 
 <?= $form->field($model, 'filename', $fieldConfig)->textInput(['maxlength' => true]) ?>
 
 <?= $form->field($model, 'title', $fieldConfig)->textInput(['maxlength' => true]) ?>
-
-<?= $form->field($model, 'sort', $fieldConfig)->hiddenInput(['data-field' => 'sort'])->label(false) ?>
 
 <?= $form->field($model, 'id', $fieldConfig)->hiddenInput()->label(false) ?>
 

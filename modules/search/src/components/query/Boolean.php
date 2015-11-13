@@ -71,4 +71,14 @@ class Boolean extends SearchQuery implements BooleanQueryInterface
     {
         $this->_signs = $signs;
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function isEmpty()
+    {
+        return !(bool) $this->_subQueries;
+    }
+
+
 } 

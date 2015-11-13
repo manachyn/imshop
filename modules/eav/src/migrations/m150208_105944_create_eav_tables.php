@@ -21,6 +21,7 @@ class m150208_105944_create_eav_tables extends Migration
                 'field_config_data' => Schema::TYPE_TEXT . ' NOT NULL',
                 'rules_config_data' => Schema::TYPE_TEXT . ' NOT NULL',
                 //'form_field_id' => Schema::TYPE_INTEGER . ' DEFAULT NULL',
+                'predefined_values' => $this->boolean()->defaultValue(0),
             ],
             $tableOptions
         );

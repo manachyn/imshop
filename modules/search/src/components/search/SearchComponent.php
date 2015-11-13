@@ -2,6 +2,7 @@
 
 namespace im\search\components\search;
 
+use im\search\components\index\IndexableInterface;
 use im\search\components\query\parser\QueryConverterInterface;
 use im\search\components\query\parser\QueryParser;
 use im\search\components\query\parser\QueryParserInterface;
@@ -60,6 +61,9 @@ class SearchComponent extends Component
         /** @var \im\search\components\SearchManager $searchManager */
         $searchManager = Yii::$app->get('searchManager');
         $searchableType = $searchManager->getSearchableType($type);
+        if ($searchableType instanceof IndexableInterface) {
+            $mapping = $searchableType->getIndexMapping($type);
+        }
         $searchService = $searchableType->getSearchService();
         $finder = $searchService->getFinder();
         if ($searchQuery) {

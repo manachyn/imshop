@@ -11,5 +11,4 @@ $url = $value->createUrl(null, $searchQuery);
 <?php if ($facet->isMultivalue()) : ?>
     <a href="<?= $url ?>"><span class="icon-facet-value-checkbox"></span></a>
 <?php endif ?>
-<a href="<?= $url ?>"><?= $value->getLabel() ?></a> (<?= $value->getResultsCount() ?>)
-
+<a href="<?= $url ?>"><?= $value->getLabel() ?></a> <?= $value->getResultsCount() ? '(' . $value->getResultsCount() . ')' : ''; ?>

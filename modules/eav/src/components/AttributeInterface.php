@@ -45,4 +45,11 @@ interface AttributeInterface
      * @param string $type
      */
     public function setType($type);
+
+    /**
+     * Whether the attribute has predefined values.
+     *
+     * @return bool
+     */
+    public function isValuesPredefined();
 } 

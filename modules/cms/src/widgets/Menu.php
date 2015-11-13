@@ -45,7 +45,9 @@ class Menu extends Widget
     public function run()
     {
         $items = MenuItem::find()->where(['menu_id' => 1, 'status' => MenuItem::STATUS_ACTIVE])->all();
-        $items = TreeHelper::buildNodesTree($items);
+        if ($items) {
+            $items = TreeHelper::buildNodesTree($items);
+        }
 
         return $this->render('menu/menu', [
             'widget' => $this,

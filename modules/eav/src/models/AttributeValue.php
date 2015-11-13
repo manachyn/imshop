@@ -181,7 +181,7 @@ class AttributeValue extends ActiveRecord implements AttributeValueInterface
     public function setEAttribute(AttributeInterface $attribute)
     {
         $this->attribute_name = $attribute->getName();
-        $this->attribute_type = $attribute->predefinedValues ? 'value' : $attribute->getType();
+        $this->attribute_type = $attribute->isValuesPredefined() ? 'value' : $attribute->getType();
         $this->relatedEAttribute = $attribute;
     }
 
@@ -307,9 +307,9 @@ class AttributeValue extends ActiveRecord implements AttributeValueInterface
         $fieldType = ArrayHelper::getValue($fieldConfig, 'fieldType', 'textInput');
         $inputOptions = ArrayHelper::getValue($fieldConfig, 'inputOptions', []);
 
-        if ($this->getEAttribute()->predefinedValues) {
+        if ($this->getEAttribute()->isValuesPredefined()) {
             $fieldType = 'dropDownList';
-            $inputOptions['items'] = ArrayHelper::map(Value::find()->where(['id' => $this->getEAttribute()->id])->asArray()->all(), 'id', 'value');
+            $inputOptions['items'] = ArrayHelper::map(Value::find()->where(['attribute_id' => $this->getEAttribute()->id])->asArray()->all(), 'id', 'value');
             $inputOptions['options']['prompt'] = '';
         }
 

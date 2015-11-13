@@ -21,8 +21,8 @@ class TermsFacet extends Facet implements TermsFacetInterface
         if (!$values && strncmp($this->attribute_name, 'eAttributes.', 12) === 0) {
             $name = substr($this->attribute_name, 12);
             $attribute = Attribute::findByNameAndEntityType($name, $this->entity_type);
-            if ($attribute->predefinedValues) {
-                $values = $attribute->values;
+            if ($attribute->isValuesPredefined()) {
+                $values = $attribute->getValues();
                 if ($values) {
                     foreach ($values as $value) {
                         $values[] = new FacetTerm([

@@ -20,6 +20,8 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'type')->dropDownList(AttributeTypes::getChoices(), ['prompt' => '']) ?>
 
+    <?= $form->field($model, 'predefined_values')->checkbox() ?>
+
     <?= $form->field($model, 'fieldConfig[fieldType]')->dropDownList(AttributeTypes::getFieldTypeChoices(), ['prompt' => '']) ?>
 
     <?= $form->field($model, 'rulesConfig')->dropDownList(AttributeTypes::getValidatorChoices(), ['multiple' => true, 'prompt' => '']) ?>

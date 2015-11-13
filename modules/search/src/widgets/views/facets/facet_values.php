@@ -14,7 +14,7 @@ $level = isset($level) ? $level : 1;
 <?php if ($values) : ?>
 <ul<?= $level == 1 ? ' class="facet-values"' : '' ?>>
 <?php foreach ($values as $value) :
-    if ($value->getResultsCount()) : ?>
+    if ($value->getResultsCount() || $value instanceof TreeFacetValueInterface) : ?>
     <li class="facet-value">
     <?= $this->render('facet_value', ['value' => $value, 'facet' => $facet, 'searchQuery' => $searchQuery, 'level' => $level]) ?>
     <?php if ($value instanceof TreeFacetValueInterface) : ?>

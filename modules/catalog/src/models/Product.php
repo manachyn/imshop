@@ -300,10 +300,23 @@ class Product extends ActiveRecord implements ProductInterface
         return $this->updated_at;
     }
 
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getCategoriesRelation()
     {
         return $this->hasMany(ProductCategory::className(), ['id' => 'category_id'])
             ->viaTable('{{%products_categories}}', ['product_id' => 'id']);
+    }
+
+    /**
+     * Returns product categories.
+     *
+     * @return ProductCategory[]
+     */
+    public function getCategories()
+    {
+        return $this->getCategoriesRelation()->all();
     }
 
     /**
