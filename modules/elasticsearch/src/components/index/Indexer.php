@@ -40,7 +40,7 @@ class Indexer extends BaseIndexer
                 'index' => [
                     '_index' => $document->getIndex(),
                     '_type' => $document->getType(),
-                    '_id' => $document->getId(),
+                    '_id' => (int) $document->getId(),
                 ],
             ]);
             $data = Json::encode($document->getData());

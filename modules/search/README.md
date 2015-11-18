@@ -56,3 +56,83 @@ http://pear.github.io/FSM/
 
 
 http://kempe.net/blog/2015/02/25/elasticsearch-query-full-text-search.html
+
+http://imshop.loc/laptops/status=1%20or%20title=Test
+$this->query = array (
+                'bool' => array (
+                    'must' => array (
+                        0 => array (
+                            'bool' => array (
+                                'should' => array (
+                                    0 => array ( 'term' => array ( 'status' => '1', ), ),
+                                    1 => array ( 'match' => array ( 'title' => 'Test', ), ),
+                                ),
+                            ),
+                        ),
+                        1 => array ( 'term' => array ( 'category' => 3, ), ),
+                    ),
+                ),
+            );
+
+            $this->aggregations  =array (
+                'all_filtered' => array (
+                    'global' => new \stdClass(),
+                    'aggs' => array (
+                        '0000000055c7196f00007f3af0c9ca7b_filtered' => array (
+                            'filter' => array (
+                                'bool' => array (
+                                    'must' => array (
+                                        0 => array (
+                                            'bool' => array (
+                                                'should' => array (
+                                                    0 => array ( 'term' => array ( 'status' => '1', ), ),
+                                                    1 => array ( 'term' => array ( 'title' => 'Test', ), ),
+                                                ),
+                                            ),
+                                        ),
+                                        1 => array (
+                                            'term' => array ( 'categories' => 3, ),
+                                        ),
+                                    ),
+                                ),
+                            ),
+                            'aggs' => array (
+                                'category' => array ( 'terms' => array ( 'field' => 'category', 'min_doc_count' => 0, ), ),
+                            ),
+                        ),
+                        '0000000055c719a200007f3af0c9ca7b_filtered' => array (
+                            'filter' => array (
+                                'bool' => array (
+                                    'must' => array (
+                                        0 => array (
+                                            'bool' => array (
+                                                'should' => array (
+                                                    0 => array ( 'term' => array ( 'status' => '1', ), ),
+                                                    1 => array ( 'query' => array ('match' => array ( 'title' => 'Test'))),
+                                                ),
+                                            ),
+                                        ),
+                                        1 => array ( 'term' => array ( 'category' => 3, ), ),
+                                    ),
+                                ),
+                            ),
+                            'aggs' => array (
+                                'hdd_facet_term' => array (
+                                    'terms' => array (
+                                        'field' => 'hdd',
+                                        'min_doc_count' => 0,
+                                        'include' => array ( 0 => '320', 1 => '500', 2 => '750', 3 => '1000', ),
+                                    ),
+                                ),
+                                'hdd_facet_range' => array (
+                                    'range' => array (
+                                        'field' => 'hdd',
+                                        'ranges' => array ( 0 => array ( 'from' => '1000', 'key' => '1000-*', ), ),
+                                    ),
+                                ),
+                                'status' => array ( 'terms' => array ( 'field' => 'status', 'min_doc_count' => 0, ), ),
+                            ),
+                        ),
+                    ),
+                ),
+            );

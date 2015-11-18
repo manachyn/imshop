@@ -3,10 +3,15 @@
 namespace im\search\components\search;
 
 use im\search\components\index\IndexableInterface;
+use im\search\components\query\BooleanQueryInterface;
+use im\search\components\query\Match;
+use im\search\components\query\MultiMatch;
 use im\search\components\query\parser\QueryConverterInterface;
 use im\search\components\query\parser\QueryParser;
 use im\search\components\query\parser\QueryParserInterface;
 use im\search\components\query\SearchQueryInterface;
+use im\search\components\query\Term;
+use im\search\components\searchable\AttributeDescriptor;
 use Yii;
 use yii\base\Component;
 
@@ -61,14 +66,19 @@ class SearchComponent extends Component
         /** @var \im\search\components\SearchManager $searchManager */
         $searchManager = Yii::$app->get('searchManager');
         $searchableType = $searchManager->getSearchableType($type);
-        if ($searchableType instanceof IndexableInterface) {
-            $mapping = $searchableType->getIndexMapping($type);
-        }
         $searchService = $searchableType->getSearchService();
         $finder = $searchService->getFinder();
         if ($searchQuery) {
             if (is_string($searchQuery)) {
                 $searchQuery = $this->parseQuery($searchQuery);
+            }
+            if ($searchableType instanceof IndexableInterface) {
+                $fullTextSearchAttributes = array_filter($searchableType->getIndexMapping($type), function (AttributeDescriptor $attribute) {
+                    return !empty($attribute->params['fullTextSearch']);
+                });
+                if ($fullTextSearchAttributes) {
+                    $searchQuery = $this->applyFullTextSearchSettings($searchQuery, $fullTextSearchAttributes);
+                }
             }
             $query = $finder->findByQuery($type, $searchQuery);
         } else {
@@ -94,5 +104,39 @@ class SearchComponent extends Component
         $query = $this->queryParser->parse($querySting);
 
         return $query;
+    }
+
+    /**
+     * Applies full text search settings to query.
+     *
+     * @param SearchQueryInterface $searchQuery
+     * @param AttributeDescriptor[] $fullTextSearchAttributes
+     * @param string $fullTextSearchParam
+     * @return SearchQueryInterface
+     */
+    public function applyFullTextSearchSettings(SearchQueryInterface $searchQuery, $fullTextSearchAttributes, $fullTextSearchParam = 'text')
+    {
+        if ($fullTextSearchAttributes) {
+            if ($searchQuery instanceof BooleanQueryInterface) {
+                $subQueries = $searchQuery->getSubQueries();
+                $signs = $searchQuery->getSigns();
+                foreach ($subQueries as $key => $subQuery) {
+                    $subQueries[$key] = $this->applyFullTextSearchSettings($subQuery, $fullTextSearchAttributes, $fullTextSearchParam);
+                }
+                $searchQuery->setSubQueries($subQueries, $signs);
+            } elseif ($searchQuery instanceof Term) {
+                $field = $searchQuery->getField();
+                if ($field == $fullTextSearchParam) {
+                    $fields = array_map(function (AttributeDescriptor $attribute) {
+                        return $attribute->name;
+                    }, $fullTextSearchAttributes);
+                    $searchQuery = new MultiMatch($fields, $searchQuery);
+                } elseif (array_filter($fullTextSearchAttributes, function (AttributeDescriptor $attribute) use ($field) { return $attribute->name == $field; })) {
+                    $searchQuery = new Match($searchQuery->getField(), $searchQuery);
+                }
+            }
+        }
+
+        return $searchQuery;
     }
 }

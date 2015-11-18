@@ -3,16 +3,16 @@
 namespace im\search\components\query;
 
 /**
- * Match query.
+ * Multi match query.
  *
  * @package im\search\components\query
  */
-class Match extends SearchQuery
+class MultiMatch extends SearchQuery
 {
     /**
-     * @var string
+     * @var array
      */
-    private $_field;
+    private $_fields;
 
     /**
      * @var Term
@@ -22,29 +22,29 @@ class Match extends SearchQuery
     /**
      * Creates Math query.
      *
-     * @param string $field
+     * @param array $fields
      * @param Term $term
      */
-    function __construct($field, Term $term)
+    function __construct($fields, Term $term)
     {
-        $this->_field = $field;
+        $this->_fields = $fields;
         $this->_term = $term;
     }
 
     /**
-     * @return string
+     * @return array
      */
-    public function getField()
+    public function getFields()
     {
-        return $this->_field;
+        return $this->_fields;
     }
 
     /**
-     * @param string $field
+     * @param array $fields
      */
-    public function setField($field)
+    public function setFields($fields)
     {
-        $this->_field = $field;
+        $this->_fields = $fields;
     }
 
     /**

@@ -56,6 +56,7 @@ class ProductCategoryController extends CategoryController implements SearchResu
 
         //text:"test1 test2"~10^100 OR test3
         //$searchQuery = \ZendSearch\Lucene\Search\QueryParser::parse($queryParam);
+        //http://imshop.loc/laptops/status=1%20or%20title=Test
 
         $searchQuery = null;
         // Parse search query

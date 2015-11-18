@@ -3,11 +3,14 @@
 namespace im\elasticsearch\components;
 
 use im\search\components\query\Boolean;
+use im\search\components\query\BooleanQueryInterface;
 use im\search\components\query\facet\FacetInterface;
 use im\search\components\query\facet\FacetValueInterface;
 use im\search\components\query\facet\IntervalFacetInterface;
 use im\search\components\query\facet\RangeFacetInterface;
 use im\search\components\query\facet\RangeFacetValueInterface;
+use im\search\components\query\Match;
+use im\search\components\query\MultiMatch;
 use im\search\components\query\QueryInterface;
 use im\search\components\query\QueryResultInterface;
 use im\search\components\query\Range;
@@ -63,7 +66,51 @@ class Query extends \yii\elasticsearch\Query implements QueryInterface
             $this->filter = $this->mapQuery($searchQuery);
             $this->aggregations = ['aggregations_filtered' => ['filter' => $this->mapQuery($this->_facetsFilter), 'aggs' => $this->aggregations]];
         } elseif ($searchQuery) {
-            $this->filter = $this->mapQuery($searchQuery);
+            //$this->filter = $this->mapQuery($searchQuery);
+//            $this->query = ['filtered' => ['filter' => $this->mapQuery($searchQuery), 'query' => ['bool' => [
+//                'should' => [
+//                    ['match' => ['title' => 'Test']]
+//                ]
+//            ]]]];
+//            $this->query = ['filtered' => [
+//                'filter' => [
+//                    'bool' => ['should' => [
+//                        ['term' => ['status' => 1]]
+//                    ]]
+//                ],
+//                'query' => [
+//                    'bool' => ['should' => [
+//                        ['match' => ['title' => 'Test']]
+//                    ]]
+//                ]
+//            ]];
+//            $this->filter = ['bool' => [
+//                'should' => [
+//                    ['term' => ['status' => 1]],
+//                    ['query' => ['match' => ['title' => 'Test']]]
+//                ]
+//            ]];
+//            $this->query = ['filtered' => ['filter' => ['bool' => [
+//                'should' => [
+//                    ['term' => ['status' => 1]],
+//                    ['query' => ['match' => ['title' => 'Test']]]
+//                ]
+//            ]]]];
+
+//            $this->query = ['match' => ['title' => 'Test']];
+
+//            $this->query = ['bool' => [
+//                'should' => [
+//                    ['match' => ['title' => 'Test']],
+//                    ['term' => ['status' => 1]]
+//                ]
+//            ]];
+
+            //$this->aggregations = ['all' => ['global' => new \stdClass(), 'aggs' => $this->aggregations]];
+
+            $this->query = $this->mapQuery($searchQuery);
+
+            //$this->query = ['filtered' => ['filter' => $this->mapQuery($searchQuery)]];
         }
 
         return parent::createCommand($db);
@@ -134,9 +181,10 @@ class Query extends \yii\elasticsearch\Query implements QueryInterface
 
     /**
      * @param SearchQueryInterface $query
+     * @param bool $asFilter
      * @return array
      */
-    protected function mapQuery(SearchQueryInterface $query)
+    protected function mapQuery(SearchQueryInterface $query, $asFilter = false)
     {
         $queryArr = [];
         if ($query instanceof Boolean) {
@@ -145,25 +193,25 @@ class Query extends \yii\elasticsearch\Query implements QueryInterface
             foreach ($query->getSubQueries() as $key => $subQuery) {
                 $sign = isset($signs[$key]) ? $signs[$key] : null;
                 if ($sign === true) {
-                    if ($subQueryArr = $this->mapQuery($subQuery)) {
+                    if ($subQueryArr = $this->mapQuery($subQuery, $asFilter)) {
                         if (!isset($boolean['must'])) {
                             $boolean['must'] = [];
                         }
-                        $boolean['must'][] = $this->mapQuery($subQuery);
+                        $boolean['must'][] = $this->mapQuery($subQuery, $asFilter);
                     }
                 } elseif ($sign === false) {
-                    if ($subQueryArr = $this->mapQuery($subQuery)) {
+                    if ($subQueryArr = $this->mapQuery($subQuery, $asFilter)) {
                         if (!isset($booleanr['must_not'])) {
                             $boolean['must_not'] = [];
                         }
-                        $boolean['must_not'][] = $this->mapQuery($subQuery);
+                        $boolean['must_not'][] = $this->mapQuery($subQuery, $asFilter);
                     }
                 } elseif ($sign === null) {
-                    if ($subQueryArr = $this->mapQuery($subQuery)) {
+                    if ($subQueryArr = $this->mapQuery($subQuery, $asFilter)) {
                         if (!isset($boolean['should'])) {
                             $boolean['should'] = [];
                         }
-                        $boolean['should'][] = $this->mapQuery($subQuery);
+                        $boolean['should'][] = $this->mapQuery($subQuery, $asFilter);
                     }
                 }
             }
@@ -181,6 +229,18 @@ class Query extends \yii\elasticsearch\Query implements QueryInterface
                 $range[$query->isIncludeUpperBound() ? 'lte' : 'lt'] = $to;
             }
             $queryArr['range'] = [$query->getField() => $range];
+        } elseif ($query instanceof Match) {
+            if ($asFilter) {
+                $queryArr['query']['match'] = [$query->getField() => $query->getTerm()->getTerm()];
+            } else {
+                $queryArr['match'] = [$query->getField() => $query->getTerm()->getTerm()];
+            }
+        } elseif ($query instanceof MultiMatch) {
+            $queryArr['multi_match'] = [
+                'query' => $query->getTerm()->getTerm(),
+                'type' => 'most_fields',
+                'fields' => $query->getFields()
+            ];
         }
 
         return $queryArr;
@@ -189,7 +249,8 @@ class Query extends \yii\elasticsearch\Query implements QueryInterface
     protected function normalizeFacets()
     {
         if ($facets = $this->getFacets()) {
-            $this->_facetsFilter = $this->getFacetsCommonFilter($facets);
+            //$this->_facetsFilter = $this->getFacetsCommonFilter($facets);
+            $this->_facetsFilter = null;
             if ($this->_facetsFilter) {
                 foreach ($facets as $facet) {
                     $this->addFacetAggregation($this->getAggregationConfig($facet));
@@ -210,6 +271,7 @@ class Query extends \yii\elasticsearch\Query implements QueryInterface
                         $facetsWithoutFilter[] = $facet;
                     }
                 }
+                $filteredAggregations = [];
                 foreach ($facetsByFilter as $key => $item) {
                     $aggregationsConfig = [];
                     foreach ($item['facets'] as $facet) {
@@ -222,7 +284,7 @@ class Query extends \yii\elasticsearch\Query implements QueryInterface
                         $aggregationsConfig = [
                             'name' => $key . '_filtered',
                             'options' => [
-                                'filter' => $this->mapQuery($item['filter']),
+                                'filter' => $this->mapQuery($item['filter'], true),
                                 'aggs' => ArrayHelper::map($aggregationsConfig, function ($agg) {
                                     return $agg['name'];
                                 }, function ($agg) {
@@ -230,9 +292,11 @@ class Query extends \yii\elasticsearch\Query implements QueryInterface
                                 })
                             ]
                         ];
+                        $filteredAggregations[$aggregationsConfig['name']] = $aggregationsConfig['options'];
                     }
-                    $this->addFacetAggregation($aggregationsConfig);
+                    //$this->addFacetAggregation($aggregationsConfig);
                 }
+                $this->addFacetAggregation(['name' => 'all_filtered', 'options' => ['global' => new \stdClass(), 'aggs' => $filteredAggregations]]);
                 foreach ($facetsWithoutFilter as $facet) {
                     $this->addFacetAggregation($this->getAggregationConfig($facet));
                 }
@@ -367,5 +431,25 @@ class Query extends \yii\elasticsearch\Query implements QueryInterface
         }
 
         return $options;
+    }
+
+    protected function extractQuery(SearchQueryInterface $searchQuery)
+    {
+        if ($searchQuery instanceof BooleanQueryInterface) {
+            $subQueries = $searchQuery->getSubQueries();
+            $signs = $searchQuery->getSigns();
+            foreach ($subQueries as $key => $subQuery) {
+
+            }
+        } elseif ($toQuery instanceof FieldQueryInterface) {
+            $equal = $toQuery->equals($query);
+            if ($equal === 0) {
+                $newQuery = new Boolean();
+                $newQuery->setSubQueries([$toQuery, $query], [$sign, $sign]);
+                return $newQuery;
+            } elseif ($equal === 1) {
+                return $toQuery;
+            }
+        }
     }
 }

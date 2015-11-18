@@ -93,17 +93,7 @@ class QueryResult extends \im\search\components\query\QueryResult implements Ind
             }
         }
         if (isset($response['aggregations'])) {
-            $aggregations = [];
-            foreach ($response['aggregations'] as $name => $aggregation) {
-                if (substr($name, -9) === '_filtered') {
-                    if (isset($aggregation['doc_count'])) {
-                        unset($aggregation['doc_count']);
-                    }
-                    $aggregations = array_merge($aggregations, $aggregation);
-                } else {
-                    $aggregations[$name] = $aggregation;
-                }
-            }
+            $aggregations = $this->parseAggregations($response['aggregations']);
             $this->parseFacets($aggregations);
         }
     }
@@ -149,4 +139,22 @@ class QueryResult extends \im\search\components\query\QueryResult implements Ind
             }
         }
     }
+
+    private function parseAggregations($aggregations)
+    {
+        $parsed = [];
+        foreach ($aggregations as $name => $aggregation) {
+            if (substr($name, -8) === 'filtered') {
+                if (isset($aggregation['doc_count'])) {
+                    unset($aggregation['doc_count']);
+                }
+                $parsed = array_merge($parsed, $this->parseAggregations($aggregation));
+            } else {
+                $parsed[$name] = $aggregation;
+            }
+        }
+
+        return $parsed;
+    }
+
 }
