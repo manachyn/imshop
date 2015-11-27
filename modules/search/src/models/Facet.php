@@ -335,6 +335,20 @@ class Facet extends ActiveRecord implements FacetInterface
     }
 
     /**
+     * @inheritdoc
+     */
+    public function isHasResults()
+    {
+        foreach ($this->getValues() as $value) {
+            if ($value->getResultsCount()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * The name of the facet edit view
      * This should be in the format of 'path/to/view'.
      * @return string

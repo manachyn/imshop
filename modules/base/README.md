@@ -21,7 +21,7 @@ Add to vendor/composer/autoload_psr4.php
 'im\\image\\' => array($baseDir . '/modules/image/src'),
 
 
-'im\\elfinder\\' => array($baseDir . '/modules/elfinder/src'),
+
 'im\\filesystem\\' => array($baseDir . '/modules/filesystem/src'),
 'im\\thruway\\' => array($baseDir . '/modules/thruway/src'),
 'im\\ratchet\\' => array($baseDir . '/modules/ratchet/src'),

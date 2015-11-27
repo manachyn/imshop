@@ -53,7 +53,11 @@ FSM
 http://pear.github.io/FSM/
 
 
+//text:"test1 test2"~10^100 OR test3
+//$searchQuery = \ZendSearch\Lucene\Search\QueryParser::parse($queryParam);
+//http://imshop.loc/laptops/status=1%20or%20title=Test
 
+http://imshop.loc/laptops/text=Apples%20phone
 
 http://kempe.net/blog/2015/02/25/elasticsearch-query-full-text-search.html
 

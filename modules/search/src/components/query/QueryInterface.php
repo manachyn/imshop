@@ -8,6 +8,11 @@ use yii\db\Connection;
 interface QueryInterface extends \yii\db\QueryInterface
 {
     /**
+     * @event Event an event that is triggered after getting query result.
+     */
+    const EVENT_AFTER_RESULT = 'afterResult';
+
+    /**
      * Sets search query.
      *
      * @param SearchQueryInterface $searchQuery
@@ -22,12 +27,26 @@ interface QueryInterface extends \yii\db\QueryInterface
     public function getSearchQuery();
 
     /**
+     * Returns order.
+     *
+     * @return array
+     */
+    public function getOrderBy();
+
+    /**
      * Executes the query and returns result object.
      *
      * @param Connection $db the service connection used to execute the query.
      * @return QueryResultInterface
      */
     public function result($db = null);
+
+    /**
+     * Sets query facets.
+     *
+     * @param FacetInterface[] $facets
+     */
+    public function setFacets($facets);
 
     /**
      * Adds an facet to this query.

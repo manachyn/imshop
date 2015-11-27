@@ -36,12 +36,13 @@ class Document
      */
     private $_data = array();
 
-    public function __construct($id = '', $data = array(), $type = '', $index = '', $relevance = 0)
+    public function __construct($id = '', $data = [], $type = '', $index = '', $relevance = 0)
     {
         $this->setId($id);
         $this->setData($data);
         $this->setType($type);
         $this->setIndex($index);
+        $this->setRelevance($relevance);
     }
 
     /**

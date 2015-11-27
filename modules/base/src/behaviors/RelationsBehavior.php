@@ -502,7 +502,8 @@ class RelationsBehavior extends Behavior
                 return;
             }
             if (!empty($model) || $this->isPrimaryKey($relation, $this->relatedData[$name])) {
-                $this->unlinkOne($name, $this->getRelationSetting($name, 'deleteOnUnlink', false));
+                $link = [];
+                $equals = true;
                 foreach ($relation->link as $pk => $fk) {
                     if (!empty($model)) {
                         $value = $model->$pk;
@@ -513,11 +514,23 @@ class RelationsBehavior extends Behavior
                     }
                     if ($value !== null) {
                         if (is_array($this->owner->$fk)) {
-                            $this->owner->$fk = array_merge($this->owner->$fk, [$value]);
+                            if (!in_array($value, $this->owner->$fk)) {
+                                $equals = false;
+                            }
+                            $link[$fk] = array_merge($this->owner->$fk, [$value]);
                         } else {
-                            $this->owner->$fk = $value;
+                            if ($this->owner->$fk != $value) {
+                                $equals = false;
+                            }
+                            $link[$fk] = $value;
                         }
                     }
+                }
+                if (!$equals) {
+                    $this->unlinkOne($name, $this->getRelationSetting($name, 'deleteOnUnlink', false));
+                }
+                foreach ($link as $name => $value) {
+                    $this->owner->$name = $value;
                 }
                 $extraColumns = !empty($this->extraColumns[$name]) ? $this->extraColumns[$name] : [];
                 $extraColumns = array_merge($this->getRelationSetting($name, 'extraColumns', []), $extraColumns);

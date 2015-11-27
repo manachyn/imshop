@@ -15,7 +15,8 @@ interface QueryParserInterface
      * Parses query string.
      *
      * @param string $queryString
+     * @param QueryParserContextInterface $context
      * @return SearchQueryInterface
      */
-    public function parse($queryString);
+    public function parse($queryString, QueryParserContextInterface $context = null);
 }

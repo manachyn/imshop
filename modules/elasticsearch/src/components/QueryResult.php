@@ -89,7 +89,15 @@ class QueryResult extends \im\search\components\query\QueryResult implements Ind
         $this->_timedOut = !empty($response['timed_out']);
         if (isset($response['hits']['hits'])) {
             foreach ($response['hits']['hits'] as $hit) {
-                $this->documents[] = new Document($hit['_id'], $hit['_source'], $hit['_type'], $hit['_index'], $hit['_score']);
+                $this->documents[] = new Document($hit['_id'], isset($hit['_source']) ? $hit['_source'] : [], $hit['_type'], $hit['_index'], $hit['_score']);
+            }
+            if (!$this->getQuery()->getOrderBy()) {
+                usort($this->documents, function (Document $a, Document $b) {
+                    if ($a->getRelevance() === $b->getRelevance()) {
+                        return $a->getId() < $b->getId() ? -1 : 1;
+                    }
+                    return $a->getRelevance() > $b->getRelevance() ? -1 : 1;
+                });
             }
         }
         if (isset($response['aggregations'])) {

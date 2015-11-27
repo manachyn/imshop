@@ -124,6 +124,16 @@ class QueryParserContext
     }
 
     /**
+     * Set context entries.
+     *
+     * @param QueryEntryInterface[] $entries
+     */
+    public function setEntries($entries)
+    {
+        $this->_entries = $entries;
+    }
+
+    /**
      * Returns query from context.
      *
      * @throws QueryParserException

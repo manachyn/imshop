@@ -2,6 +2,7 @@
 
 namespace im\search\components\transformer;
 
+use im\search\components\index\Document;
 use yii\db\ActiveRecord;
 
 class DocumentToActiveRecordTransformer implements DocumentToObjectTransformerInterface
@@ -13,10 +14,7 @@ class DocumentToActiveRecordTransformer implements DocumentToObjectTransformerIn
      */
     public function transform($documents)
     {
-        $ids = [];
-        foreach ($documents as $document) {
-            $ids[] = $document->getId();
-        }
+        $ids = array_map(function (Document $document) { return $document->getId(); }, $documents);
         $objects = $this->findByIds($ids);
         $keys = array_flip($ids);
         usort($objects, function (ActiveRecord $a, ActiveRecord $b) use ($keys) {

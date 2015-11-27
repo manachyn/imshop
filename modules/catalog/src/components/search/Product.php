@@ -45,4 +45,12 @@ class Product extends IndexedSearchableType
 
         return $searchableAttributes;
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function getTextFields()
+    {
+        return array_merge(parent::getTextFields(), ['title', 'description']);
+    }
 }

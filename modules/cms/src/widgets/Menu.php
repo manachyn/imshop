@@ -44,20 +44,57 @@ class Menu extends Widget
      */
     public function run()
     {
-        $items = MenuItem::find()->where(['menu_id' => 1, 'status' => MenuItem::STATUS_ACTIVE])->all();
+        $items = MenuItem::find()->where(['menu_id' => 1, 'status' => MenuItem::STATUS_ACTIVE])->with(['icon', 'activeIcon', 'video'])->all();
         if ($items) {
             $items = TreeHelper::buildNodesTree($items);
         }
 
         return $this->render('menu/menu', [
             'widget' => $this,
-            'items' => $items,
-            'level' => 1
+            'items' => $items
         ]);
     }
 
-    public function isItemActive(MenuItem $item)
+    public static function setMenuItemOptions(MenuItem $item, MenuItem $parent = null)
     {
-        return $item->url && trim(Yii::$app->request->getUrl(), '/') === trim($item->url, '/');
+        $itemOptions = ['tag' => 'li'];
+        $linkOptions = [];
+        if ($parent && $parent->items_display == MenuItem::DISPLAY_GRID) {
+            $itemOptions['tag'] = 'div';
+            $itemOptions['class'] = $parent->items_css_classes;
+        }
+        $itemOptions = array_merge_recursive($itemOptions, $item->getHtmlAttributes());
+        $children = $item->children;
+        if ($children) {
+            switch ($item->items_display) {
+                case MenuItem::DISPLAY_DROPDOWN:
+                    Html::addCssClass($itemOptions, 'dropdown');
+                    //$linkOptions['data-toggle'] = 'dropdown';
+                    $linkOptions['aria-haspopup'] = "true";
+                    $linkOptions['aria-expanded'] = "false";
+                    Html::addCssClass($linkOptions, 'dropdown-toggle');
+                    $item->label .= ' <span class="caret"></span>';
+                    break;
+                case MenuItem::DISPLAY_FULL_WIDTH_DROPDOWN:
+                    Html::addCssClass($itemOptions, 'dropdown dropdown-full-width');
+                    //$linkOptions['data-toggle'] = 'dropdown';
+                    $linkOptions['aria-haspopup'] = "true";
+                    $linkOptions['aria-expanded'] = "false";
+                    Html::addCssClass($linkOptions, 'dropdown-toggle');
+                    $item->label .= ' <span class="caret"></span>';
+                    break;
+                case MenuItem::DISPLAY_GRID:
+                    Html::addCssClass($itemOptions, 'dropdown dropdown-full-width');
+                    //$linkOptions['data-toggle'] = 'dropdown';
+                    $linkOptions['aria-haspopup'] = "true";
+                    $linkOptions['aria-expanded'] = "false";
+                    Html::addCssClass($linkOptions, 'dropdown-toggle');
+                    $item->label .= ' <span class="caret"></span>';
+                    break;
+            }
+        }
+
+        $item->setHtmlAttributes($itemOptions);
+        $item->setLinkHtmlAttributes($linkOptions);
     }
 }

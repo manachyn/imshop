@@ -97,4 +97,11 @@ interface FacetInterface
      * @return mixed
      */
     public function getContext();
+
+    /**
+     * Whether facet has results.
+     *
+     * @return bool
+     */
+    public function isHasResults();
 }

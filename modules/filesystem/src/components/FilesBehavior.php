@@ -209,14 +209,14 @@ class FilesBehavior extends Behavior implements ModelBehaviorInterface
             foreach ($this->attributes as $attribute => $storageConfig) {
                 if (isset($this->_uploadedFiles[$attribute])) {
                     if ($this->_uploadedFiles[$attribute] instanceof UploadedFile) {
+                        $delete = $storageConfig->deleteOnUnlink || $this->owner->getRelationSetting($storageConfig->relation, 'deleteOnUnlink');
+                        if ($delete && (!empty($this->_relatedFiles[$attribute]['models']))) {
+                            foreach ($this->_relatedFiles[$attribute]['models'] as $file) {
+                                $filesystemComponent->deleteFile($file);
+                            }
+                        }
                         if ($model = $this->saveUploadedFile($this->_uploadedFiles[$attribute], $storageConfig)) {
                             if (!$storageConfig->multiple && $this->_relatedFiles[$attribute]['models']) {
-                                $delete = $storageConfig->deleteOnUnlink || $this->owner->getRelationSetting($storageConfig->relation, 'deleteOnUnlink');
-                                if ($delete) {
-                                    foreach ($this->_relatedFiles[$attribute]['models'] as $file) {
-                                        $filesystemComponent->deleteFile($file);
-                                    }
-                                }
                                 $this->_relatedFiles[$attribute]['models'] = [$model];
                             } else {
                                 $this->_relatedFiles[$attribute]['models'][] = $model;

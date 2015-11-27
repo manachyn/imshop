@@ -21,7 +21,7 @@ class QueryLexer implements QueryLexerInterface
             '/[0-9]+(?:\.[0-9]+)?/A' => QueryToken::TYPE_NUMBER,
             '/"([^"\\\\]*(?:\\\\.[^"\\\\]*)*)"|\'([^\'\\\\]*(?:\\\\.[^\'\\\\]*)*)\'/As' => QueryToken::TYPE_PHRASE,
             '/not(?=[\s(])|and(?=[\s(])|or(?=[\s(])|\=|\>\=|\<\=|\>|\<|&/A' => QueryToken::TYPE_OPERATOR,
-            '/\[|\]|\(|\)/A' => QueryToken::TYPE_SYNTAX,
+            '/\[|\]|\(|\)|\{|\}|\*/A' => QueryToken::TYPE_SYNTAX,
             '/[a-zA-Z_\-\x7f-\xff][a-zA-Z0-9_\-\x7f-\xff]*/A' => QueryToken::TYPE_WORD
         ];
         while ($cursor < $end) {

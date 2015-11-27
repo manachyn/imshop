@@ -1,8 +1,11 @@
 <?php
 
 namespace im\search\components\query\parser;
+
 use im\search\components\query\BooleanQueryInterface;
 use im\search\components\query\FieldQueryInterface;
+use im\search\components\query\Match;
+use im\search\components\query\MultiMatch;
 use im\search\components\query\RangeInterface;
 use im\search\components\query\SearchQueryInterface;
 use im\search\components\query\Term;
@@ -87,6 +90,8 @@ class QueryConverter implements QueryConverterInterface
                 $queryString .= $query->isIncludeUpperBound() ? $this->syntax[self::SYNTAX_INCLUDED_RANGE_END] : $this->syntax[self::SYNTAX_EXCLUDED_RANGE_END];
             } elseif ($query instanceof Term) {
                 $queryString = $query->getTerm();
+            } elseif ($query instanceof Match || $query instanceof MultiMatch) {
+                $queryString = $query->getTerm()->getTerm();
             }
             if ($queryString !== '' && !$asValue) {
                 $queryString = $query->getField() . $this->syntax[self::SYNTAX_EQUAL_OPERATOR] . $queryString;

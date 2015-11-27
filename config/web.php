@@ -23,6 +23,9 @@ $config = [
         'base' => [
             'class' => 'im\base\Module'
         ],
+        'backend' => [
+            'class' => 'im\backend\Module'
+        ],
         'users' => [
             'class' => 'im\users\Module'
         ],
@@ -81,6 +84,7 @@ $config = [
             'showScriptName' => false,
             'cache' => false,
             'rules' => [
+                ['pattern' => '/', 'route' => 'cms/page/view', 'defaults' => ['path' => 'index']],
                 ['pattern' => 'storage/<server:\w+>/<path:(.*)>', 'route' => 'glide/index', 'encodeParams' => false],
                 [
                     'class' => 'im\base\routing\GroupUrlRule',
@@ -193,6 +197,7 @@ $config = [
                 ['http_address' => '127.0.0.1:9200']
             ]
         ],
+        'categorySearch' => 'im\catalog\components\search\CategorySearchComponent',
         'layoutManager' => 'im\cms\components\LayoutManager',
         'templateManager' => 'im\cms\components\TemplateManager',
         'glide' => [

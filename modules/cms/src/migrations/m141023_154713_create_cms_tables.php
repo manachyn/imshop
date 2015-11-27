@@ -28,9 +28,9 @@ class m141023_154713_create_cms_tables extends Migration
             ],
             $tableOptions
         );
-        $this->createIndex('type', '{{%pages}}', 'type');
         $this->createIndex('slug', '{{%pages}}', 'slug');
         $this->createIndex('status', '{{%pages}}', 'status');
+        $this->createIndex('type', '{{%pages}}', 'type');
         $this->createIndex('created_at', '{{%pages}}', 'created_at');
         $this->createIndex('updated_at', '{{%pages}}', 'updated_at');
 
@@ -108,7 +108,7 @@ class m141023_154713_create_cms_tables extends Migration
         $this->createIndex('depth', '{{%menus_items}}', 'depth');
         $this->createIndex('tree', '{{%menus_items}}', 'tree');
         $this->createIndex('name', '{{%menus_items}}', 'label');
-        $this->createIndex('status', '{{%menus_items}}', 'status');
+        $this->createIndex('menu_id_status', '{{%menus_items}}', ['menu_id', 'status']);
         // Foreign Keys
         $this->addForeignKey('FK_menus_items_menu_id', '{{%menus_items}}', 'menu_id', '{{%menus}}', 'id', 'CASCADE', 'CASCADE');
         $this->addForeignKey('FK_menus_items_icon_id', '{{%menus_items}}', 'icon_id', '{{%menu_item_files}}', 'id', 'SET NULL', 'CASCADE');

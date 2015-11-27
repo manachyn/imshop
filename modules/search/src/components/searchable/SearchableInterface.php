@@ -39,4 +39,11 @@ interface SearchableInterface
      * @return AttributeDescriptor[]
      */
     public function getSearchableAttributes($recursive = false);
+
+    /**
+     * Returns full text search attributes.
+     *
+     * @return AttributeDescriptor[]
+     */
+    public function getFullTextSearchAttributes();
 }

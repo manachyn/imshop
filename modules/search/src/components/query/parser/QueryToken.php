@@ -22,12 +22,15 @@ class QueryToken
     const TYPE_SYNTAX = 'syntax';
     const TYPE_LEFT_SQUARE_BRACKET = 'left_square_bracket';
     const TYPE_RIGHT_SQUARE_BRACKET = 'right_square_bracket';
+    const TYPE_LEFT_CURLY_BRACKET = 'left_curly_bracket';
+    const TYPE_RIGHT_CURLY_BRACKET = 'right_curly_bracket';
     const TYPE_LEFT_PARENTHESIS = 'left_parenthesis';
     const TYPE_RIGHT_PARENTHESIS = 'right_parenthesis';
     const TYPE_AND_OPERATOR = 'and';
     const TYPE_OR_OPERATOR = 'or';
     const TYPE_NOT_OPERATOR = 'not';
     const TYPE_TO_LEXEME = 'to';
+    const TYPE_WILDCARD = 'wildcard';
 
     /**
      * Token type.
@@ -118,6 +121,15 @@ class QueryToken
                         break;
                     case ')':
                         $this->type = self::TYPE_RIGHT_PARENTHESIS;
+                        break;
+                    case '{':
+                        $this->type = self::TYPE_LEFT_CURLY_BRACKET;
+                        break;
+                    case '}':
+                        $this->type = self::TYPE_RIGHT_CURLY_BRACKET;
+                        break;
+                    case '*':
+                        $this->type = self::TYPE_WILDCARD;
                         break;
 //                    case '-':
 //                        $this->type = self::TYPE_WHITE_SPACE;

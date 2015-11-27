@@ -7,7 +7,7 @@ namespace im\search\components\query;
  *
  * @package im\search\components\query
  */
-class MultiMatch extends SearchQuery
+class MultiMatch extends SearchQuery implements FieldQueryInterface
 {
     /**
      * @var array
@@ -62,4 +62,22 @@ class MultiMatch extends SearchQuery
     {
         $this->_term = $term;
     }
-} 
+
+    /**
+     * @inheritdoc
+     */
+    public function getField()
+    {
+        return $this->getTerm()->getField();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function equals(SearchQueryInterface $query)
+    {
+        $sameField = $query instanceof MultiMatch && $this->getFields() === $query->getFields() && $this->getField() === $query->getField();
+
+        return $sameField && $this->getTerm()->equals($query->getTerm()) ? 1 : ($sameField ? 0 : -1);
+    }
+}

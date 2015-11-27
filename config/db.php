@@ -6,5 +6,6 @@ return [
     'username' => 'root',
     'password' => 'ubuntu',
     'charset' => 'utf8',
-    'tablePrefix' => 'tbl_'
+    'tablePrefix' => 'tbl_',
+    'enableSchemaCache' => true
 ];

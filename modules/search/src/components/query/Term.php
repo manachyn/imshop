@@ -76,6 +76,6 @@ class Term extends SearchQuery implements FieldQueryInterface
     {
         $sameField = $query instanceof Term && $this->getField() === $query->getField();
 
-        return $sameField && $this->getTerm() === $query->getTerm() ? 1 : ($sameField ? 0 : -1);
+        return $sameField && $this->getTerm() == $query->getTerm() ? 1 : ($sameField ? 0 : -1);
     }
 }

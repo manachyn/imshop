@@ -4,6 +4,8 @@ namespace im\search\components\service\db;
 
 use im\eav\models\Attribute;
 use im\eav\models\AttributeValue;
+use im\search\components\index\IndexableInterface;
+use im\search\components\query\parser\QueryParserContextInterface;
 use im\search\components\searchable\AttributeDescriptor;
 use im\search\components\searchable\SearchableInterface;
 use ReflectionClass;
@@ -19,7 +21,7 @@ use yii\helpers\Inflector;
  *
  * @package im\search\components\service\db
  */
-class SearchableType extends Object implements SearchableInterface
+class SearchableType extends Object implements SearchableInterface, QueryParserContextInterface
 {
     /**
      * @var string
@@ -141,6 +143,29 @@ class SearchableType extends Object implements SearchableInterface
     }
 
     /**
+     * @inheritdoc
+     */
+    public function getFullTextSearchAttributes()
+    {
+        $fullTextSearchAttributes = [];
+        if ($this instanceof IndexableInterface) {
+            $fullTextSearchAttributes = array_filter($this->getIndexMapping(), function (AttributeDescriptor $attribute) {
+                return !empty($attribute->params['fullTextSearch']);
+            });
+        }
+
+        return $fullTextSearchAttributes;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getTextFields()
+    {
+        return ['text'];
+    }
+
+    /**
      * @param ActiveRecord $model
      * @param array $except
      * @return \im\search\components\searchable\AttributeDescriptor[]
@@ -233,10 +258,5 @@ class SearchableType extends Object implements SearchableInterface
         }
 
         return $this->model;
-    }
-
-    protected function createAttribute()
-    {
-
     }
 }

@@ -7,7 +7,7 @@ namespace im\search\components\query;
  *
  * @package im\search\components\query
  */
-class Match extends SearchQuery
+class Match extends SearchQuery implements FieldQueryInterface
 {
     /**
      * @var string
@@ -32,7 +32,7 @@ class Match extends SearchQuery
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
     public function getField()
     {
@@ -62,4 +62,14 @@ class Match extends SearchQuery
     {
         $this->_term = $term;
     }
-} 
+
+    /**
+     * @inheritdoc
+     */
+    public function equals(SearchQueryInterface $query)
+    {
+        $sameField = $query instanceof Match && $this->getField() === $query->getField();
+
+        return $sameField && $this->getTerm()->equals($query->getTerm()) ? 1 : ($sameField ? 0 : -1);
+    }
+}

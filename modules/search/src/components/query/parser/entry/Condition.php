@@ -40,6 +40,54 @@ class Condition implements QueryEntryInterface
     }
 
     /**
+     * @return string
+     */
+    public function getField()
+    {
+        return $this->_field;
+    }
+
+    /**
+     * @param string $field
+     */
+    public function setField($field)
+    {
+        $this->_field = $field;
+    }
+
+    /**
+     * @return string
+     */
+    public function getValue()
+    {
+        return $this->_value;
+    }
+
+    /**
+     * @param string $value
+     */
+    public function setValue($value)
+    {
+        $this->_value = $value;
+    }
+
+    /**
+     * @return string
+     */
+    public function getOperator()
+    {
+        return $this->_operator;
+    }
+
+    /**
+     * @param string $operator
+     */
+    public function setOperator($operator)
+    {
+        $this->_operator = $operator;
+    }
+
+    /**
      * @inheritdoc
      */
     public function getQuery()

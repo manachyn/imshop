@@ -11,6 +11,7 @@ use im\filesystem\components\FilesBehavior;
 use im\tree\models\Tree;
 use Intervention\Image\Constraint;
 use Intervention\Image\ImageManagerStatic;
+use Yii;
 use yii\helpers\Inflector;
 
 /**
@@ -28,6 +29,10 @@ use yii\helpers\Inflector;
  * @property integer $items_display
  * @property string $items_css_classes
  * @property bool $status
+ * @property MenuItemFile $icon
+ * @property MenuItemFile $activeIcon
+ * @property MenuItemFile $video
+ * @property MenuItem[] $children
  *
  * @method MenuItemQuery parents(integer $depth = null)
  * @method MenuItemQuery children(integer $depth = null)
@@ -44,9 +49,20 @@ class MenuItem extends Tree
 
     const DEFAULT_STATUS = self::STATUS_ACTIVE;
 
+    const DISPLAY_LIST = 0;
     const DISPLAY_DROPDOWN = 1;
     const DISPLAY_FULL_WIDTH_DROPDOWN = 2;
     const DISPLAY_GRID = 3;
+
+    /**
+     * @var array
+     */
+    private $_htmlAttributes = [];
+
+    /**
+     * @var array
+     */
+    private $_linkHtmlAttributes = [];
 
     /**
      * @inheritdoc
@@ -170,11 +186,29 @@ class MenuItem extends Tree
         return $this->status === self::STATUS_ACTIVE;
     }
 
+    /**
+     * @return array
+     */
     public function getHtmlAttributes()
     {
-        return $this->css_classes ? ['class' => explode(' ', $this->css_classes)] : [];
+        if ($this->css_classes) {
+            return array_merge_recursive($this->_htmlAttributes, ['class' => explode(' ', $this->css_classes)]);
+        }
+
+        return $this->_htmlAttributes;
     }
 
+    /**
+     * @param array $htmlAttributes
+     */
+    public function setHtmlAttributes($htmlAttributes)
+    {
+        $this->_htmlAttributes = $htmlAttributes;
+    }
+
+    /**
+     * @return array
+     */
     public function getLinkHtmlAttributes()
     {
         $attributes = [];
@@ -185,7 +219,15 @@ class MenuItem extends Tree
             $attributes['rel'] = $this->rel;
         }
 
-        return $attributes;
+        return array_merge_recursive($this->_linkHtmlAttributes, $attributes);
+    }
+
+    /**
+     * @param array $linkHtmlAttributes
+     */
+    public function setLinkHtmlAttributes($linkHtmlAttributes)
+    {
+        $this->_linkHtmlAttributes = $linkHtmlAttributes;
     }
 
     /**
@@ -213,9 +255,18 @@ class MenuItem extends Tree
     public static function getDisplayList()
     {
         return [
+            self::DISPLAY_LIST => Module::t('menu-item', 'List'),
             self::DISPLAY_DROPDOWN => Module::t('menu-item', 'Dropdown'),
             self::DISPLAY_FULL_WIDTH_DROPDOWN => Module::t('menu-item', 'Full width dropdown'),
             self::DISPLAY_GRID => Module::t('menu-item', 'Grid (requires css class for items)')
         ];
+    }
+
+    /**
+     * @return bool
+     */
+    public function isActive()
+    {
+        return $this->url && trim(Yii::$app->request->getUrl(), '/') === trim($this->url, '/');
     }
 }

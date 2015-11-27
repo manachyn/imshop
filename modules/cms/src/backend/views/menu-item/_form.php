@@ -32,6 +32,8 @@ use yii\widgets\ActiveForm;
 <?php Block::end(); ?>
 
 <?php $display = Block::begin(); ?>
+<?= $form->field($model, 'items_display')->dropDownList($model::getDisplayList()) ?>
+<?= $form->field($model, 'items_css_classes')->textInput(['maxlength' => true]) ?>
 <div class="row">
     <div class="col-sm-4">
         <?= $form->field($model, 'uploadedIcon')->fileInput(['accept' => 'image/*']) ?>

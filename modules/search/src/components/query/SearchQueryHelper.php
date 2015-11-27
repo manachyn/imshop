@@ -43,7 +43,7 @@ class SearchQueryHelper
                 }
             }
             $newQuery = new Boolean();
-            $newQuery->setSubQueries([$toQuery, $query], [$sign, $sign]);
+            $newQuery->setSubQueries([$toQuery, $query], [$topLevelSign, $topLevelSign]);
         }
 
         return $newQuery;
