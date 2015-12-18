@@ -3,21 +3,20 @@
 namespace im\cms\components;
 
 use im\cms\models\widgets\WidgetArea;
-use im\cms\Module;
 use yii\base\Object;
 use Yii;
 
 class Layout extends Object
 {
     /**
-     * @var string layout name.
-     */
-    private $_name;
-
-    /**
      * @var string an ID that uniquely identifies layout.
      */
     public $id;
+
+    /**
+     * @var string layout name.
+     */
+    public $name;
 
     /**
      * @var boolean whether the layout is default
@@ -27,55 +26,37 @@ class Layout extends Object
     /**
      * @var WidgetArea[]
      */
-    public $widgetAreas;
+    public $_widgetAreas;
 
     /**
      * @var array|WidgetAreaDescriptor[]
      */
-    private $_availableWidgetAreas;
+    public $_availableWidgetAreas = [];
 
     /**
-     * @inheritdoc
+     * @return \im\cms\models\widgets\WidgetArea[]
      */
-    public function init()
+    public function getWidgetAreas()
     {
-        parent::init();
-        foreach ($this->_availableWidgetAreas as $key => $widgetArea) {
-            if (!$widgetArea instanceof WidgetAreaDescriptor) {
-                $widgetArea = Yii::createObject($widgetArea);
-                $this->_availableWidgetAreas[$key] = $widgetArea;
+        if (!$this->_widgetAreas) {
+            foreach ($this->getAvailableWidgetAreas() as $key => $widgetArea) {
+                $this->_widgetAreas[$key] = new WidgetArea([
+                    'code' => $widgetArea->code,
+                    'title' => $widgetArea->title,
+                    'display' => WidgetArea::DISPLAY_ALWAYS
+                ]);
             }
-            $this->widgetAreas[$key] = new WidgetArea([
-                'code' => $widgetArea->code,
-                'title' => $widgetArea->title,
-                'display' => WidgetArea::DISPLAY_ALWAYS
-            ]);
         }
+
+        return $this->_widgetAreas;
     }
 
     /**
-     * @param string $name
+     * @param \im\cms\models\widgets\WidgetArea[] $widgetAreas
      */
-    public function setName($name)
+    public function setWidgetAreas($widgetAreas)
     {
-        $this->_name = $name;
-    }
-
-    /**
-     * @return string
-     */
-    public function getName()
-    {
-        //return $this->default ? $this->_name . ' (' . Module::t('module', 'default') . ')' : $this->_name;
-        return $this->_name;
-    }
-
-    /**
-     * @param WidgetAreaDescriptor[] $availableWidgetAreas
-     */
-    public function setAvailableWidgetAreas($availableWidgetAreas)
-    {
-        $this->_availableWidgetAreas = $availableWidgetAreas;
+        $this->_widgetAreas = $widgetAreas;
     }
 
     /**
@@ -83,8 +64,21 @@ class Layout extends Object
      */
     public function getAvailableWidgetAreas()
     {
+        foreach ($this->$this->_availableWidgetAreas as $key => $widgetArea) {
+            if (!$widgetArea instanceof WidgetAreaDescriptor) {
+                $widgetArea = Yii::createObject($widgetArea);
+                $this->_availableWidgetAreas[$key] = $widgetArea;
+            }
+        }
+
         return $this->_availableWidgetAreas;
     }
 
-
+    /**
+     * @param array|WidgetAreaDescriptor[] $availableWidgetAreas
+     */
+    public function setAvailableWidgetAreas($availableWidgetAreas)
+    {
+        $this->_availableWidgetAreas = $availableWidgetAreas;
+    }
 }

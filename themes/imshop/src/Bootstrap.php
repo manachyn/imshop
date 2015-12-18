@@ -24,8 +24,9 @@ class Bootstrap implements BootstrapInterface
      */
     public function registerLayouts($app)
     {
+        /** @var \im\cms\components\LayoutManager $layoutManager */
         $layoutManager = $app->get('layoutManager');
-        $layoutManager->registerLayout(Yii::createObject([
+        $layoutManager->registerLayout([
             'class' => 'im\cms\components\Layout',
             'id' => 'main',
             'name' => 'Main layout',
@@ -34,14 +35,15 @@ class Bootstrap implements BootstrapInterface
                 ['class' => 'im\cms\components\WidgetAreaDescriptor', 'code' => 'sidebar', 'title' => 'Sidebar'],
                 ['class' => 'im\cms\components\WidgetAreaDescriptor', 'code' => 'footer', 'title' => 'Footer']
             ]
-        ]));
-        $layoutManager->registerLayout(Yii::createObject([
+        ]);
+        $layoutManager->registerLayout([
             'class' => 'im\cms\components\Layout',
             'id' => 'home',
             'name' => 'Home',
             'availableWidgetAreas' => [
                 ['class' => 'im\cms\components\WidgetAreaDescriptor', 'code' => 'footer', 'title' => 'Footer']
             ]
-        ]));
+        ]);
+        $layoutManager->registerMenuLocation(['class' => 'im\cms\components\MenuLocationDescriptor', 'code' => 'top', 'name' => 'Top menu']);
     }
 }

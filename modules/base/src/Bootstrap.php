@@ -28,15 +28,17 @@ class Bootstrap implements BootstrapInterface
         Yii::setAlias('@im/users', $vendorDir . '/modules/users/src');
         Yii::setAlias('@im/search', $vendorDir . '/modules/search/src');
 
-        $this->registerTranslations();
+        $this->registerTranslations($app);
     }
 
     /**
-     * Register module translations.
+     * Registers module translations.
+     *
+     * @param \yii\base\Application $app
      */
-    public function registerTranslations()
+    public function registerTranslations($app)
     {
-        Yii::$app->i18n->translations[Module::$messagesCategory . '/*'] = [
+        $app->i18n->translations[Module::$messagesCategory . '/*'] = [
             'class' => 'yii\i18n\PhpMessageSource',
             'sourceLanguage' => 'en-US',
             'basePath' => '@im/base/messages',

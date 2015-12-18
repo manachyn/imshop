@@ -53,6 +53,9 @@ $config = [
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],
+        'memCache' => [
+            'class' => 'yii\caching\MemCache',
+        ],
         'user' => [
             'class' => 'im\users\components\UserComponent',
             'identityClass' => 'app\models\User',
@@ -82,7 +85,7 @@ $config = [
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
-            'cache' => false,
+            //'cache' => 'memCache',
             'rules' => [
                 ['pattern' => '/', 'route' => 'cms/page/view', 'defaults' => ['path' => 'index']],
                 ['pattern' => 'storage/<server:\w+>/<path:(.*)>', 'route' => 'glide/index', 'encodeParams' => false],

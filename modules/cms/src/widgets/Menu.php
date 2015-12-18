@@ -5,11 +5,17 @@ namespace im\cms\widgets;
 use im\cms\models\MenuItem;
 use im\tree\components\TreeHelper;
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\base\Widget;
 use yii\helpers\Html;
 
 class Menu extends Widget
 {
+    /**
+     * @var string
+     */
+    public $location;
+
     /**
      * @var array the HTML attributes for the widget container tag.
      */
@@ -33,6 +39,9 @@ class Menu extends Widget
     public function init()
     {
         parent::init();
+        if ($this->location === null) {
+            throw new InvalidConfigException('The "location" property must be set.');
+        }
         Html::addCssClass($this->options, ['widget' => 'nav']);
         if ($this->dropDownCaret === null) {
             $this->dropDownCaret = Html::tag('span', '', ['class' => 'caret']);
@@ -44,14 +53,18 @@ class Menu extends Widget
      */
     public function run()
     {
-        $items = MenuItem::find()->where(['menu_id' => 1, 'status' => MenuItem::STATUS_ACTIVE])->with(['icon', 'activeIcon', 'video'])->all();
-        if ($items) {
-            $items = TreeHelper::buildNodesTree($items);
-        }
+//        $items = MenuItem::find()->where(['menu_id' => 1, 'status' => MenuItem::STATUS_ACTIVE])->with(['icon', 'activeIcon', 'video'])->all();
+//        if ($items) {
+//            $items = TreeHelper::buildNodesTree($items);
+//        }
+
+        /** @var \im\cms\components\LayoutManager $layoutManager */
+        $layoutManager = Yii::$app->get('layoutManager');
+        $menu = $layoutManager->getMenu($this->location);
 
         return $this->render('menu/menu', [
             'widget' => $this,
-            'items' => $items
+            'items' => $menu->items
         ]);
     }
 

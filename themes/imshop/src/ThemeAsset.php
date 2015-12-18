@@ -34,7 +34,7 @@ class ThemeAsset extends AssetBundle
             'images/*/*',
             'css/*.css',
         ],
-        'forceCopy' => true
+        //'forceCopy' => YII_DEBUG
     ];
 
     /**

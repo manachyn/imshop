@@ -48,6 +48,7 @@ class Bootstrap implements BootstrapInterface
      */
     public function registerPageTypes($app)
     {
+        /** @var \im\cms\components\Cms $cms */
         $cms = $app->get('cms');
         $cms->registerPageType(new EntityType('search_page', 'im\search\models\SearchPage'));
     }
@@ -59,6 +60,7 @@ class Bootstrap implements BootstrapInterface
      */
     public function registerWidgets($app)
     {
+        /** @var \im\cms\components\LayoutManager $layoutManager */
         $layoutManager = $app->get('layoutManager');
         $layoutManager->registerWidget('im\search\widgets\FacetsWidget');
     }
@@ -80,11 +82,13 @@ class Bootstrap implements BootstrapInterface
 
     /**
      * Registers entity types.
+     *
+     * @param \yii\base\Application $app
      */
-    public function registerEntityTypes()
+    public function registerEntityTypes($app)
     {
         /** @var \im\base\types\EntityTypesRegister $typesRegister */
-        $typesRegister = Yii::$app->get('typesRegister');
+        $typesRegister = $app->get('typesRegister');
         $typesRegister->registerEntityType(new EntityType('terms_facet', 'im\search\models\TermsFacet', 'facets', Module::t('facet', 'Terms facet')));
         $typesRegister->registerEntityType(new EntityType('range_facet', 'im\search\models\RangeFacet', 'facets', Module::t('facet', 'Range facet')));
         $typesRegister->registerEntityType(new EntityType('interval_facet', 'im\search\models\IntervalFacet', 'facets', Module::t('facet', 'Interval facet')));

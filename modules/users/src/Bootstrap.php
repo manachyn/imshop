@@ -16,35 +16,35 @@ class Bootstrap implements BootstrapInterface
     {
         Yii::setAlias('@im/users', __DIR__);
 
-        /** @var $module Module */
-        $module = $app->getModule('users');
-
-
-
-        if ($module) {
-//            $this->registerTranslations();
-//            if ($app instanceof ConsoleApplication) {
-//                $module->controllerNamespace = 'im\user\commands';
-//            } else {
+//        /** @var $module Module */
+//        $module = $app->getModule('users');
 //
-//                $configUrlRule = [
-//                    'prefix' => $module->urlPrefix,
-//                    'rules'  => $module->urlRules
-//                ];
 //
-//                if ($module->urlPrefix != 'user') {
-//                    $configUrlRule['routePrefix'] = 'user';
-//                }
 //
-//                $app->get('urlManager')->rules[] = new GroupUrlRule($configUrlRule);
-//
-//                if (!$app->has('authClientCollection')) {
-//                    $app->set('authClientCollection', [
-//                        'class' => Collection::className(),
-//                    ]);
-//                }
-//            }
-        }
+//        if ($module) {
+////            $this->registerTranslations();
+////            if ($app instanceof ConsoleApplication) {
+////                $module->controllerNamespace = 'im\user\commands';
+////            } else {
+////
+////                $configUrlRule = [
+////                    'prefix' => $module->urlPrefix,
+////                    'rules'  => $module->urlRules
+////                ];
+////
+////                if ($module->urlPrefix != 'user') {
+////                    $configUrlRule['routePrefix'] = 'user';
+////                }
+////
+////                $app->get('urlManager')->rules[] = new GroupUrlRule($configUrlRule);
+////
+////                if (!$app->has('authClientCollection')) {
+////                    $app->set('authClientCollection', [
+////                        'class' => Collection::className(),
+////                    ]);
+////                }
+////            }
+//        }
     }
 
 //    /**

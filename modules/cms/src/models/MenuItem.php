@@ -34,13 +34,13 @@ use yii\helpers\Inflector;
  * @property MenuItemFile $video
  * @property MenuItem[] $children
  *
- * @method MenuItemQuery parents(integer $depth = null)
- * @method MenuItemQuery children(integer $depth = null)
+ * @method MenuItemQuery parents($depth = null)
+ * @method MenuItemQuery children($depth = null)
  * @method MenuItemQuery leaves()
  * @method MenuItemQuery prev()
  * @method MenuItemQuery next()
  */
-class MenuItem extends Tree
+class MenuItem extends Tree implements \Serializable
 {
     use ModelBehaviorTrait;
 
@@ -181,6 +181,25 @@ class MenuItem extends Tree
         ];
     }
 
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getMenuRelation()
+    {
+        return $this->hasOne(Menu::className(), ['id' => 'menu_id']);
+    }
+
+    /**
+     * @return Menu
+     */
+    public function getMenu()
+    {
+        return $this->getMenuRelation()->one();
+    }
+
+    /**
+     * @return bool
+     */
     public function isVisible()
     {
         return $this->status === self::STATUS_ACTIVE;
@@ -268,5 +287,28 @@ class MenuItem extends Tree
     public function isActive()
     {
         return $this->url && trim(Yii::$app->request->getUrl(), '/') === trim($this->url, '/');
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function serialize()
+    {
+        return serialize([
+            'attributes' => $this->getAttributes(),
+            'related' => $this->getRelatedRecords()
+        ]);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function unserialize($serialized)
+    {
+        $data = unserialize($serialized);
+        $this->setAttributes($data['attributes']);
+        foreach ($data['related'] as $name => $value) {
+            $this->populateRelation($name, $value);
+        }
     }
 }

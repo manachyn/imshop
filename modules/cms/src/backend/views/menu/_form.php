@@ -13,6 +13,8 @@ use yii\widgets\ActiveForm;
 
 <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
+<?= $form->field($model, 'location')->dropDownList($model->getLocationsList()) ?>
+
 <?= Html::submitButton($model->isNewRecord ? Module::t('module', 'Create') : Module::t('module', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-primary' : 'btn btn-success']) ?>
 
 <?php ActiveForm::end(); ?>

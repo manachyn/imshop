@@ -36,6 +36,6 @@ class ThemeAsset extends AssetBundle
      * @inheritdoc
      */
     public $publishOptions = [
-        'forceCopy' => true
+        'forceCopy' => YII_DEBUG
     ];
 }

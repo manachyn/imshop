@@ -19,6 +19,8 @@ class Bootstrap implements BootstrapInterface
 
     /**
      * Registers module translations.
+     *
+     * @param \yii\base\Application $app
      */
     public function registerTranslations($app)
     {

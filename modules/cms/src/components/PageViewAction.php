@@ -41,7 +41,9 @@ class PageViewAction extends ModelViewAction implements ModelContextInterface
         $this->setModel($model);
         if ($model && $model->getBehavior('template')) {
             /** @var TemplateBehavior|Page $model */
-            if ($model->template && $layout = $model->template->getLayout()) {
+            /** @var \im\cms\models\Template $template */
+            $template = $model->getTemplate()->one();
+            if ($template && $layout = $template->getLayout()) {
                 $this->controller->layout = '//' . $layout->id;
             }
         }

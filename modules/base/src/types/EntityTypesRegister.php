@@ -4,7 +4,6 @@ namespace im\base\types;
 
 use yii\base\Component;
 use yii\base\InvalidParamException;
-use yii\di\Instance;
 
 class EntityTypesRegister extends Component
 {
@@ -34,19 +33,6 @@ class EntityTypesRegister extends Component
         }
     }
 
-//    /**
-//     * @inheritdoc
-//     */
-//    public function init()
-//    {
-//        parent::init();
-//        foreach ($this->entityTypes as $key => $type) {
-//            $this[$key] = Instance::ensure($type, 'im\base\types\EntityType');
-//        }
-//    }
-
-
-
     /**
      * Registers entity type.
      *
@@ -61,7 +47,8 @@ class EntityTypesRegister extends Component
     }
 
     /**
-     * Checks whether the type exists in the registry
+     * Checks whether the type exists in the registry.
+     *
      * @param EntityType|string $type
      * @return bool
      */
@@ -93,6 +80,12 @@ class EntityTypesRegister extends Component
         return $asString ? $entityType->getType() : $entityType;
     }
 
+    /**
+     * Returns entity class by entity type.
+     *
+     * @param string $type
+     * @return string
+     */
     public function getEntityClass($type)
     {
         if (isset($this->_entityTypes[$type])) {

@@ -40,6 +40,11 @@ class Cms extends Component
     public $pageCacheDependency;
 
     /**
+     * @var CacheManager
+     */
+    public $_cacheManager = 'im\cms\components\CacheManager';
+
+    /**
      * Registers page type.
      *
      * @param EntityType $type
@@ -77,5 +82,21 @@ class Cms extends Component
         $class = $type && $typesRegister->hasEntityType($type) ? $typesRegister->getEntityClass($type) : Page::className();
 
         return Yii::createObject(['class' => $class, 'type' => $type]);
+    }
+
+    /**
+     * Returns cache manager.
+     *
+     * @return CacheManager|null
+     */
+    public function getCacheManager()
+    {
+        if ($this->_cacheManager === false) {
+            return null;
+        } elseif (!$this->_cacheManager instanceof CacheManager) {
+            $this->_cacheManager = Yii::createObject($this->_cacheManager);
+        }
+
+        return $this->_cacheManager;
     }
 }

@@ -2,7 +2,10 @@
 
 namespace im\cms\components;
 
+use im\cms\models\Menu;
+use im\cms\models\MenuItem;
 use im\cms\models\widgets\Widget;
+use im\tree\components\TreeHelper;
 use yii\base\Component;
 use Yii;
 use yii\base\InvalidParamException;
@@ -28,17 +31,9 @@ class LayoutManager extends Component
     private $_widgets = [];
 
     /**
-     * @inheritdoc
+     * @var array|MenuLocation[]
      */
-    public function init()
-    {
-        parent::init();
-        foreach ($this->_layouts as $key => $layout) {
-            if (!$layout instanceof Layout) {
-                $this->_layouts[$key] = Yii::createObject($layout);
-            }
-        }
-    }
+    public $_menuLocations = [];
 
     /**
      * Registers widget.
@@ -55,23 +50,13 @@ class LayoutManager extends Component
     }
 
     /**
-     * Registers widget.
+     * Registers layout.
      *
-     * @param Layout $layout
+     * @param array|Layout $layout
      */
     public function registerLayout($layout)
     {
         $this->_layouts[] = $layout;
-    }
-
-    /**
-     * Sets layouts.
-     *
-     * @param Layout[] $layouts
-     */
-    public function setLayouts($layouts)
-    {
-        $this->_layouts = $layouts;
     }
 
     /**
@@ -81,6 +66,12 @@ class LayoutManager extends Component
      */
     public function getLayouts()
     {
+        foreach ($this->_layouts as $key => $layout) {
+            if (!$layout instanceof Layout) {
+                $this->_layouts[$key] = Yii::createObject($layout);
+            }
+        }
+
         return $this->_layouts;
     }
 
@@ -94,7 +85,7 @@ class LayoutManager extends Component
     {
         $layout = null;
         if ($id) {
-            foreach ($this->_layouts as $item) {
+            foreach ($this->getLayouts() as $item) {
                 if ($item->id == $id) {
                     $layout = $item;
                     break;
@@ -114,8 +105,9 @@ class LayoutManager extends Component
      */
     public function getDefaultLayout()
     {
-        $defaultLayout = $this->_layouts[0];
-        foreach ($this->_layouts as $layout) {
+        $layouts = $this->getLayouts();
+        $defaultLayout = $layouts[0];
+        foreach ($layouts as $layout) {
             if ($layout->default) {
                 $defaultLayout = $layout;
             }
@@ -155,6 +147,62 @@ class LayoutManager extends Component
         }
 
         return null;
+    }
+
+    /**
+     * @return MenuLocation[]
+     */
+    public function getMenuLocations()
+    {
+        return $this->_menuLocations;
+    }
+
+    /**
+     * @param array|MenuLocation $menuLocation
+     */
+    public function registerMenuLocation($menuLocation)
+    {
+        $this->_menuLocations[] = $menuLocation;
+    }
+
+    public function getMenu($location)
+    {
+        /** @var \im\cms\components\Cms $cms */
+        $cms = Yii::$app->get('cms');
+        $cacheManager = $cms->getCacheManager();
+        if ($cacheManager) {
+            $dataName = Menu::className();
+            $cache = $cacheManager->getCacheForData($dataName);
+            if ($cache) {
+                $cacheKey = [$dataName, $location];
+                if (($menu = $cache->get($cacheKey)) !== false) {
+                    return $menu;
+                } else {
+                    $menu = $this->loadMenu($location);
+                    $cache->set($cacheKey, $menu);
+                    return $menu;
+                }
+            }
+        }
+    }
+
+    /**
+     * Loads menu with items for db.
+     *
+     * @param string $location
+     * @return Menu
+     */
+    private function loadMenu($location)
+    {
+        /** @var Menu $menu */
+        $menu = Menu::find()->where(['location' => $location])->one();
+        $items = $menu->getItems()->where(['status' => MenuItem::STATUS_ACTIVE])->with(['icon', 'activeIcon', 'video'])->all();
+        if ($items) {
+            $items = TreeHelper::buildNodesTree($items);
+            $menu->populateRelation('items', $items);
+        }
+
+        return $menu;
     }
 
 //    /**

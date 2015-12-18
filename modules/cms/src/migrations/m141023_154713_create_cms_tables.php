@@ -54,10 +54,14 @@ class m141023_154713_create_cms_tables extends Migration
             '{{%menus}}',
             [
                 'id' => $this->primaryKey(),
-                'name' => $this->string(100)->notNull()
+                'name' => $this->string(100)->notNull(),
+                'location' => $this->string(100)->notNull()
             ],
             $tableOptions
         );
+
+        // Indexes
+        $this->createIndex('location', '{{%menus}}', 'location');
 
         // Menu item files
         $this->createTable(
