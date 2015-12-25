@@ -1,6 +1,8 @@
 <?php
 
 namespace im\base\routing;
+use Yii;
+use yii\caching\Cache;
 use yii\db\ActiveRecordInterface;
 use yii\base\Object;
 use yii\base\InvalidConfigException;
@@ -44,15 +46,24 @@ class ModelRouteResolver extends Object implements RouteResolverInterface
      */
     public function resolve($params)
     {
-        // @TODO Add caching
         /* @var $modelClass ActiveRecordInterface */
         $modelClass = $this->modelClass;
         $condition = $this->getCondition($params);
         if ($condition === false) {
             return false;
         }
+        $urlManager = Yii::$app->getUrlManager();
+        if ($urlManager->cache instanceof Cache) {
+            $cacheKey = array_merge([$this->modelClass], $condition);
+            if (($match = $urlManager->cache->get($cacheKey)) === false) {
+                $match = $modelClass::find()->where($condition)->asArray()->count();
+                $urlManager->cache->set($cacheKey, $match);
+            }
+        } else {
+            $match = $modelClass::find()->where($condition)->asArray()->count();
+        }
 
-        return $modelClass::find()->where($condition)->asArray()->count() ? $this->getRoute() : false;
+        return $match ? $this->getRoute() : false;
     }
 
     /**

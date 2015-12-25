@@ -10,6 +10,10 @@ use yii\base\Model;
 use yii\web\NotFoundHttpException;
 use Yii;
 
+/**
+ * Class PageViewAction
+ * @package im\cms\components
+ */
 class PageViewAction extends ModelViewAction implements ModelContextInterface
 {
     /**
@@ -31,18 +35,22 @@ class PageViewAction extends ModelViewAction implements ModelContextInterface
 
     /**
      * Displays a page.
-     *
+     * If the model is not found, a 404 HTTP exception will be thrown.
      * @param string $path page path
+     * @throws \yii\web\NotFoundHttpException
      * @return string page content
      */
     public function run($path = 'index')
     {
         $model = $this->findModel($path);
+        if (!$model) {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
         $this->setModel($model);
         if ($model && $model->getBehavior('template')) {
             /** @var TemplateBehavior|Page $model */
             /** @var \im\cms\models\Template $template */
-            $template = $model->getTemplate()->one();
+            $template = $model->template;
             if ($template && $layout = $template->getLayout()) {
                 $this->controller->layout = '//' . $layout->id;
             }
@@ -54,21 +62,39 @@ class PageViewAction extends ModelViewAction implements ModelContextInterface
     /**
      * Finds the Page model based on it's path.
      *
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param string $path page path
-     * @throws \yii\web\NotFoundHttpException
-     * @return Page the loaded model
+     * @param string $path
+     * @return Page|null
+     * @throws InvalidConfigException
      */
     public function findModel($path)
     {
-        $model = $this->loadModel($path);
-        if ($model !== null) {
-            return $model;
-        } else {
-            throw new NotFoundHttpException('The requested page does not exist.');
+        /** @var \im\cms\components\Cms $cms */
+        $cms = Yii::$app->get('cms');
+        $cacheManager = $cms->getCacheManager();
+        if ($cacheManager) {
+            $cacheKey = [$this->modelClass, $path];
+            return $cacheManager->getFromCache($this->modelClass, $cacheKey, function () use ($path) {
+                return $this->loadModel($path);
+            });
         }
+
+        return $this->loadModel($path);
     }
 
+    /**
+     * @return array
+     */
+    protected function getRelationForLoad()
+    {
+        /* @var $modelClass Page */
+        $model = Yii::createObject($this->modelClass);
+        $relations = [];
+        if ($model->getBehavior('template')) {
+            $relations[] = 'template';
+        }
+
+        return $relations;
+    }
 
     /**
      * Loads page model with relations from database by it's path.
@@ -81,7 +107,14 @@ class PageViewAction extends ModelViewAction implements ModelContextInterface
         /* @var $modelClass Page */
         $modelClass = $this->modelClass;
 
-        return $modelClass::findByPath($path)->published()->one();
+        $model = $modelClass::findByPath($path)->published()->one();
+        if ($model) {
+            foreach ($this->getRelationForLoad() as $relation) {
+                $model->$relation;
+            }
+        }
+
+        return $model;
     }
 
     /**

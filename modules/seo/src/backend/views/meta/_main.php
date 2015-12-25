@@ -20,7 +20,7 @@
 
 <?= !isset($attributes) || in_array('custom_meta', $attributes) ? $form->field($model, 'custom_meta')->textarea() : '' ?>
 
-<?= !isset($attributes) || in_array('meta_robots', $attributes) ? $form->field($model, 'meta_robots')->checkboxList(
+<?= !isset($attributes) || in_array('meta_robots', $attributes) ? $form->field($model, 'metaRobotsDirectives')->checkboxList(
     $model::getMetaRobotsDirectivesList()
 ) : '' ?>
 

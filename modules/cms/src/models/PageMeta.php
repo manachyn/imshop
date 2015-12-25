@@ -16,4 +16,12 @@ class PageMeta extends Meta
     {
         return '{{%page_meta}}';
     }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getEntity()
+    {
+        return $this->hasOne(Page::className(), ['id' => 'entity_id']);
+    }
 }

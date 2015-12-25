@@ -19,24 +19,28 @@ class PageQuery extends ActiveQuery
     public function status($status)
     {
         $this->andWhere(['status' => $status]);
+
         return $this;
     }
 
     public function published()
     {
         $this->andWhere(['status' => Page::STATUS_PUBLISHED]);
+
         return $this;
     }
 
     public function unpublished()
     {
         $this->andWhere(['status' => Page::STATUS_UNPUBLISHED]);
+
         return $this;
     }
 
     public function deleted()
     {
         $this->andWhere(['status' => Page::STATUS_DELETED]);
+
         return $this;
     }
 }

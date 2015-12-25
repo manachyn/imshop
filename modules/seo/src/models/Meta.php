@@ -3,6 +3,7 @@
 namespace im\seo\models;
 
 use im\base\behaviors\RelationsBehavior;
+use im\base\helpers\TemplateHelper;
 use im\seo\components\MetaInterface;
 use im\seo\Module;
 use Yii;
@@ -20,6 +21,7 @@ use yii\web\View;
  * @property string $meta_robots
  * @property string $custom_meta
  *
+ * @property ActiveRecord $entity
  * @property SocialMeta[] $socialMeta
  */
 class Meta extends ActiveRecord implements MetaInterface
@@ -52,7 +54,7 @@ class Meta extends ActiveRecord implements MetaInterface
             [['custom_meta'], 'string'],
             [['meta_title'], 'string', 'max' => 70],
             [['meta_description'], 'string', 'max' => 160],
-            [['meta_robots'], 'safe'],
+            [['meta_robots', 'metaRobotsDirectives'], 'safe'],
             [['socialMeta'], 'im\base\validators\RelationValidator']
         ];
     }
@@ -68,8 +70,23 @@ class Meta extends ActiveRecord implements MetaInterface
             'meta_title' => Module::t('meta', 'Meta Title'),
             'meta_description' => Module::t('meta', 'Meta Description'),
             'meta_robots' => Module::t('meta', 'Meta Robots'),
+            'metaRobotsDirectives' => Module::t('meta', 'Meta Robots'),
             'custom_meta' => Module::t('meta', 'Custom Meta Tags')
         ];
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getEntity()
+    {
+        if ($this->entity_type) {
+            $class = Yii::$app->get('core')->getEntityClass($this->entity_type);
+            return $this->hasOne($class, ['id' => 'entity_id']);
+        }
+        else {
+            return null;
+        }
     }
 
     /**
@@ -91,6 +108,22 @@ class Meta extends ActiveRecord implements MetaInterface
         }
 
         return $socialMeta;
+    }
+
+    /**
+     * @return array
+     */
+    public function getMetaRobotsDirectives()
+    {
+        return is_string($this->meta_robots) ? explode(',', $this->meta_robots) : $this->meta_robots;
+    }
+
+    /**
+     * @param array|string $metaRobotsDirectives
+     */
+    public function setMetaRobotsDirectives($metaRobotsDirectives)
+    {
+        $this->meta_robots = is_array($metaRobotsDirectives) ? implode(',', $metaRobotsDirectives) : $metaRobotsDirectives;
     }
 
     /**
@@ -125,13 +158,13 @@ class Meta extends ActiveRecord implements MetaInterface
     }
 
     /**
-     * @param View $view
+     * @inheritdoc
      */
     public function applyTo(View $view)
     {
-        $view->params['metaTitle'] = $this->meta_title ? $this->meta_title : $view->title;
+        $view->params['metaTitle'] = $this->meta_title ? TemplateHelper::evaluateTemplate($this->meta_title, ['model' => $this->entity]) : $view->title;
         if ($this->meta_description)
-            $view->registerMetaTag(['name' => 'description', 'content' => $this->meta_description], 'description');
+            $view->registerMetaTag(['name' => 'description', 'content' => TemplateHelper::evaluateTemplate($this->meta_description, ['model' => $this->entity])], 'description');
         if ($this->meta_robots)
             $view->registerMetaTag(['name' => 'robots', 'content' => $this->meta_robots], 'robots');
         if ($this->custom_meta) {

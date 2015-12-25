@@ -3,181 +3,30 @@
 namespace im\cms\components;
 
 use im\cms\models\Menu;
-use Symfony\Component\Routing\Exception\InvalidParameterException;
-use Yii;
-use yii\base\Component;
-use yii\base\InvalidParamException;
-use yii\caching\Cache;
-use yii\caching\TagDependency;
+use im\cms\models\Page;
+use im\cms\models\widgets\WidgetArea;
 
 /**
  * Module cache manager.
  *
  * @package im\cms\components
  */
-class CacheManager extends Component
+class CacheManager extends \im\base\cache\CacheManager
 {
     /**
-     * @var \yii\caching\Cache[]
+     * @inheritdoc
      */
-    private $_caches = [
-        'defaultCache' => 'cache'
-    ];
-
-    /**
-     * @var string
-     */
-    private $_defaultCache = 'defaultCache';
-
-    /**
-     * Maps data class to cache name.
-     *
-     * @var array
-     */
-    private $_dataCaches = [];
-
-    /**
-     * Maps data class to cache key methods.
-     *
-     * @var array
-     */
-    private $_dataCacheKeys = [
+    protected $dataCacheKeys = [
         'im\cms\models\Menu' => 'getMenuCacheKey'
     ];
 
     /**
-     * Returns cache for object.
-     *
-     * @param object $object
-     * @return null|Cache
+     * @inheritdoc
      */
-    public function getCacheFor($object)
-    {
-        $cache = null;
-        $dataName = get_class($object);
-        if (isset($this->_dataCaches[$dataName])) {
-            $cache = $this->getCache($this->_dataCaches[$dataName]);
-        } else {
-            $cache = $this->getDefaultCache();
-        }
-
-        return $cache;
-    }
-
-    /**
-     * Returns cache for data.
-     *
-     * @param string $dataName
-     * @return null|Cache
-     */
-    public function getCacheForData($dataName)
-    {
-        $cache = null;
-        if (isset($this->_dataCaches[$dataName])) {
-            $cache = $this->getCache($this->_dataCaches[$dataName]);
-        } else {
-            $cache = $this->getDefaultCache();
-        }
-
-        return $cache;
-    }
-
-    /**
-     * Returns cache key for object.
-     *
-     * @param object $object
-     * @return mixed
-     */
-    public function getKeyFor($object)
-    {
-        $dataName = get_class($object);
-        if (isset($this->_dataCacheKeys[$dataName])) {
-            return call_user_func([$this, $this->_dataCacheKeys[$dataName]], $object);
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * @return null|Cache
-     */
-    public function getDefaultCache()
-    {
-        return $this->getCache($this->_defaultCache);
-    }
-
-    /**
-     * @param string $key
-     * @return null|Cache
-     */
-    public function getCache($key)
-    {
-        if (!$this->_caches[$key] instanceof Cache) {
-            if (is_string($this->_caches[$key])) {
-                $this->_caches[$key] = Yii::$app->get($this->_caches[$key], false);
-            } else {
-                $this->_caches[$key] = Yii::createObject($this->_caches[$key]);
-            }
-        }
-
-        return $this->_caches[$key];
-    }
-
-    /**
-     * @return \yii\caching\Cache[]
-     */
-    public function getCaches()
-    {
-        foreach ($this->_caches as $key => $cache) {
-            if ($cache instanceof Cache) {
-                $this->_caches[$key] = $this->getCache($key);
-            }
-        }
-
-        return $this->_caches;
-    }
-
-    /**
-     * @param \yii\caching\Cache[] $caches
-     */
-    public function setCaches($caches)
-    {
-        $this->_caches = $caches;
-    }
-
-//    /**
-//     * Invalidates cache.
-//     *
-//     * @param string $dataName
-//     * @param string|array $tags
-//     */
-//    public function invalidateTaggedCache($object, $tags)
-//    {
-//        $cache = $this->getCacheFor($dataName);
-//        if ($cache) {
-//            TagDependency::invalidate($cache, $tags);
-//        }
-//    }
-
-    /**
-     * Delete object from cache.
-     *
-     * @param object $object
-     */
-    public function deleteFromCache($object)
-    {
-        if (($cache = $this->getCacheFor($object)) && ($key = $this->getKeyFor($object))) {
-            $cache->delete($key);
-        }
-    }
-
-    /**
-     * @param object $object
-     */
-    public function onObjectChange($object)
-    {
-        $this->deleteFromCache($object);
-    }
+    protected $dataCacheTags = [
+        'im\cms\models\Page' => 'getPageCacheTags',
+        'im\cms\models\widgets\WidgetArea' => 'getWidgetAreaCacheTags'
+    ];
 
     /**
      * Returns menu cache key.
@@ -190,6 +39,34 @@ class CacheManager extends Component
         return [
             Menu::className(),
             $menu->location
+        ];
+    }
+
+    /**
+     * Returns page cache tags.
+     *
+     * @param Page $page
+     * @return array
+     */
+    public function getPageCacheTags(Page $page)
+    {
+        return [
+            Page::className(),
+            Page::className() . '::' . $page->getPrimaryKey()
+        ];
+    }
+
+    /**
+     * Returns widget area cache tags.
+     *
+     * @param WidgetArea $widgetArea
+     * @return array
+     */
+    public function getWidgetAreaCacheTags(WidgetArea $widgetArea)
+    {
+        return [
+            WidgetArea::className(),
+            WidgetArea::className() . '::' . $widgetArea->getPrimaryKey()
         ];
     }
 }

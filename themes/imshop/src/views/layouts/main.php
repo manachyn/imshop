@@ -31,8 +31,7 @@ use im\imshop\widgets\FlashMessages;
             <?= WidgetArea::widget([
                 'code' => 'sidebar',
                 'layout' => 'main',
-                'context' => $this->context,
-                'enableCache' => false
+                'context' => $this->context
             ]) ?>
         </div>
     </div>

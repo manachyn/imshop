@@ -64,14 +64,6 @@ abstract class SocialMeta extends ActiveRecord implements MetaInterface
 
     abstract public function getSocialName();
 
-//    /**
-//     * @inheritdoc
-//     */
-//    public static function find()
-//    {
-//        return new SocialMetaQuery(get_called_class(), ['socialType' => self::getEntityType()]);
-//    }
-
     /**
      * @inheritdoc
      */
@@ -80,18 +72,4 @@ abstract class SocialMeta extends ActiveRecord implements MetaInterface
         $this->social_type = Yii::$app->get('typesRegister')->getEntityType($this);
         return parent::beforeSave($insert);
     }
-
-//    /**
-//     * @return \yii\db\ActiveQuery
-//     */
-//    public function getMeta()
-//    {
-//        if ($this->meta_type) {
-//            $class = Yii::$app->seo->getMetaClass($this->meta_type);
-//            return $this->hasOne($class, ['id' => 'meta_id']);
-//        }
-//        else {
-//            return null;
-//        }
-//    }
 }

@@ -6,11 +6,8 @@ use im\base\context\ModelContextInterface;
 use im\cms\components\TemplateBehavior;
 use im\cms\models\Template;
 use im\cms\models\widgets\WidgetArea as WidgetAreaModel;
-use im\cms\models\widgets\Widget as WidgetModel;
+use yii\base\InvalidConfigException;
 use yii\base\Widget;
-use yii\caching\Cache;
-use yii\caching\TagDependency;
-use yii\db\ActiveRecord;
 use Yii;
 use yii\web\Controller;
 
@@ -27,11 +24,6 @@ class WidgetArea extends Widget
     public $layout;
 
     /**
-     * @var ActiveRecord
-     */
-    public $owner;
-
-    /**
      * @var Template
      */
     public $template;
@@ -42,18 +34,19 @@ class WidgetArea extends Widget
     public $context;
 
     /**
-     * @var boolean whether to enable page caching.
+     * @var WidgetAreaModel
      */
-    public $enableCache = true;
+    protected $_widgetArea;
 
     /**
-     * @var WidgetModel[]
+     * @inheritdoc
      */
-    protected $_widgets;
-
     public function init()
     {
         parent::init();
+        if ($this->code === null) {
+            throw new InvalidConfigException('The "code" property must be set.');
+        }
         $model = null;
         if ($this->context instanceof ModelContextInterface) {
             $model = $this->context->getModel();
@@ -66,18 +59,23 @@ class WidgetArea extends Widget
             /** @var TemplateBehavior $model */
             $this->template = $model->template;
         }
-        if (!$this->template) {
+        if (!$this->template && $this->layout) {
             /** @var \im\cms\components\TemplateManager $templateManager */
             $templateManager = Yii::$app->get('templateManager');
             $this->template = $templateManager->getDefaultTemplate($this->layout);
         }
-        $this->setWidgets();
+        /** @var \im\cms\components\LayoutManager $layoutManager */
+        $layoutManager = Yii::$app->get('layoutManager');
+        $this->_widgetArea = $layoutManager->getWidgetArea($this->code, $this->template ? $this->template->id : null);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function run()
     {
-        if ($this->_widgets) {
-            foreach ($this->_widgets as $widget) {
+        if ($this->_widgetArea) {
+            foreach ($this->_widgetArea->widgets as $widget) {
                 $widget->context = $this->context;
                 if ($output = $widget->run()) {
                     echo "\n" . $output;
@@ -85,72 +83,4 @@ class WidgetArea extends Widget
             }
         }
     }
-
-    protected function setWidgets()
-    {
-        if ($this->enableCache) {
-            /* @var $cache Cache */
-            $cache = \Yii::$app->cache;
-            $key = $this->getCacheKey();
-            $widgets = $cache->get($key);
-            if ($widgets === false) {
-                $widgets = $this->loadWidgets();
-                if ($widgets) {
-                    $tags = [Yii::$app->layoutManager->getWidgetAreasCacheTag()];
-                    if ($this->owner !== null)
-                        $tags[] = Yii::$app->layoutManager->getWidgetAreasCacheTag($this->owner);
-                    $dependency = new TagDependency(['tags' => $tags]);
-                    $cache->set($key, $widgets, 0, $dependency);
-                }
-            }
-            $this->_widgets = $widgets;
-        } else {
-            $this->_widgets = $this->loadWidgets();
-        }
-    }
-
-    /**
-     * @return \im\cms\models\widgets\Widget[]
-     */
-    protected function loadWidgets()
-    {
-        $widgets = [];
-        $model = $this->loadModel();
-        if ($model) {
-            $widgets = $model->getWidgets()->all();
-        }
-
-        return $widgets;
-    }
-
-    /**
-     * @return \im\cms\models\widgets\WidgetArea
-     */
-    protected function loadModel()
-    {
-        $condition = ['code' => $this->code];
-        $condition['template_id'] = $this->template ? $this->template->id : null;
-
-        return WidgetAreaModel::findOne($condition);
-    }
-
-    /**
-     * Returns the cache key.
-     * @return mixed the cache key
-     */
-    protected function getCacheKey()
-    {
-        $owner = 0;
-        if ($this->owner !== null) {
-            $pks = $this->owner->primaryKey();
-            $owner = $this->owner->$pks[0];
-        }
-        return [
-            __CLASS__,
-            $this->code,
-            $this->layout,
-            $owner
-        ];
-    }
-
 } 

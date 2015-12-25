@@ -56,7 +56,7 @@ class OpenGraph extends SocialMeta
     }
 
     /**
-     * @param View $view
+     * @inheritdoc
      */
     public function applyTo(View $view)
     {

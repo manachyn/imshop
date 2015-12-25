@@ -72,10 +72,11 @@ class SeoBehavior extends Behavior implements ModelBehaviorInterface
      */
     public function getMetaRelation()
     {
-        $query = $this->owner->hasOne($this->metaClass, ['entity_id' => 'id']);
+        $query = $this->owner->hasOne($this->metaClass, ['entity_id' => 'id'])->inverseOf('entity');
         if ($this->ownerType) {
             $query->where(['entity_type' => $this->ownerType]);
         }
+
         return $query;
     }
 
@@ -88,6 +89,7 @@ class SeoBehavior extends Behavior implements ModelBehaviorInterface
         if ($meta === null) {
             $meta = Yii::createObject($this->metaClass);
         }
+
         return $meta;
     }
 
@@ -137,6 +139,7 @@ class SeoBehavior extends Behavior implements ModelBehaviorInterface
     {
         $this->_model = $this->getMeta();
         $this->owner->populateRelation('metaRelation', $this->_model);
+
         return $this->_model->load($data);
     }
 }

@@ -5,6 +5,7 @@ namespace im\cms\components;
 use im\cms\models\Menu;
 use im\cms\models\MenuItem;
 use im\cms\models\widgets\Widget;
+use im\cms\models\widgets\WidgetArea;
 use im\tree\components\TreeHelper;
 use yii\base\Component;
 use Yii;
@@ -165,6 +166,12 @@ class LayoutManager extends Component
         $this->_menuLocations[] = $menuLocation;
     }
 
+    /**
+     * Returns menu by location.
+     *
+     * @param string $location
+     * @return Menu|null
+     */
     public function getMenu($location)
     {
         /** @var \im\cms\components\Cms $cms */
@@ -172,22 +179,40 @@ class LayoutManager extends Component
         $cacheManager = $cms->getCacheManager();
         if ($cacheManager) {
             $dataName = Menu::className();
-            $cache = $cacheManager->getCacheForData($dataName);
-            if ($cache) {
-                $cacheKey = [$dataName, $location];
-                if (($menu = $cache->get($cacheKey)) !== false) {
-                    return $menu;
-                } else {
-                    $menu = $this->loadMenu($location);
-                    $cache->set($cacheKey, $menu);
-                    return $menu;
-                }
-            }
+            $cacheKey = [$dataName, $location];
+            return $cacheManager->getFromCache($dataName, $cacheKey, function () use ($location) {
+                return $this->loadMenu($location);
+            });
         }
+
+        return $this->loadMenu($location);
     }
 
     /**
-     * Loads menu with items for db.
+     * Returns widget area by code and template.
+     *
+     * @param string $code
+     * @param int $template
+     * @return WidgetArea|null
+     */
+    public function getWidgetArea($code, $template = null)
+    {
+        /** @var \im\cms\components\Cms $cms */
+        $cms = Yii::$app->get('cms');
+        $cacheManager = $cms->getCacheManager();
+        if ($cacheManager) {
+            $dataName = WidgetArea::className();
+            $cacheKey = [$dataName, $code, $template];
+            return $cacheManager->getFromCache($dataName, $cacheKey, function () use ($code, $template) {
+                return $this->loadWidgetArea($code, $template);
+            });
+        }
+
+        return $this->loadWidgetArea($code, $template);
+    }
+
+    /**
+     * Loads menu with items from db.
      *
      * @param string $location
      * @return Menu
@@ -205,27 +230,24 @@ class LayoutManager extends Component
         return $menu;
     }
 
-//    /**
-//     * @param ActiveRecord $owner
-//     */
-//    public function invalidateWidgetAreasCache($owner = null)
-//    {
-//        /* @var $cache Cache */
-//        $cache = \Yii::$app->cache;
-//        TagDependency::invalidate($cache, $this->getWidgetAreasCacheTag($owner));
-//    }
+    /**
+     * Loads widget area with items from db.
+     *
+     * @param string $code
+     * @param int $template
+     * @return WidgetArea|null
+     */
+    private function loadWidgetArea($code, $template = null)
+    {
+        $condition = ['code' => $code];
+        $condition['template_id'] = $template;
+        /** @var WidgetArea $widgetArea */
+        $widgetArea = WidgetArea::findOne($condition);
+        if ($widgetArea) {
+            $widgets = $widgetArea->getWidgets()->all();
+            $widgetArea->populateRelation('widgets', $widgets);
+        }
 
-//    /**
-//     * Returns the cache tag name.
-//     * This allows to invalidate all cached widget areas.
-//     * @param ActiveRecord $owner
-//     * @return string the cache tag name
-//     */
-//    public function getWidgetAreasCacheTag($owner = null)
-//    {
-//        return md5(serialize([
-//            'WidgetArea',
-//            $owner !== null ? $this->getOwnerType($owner) : ''
-//        ]));
-//    }
+        return $widgetArea;
+    }
 } 

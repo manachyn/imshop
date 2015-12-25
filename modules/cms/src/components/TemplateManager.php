@@ -33,6 +33,11 @@ class TemplateManager extends Component
             $valid = Model::validateMultiple($widgetAreas, array_diff($first->activeAttributes(), ['template_id'])) && $valid;
             $valid = Model::validateMultiple($widgets) && $valid;
             if ($valid && $template->save(false)) {
+                if ($widgets) {
+                    foreach ($widgets as $widget) {
+                        $widget->save();
+                    }
+                }
                 if ($widgetAreas) {
                     foreach ($widgetAreas as $area) {
                         $area->template_id = $template->id;

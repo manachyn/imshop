@@ -36,6 +36,9 @@ class Menu extends Widget
      */
     public $dropDownCaret;
 
+    /**
+     * @inheritdoc
+     */
     public function init()
     {
         parent::init();
@@ -53,11 +56,6 @@ class Menu extends Widget
      */
     public function run()
     {
-//        $items = MenuItem::find()->where(['menu_id' => 1, 'status' => MenuItem::STATUS_ACTIVE])->with(['icon', 'activeIcon', 'video'])->all();
-//        if ($items) {
-//            $items = TreeHelper::buildNodesTree($items);
-//        }
-
         /** @var \im\cms\components\LayoutManager $layoutManager */
         $layoutManager = Yii::$app->get('layoutManager');
         $menu = $layoutManager->getMenu($this->location);
@@ -68,6 +66,10 @@ class Menu extends Widget
         ]);
     }
 
+    /**
+     * @param MenuItem $item
+     * @param MenuItem|null $parent
+     */
     public static function setMenuItemOptions(MenuItem $item, MenuItem $parent = null)
     {
         $itemOptions = ['tag' => 'li'];
