@@ -15,6 +15,7 @@ return [
         'im\eav\Bootstrap',
         'im\variation\Bootstrap',
         'im\catalog\Bootstrap',
+        'im\cms\Bootstrap',
         'im\elasticsearch\Bootstrap',
     ],
     'controllerNamespace' => 'app\commands',
@@ -43,6 +44,8 @@ return [
                 ['http_address' => '127.0.0.1:9200']
             ]
         ],
+        'layoutManager' => 'im\cms\components\LayoutManager',
+        'cms' => 'im\cms\components\Cms'
     ],
     'params' => $params,
 ];

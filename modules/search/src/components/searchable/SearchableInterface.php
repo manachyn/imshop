@@ -46,4 +46,11 @@ interface SearchableInterface
      * @return AttributeDescriptor[]
      */
     public function getFullTextSearchAttributes();
+
+    /**
+     * Returns the name of the view for rendering search results.
+     *
+     * @return string
+     */
+    public function getSearchResultsView();
 }

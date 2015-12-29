@@ -121,7 +121,6 @@ class Seo extends Component
     private function getMeta(Model $model)
     {
         if ($model->getBehavior('seo')) {
-            /** @var SeoBehavior $model */
             $cacheManager = $this->getCacheManager();
             if ($cacheManager) {
                 $cacheKey = [$model::className()];
@@ -133,13 +132,30 @@ class Seo extends Component
                 }
                 $cacheKey[] = Meta::className();
                 return $cacheManager->getFromCache(Meta::className(), $cacheKey, function () use ($model) {
-                    return $model->getMeta();
+                    return $this->loadMeta($model);
                 });
             }
 
-            return $model->getMeta();
+            return $this->loadMeta($model);
         }
 
         return null;
+    }
+
+    /**
+     * Loads model meta from db.
+     *
+     * @param Model $model
+     * @return Meta
+     */
+    private function loadMeta(Model $model)
+    {
+        /** @var SeoBehavior $model */
+        $meta = $model->getMeta();
+        if ($meta) {
+            $meta->socialMeta;
+        }
+
+        return $meta;
     }
 }

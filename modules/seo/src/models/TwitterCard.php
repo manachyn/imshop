@@ -57,7 +57,7 @@ class TwitterCard extends SocialMeta
      */
     public function applyTo(View $view)
     {
-        $attributes = $this->getAttributes(null, ['id', 'meta_id']);
+        $attributes = $this->getAttributes(null, ['id', 'meta_id', 'meta_type', 'social_type']);
         foreach ($attributes as $name => $value) {
             $view->registerMetaTag(['property' => 'twitter:' . $name, 'content' => $value]);
         }

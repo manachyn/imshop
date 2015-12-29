@@ -16,4 +16,12 @@ class ProductCategoryMeta extends Meta
     {
         return '{{%product_category_meta}}';
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function getEntity()
+    {
+        return $this->hasOne(ProductCategory::className(), ['id' => 'entity_id']);
+    }
 }

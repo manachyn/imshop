@@ -2,6 +2,7 @@
 
 namespace im\search\components\search;
 
+use im\search\components\index\IndexableInterface;
 use im\search\components\query\BooleanQueryInterface;
 use im\search\components\query\Match;
 use im\search\components\query\MultiMatch;
@@ -13,16 +14,10 @@ use im\search\components\query\SearchQueryInterface;
 use im\search\components\query\Term;
 use im\search\components\searchable\AttributeDescriptor;
 use im\search\components\searchable\SearchableInterface;
-use im\search\models\FacetSet;
 use Yii;
 use yii\base\Component;
-use yii\base\Model;
 
-/**
- * Class SearchComponent
- * @package im\search\components\search
- */
-class SearchComponent extends Component
+class SearchComponentOld extends Component
 {
     /**
      * Query parser is used to parse search request to query object.
@@ -42,11 +37,6 @@ class SearchComponent extends Component
     public $queryConverter = 'im\search\components\query\parser\QueryConverter';
 
     /**
-     * @var \im\search\components\SearchManager
-     */
-    private $_searchManager;
-
-    /**
      * @inheritdoc
      */
     public function init()
@@ -59,73 +49,48 @@ class SearchComponent extends Component
             $this->queryConverter= Yii::createObject($this->queryConverter);
         }
     }
-    /**
-     * Returns data provider for searchable type.
-     *
-     * @param SearchableInterface|string $searchableType
-     * @param SearchQueryInterface|string $searchQuery
-     * @param \im\search\components\query\facet\FacetInterface[] $facets
-     * @param Model $model
-     * @param array $params
-     * @return SearchDataProvider
-     */
-    public function getSearchDataProvider($searchableType, $searchQuery = null, $facets = [], Model $model = null, array $params = [])
-    {
-        $searchableType = $this->normalizeSearchableType($searchableType);
-        $query = $this->getQuery($searchableType, $searchQuery, $facets, $model, $params);
-        $dataProvider = new SearchDataProvider([
-            'query' => $query
-        ]);
 
-        return $dataProvider;
+    public function search($type, $params)
+    {
+        //$query = $this->getQuery($type);
     }
 
     /**
      * Return search query.
      *
-     * @param string $searchableType
+     * @param SearchableInterface|string $searchableType
      * @param SearchQueryInterface|string $searchQuery
      * @param \im\search\components\query\facet\FacetInterface[] $facets
-     * @param Model $model
-     * @param array $params
      * @return \im\search\components\query\QueryInterface
      */
-    public function getQuery($searchableType, $searchQuery = null, $facets = [], Model $model = null, $params = [])
+    public function getQuery($searchableType, $searchQuery = null, $facets = [])
     {
-        $searchableType = $this->normalizeSearchableType($searchableType);
-        if ($searchQuery) {
-            $searchQuery = $this->normalizeSearchableQuery($searchQuery, $searchableType);
+        if (is_string($searchableType)) {
+            /** @var \im\search\components\SearchManager $searchManager */
+            $searchManager = Yii::$app->get('searchManager');
+            $searchableType = $searchManager->getSearchableType($searchableType);
         }
         $searchService = $searchableType->getSearchService();
         $finder = $searchService->getFinder();
         if ($searchQuery) {
+            if (is_string($searchQuery)) {
+                $searchQuery = $this->parseQuery($searchQuery);
+            }
+            $fullTextSearchAttributes = $searchableType->getFullTextSearchAttributes();
+            if ($fullTextSearchAttributes) {
+                $searchQuery = $this->applyFullTextSearchSettings($searchQuery, $fullTextSearchAttributes);
+            }
             $query = $finder->findByQuery($searchableType->getType(), $searchQuery);
         } else {
             $query = $finder->find($searchableType->getType());
         }
         if ($facets) {
             foreach ($facets as $facet) {
-                $facet->setContext($model);
+                $query->addFacet($facet);
             }
-            $query->setFacets($facets);
         }
 
         return $query;
-    }
-
-    /**
-     * Returns model facets.
-     *
-     * @param Model $model
-     * @return \im\search\components\query\facet\FacetInterface[]
-     */
-    public function getFacets(Model $model)
-    {
-        /** @var FacetSet $facetSet */
-        $facetSet = FacetSet::findOne(1);
-        $facets = $facetSet->facets;
-
-        return $facets;
     }
 
     /**
@@ -137,44 +102,9 @@ class SearchComponent extends Component
      */
     public function parseQuery($querySting, QueryParserContextInterface $context = null)
     {
-        return $this->queryParser->parse($querySting, $context);
-    }
+        $query = $this->queryParser->parse($querySting, $context);
 
-    /**
-     * @param SearchableInterface|string $searchableType
-     * @return SearchableInterface
-     */
-    protected function normalizeSearchableType($searchableType)
-    {
-        if (is_string($searchableType)) {
-            $searchableType = $this->getSearchManager()->getSearchableType($searchableType);
-        }
-
-        return $searchableType;
-    }
-
-    /**
-     * @param SearchQueryInterface|string $searchQuery
-     * @param SearchableInterface $searchableType
-     * @return SearchQueryInterface
-     */
-    protected function normalizeSearchableQuery($searchQuery, $searchableType = null)
-    {
-        if (is_string($searchQuery)) {
-            if ($searchableType instanceof QueryParserContextInterface) {
-                $searchQuery = $this->parseQuery($searchQuery, $searchableType);
-            } else {
-                $searchQuery = $this->parseQuery($searchQuery);
-            }
-        }
-        if ($searchableType) {
-            $fullTextSearchAttributes = $searchableType->getFullTextSearchAttributes();
-            if ($fullTextSearchAttributes) {
-                $searchQuery = $this->applyFullTextSearchSettings($searchQuery, $fullTextSearchAttributes);
-            }
-        }
-
-        return $searchQuery;
+        return $query;
     }
 
     /**
@@ -209,17 +139,5 @@ class SearchComponent extends Component
         }
 
         return $searchQuery;
-    }
-
-    /**
-     * @return \im\search\components\SearchManager
-     */
-    protected function getSearchManager()
-    {
-        if (!$this->_searchManager) {
-            $this->_searchManager = Yii::$app->get('searchManager');
-        }
-
-        return $this->_searchManager;
     }
 }

@@ -5,9 +5,10 @@ namespace im\elasticsearch\components;
 use im\search\components\finder\FinderInterface;
 use im\search\components\index\IndexerInterface;
 use im\search\components\service\BaseSearchService;
+use im\search\components\service\IndexSearchServiceInterface;
 use Yii;
 
-class SearchService extends BaseSearchService
+class SearchService extends BaseSearchService implements IndexSearchServiceInterface
 {
     private $_indexer = 'im\elasticsearch\components\index\Indexer';
 

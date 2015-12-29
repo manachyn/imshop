@@ -8,7 +8,6 @@ use yii\helpers\Url;
 /* @var $this yii\web\View */
 /* @var $facets im\search\components\query\facet\FacetInterface[] */
 /* @var $selectedFacets im\search\components\query\facet\FacetInterface[] */
-/* @var $searchComponent im\search\components\search\SearchComponent */
 /* @var $searchQuery im\search\components\query\SearchQueryInterface */
 
 ?>

@@ -4,8 +4,15 @@ namespace im\search\components\service;
 
 use yii\base\Component;
 
+/**
+ * Class BaseSearchService
+ * @package im\search\components\service
+ */
 abstract class BaseSearchService extends Component implements SearchServiceInterface
 {
+    /**
+     * @var string
+     */
     private $_name;
 
     /**

@@ -3,7 +3,6 @@
 namespace im\cms;
 
 use im\base\types\EntityType;
-use im\cms\models\Page;
 use yii\base\Application;
 use yii\base\BootstrapInterface;
 use Yii;
@@ -60,6 +59,7 @@ class Bootstrap implements BootstrapInterface
         $this->registerEntityTypes();
         $this->registerPageTypes();
         $this->registerWidgets($app);
+        $this->registerSearchableTypes($app);
     }
 
     /**
@@ -151,6 +151,23 @@ class Bootstrap implements BootstrapInterface
         /** @var \im\cms\components\Cms $cms */
         $cms = Yii::$app->get('cms');
         $cms->registerPageType(new EntityType('page', 'im\cms\models\Page', 'page', 'Static page'));
+    }
+
+    /**
+     * Registers searchable types.
+     *
+     * @param Application $app
+     */
+    public function registerSearchableTypes($app)
+    {
+        /** @var \im\search\components\SearchManager $searchManager */
+        $searchManager = $app->get('searchManager');
+        $searchManager->registerSearchableType([
+            'class' => 'im\search\components\service\db\IndexedSearchableType',
+            'type' => 'page',
+            'searchResultsView' => '@im/cms/views/page/_search_results',
+            'modelClass' => 'im\cms\models\Page'
+        ]);
     }
 
     /**

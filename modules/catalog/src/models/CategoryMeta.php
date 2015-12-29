@@ -16,4 +16,12 @@ class CategoryMeta extends Meta
     {
         return '{{%category_meta}}';
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function getEntity()
+    {
+        return $this->hasOne(Category::className(), ['id' => 'entity_id']);
+    }
 }

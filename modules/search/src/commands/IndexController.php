@@ -2,10 +2,15 @@
 
 namespace im\search\commands;
 
+use im\search\components\service\IndexSearchServiceInterface;
 use Yii;
 use yii\console\Controller;
 use yii\helpers\Console;
 
+/**
+ * Class IndexController
+ * @package im\search\commands
+ */
 class IndexController extends Controller
 {
     /**
@@ -41,32 +46,22 @@ class IndexController extends Controller
         $searchManager = Yii::$app->get('searchManager');
         $index = $searchManager->getIndexManager()->getIndex($index);
         if ($index) {
-            $indexer = $index->getSearchService()->getIndexer();
-            $options = [
-                'offset' => $this->offset,
-                'sleep' => $this->sleep,
-                'batchSize' => $this->batchSize
-            ];
-            $progress = $options['batchSize'] ? $this->getProgress('Reindex: ') : null;
-            $result = $indexer->reindex($index, $type, $options, $progress);
+            $searchService = $index->getSearchService();
+            if ($searchService instanceof IndexSearchServiceInterface) {
+                $indexer = $searchService->getIndexer();
+                $options = [
+                    'offset' => $this->offset,
+                    'sleep' => $this->sleep,
+                    'batchSize' => $this->batchSize
+                ];
+                $progress = $options['batchSize'] ? $this->getProgress('Reindex: ') : null;
+                $result = $indexer->reindex($index, $type, $options, $progress);
 
-            $this->stdout("Total: {$result->total}\n");
-            $this->stdout("Indexed: {$result->success}\n");
-            $this->stdout("Error: {$result->error}\n");
+                $this->stdout("Total: {$result->total}\n");
+                $this->stdout("Indexed: {$result->success}\n");
+                $this->stdout("Error: {$result->error}\n");
+            }
         }
-
-        return Controller::EXIT_CODE_NORMAL;
-    }
-
-    public function actionSearch($index, $type)
-    {
-        /** @var \im\search\components\SearchManager $searchManager */
-        $searchManager = Yii::$app->get('searchManager');
-        $index = $searchManager->getIndexManager()->getIndex($index);
-        $finder = $index->getSearchService()->getFinder();
-        $query = $finder->find($index->getName(), $type);
-        $res = $query->where(['eAttributes.type' => 'semiautomatic'])->addFacet('eAttributes.type', 'terms', ['field' => 'eAttributes.type'])->result();
-        $objects = $res->getObjects();
 
         return Controller::EXIT_CODE_NORMAL;
     }
@@ -77,7 +72,8 @@ class IndexController extends Controller
      * @param string $action
      * @return callable
      */
-    private function getProgress($action) {
+    private function getProgress($action)
+    {
         $progress = false;
         return function ($processed, $total, $message = null) use ($progress, $action) {
             if (!$progress) {

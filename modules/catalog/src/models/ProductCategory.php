@@ -16,7 +16,7 @@ use yii\helpers\Url;
  *
  * @property Product[] $products
  */
-class ProductCategory extends Category
+class ProductCategory extends Category implements \Serializable
 {
     /**
      * @inheritdoc
@@ -86,5 +86,28 @@ class ProductCategory extends Category
     public function getProducts()
     {
         return $this->hasMany(Product::className(), ['id' => 'product_id'])->viaTable('{{%products_categories}}', ['category_id' => 'id']);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function serialize()
+    {
+        return serialize([
+            'attributes' => $this->getAttributes(),
+            'related' => $this->getRelatedRecords()
+        ]);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function unserialize($serialized)
+    {
+        $data = unserialize($serialized);
+        $this->setAttributes($data['attributes']);
+        foreach ($data['related'] as $name => $value) {
+            $this->populateRelation($name, $value);
+        }
     }
 }

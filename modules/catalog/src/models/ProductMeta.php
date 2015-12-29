@@ -16,4 +16,12 @@ class ProductMeta extends Meta
     {
         return '{{%product_meta}}';
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function getEntity()
+    {
+        return $this->hasOne(Product::className(), ['id' => 'entity_id']);
+    }
 }

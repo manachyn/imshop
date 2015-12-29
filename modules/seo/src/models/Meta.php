@@ -171,8 +171,11 @@ class Meta extends ActiveRecord implements MetaInterface
             $view->params['customMeta'] = isset($view->params['customMeta'])
                 ? $view->params['customMeta'] .= "\n" . $this->custom_meta : "\n" . $this->custom_meta;
         }
-//        if ($this->openGraph !== null)
-//            $this->openGraph->applyTo($view);
+        if ($this->socialMeta) {
+            foreach ($this->socialMeta as $meta) {
+                $meta->applyTo($view);
+            }
+        }
 
     }
 

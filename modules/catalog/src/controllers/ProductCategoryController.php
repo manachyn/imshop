@@ -2,25 +2,23 @@
 
 namespace im\catalog\controllers;
 
-use im\catalog\models\CategoriesFacet;
 use im\catalog\models\CategoriesFacetValue;
 use im\catalog\models\Product;
-use im\catalog\models\ProductCategoriesFacet;
-use im\catalog\models\ProductCategoriesFacetValue;
 use im\catalog\models\ProductCategory;
 use im\search\components\index\IndexableInterface;
 use im\search\components\query\FieldQueryInterface;
 use im\search\components\query\QueryResultInterface;
-use im\search\components\query\SearchQueryHelper;
 use im\search\components\query\Term;
-use im\search\components\search\SearchDataProvider;
 use im\search\components\search\SearchResultContextInterface;
 use im\search\components\SearchManager;
-use im\search\models\FacetSet;
 use Yii;
 use yii\web\NotFoundHttpException;
 use yii\web\Request;
 
+/**
+ * Class ProductCategoryController
+ * @package im\catalog\controllers
+ */
 class ProductCategoryController extends CategoryController implements SearchResultContextInterface
 {
     /**
@@ -56,7 +54,7 @@ class ProductCategoryController extends CategoryController implements SearchResu
         $params['categoriesFacetValueRouteParams'] = function (CategoriesFacetValue $value) {
             return ['path' => $value->getEntity()->slug];
         };
-        $dataProvider = $categorySearchComponent->getSearchDataProvider($searchableType, $model, $searchQuery, $params);
+        $dataProvider = $categorySearchComponent->getSearchDataProvider($searchableType, $searchQuery, [], $model, $params);
         $dataProvider->prepare();
         $this->_searchResult = $dataProvider->query->result();
 
@@ -65,82 +63,6 @@ class ProductCategoryController extends CategoryController implements SearchResu
             'productsDataProvider' => $dataProvider
         ]);
     }
-
-//    /**
-//     * Displays product category page.
-//     *
-//     * @param string $path
-//     * @param Request $request
-//     * @return string
-//     * @throws NotFoundHttpException
-//     */
-//    public function actionView($path, Request $request)
-//    {
-//        $model = $this->findModel($path);
-//        $this->setModel($model);
-//        $searchManager = $this->getSearchManager();
-//        $searchComponent = $searchManager->getSearchComponent();
-//        $queryParam = $request->get('query', '');
-//
-//        // Get model facets
-//        /** @var FacetSet $facetSet */
-//        $facetSet = FacetSet::findOne(1);
-//        $facets = $facetSet->facets;
-//
-//        //text:"test1 test2"~10^100 OR test3
-//        //$searchQuery = \ZendSearch\Lucene\Search\QueryParser::parse($queryParam);
-//        //http://imshop.loc/laptops/status=1%20or%20title=Test
-//
-//        $searchQuery = null;
-//        // Parse search query
-//        if ($queryParam) {
-//            $searchQuery = $searchComponent->parseQuery($queryParam);
-//        }
-//
-//        // Add category query to search query
-//        list($categoryQuery, $categoryParentsQuery) = $this->getSearchQueries($model);
-//        if ($categoryQuery) {
-//            $categoryQuery = $searchQuery ? SearchQueryHelper::includeQuery(clone $searchQuery, $categoryQuery) : $categoryQuery;
-//            if ($categoryParentsQuery) {
-//                $categoryParentsQuery = $searchQuery ? SearchQueryHelper::includeQuery(clone $searchQuery, $categoryParentsQuery) : $categoryParentsQuery;
-//            }
-//        }
-//        // Add filter to facets
-//        if (array_filter($facets, function ($facet) { return $facet instanceof CategoriesFacet; })) {
-//            foreach ($facets as $facet) {
-//                if ($facet instanceof CategoriesFacet) {
-//                    $facet->setFilter($categoryParentsQuery ?: $searchQuery);
-//                } else {
-//                    $facet->setFilter($categoryQuery);
-//                }
-//            }
-//        }
-//
-//        // Create query for data provider
-//        $query = $searchComponent->getQuery('product', $categoryQuery ?: $searchQuery, $facets);
-//        $dataProvider = new SearchDataProvider([
-//            'query' => $query
-//        ]);
-//        $dataProvider->prepare();
-//        $this->_searchResult = $dataProvider->query->result();
-//        $query->setSearchQuery($searchQuery);
-//
-//        // Set context and route params for categories facets
-//        $facets = $this->_searchResult->getFacets();
-//        foreach ($facets as $facet) {
-//            $facet->setContext($model);
-//            if ($facet instanceof ProductCategoriesFacet) {
-//                $facet->setValueRouteParams(function (ProductCategoriesFacetValue $value) {
-//                    return ['path' => $value->getEntity()->slug];
-//                });
-//            }
-//        }
-//
-//        return $this->render('view', [
-//            'model' => $model,
-//            'productsDataProvider' => $dataProvider
-//        ]);
-//    }
 
     /**
      * @inheritdoc
@@ -217,5 +139,4 @@ class ProductCategoryController extends CategoryController implements SearchResu
 
         return $this->_categorySearchComponent;
     }
-
 }

@@ -2,65 +2,102 @@
 
 namespace im\catalog\components\search;
 
-
 use im\catalog\models\CategoriesFacet;
 use im\catalog\models\Category;
 use im\search\components\index\IndexableInterface;
 use im\search\components\query\FieldQueryInterface;
+use im\search\components\query\parser\QueryParserContextInterface;
 use im\search\components\query\QueryInterface;
 use im\search\components\query\QueryResultEvent;
+use im\search\components\query\QueryResultInterface;
 use im\search\components\query\SearchQueryHelper;
+use im\search\components\query\SearchQueryInterface;
 use im\search\components\query\Term;
-use im\search\components\search\SearchComponent;
+use im\search\components\search\SearchDataProvider;
 use im\search\components\searchable\SearchableInterface;
+use im\search\models\FacetSet;
+use Yii;
 use yii\base\Component;
-use yii\base\Model;
 
-/**
- * Class CategorySearchComponent
- * @package im\catalog\components\search
- */
-class CategorySearchComponent extends SearchComponent
+class CategorySearchComponentOld extends Component
 {
+    /**
+     * @var \im\search\components\SearchManager
+     */
+    private $_searchManager;
+
     /**
      * @var array
      */
     private $_mapping = [];
 
+
     /**
-     * @inheritdoc
+     * Returns data provider for searchable type.
+     *
+     * @param SearchableInterface|string $searchableType
+     * @param Category $category
+     * @param SearchQueryInterface|string $searchQuery
+     * @param array $params
+     * @return SearchDataProvider
      */
-    public function getQuery($searchableType, $searchQuery = null, $facets = [], Model $model = null, $params = [])
+    public function getSearchDataProvider($searchableType, Category $category, $searchQuery = null, $params = [])
     {
-        /** @var Category $model */
+        $searchableType = $this->normalizeSearchableType($searchableType);
+        $query = $this->getQuery($searchableType, $category, $searchQuery, $params);
+        $dataProvider = new SearchDataProvider([
+            'query' => $query
+        ]);
+
+        return $dataProvider;
+    }
+
+    /**
+     * Return search query.
+     *
+     * @param string $searchableType
+     * @param Category $category
+     * @param SearchQueryInterface|string $searchQuery
+     * @param array $params
+     * @return \im\search\components\query\QueryInterface
+     */
+    public function getQuery($searchableType, Category $category, $searchQuery = null, $params = [])
+    {
         $searchComponent = $this->getSearchManager()->getSearchComponent();
         $searchableType = $this->normalizeSearchableType($searchableType);
-        if ($searchQuery) {
-            $searchQuery = $this->normalizeSearchableQuery($searchQuery, $searchableType);
+
+        // Parse search query
+        if ($searchQuery && is_string($searchQuery)) {
+            if ($searchableType instanceof QueryParserContextInterface) {
+                $searchQuery = $searchComponent->parseQuery($searchQuery, $searchableType);
+            } else {
+                $searchQuery = $searchComponent->parseQuery($searchQuery);
+            }
+
         }
 
         // Add category query to search query
-        $categoryQuery = $this->getCategoryFieldQuery($model, $searchableType);
+        $categoryQuery = $this->getCategoryFieldQuery($category, $searchableType);
         if ($categoryQuery) {
             $searchQuery = $searchQuery ? SearchQueryHelper::includeQuery(clone $searchQuery, $categoryQuery) : $categoryQuery;
         }
 
         $query = $searchComponent->getQuery($searchableType, $searchQuery);
 
-        $facets = $this->getFacets($model);
+        $facets = $this->getFacets($category);
         $facetsFilter = null;
         // Exclude category query from search query, merge search query with category parents query and add it to categories facet as filter.
         // This will allow to calculate categories facet not for current category but also for children categories.
         if ($categoryQuery && array_filter($facets, function ($facet) { return $facet instanceof CategoriesFacet; })) {
             $facetsFilter = SearchQueryHelper::excludeQuery(clone $query->getSearchQuery(), $categoryQuery);
             // Search query by category parents
-            $categoryParentsQuery = $this->getCategoryParentsQuery($model, $searchableType);
+            $categoryParentsQuery = $this->getCategoryParentsQuery($category, $searchableType);
             if ($categoryParentsQuery) {
                 $facetsFilter = SearchQueryHelper::includeQuery($facetsFilter, $categoryParentsQuery);
             }
         }
         foreach ($facets as $facet) {
-            $facet->setContext($model);
+            $facet->setContext($category);
             if ($facet instanceof CategoriesFacet && $facetsFilter) {
                 $facet->setFilter($facetsFilter);
                 if (isset($params['categoriesFacetValueRouteParams'])) {
@@ -82,6 +119,39 @@ class CategorySearchComponent extends SearchComponent
         }
 
         return $query;
+    }
+
+    /**
+     * Returns category facets.
+     *
+     * @param Category $category
+     * @return \im\search\components\query\facet\FacetInterface[]
+     */
+    public function getFacets(Category $category)
+    {
+        $facetSet = FacetSet::findOne(1);
+        $facets = $facetSet->facets;
+        return $facets;
+    }
+
+    public function setFacetsQueryResult(QueryResultInterface $queryResult)
+    {
+
+    }
+
+    /**
+     * @param SearchableInterface|string $searchableType
+     * @return SearchableInterface
+     */
+    protected function normalizeSearchableType($searchableType)
+    {
+        if (is_string($searchableType)) {
+            /** @var \im\search\components\SearchManager $searchManager */
+            $searchManager = Yii::$app->get('searchManager');
+            $searchableType = $searchManager->getSearchableType($searchableType);
+        }
+
+        return $searchableType;
     }
 
     /**
@@ -145,5 +215,17 @@ class CategorySearchComponent extends SearchComponent
         }
 
         return $mapping;
+    }
+
+    /**
+     * @return \im\search\components\SearchManager
+     */
+    protected function getSearchManager()
+    {
+        if (!$this->_searchManager) {
+            $this->_searchManager = Yii::$app->get('searchManager');
+        }
+
+        return $this->_searchManager;
     }
 }

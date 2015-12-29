@@ -39,6 +39,11 @@ class SearchableType extends Object implements SearchableInterface, QueryParserC
     public $modelClass;
 
     /**
+     * @var string
+     */
+    public $searchResultsView;
+
+    /**
      * @var Model instance
      */
     protected $model;
@@ -68,6 +73,14 @@ class SearchableType extends Object implements SearchableInterface, QueryParserC
         $searchManager = Yii::$app->get('searchManager');
 
         return $searchManager->getSearchService($this->searchServiceId);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getSearchResultsView()
+    {
+        return $this->searchResultsView;
     }
 
     /**
