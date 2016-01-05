@@ -40,7 +40,8 @@
         "league/flysystem-cached-adapter": "dev-master",
         "league/flysystem-aws-s3-v3": "^1.0@dev",
         "studio-42/elfinder": "2.x-dev",
-        "bower-asset/chartjs": "^1.0@dev"
+        "bower-asset/chartjs": "^1.0@dev",
+        "hostnet/webpack-bundle": "dev-master"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",

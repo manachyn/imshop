@@ -170,6 +170,7 @@ $config = [
             ]
         ],
         'view' => [
+            'class' => 'im\base\components\View',
             'theme' => ['class' => 'im\imshop\Theme']
         ],
         'backendTheme' => 'im\adminlte\Theme',
@@ -219,21 +220,22 @@ $config = [
         ],
         'cms' => 'im\cms\components\Cms',
         'assetManager' => [
-            'bundles' => [
-                'yii\web\JqueryAsset' =>  [
-                    'depends' => [
-                        'im\imshop\IEJqueryAsset',
-                    ],
-                    'jsOptions' => [
-                        'condition' => '(!IE)|(gte IE 9)'
-                    ]
-                ],
-                'yii\bootstrap\BootstrapPluginAsset' => [
-                    'depends' => [
-                        'yii\web\JqueryAsset'
-                    ]
-                ],
-            ],
+//            'bundles' => [
+//                'yii\web\JqueryAsset' =>  [
+//                    'depends' => [
+//                        'im\imshop\IEJqueryAsset',
+//                    ],
+//                    'jsOptions' => [
+//                        'condition' => '(!IE)|(gte IE 9)'
+//                    ]
+//                ],
+//                'yii\bootstrap\BootstrapPluginAsset' => [
+//                    'depends' => [
+//                        'yii\web\JqueryAsset'
+//                    ]
+//                ],
+//            ],
+            'bundles' => require(__DIR__ . '/assets.php'),
         ]
     ],
     'controllerMap' => [

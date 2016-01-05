@@ -18,12 +18,12 @@ class ThemeAsset extends AssetBundle
         'css/main.css'
     ];
 
-//    /**
-//     * @inheritdoc
-//     */
-//    public $js = [
-//
-//    ];
+    /**
+     * @inheritdoc
+     */
+    public $js = [
+        'js/a.js'
+    ];
 
     /**
      * @inheritdoc
@@ -33,14 +33,16 @@ class ThemeAsset extends AssetBundle
             'images/*',
             'images/*/*',
             'css/*.css',
+            'js/*.js',
         ],
-        //'forceCopy' => YII_DEBUG
+        'forceCopy' => YII_DEBUG
     ];
 
     /**
      * @inheritdoc
      */
     public $depends = [
-        'im\imshop\FontAwesomeAsset'
+        'im\imshop\FontAwesomeAsset',
+        'im\imshop\BAsset'
     ];
 }

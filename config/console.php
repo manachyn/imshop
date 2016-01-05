@@ -21,7 +21,8 @@ return [
     'controllerNamespace' => 'app\commands',
     'modules' => [
         'gii' => 'yii\gii\Module',
-        'search' => 'im\search\Module'
+        'search' => 'im\search\Module',
+        'webpack' => 'im\webpack\Module'
     ],
     'components' => [
         'cache' => [

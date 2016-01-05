@@ -19,6 +19,7 @@ Add to vendor/composer/autoload_psr4.php
 'im\\elfinder\\' => array($baseDir . '/modules/elfinder/src'),
 'im\\imshop\\' => array($baseDir . '/themes/imshop/src'),
 'im\\image\\' => array($baseDir . '/modules/image/src'),
+'im\\webpack\\' => array($baseDir . '/modules/webpack/src'),
 
 
 
