@@ -1,9 +1,12 @@
 <?php
+
 /**
  * Header layout.
  *
  * @var \yii\web\View $this View
  */
+
+use im\search\widgets\SearchWidget;
 
 $assetsPublishUrl = Yii::$app->assetManager->getPublishedUrl('@im/imshop/assets');
 
@@ -47,10 +50,7 @@ $assetsPublishUrl = Yii::$app->assetManager->getPublishedUrl('@im/imshop/assets'
                             </div>
                             <div class="col-xs-6 col-sm-12">
                                 <div class="search-bar pull-right">
-                                    <form class="form-inline">
-                                        <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
-                                        <input type="search" class="form-control" placeholder="Search">
-                                    </form>
+                                    <?= SearchWidget::widget(); ?>
                                 </div>
                             </div>
                         </div>

@@ -170,7 +170,7 @@ $config = [
             ]
         ],
         'view' => [
-            'class' => 'im\base\components\View',
+//            'class' => 'im\base\components\View',
             'theme' => ['class' => 'im\imshop\Theme']
         ],
         'backendTheme' => 'im\adminlte\Theme',

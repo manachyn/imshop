@@ -7,15 +7,10 @@
  * @var string $content Content
  */
 
+use im\imshop\HomeAsset;
 use im\imshop\widgets\FlashMessages;
 
-//$this->registerJs('
-//require(["im/imshop/a"], function(a) {
-//    console.log(a);
-//});
-//', \yii\web\View::POS_END, null, ['depends' => ['im\imshop\BAsset']]);
-
-\app\assets\AllAsset::register($this);
+HomeAsset::register($this);
 
 ?>
 <?php $this->beginPage(); ?>

@@ -22,7 +22,7 @@ class ThemeAsset extends AssetBundle
      * @inheritdoc
      */
     public $js = [
-        'js/a.js'
+
     ];
 
     /**
@@ -42,7 +42,6 @@ class ThemeAsset extends AssetBundle
      * @inheritdoc
      */
     public $depends = [
-        'im\imshop\FontAwesomeAsset',
-        'im\imshop\BAsset'
+        'im\imshop\FontAwesomeAsset'
     ];
 }
