@@ -37,9 +37,29 @@ class FilesystemComponent extends Component
     const EVENT_AFTER_DELETE = 'afterDelete';
 
     /**
-     * @var array of available filesystems
+     * @var array|Filesystem[] available filesystems
      */
     public $filesystems = [];
+
+    /**
+     * @return Filesystem[]
+     */
+    public function getFilesystems()
+    {
+        foreach ($this->filesystems as $key => $filesystem) {
+            $this->get($key);
+        }
+
+        return $this->filesystems;
+    }
+
+    /**
+     * @param array|Filesystem[] $filesystems
+     */
+    public function setFilesystems($filesystems)
+    {
+        $this->filesystems = $filesystems;
+    }
 
     /**
      * Returns filesystem by name.

@@ -89,7 +89,7 @@ class Variant extends ActiveRecord implements VariantInterface
     public function getEntityRelation()
     {
         if ($this->entity_type) {
-            $class = Yii::$app->get('core')->getEntityClass($this->entity_type);
+            $class = Yii::$app->get('typesRegister')->getEntityClass($this->entity_type);
             return $this->hasOne($class, ['id' => 'entity_id']);
         }
         else {

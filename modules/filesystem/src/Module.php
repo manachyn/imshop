@@ -18,4 +18,17 @@ class Module extends \yii\base\Module
      * @inheritdoc
      */
     public $controllerNamespace = 'im\filesystem\controllers';
+
+    /**
+     * @inheritdoc
+     */
+    public function init()
+    {
+        parent::init();
+        $this->modules = [
+            'rest' => [
+                'class' => 'im\filesystem\rest\Module'
+            ],
+        ];
+    }
 }
