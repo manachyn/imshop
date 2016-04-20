@@ -1,17 +1,15 @@
-# IMShop - E-сommerce platform on Yii Framework 2
+http://www.yiiframework.com/wiki/799/yii2-app-advanced-on-single-domain-apache-nginx/
+http://mickgeek.com/yii-2-advanced-template-on-the-same-domain-2
 
-## Features
+http://www.elisdn.ru/blog/85/seo-service-on-yii2-reusing-of-modules
+https://github.com/ElisDN/seokeys/tree/master/modules/user/widgets/backend/grid
+http://www.elisdn.ru/blog/78/yii2-codeception-testing
 
-- Different product types, configurable attributes
-- Flexible catalog
-- Fast, configurable Faceted search (Layered Navigation), Query language
-- CMS (page types, editable templates, widgets)
-- File manager (cloud storage)
-- SEO-friendly (Social Meta Tags)
-- Adaptive admin panel
-- User management
-- E-сommerce
 
-## Technologies
+cd /path/to/project/frontend/web
+ln -s ../../backend/web backend
 
-PHP5, MySQL, Yii2, JavaScript(ES6), jQuery, Elasticsearch, Redis, Memcache, WebSocket, TDD, PHPUnit, Codeception (BDD), Webpack
+chmod -R 0777 frontend/runtime
+chmod -R 0777 backend/runtime
+chmod -R 0777 frontend/web/assets
+chmod -R 0777 backend/web/assets

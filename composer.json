@@ -1,7 +1,7 @@
 {
-    "name": "yiisoft/yii2-app-basic",
-    "description": "Yii 2 Basic Project Template",
-    "keywords": ["yii2", "framework", "basic", "project template"],
+    "name": "yiisoft/yii2-app-advanced",
+    "description": "Yii 2 Advanced Project Template",
+    "keywords": ["yii2", "framework", "advanced", "project template"],
     "homepage": "http://www.yiiframework.com/",
     "type": "project",
     "license": "BSD-3-Clause",
@@ -12,35 +12,12 @@
         "irc": "irc://irc.freenode.net/yii",
         "source": "https://github.com/yiisoft/yii2"
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "require": {
         "php": ">=5.4.0",
-        "yiisoft/yii2": ">=2.0.4",
+        "yiisoft/yii2": ">=2.0.6",
         "yiisoft/yii2-bootstrap": "*",
-        "yiisoft/yii2-swiftmailer": "*",
-        "yiisoft/yii2-jui": "*",
-        "yiisoft/yii2-authclient": "^2.0",
-        "kartik-v/yii2-widget-select2": "*",
-        "creocoder/yii2-nested-sets": "*",
-        "almasaeed2010/adminlte": "^2.2",
-        "components/font-awesome": "^4.3",
-        "driftyco/ionicons": "^2.0",
-        "bower-asset/jstree": "^3.1",
-        "2amigos/yii2-file-upload-widget": "dev-master",
-        "creocoder/yii2-flysystem": "^0.8.1",
-        "2amigos/yii2-file-input-widget": "~1.0",
-        "yiisoft/yii2-elasticsearch": "^2.0",
-        "yiisoft/yii2-imagine": "^2.0",
-        "trntv/yii2-glide": "^1.0",
-        "vova07/yii2-imperavi-widget": "^1.2",
-        "symfony/expression-language": "^3.0@dev",
-        "2amigos/yii2-ckeditor-widget": "~1.0@dev",
-        "mihaildev/yii2-ckeditor": "dev-master",
-        "league/flysystem-cached-adapter": "dev-master",
-        "league/flysystem-aws-s3-v3": "^1.0@dev",
-        "studio-42/elfinder": "2.x-dev",
-        "bower-asset/chartjs": "^1.0@dev",
-        "hostnet/webpack-bundle": "dev-master"
+        "yiisoft/yii2-swiftmailer": "*"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",
@@ -48,52 +25,10 @@
         "yiisoft/yii2-gii": "*",
         "yiisoft/yii2-faker": "*"
     },
-    "autoload": {
-        "psr-4": {
-            "im\\base\\": "modules/base/src",
-            "im\\forms\\": "modules/forms/src",
-            "im\\config\\": "modules/config/src",
-            "im\\adminlte\\": "themes/adminlte/src",
-            "im\\cms\\": "modules/cms/src",
-            "im\\users\\": "modules/users/src",
-            "im\\mailer\\": "modules/mailer/src",
-            "im\\catalog\\": "modules/catalog/src",
-            "im\\tree\\": "modules/tree/src",
-            "im\\eav\\": "modules/eav/src",
-            "im\\variation\\": "modules/variation/src",
-            "im\\seo\\": "modules/seo/src",
-            "im\\filesystem\\": "modules/filesystem/src",
-            "im\\search\\": "modules/search/src",
-            "im\\elasticsearch\\": "modules/elasticsearch/src",
-            "im\\image\\": "modules/image/src",
-            "im\\fsm\\": "modules/fsm/src",
-            "im\\elfinder\\": "modules/elfinder/src",
-            "im\\imshop\\": "themes/imshop/src",
-            "im\\webpack\\": "modules/webpack/src",
-            "im\\flow\\": "modules/flow/src"
-        }
-    },
     "config": {
         "process-timeout": 1800
     },
-    "scripts": {
-        "post-create-project-cmd": [
-            "yii\\composer\\Installer::postCreateProject"
-        ]
-    },
     "extra": {
-        "yii\\composer\\Installer::postCreateProject": {
-            "setPermission": [
-                {
-                    "runtime": "0777",
-                    "web/assets": "0777",
-                    "yii": "0755"
-                }
-            ],
-            "generateCookieValidationKey": [
-                "config/web.php"
-            ]
-        },
         "asset-installer-paths": {
             "npm-asset-library": "vendor/npm",
             "bower-asset-library": "vendor/bower"

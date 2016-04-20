@@ -1,30 +1,23 @@
 <?php
 /**
- * Application configuration shared by all test types
+ * Application configuration shared by all applications and test types
  */
-
-use tests\codeception\_support\MailHelper;
-
 return [
+    'language' => 'en-US',
     'controllerMap' => [
         'fixture' => [
             'class' => 'yii\faker\FixtureController',
-            'fixtureDataPath' => '@tests/codeception/fixtures',
-            'templatePath' => '@tests/codeception/templates',
-            'namespace' => 'tests\codeception\fixtures',
+            'fixtureDataPath' => '@tests/codeception/common/fixtures/data',
+            'templatePath' => '@tests/codeception/common/templates/fixtures',
+            'namespace' => 'tests\codeception\common\fixtures',
         ],
     ],
     'components' => [
         'db' => [
-            'dsn' => 'mysql:host=localhost;dbname=imshop_tests',
+            'dsn' => 'mysql:host=localhost;dbname=yii2_advanced_tests',
         ],
         'mailer' => [
             'useFileTransport' => true,
-            'on afterSend' => function ($event) {
-                if ($event->isSuccessful) {
-                    MailHelper::$mails[] = $event->message;
-                }
-            },
         ],
         'urlManager' => [
             'showScriptName' => true,
