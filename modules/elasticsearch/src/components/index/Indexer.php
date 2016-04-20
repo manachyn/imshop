@@ -8,6 +8,7 @@ use im\search\components\index\Document;
 use im\search\components\index\IndexActionResult;
 use im\search\components\index\IndexInterface;
 use im\search\components\index\Response as BaseResponse;
+use im\search\components\searchable\AttributeDescriptor;
 use yii\elasticsearch\Connection;
 use yii\helpers\Json;
 
@@ -104,6 +105,38 @@ class Indexer extends BaseIndexer
     /**
      * @inheritdoc
      */
+    public function setMapping(IndexInterface $index, $type, array $attributes)
+    {
+        static::getDb()->createCommand()->deleteIndex($index->getName());
+        $mapping = ['properties' => []];
+        foreach ($attributes as $attribute) {
+            if ($attribute->type || !empty($attribute->params['fullTextSearch'])) {
+                $mapping['properties'][$attribute->name] = ['type' => $this->getMappingType($attribute->type)];
+            }
+            if (isset($mapping['properties'][$attribute->name]['type'])
+                && $mapping['properties'][$attribute->name]['type'] == 'string'
+                && empty($attribute->params['fullTextSearch'])) {
+                $mapping['properties'][$attribute->name]['index'] = 'not_analyzed';
+            }
+            if (!empty($attribute->params['suggestions'])) {
+                $mapping['properties'][$attribute->name . '_suggest'] = ['type' => 'completion'];
+            }
+        }
+        $configuration = ['mappings' => [$type => $mapping]];
+        static::getDb()->createCommand()->createIndex($index->getName(), $configuration);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function typeExists(IndexInterface $index, $type)
+    {
+        return static::getDb()->createCommand()->typeExists($index->getName(), $type);
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function getIndexActionResult(BaseResponse $response)
     {
         $result = new IndexActionResult($response->getAction());
@@ -133,5 +166,32 @@ class Indexer extends BaseIndexer
     public static function getDb()
     {
         return \Yii::$app->get('elasticsearch');
+    }
+
+
+    /**
+     * @param string $type
+     * @return string
+     */
+    private function getMappingType($type)
+    {
+        switch ($type) {
+            case AttributeDescriptor::TYPE_STRING:
+                $mappingType = 'string';
+                break;
+            case AttributeDescriptor::TYPE_INTEGER:
+                $mappingType = 'integer';
+                break;
+            case AttributeDescriptor::TYPE_FLOAT:
+                $mappingType = 'float';
+                break;
+            case AttributeDescriptor::TYPE_BOOLEAN:
+                $mappingType = 'boolean';
+                break;
+            default:
+                $mappingType = 'string';
+        }
+
+        return $mappingType;
     }
 }

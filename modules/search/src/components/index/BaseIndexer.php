@@ -25,7 +25,10 @@ abstract class BaseIndexer implements IndexerInterface
         $limit = isset($options['batchSize']) ? $options['batchSize'] : null;
         $ignoreErrors = isset($options['ignoreErrors']) ? $options['ignoreErrors'] : false;
 
-        $this->deleteIndexType($index, $type);
+        if ($this->typeExists($index, $type)) {
+            $this->deleteIndex($index);
+            $this->setMapping($index, $type, $this->getIndexMapping($type));
+        }
 
         $provider = $this->getIndexProvider($type);
         $total = $provider->countObjects($offset);
@@ -105,6 +108,13 @@ abstract class BaseIndexer implements IndexerInterface
     public function deleteIndexType(IndexInterface $index, $type)
     {
         return $this->delete($index, $type);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setMapping(IndexInterface $index, $type, array $attributes)
+    {
     }
 
     /**

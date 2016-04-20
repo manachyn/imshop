@@ -99,6 +99,23 @@ class SearchManager extends Component
     }
 
     /**
+     * Returns default searchable type.
+     *
+     * @return SearchableInterface
+     */
+    public function getDefaultSearchableType()
+    {
+        $types = $this->getSearchableTypes();
+        foreach ($types as $type) {
+            if ($type->isDefault()) {
+                return $type;
+            }
+        }
+
+        return reset($types);
+    }
+
+    /**
      * Returns searchable type by class.
      *
      * @param string $class
@@ -324,128 +341,4 @@ class SearchManager extends Component
     {
         $this->_searchComponent = $searchComponent;
     }
-
-//
-//    /**
-//     * @param string $entityType
-//     * @return AttributeDescriptor[]
-//     */
-//    public function getSearchableAttributes($entityType = null)
-//    {
-//        $attributes = [];
-//        foreach ($this->searchableItems as $item) {
-//            $itemAttributes = $item->getSearchProvider()->getSearchableAttributes();
-//            if ($entityType && $item->entityType === $entityType) {
-//                $attributes = $itemAttributes;
-//                break;
-//            } else {
-//                $attributes = array_merge($attributes, $itemAttributes);
-//            }
-//        }
-//
-//        return $attributes;
-//    }
-//
-//    /**
-//     * @return array
-//     */
-//    public function getSearchableEntityTypes()
-//    {
-//        return ArrayHelper::map($this->searchableItems, 'entityType', function (SearchableItem $item) {
-//            return Inflector::camel2words($item->entityType);
-//        });
-//    }
-//
-//    /**
-//     * @param string $entityType
-//     * @return IndexAttribute[]
-//     */
-//    public function getIndexAttributes($entityType = null)
-//    {
-//        $searchableAttributes = $this->getSearchableAttributes($entityType);
-//        $indexAttributes = IndexAttribute::findByIndexType($entityType);
-//        $attributes = [];
-//        foreach ($searchableAttributes as $searchableAttribute) {
-//            /** @var IndexAttribute $indexAttribute */
-//            $indexAttribute = null;
-//            foreach ($indexAttributes as $attribute) {
-//                if ($attribute->entity_type === $searchableAttribute->entity_type
-//                    && (($attribute->attribute_id && $attribute->attribute_id === $searchableAttribute->attribute_id)
-//                    || $attribute->attribute_name === $searchableAttribute->name)) {
-//                    $indexAttribute = $attribute;
-//                    break;
-//                }
-//            }
-//            if ($indexAttribute) {
-//                $indexAttribute->indexable = true;
-//                $indexAttribute->name = $searchableAttribute->name;
-//                $indexAttribute->label =$searchableAttribute->label;
-//            } else {
-//                $indexAttribute = new IndexAttribute([
-//                    'entity_type' => $searchableAttribute->entity_type,
-//                    'attribute_id' => $searchableAttribute->attribute_id,
-//                    'attribute_name' => $searchableAttribute->attribute_id ? '' : $searchableAttribute->name,
-//                    'name' => $searchableAttribute->name,
-//                    'label' => $searchableAttribute->label,
-//                ]);
-//            }
-//            $attributes[] = $indexAttribute;
-//        }
-//
-//        return $attributes;
-//    }
-//
-//    /**
-//     * Returns index manager.
-//     *
-//     * @return IndexManager
-//     */
-//    public function getIndexManager()
-//    {
-//        return $this->_indexManager = Instance::ensure($this->_indexManager, IndexManager::className());
-//    }
-//
-//    /**
-//     * Sets index manager instance or config.
-//     *
-//     * @param string|array|IndexManager $indexManager
-//     */
-//    public function setIndexManager($indexManager)
-//    {
-//        $this->_indexManager = $indexManager;
-//    }
-//
-//    /**
-//     * Returns search service by id.
-//     *
-//     * @param string $id
-//     * @return SearchServiceInterface
-//     * @throws \yii\base\InvalidConfigException
-//     */
-//    public function getSearchService($id)
-//    {
-//        if (!isset($this->searchServices[$id])) {
-//            throw new InvalidParamException("The search service '$id' is not registered");
-//        }
-//        if (!$this->searchServices[$id] instanceof SearchServiceInterface) {
-//            $this->searchServices[$id] = Yii::createObject($this->searchServices[$id]);
-//        }
-//
-//        return $this->searchServices[$id];
-//    }
-//
-//    private function normalizeSearchableTypes($types) {
-//        foreach ($types as $key => $type) {
-//            $types[$key] = $this->normalizeSearchableType($type);
-//        }
-//    }
-//
-//    private function normalizeSearchableType($type)
-//    {
-//        if (!$type instanceof SearchableInterface) {
-//            $type = Yii::createObject($type);
-//        }
-//
-//        return $type;
-//    }
 }

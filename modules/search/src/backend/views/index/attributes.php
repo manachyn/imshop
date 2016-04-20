@@ -59,6 +59,13 @@ $this->params['breadcrumbs'] = [['label' => $this->title, 'url' => ['index']], $
                     },
                 ],
                 [
+                    'attribute' => 'suggestions',
+                    'format' => 'raw',
+                    'value' => function (IndexAttribute $attribute, $key) use ($form) {
+                        return $form->field($attribute, "[$key]suggestions")->checkbox([], false)->label(false);
+                    },
+                ],
+                [
                     'attribute' => 'indexable',
                     'format' => 'raw',
                     'value' => function (IndexAttribute $attribute, $key) use ($form) {

@@ -3,7 +3,6 @@
 namespace im\search\widgets;
 
 use im\cms\models\widgets\Widget;
-use im\search\components\query\facet\FacetInterface;
 use im\search\components\query\facet\FacetValueInterface;
 use im\search\components\search\SearchResultContextInterface;
 use im\search\Module;

@@ -2,6 +2,7 @@
 
 namespace im\search\models;
 
+use im\search\components\searchable\AttributeDescriptor;
 use im\search\Module;
 use Yii;
 use yii\db\ActiveRecord;
@@ -16,6 +17,7 @@ use yii\db\ActiveRecord;
  * @property string $type
  * @property bool $full_text_search
  * @property int $boost
+ * @property bool $suggestions
 
  */
 class IndexAttribute extends ActiveRecord
@@ -46,7 +48,7 @@ class IndexAttribute extends ActiveRecord
         return [
             [['index_type', 'name'], 'required'],
             [['index_type', 'name', 'index_name', 'type'], 'string', 'max' => 100],
-            [['full_text_search', 'boost'], 'integer']
+            [['full_text_search', 'boost', 'suggestions'], 'integer']
         ];
     }
 
@@ -64,7 +66,8 @@ class IndexAttribute extends ActiveRecord
             'label' => Module::t('indexAttribute', 'Label'),
             'indexable' => Module::t('indexAttribute', 'Indexable'),
             'full_text_search' => Module::t('indexAttribute', 'Full text search'),
-            'boost' => Module::t('indexAttribute', 'Search boost')
+            'boost' => Module::t('indexAttribute', 'Search boost'),
+            'suggestions' => Module::t('indexAttribute', 'Suggestions')
         ];
     }
 
@@ -76,10 +79,10 @@ class IndexAttribute extends ActiveRecord
     public static function getTypesList()
     {
         return [
-            'string' => Module::t('indexAttribute', 'String'),
-            'int' => Module::t('indexAttribute', 'Integer'),
-            'float' => Module::t('indexAttribute', 'Floating point number'),
-            'bool' => Module::t('indexAttribute', 'Boolean'),
+            AttributeDescriptor::TYPE_STRING => Module::t('indexAttribute', 'String'),
+            AttributeDescriptor::TYPE_INTEGER => Module::t('indexAttribute', 'Integer'),
+            AttributeDescriptor::TYPE_FLOAT => Module::t('indexAttribute', 'Floating point number'),
+            AttributeDescriptor::TYPE_BOOLEAN =>  Module::t('indexAttribute', 'Boolean')
         ];
     }
 
@@ -112,6 +115,11 @@ class IndexAttribute extends ActiveRecord
         $indexableAttributes = IndexAttribute::find()->where($indexableCondition)->all();
         foreach ($data as $item) {
             if ($item['indexable']) {
+                $item['full_text_search'] = (int) $item['full_text_search'];
+                $item['suggestions'] = (int) $item['suggestions'];
+                if (isset($item['boost'])) {
+                    $item['boost'] = (int) $item['boost'];
+                }
                 $indexable = false;
                 foreach ($indexableAttributes as $indexableItem) {
                     if ($item['index_type'] === $indexableItem['index_type'] && $item['name'] === $indexableItem['name']) {
@@ -126,10 +134,18 @@ class IndexAttribute extends ActiveRecord
             }
         }
         $saved = true;
+        $changedIndexType = [];
         foreach ($indexableAttributes as $item) {
+            $dirtyAttributes = $item->getDirtyAttributes();
+            $changed = $dirtyAttributes && count(array_intersect(array_keys($dirtyAttributes), ['index_name', 'type', 'full_text_search', 'suggestions'])) > 0 ? true : false;
             if (!$item->save()) {
                 $saved = false;
+            } elseif ($changed && !in_array($item->index_type, $changedIndexType)) {
+                $changedIndexType[] = $item->index_type;
             }
+        }
+        if ($changedIndexType) {
+            // Trigger index mapping changed event (currently reindexing is performed manually)
         }
         if ($saved) {
             IndexAttribute::deleteAll($deleteCondition);

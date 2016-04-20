@@ -81,13 +81,14 @@ class PageViewAction extends ModelViewAction implements ModelContextInterface
         return $this->loadModel($path);
     }
 
+
     /**
+     * @param Page $model
+     *
      * @return array
      */
-    protected function getRelationForLoad()
+    protected function getRelationForLoad(Page $model)
     {
-        /* @var $modelClass Page */
-        $model = Yii::createObject($this->modelClass);
         $relations = [];
         if ($model->getBehavior('template')) {
             $relations[] = 'template';
@@ -106,10 +107,10 @@ class PageViewAction extends ModelViewAction implements ModelContextInterface
     {
         /* @var $modelClass Page */
         $modelClass = $this->modelClass;
-
+        /** @var Page $model */
         $model = $modelClass::findByPath($path)->published()->one();
         if ($model) {
-            foreach ($this->getRelationForLoad() as $relation) {
+            foreach ($this->getRelationForLoad($model) as $relation) {
                 $model->$relation;
             }
         }

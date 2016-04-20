@@ -7,5 +7,5 @@ return [
     'password' => 'ubuntu',
     'charset' => 'utf8',
     'tablePrefix' => 'tbl_',
-    'enableSchemaCache' => true
+    'enableSchemaCache' => false
 ];

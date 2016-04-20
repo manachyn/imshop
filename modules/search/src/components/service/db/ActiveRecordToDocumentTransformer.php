@@ -4,6 +4,7 @@ namespace im\search\components\service\db;
 
 use im\eav\models\Value;
 use im\search\components\index\Document;
+use im\search\components\searchable\AttributeDescriptor;
 use im\search\components\transformer\ObjectToDocumentTransformerInterface;
 use yii\db\ActiveQuery;
 use yii\helpers\ArrayHelper;
@@ -90,6 +91,19 @@ class ActiveRecordToDocumentTransformer implements ObjectToDocumentTransformerIn
             }
         }
 
+        return $this->postTransform($document, $object, $attributes);
+    }
+
+    /**
+     * Post transformation operations.
+     *
+     * @param Document $document
+     * @param object $object
+     * @param AttributeDescriptor[] $attributes
+     * @return Document
+     */
+    protected function postTransform(Document $document, $object, $attributes)
+    {
         return $document;
     }
 }

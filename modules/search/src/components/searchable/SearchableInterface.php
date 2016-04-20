@@ -53,4 +53,11 @@ interface SearchableInterface
      * @return string
      */
     public function getSearchResultsView();
+
+    /**
+     * Whether type is default searchable type.
+     *
+     * @return bool
+     */
+    public function isDefault();
 }

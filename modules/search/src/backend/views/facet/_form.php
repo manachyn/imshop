@@ -39,6 +39,7 @@ ListViewAsset::register($this);
 
     <?= $form->field($model, 'operator', ['options' => ['data-field' => 'operator', 'style' => !$model->isMultivalue() ? 'display: none;' : '']])->dropDownList($model::getOperatorsList()) ?>
 
+    <label><?= Module::t('facet', 'Attribute values as facet values') ?></label>
     <?= $form->field($model, 'entity_type')->dropDownList(
         $model::getEntityTypesList(),
         ['prompt' => '', 'data-field' => 'entity_type']

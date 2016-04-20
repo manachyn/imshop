@@ -5,6 +5,7 @@ namespace im\elasticsearch\components;
 use im\search\components\finder\BaseFinder;
 use im\search\components\query\IndexQueryInterface;
 use im\search\components\query\SearchQueryInterface;
+use im\search\components\query\Suggest;
 use Yii;
 use yii\elasticsearch\Connection;
 
@@ -49,6 +50,23 @@ class Finder extends BaseFinder
         if ($transformer = static::getTransformer($type)) {
             $query->setTransformer($transformer);
         }
+
+        return $query;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function findSuggestions(Suggest $suggest, $type, SearchQueryInterface $query = null)
+    {
+        $query = Yii::createObject([
+            'class' => SuggestionsQuery::className(),
+            'searchQuery' => $query,
+            'index' => $this->getIndex($type),
+            'type' => $type,
+            'limit' => 0,
+            'suggestQuery' => $suggest
+        ]);
 
         return $query;
     }

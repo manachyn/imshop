@@ -3,8 +3,10 @@
 namespace im\search\controllers;
 
 use im\base\context\ModelContextInterface;
+use im\catalog\models\CategoriesFacetValue;
 use im\search\components\query\QueryResultInterface;
 use im\search\components\search\SearchResultContextInterface;
+use im\search\components\searchable\SearchableInterface;
 use im\search\models\SearchPage;
 use Yii;
 use yii\base\Model;
@@ -29,11 +31,6 @@ class SearchPageController extends Controller implements ModelContextInterface, 
     private $_searchResult;
 
     /**
-     * @var \im\search\components\search\SearchComponent
-     */
-    private $_searchComponent;
-
-    /**
      * @var \im\search\components\SearchManager
      */
     private $_searchManager;
@@ -42,52 +39,40 @@ class SearchPageController extends Controller implements ModelContextInterface, 
      * Displays search page.
      *
      * @param string $path
-     * @param Request $request
+     * @param string $type
+     * @param string $query
      * @return string
      * @throws NotFoundHttpException
      */
-    public function actionView($path, Request $request)
+    public function actionView($path, $type = null, $query = '')
     {
         $model = $this->findModel($path);
         $this->setModel($model);
-        $searchComponent = $this->getSearchComponent();
-        $searchableType = $this->getSearchManager()->getSearchableType('page');
-        $searchQuery = $request->get('query', null);
-        $dataProvider = $searchComponent->getSearchDataProvider($searchableType, $searchQuery, [], $model);
+        $searchManager = $this->getSearchManager();
+        $searchableType = $type ? $searchManager->getSearchableType($type) : $searchManager->getDefaultSearchableType();
+        $searchComponent = $this->getSearchComponent($searchableType);
+        $params = [];
+        if ($searchableType->getType() == 'product') {
+            $params['categoriesFacetValueRouteParams'] = function (CategoriesFacetValue $value) {
+                return ['path' => $value->getEntity()->slug];
+            };
+        }
+        $dataProvider = $searchComponent->getSearchDataProvider(
+            $searchableType,
+            $query,
+            $searchComponent->getFacets($model),
+            $model,
+            $params
+        );
         $dataProvider->prepare();
         $this->_searchResult = $dataProvider->query->result();
-        $searchResultsView = $searchableType->getSearchResultsView();
-        $searchResultsView = $searchResultsView ?: 'view';
 
-        return $this->render($searchResultsView, [
+        return $this->render('view', [
             'model' => $model,
-            'dataProvider' => $dataProvider
+            'dataProvider' => $dataProvider,
+            'searchableType' => $searchableType
         ]);
     }
-
-
-//    public function actionView($path, Request $request)
-//    {
-//        $model = $this->findModel($path);
-//        /** @var \im\search\components\SearchManager $searchManager */
-//        $searchManager = Yii::$app->get('searchManager');
-//        $query = $request->get('query', '');
-//        $searchComponent = $searchManager->getSearchComponent();
-//        /** @var FacetSet $facetSet */
-//        $facetSet = FacetSet::findOne(1);
-//        $facets = $facetSet->facets;
-//        $query = $searchComponent->getQuery('product', $query, $facets);
-//        $dataProvider = new SearchDataProvider([
-//            'query' => $query
-//        ]);
-//        $dataProvider->prepare();
-//        $this->_searchResult = $dataProvider->query->result();
-//
-//        return $this->render('view', [
-//            'model' => $model,
-//            'dataProvider' => $dataProvider
-//        ]);
-//    }
 
     /**
      * @inheritdoc
@@ -113,6 +98,12 @@ class SearchPageController extends Controller implements ModelContextInterface, 
         $this->_model = $model;
     }
 
+
+    /**
+     * @param string $path
+     * @return SearchPage
+     * @throws NotFoundHttpException
+     */
     protected function findModel($path)
     {
         if (($model = SearchPage::findByPath($path)->published()->one()) !== null) {
@@ -137,17 +128,16 @@ class SearchPageController extends Controller implements ModelContextInterface, 
         return $this->_searchManager;
     }
 
+
     /**
      * Returns search component.
      *
+     * @param SearchableInterface $searchableType
      * @return \im\search\components\search\SearchComponent
      */
-    protected function getSearchComponent()
+    protected function getSearchComponent(SearchableInterface $searchableType = null)
     {
-        if (!$this->_searchComponent) {
-            $this->_searchComponent = $this->getSearchManager()->getSearchComponent();
-        }
-
-        return $this->_searchComponent;
+        return $searchableType && $searchableType->getType() == 'product' ? Yii::$app->get('categorySearch')
+            : $this->getSearchManager()->getSearchComponent();
     }
 }

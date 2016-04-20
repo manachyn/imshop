@@ -48,6 +48,14 @@ class CategoriesFacet extends Facet implements TreeFacetInterface
     /**
      * @inheritdoc
      */
+    public function isDisplayValuesWithoutResults()
+    {
+        return true;
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function getValueInstance(array $config)
     {
         if (!isset($config['class'])) {
@@ -157,7 +165,7 @@ class CategoriesFacet extends Facet implements TreeFacetInterface
      */
     protected function applyContext($values)
     {
-        if (($context = $this->getContext()) && $context instanceof Category) {
+        //if (($context = $this->getContext()) && $context instanceof Category) {
             foreach ($values as $key => $value) {
 //                if ($context->equals($value->getEntity())) {
 //                    unset($values[$key]);
@@ -170,7 +178,7 @@ class CategoriesFacet extends Facet implements TreeFacetInterface
                     $value->setRouteParams($valueRouteParams);
                 }
             }
-        }
+        //}
 
         return $values;
     }

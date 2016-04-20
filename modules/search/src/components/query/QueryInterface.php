@@ -62,4 +62,18 @@ interface QueryInterface extends \yii\db\QueryInterface
      * @return FacetInterface[]
      */
     public function getFacets();
+
+    /**
+     * Sets suggest query.
+     *
+     * @param Suggest $suggestQuery
+     */
+    public function setSuggestQuery(Suggest $suggestQuery);
+
+    /**
+     * Returns suggest query.
+     *
+     * @return Suggest
+     */
+    public function getSuggestQuery();
 }

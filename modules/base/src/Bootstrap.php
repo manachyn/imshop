@@ -27,6 +27,7 @@ class Bootstrap implements BootstrapInterface
         Yii::setAlias('@im/tree', $vendorDir . '/modules/tree/src');
         Yii::setAlias('@im/users', $vendorDir . '/modules/users/src');
         Yii::setAlias('@im/search', $vendorDir . '/modules/search/src');
+        Yii::setAlias('@im/ecommerce', $vendorDir . '/modules/ecommerce/src');
 
         $this->registerTranslations($app);
     }

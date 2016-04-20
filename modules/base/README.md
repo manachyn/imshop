@@ -50,3 +50,5 @@ php yii migrate --migrationPath=@app/modules/cms/src/migrations
 
 Dynamic relations
 https://github.com/synatree/yii2-dynamic-relations
+
+composer dump-autoload --optimize

@@ -33,7 +33,6 @@
         "yiisoft/yii2-imagine": "^2.0",
         "trntv/yii2-glide": "^1.0",
         "vova07/yii2-imperavi-widget": "^1.2",
-        "zendframework/zendsearch": "dev-master",
         "symfony/expression-language": "^3.0@dev",
         "2amigos/yii2-ckeditor-widget": "~1.0@dev",
         "mihaildev/yii2-ckeditor": "dev-master",
@@ -48,6 +47,31 @@
         "yiisoft/yii2-debug": "*",
         "yiisoft/yii2-gii": "*",
         "yiisoft/yii2-faker": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "im\\base\\": "modules/base/src",
+            "im\\forms\\": "modules/forms/src",
+            "im\\config\\": "modules/config/src",
+            "im\\adminlte\\": "themes/adminlte/src",
+            "im\\cms\\": "modules/cms/src",
+            "im\\users\\": "modules/users/src",
+            "im\\mailer\\": "modules/mailer/src",
+            "im\\catalog\\": "modules/catalog/src",
+            "im\\tree\\": "modules/tree/src",
+            "im\\eav\\": "modules/eav/src",
+            "im\\variation\\": "modules/variation/src",
+            "im\\seo\\": "modules/seo/src",
+            "im\\filesystem\\": "modules/filesystem/src",
+            "im\\search\\": "modules/search/src",
+            "im\\elasticsearch\\": "modules/elasticsearch/src",
+            "im\\image\\": "modules/image/src",
+            "im\\fsm\\": "modules/fsm/src",
+            "im\\elfinder\\": "modules/elfinder/src",
+            "im\\imshop\\": "themes/imshop/src",
+            "im\\webpack\\": "modules/webpack/src",
+            "im\\flow\\": "modules/flow/src"
+        }
     },
     "config": {
         "process-timeout": 1800

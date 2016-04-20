@@ -8,10 +8,20 @@ use yii\console\Exception;
 use yii\helpers\FileHelper;
 use yii\web\AssetBundle;
 
+/**
+ * Class WebpackController
+ * @package im\webpack\commands
+ */
 class WebpackController extends Controller
 {
-    public $defaultAction = 'config';
+    /**
+     * @inheritdoc
+     */
+    public $defaultAction = 'build';
 
+    /**
+     * @var array
+     */
     public $entryPoints = [];
 
     /**
@@ -19,12 +29,19 @@ class WebpackController extends Controller
      */
     private $_assetManager = [];
 
-    public function actionConfig($configFile, $bundleFile)
+    /**
+     * Build entry points.
+     *
+     * @param string $configFile
+     */
+    public function actionBuild($configFile)
     {
         $this->loadConfiguration($configFile);
         $entryPoints = $this->loadEntryPoints($this->entryPoints);
         foreach ($entryPoints as $name => $entryPoint) {
+            $this->stdout("Build entry point bundle '{$entryPoint->className()}' => ");
             $file = $this->buildBundle($entryPoint, $entryPoint->js);
+            $this->stdout($file . "\n");
         }
     }
 

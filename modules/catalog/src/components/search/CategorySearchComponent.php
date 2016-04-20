@@ -40,14 +40,13 @@ class CategorySearchComponent extends SearchComponent
         }
 
         // Add category query to search query
-        $categoryQuery = $this->getCategoryFieldQuery($model, $searchableType);
+        $categoryQuery = $model instanceof Category ? $this->getCategoryFieldQuery($model, $searchableType) : null;
         if ($categoryQuery) {
             $searchQuery = $searchQuery ? SearchQueryHelper::includeQuery(clone $searchQuery, $categoryQuery) : $categoryQuery;
         }
 
         $query = $searchComponent->getQuery($searchableType, $searchQuery);
 
-        $facets = $this->getFacets($model);
         $facetsFilter = null;
         // Exclude category query from search query, merge search query with category parents query and add it to categories facet as filter.
         // This will allow to calculate categories facet not for current category but also for children categories.
@@ -61,8 +60,10 @@ class CategorySearchComponent extends SearchComponent
         }
         foreach ($facets as $facet) {
             $facet->setContext($model);
-            if ($facet instanceof CategoriesFacet && $facetsFilter) {
-                $facet->setFilter($facetsFilter);
+            if ($facet instanceof CategoriesFacet) {
+                if ($facetsFilter) {
+                    $facet->setFilter($facetsFilter);
+                }
                 if (isset($params['categoriesFacetValueRouteParams'])) {
                     $facet->setValueRouteParams($params['categoriesFacetValueRouteParams']);
                 }

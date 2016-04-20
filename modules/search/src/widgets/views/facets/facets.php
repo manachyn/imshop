@@ -36,7 +36,7 @@ use yii\helpers\Url;
     <ul class="facets">
     <?php foreach ($facets as $facet) :
         $values = $facet instanceof TreeFacetInterface ? $facet->getValuesTree($this->context) : $facet->getValues();
-        $hasResults = $facet instanceof TreeFacetInterface ? true : $facet->isHasResults();
+        $hasResults = $facet->isHasResults() || $facet->isDisplayValuesWithoutResults();
         if ($values && $hasResults) : ?>
         <li class="facet">
             <span class="facet-label"><?= $facet->getLabel() ?></span>

@@ -14,6 +14,7 @@ use im\search\components\query\QueryResultEvent;
 use im\search\components\query\QueryResultInterface;
 use im\search\components\query\Range;
 use im\search\components\query\SearchQueryInterface;
+use im\search\components\query\Suggest;
 use im\search\components\query\Term;
 use im\search\components\transformer\DocumentToObjectTransformerInterface;
 use ReflectionClass;
@@ -47,6 +48,11 @@ class Query extends \yii\elasticsearch\Query implements QueryInterface
     private $_searchQuery;
 
     /**
+     * @var Suggest
+     */
+    private $_suggestQuery;
+
+    /**
      * @inheritdoc
      */
     public function init()
@@ -60,9 +66,11 @@ class Query extends \yii\elasticsearch\Query implements QueryInterface
     public function createCommand($db = null)
     {
         $this->mapAggregations();
-        $searchQuery = $this->getSearchQuery();
-        if ($searchQuery) {
+        if ($searchQuery = $this->getSearchQuery()) {
             $this->query = $this->mapQuery($searchQuery);
+        }
+        if ($suggestQuery = $this->getSuggestQuery()) {
+            $this->suggest = $this->mapSuggestQuery($suggestQuery);
         }
 
         return parent::createCommand($db);
@@ -150,6 +158,23 @@ class Query extends \yii\elasticsearch\Query implements QueryInterface
     {
         return $this->orderBy;
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function setSuggestQuery(Suggest $suggestQuery)
+    {
+        $this->_suggestQuery = $suggestQuery;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getSuggestQuery()
+    {
+        return $this->_suggestQuery;
+    }
+
 
     /**
      * This method is called after getting result.
@@ -281,11 +306,33 @@ class Query extends \yii\elasticsearch\Query implements QueryInterface
                 }
                 //$this->addFacetAggregation($aggregationsConfig);
             }
-            $this->addFacetAggregation(['name' => 'all_filtered', 'options' => ['global' => new \stdClass(), 'aggs' => $filteredAggregations]]);
+            if ($filteredAggregations) {
+                $this->addFacetAggregation([
+                    'name' => 'all_filtered',
+                    'options' => [
+                        'global' => new \stdClass(),
+                        'aggs'   => $filteredAggregations
+                    ]
+                ]);
+            }
             foreach ($facetsWithoutFilter as $facet) {
                 $this->addFacetAggregation($this->getAggregationConfig($facet));
             }
         }
+    }
+
+    /**
+     * @param Suggest $query
+     * @return array
+     */
+    protected function mapSuggestQuery(Suggest $query)
+    {
+        $suggest = [];
+        foreach ($query->getFields() as $field) {
+            $suggest[$field . '_suggestion'] = ['text' => $query->getTerm(), 'completion' => ['field' => $field . '_suggest']];
+        }
+
+        return $suggest;
     }
 
     /**

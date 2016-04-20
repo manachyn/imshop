@@ -64,7 +64,7 @@ class Layout extends Object
      */
     public function getAvailableWidgetAreas()
     {
-        foreach ($this->$this->_availableWidgetAreas as $key => $widgetArea) {
+        foreach ($this->_availableWidgetAreas as $key => $widgetArea) {
             if (!$widgetArea instanceof WidgetAreaDescriptor) {
                 $widgetArea = Yii::createObject($widgetArea);
                 $this->_availableWidgetAreas[$key] = $widgetArea;

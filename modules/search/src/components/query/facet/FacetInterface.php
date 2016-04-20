@@ -104,4 +104,11 @@ interface FacetInterface
      * @return bool
      */
     public function isHasResults();
+
+    /**
+     * Whether to display facet value if it has no results.
+     *
+     * @return bool
+     */
+    public function isDisplayValuesWithoutResults();
 }

@@ -105,7 +105,7 @@ trait FacetValueTrait
      */
     public function getRouteParams()
     {
-        return $this->getRouteParams();
+        return $this->_routeParams;
     }
 
     /**
@@ -123,6 +123,7 @@ trait FacetValueTrait
      */
     public function createUrl($route = null, SearchQueryInterface $searchQuery = null, $scheme = false)
     {
+        $routeParams = $this->getRouteParams();
         $valueQuery = $this->getValueSearchQuery();
         if ($searchQuery) {
             $searchQuery = clone $searchQuery;
@@ -132,13 +133,13 @@ trait FacetValueTrait
                 if (!$this->getFacet()->isMultivalue()) {
                     $searchQuery = SearchQueryHelper::excludeQueryByFieldName($searchQuery, $valueQuery->getField());
                 }
-                if ($this->_routeParams) {
+                if ($routeParams) {
                     $valueQuery = $searchQuery;
                 } else {
                     $valueQuery = SearchQueryHelper::includeQuery($searchQuery, $valueQuery, $this->getValueOperator());
                 }
             }
-        } elseif ($this->_routeParams) {
+        } elseif ($routeParams) {
             $valueQuery = null;
         }
         /** @var \im\search\components\SearchManager $searchManager */
@@ -148,7 +149,7 @@ trait FacetValueTrait
         if (!$route) {
             $currentParams = Yii::$app->getRequest()->getQueryParams();
             $currentParams[0] = '/' . Yii::$app->controller->getRoute();
-            $route = ArrayHelper::merge($currentParams, $this->_routeParams);
+            $route = ArrayHelper::merge($currentParams, $routeParams);
         }
         if ($valueQuery) {
             $route['query'] = $searchComponent->queryConverter->toString($valueQuery);

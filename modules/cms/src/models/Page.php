@@ -120,7 +120,7 @@ class Page extends ActiveRecord
      */
     public function getUrl()
     {
-        return $this->slug;
+        return $this->slug != 'index' ? $this->slug : '/';
     }
 
     /**
@@ -151,7 +151,7 @@ class Page extends ActiveRecord
      */
     public static function find()
     {
-        return new PageQuery(get_called_class(), ['type' => static::TYPE]);
+        return new PageQuery(get_called_class(), ['type' => static::TYPE != Page::TYPE ? static::TYPE : null]);
     }
 
     /**

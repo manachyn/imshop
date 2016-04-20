@@ -37,7 +37,10 @@ class Module extends \yii\base\Module
         $this->modules = [
             'backend' => [
                 'class' => 'im\search\backend\Module'
-            ]
+            ],
+            'rest' => [
+                'class' => 'im\search\rest\Module'
+            ],
         ];
     }
 }

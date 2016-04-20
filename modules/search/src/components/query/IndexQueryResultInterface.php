@@ -2,6 +2,10 @@
 
 namespace im\search\components\query;
 
+/**
+ * Interface IndexQueryResultInterface
+ * @package im\search\components\query
+ */
 interface IndexQueryResultInterface
 {
     /**

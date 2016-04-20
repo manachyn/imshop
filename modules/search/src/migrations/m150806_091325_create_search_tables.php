@@ -32,7 +32,8 @@ class m150806_091325_create_search_tables extends Migration
             'index_name' => $this->string(100)->notNull(),
             'type' => $this->string(100)->notNull(),
             'full_text_search' => $this->boolean()->defaultValue(0),
-            'boost' => $this->integer()->defaultValue(null)
+            'boost' => $this->integer()->defaultValue(null),
+            'suggestions' => $this->boolean()->defaultValue(0),
         ], $tableOptions);
 
         $this->createIndex('index_type', '{{%index_attributes}}', 'index_type');

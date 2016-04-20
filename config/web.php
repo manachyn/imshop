@@ -18,6 +18,8 @@ $config = [
         'im\cms\Bootstrap',
         'im\catalog\Bootstrap',
         'im\imshop\Bootstrap',
+        'im\flow\Bootstrap',
+        'im\ecommerce\Bootstrap',
     ],
     'modules' => [
         'base' => [
@@ -43,6 +45,9 @@ $config = [
         ],
         'eav' => [
             'class' => 'im\eav\Module'
+        ],
+        'flow' => [
+            'class' => 'im\flow\Module'
         ]
     ],
     'components' => [
@@ -236,7 +241,8 @@ $config = [
 //                ],
 //            ],
             'bundles' => require(__DIR__ . '/assets.php'),
-        ]
+        ],
+        'flowCoordinator' => 'im\flow\coordinator\Coordinator'
     ],
     'controllerMap' => [
         'glide' => 'im\image\glide\controllers\GlideController',

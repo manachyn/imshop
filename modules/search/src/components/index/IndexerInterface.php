@@ -2,6 +2,8 @@
 
 namespace im\search\components\index;
 
+use im\search\components\searchable\AttributeDescriptor;
+
 /**
  * Interface IndexerInterface.
  *
@@ -104,4 +106,24 @@ interface IndexerInterface
      * @return IndexActionResult
      */
     public function getIndexActionResult(Response $response);
+
+
+    /**
+     * Set index mapping for type.
+     *
+     * @param IndexInterface $index
+     * @param string $type
+     * @param AttributeDescriptor[] $attributes
+     */
+    public function setMapping(IndexInterface $index, $type, array $attributes);
+
+
+    /**
+     * Whether index type exists.
+     *
+     * @param IndexInterface $index
+     * @param string $type
+     * @return bool
+     */
+    public function typeExists(IndexInterface $index, $type);
 }

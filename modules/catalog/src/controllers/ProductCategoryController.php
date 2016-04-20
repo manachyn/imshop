@@ -13,7 +13,6 @@ use im\search\components\search\SearchResultContextInterface;
 use im\search\components\SearchManager;
 use Yii;
 use yii\web\NotFoundHttpException;
-use yii\web\Request;
 
 /**
  * Class ProductCategoryController
@@ -36,25 +35,31 @@ class ProductCategoryController extends CategoryController implements SearchResu
      */
     private $_categorySearchComponent;
 
+
     /**
      * Displays product category page.
      *
      * @param string $path
-     * @param Request $request
+     * @param string $query
      * @return string
      * @throws NotFoundHttpException
      */
-    public function actionView($path, Request $request)
+    public function actionView($path, $query = '')
     {
         $model = $this->findModel($path);
         $this->setModel($model);
-        $categorySearchComponent = $this->getCategorySearchComponent();
+        $searchComponent = $this->getCategorySearchComponent();
         $searchableType = 'product';
-        $searchQuery = $request->get('query', null);
         $params['categoriesFacetValueRouteParams'] = function (CategoriesFacetValue $value) {
             return ['path' => $value->getEntity()->slug];
         };
-        $dataProvider = $categorySearchComponent->getSearchDataProvider($searchableType, $searchQuery, [], $model, $params);
+        $dataProvider = $searchComponent->getSearchDataProvider(
+            $searchableType,
+            $query,
+            $searchComponent->getFacets($model),
+            $model,
+            $params
+        );
         $dataProvider->prepare();
         $this->_searchResult = $dataProvider->query->result();
 
@@ -73,11 +78,12 @@ class ProductCategoryController extends CategoryController implements SearchResu
     }
 
     /**
-     * FiCategory ategory model based on its path.
+     * Find category model based on its path.
      * If the model is not found, a 404 HTTP exception will be thrown.
+     *
      * @param string $path
-     * @throws \yii\web\NotFoundHttpException
-     * @return ProductCategory the loaded model
+     * @throws NotFoundHttpException
+     * @return ProductCategory
      */
     protected function findModel($path)
     {

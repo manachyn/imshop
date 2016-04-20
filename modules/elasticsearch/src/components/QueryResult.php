@@ -39,8 +39,16 @@ class QueryResult extends \im\search\components\query\QueryResult implements Ind
      */
     private $_timedOut = false;
 
+    /**
+     * @var array
+     */
     private $_selectedFacets = [];
 
+    /**
+     * QueryResult constructor.
+     * @param QueryInterface $query
+     * @param array $response
+     */
     function __construct(QueryInterface $query, array $response)
     {
         parent::__construct($query);
@@ -148,6 +156,10 @@ class QueryResult extends \im\search\components\query\QueryResult implements Ind
         }
     }
 
+    /**
+     * @param $aggregations
+     * @return array
+     */
     private function parseAggregations($aggregations)
     {
         $parsed = [];

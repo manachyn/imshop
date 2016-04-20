@@ -7,6 +7,7 @@ use im\eav\models\AttributeValue;
 use im\search\components\index\IndexableInterface;
 use im\search\components\query\parser\QueryParserContextInterface;
 use im\search\components\searchable\AttributeDescriptor;
+use im\search\components\searchable\AttributeDescriptorDependency;
 use im\search\components\searchable\SearchableInterface;
 use ReflectionClass;
 use Yii;
@@ -42,6 +43,11 @@ class SearchableType extends Object implements SearchableInterface, QueryParserC
      * @var string
      */
     public $searchResultsView;
+
+    /**
+     * @var bool
+     */
+    public $default = false;
 
     /**
      * @var Model instance
@@ -179,9 +185,17 @@ class SearchableType extends Object implements SearchableInterface, QueryParserC
     }
 
     /**
+     * @inheritdoc
+     */
+    public function isDefault()
+    {
+        return $this->default;
+    }
+
+    /**
      * @param ActiveRecord $model
      * @param array $except
-     * @return \im\search\components\searchable\AttributeDescriptor[]
+     * @return AttributeDescriptor[]
      */
     protected function getSearchableModelAttributes($model, $except = [])
     {
@@ -248,10 +262,15 @@ class SearchableType extends Object implements SearchableInterface, QueryParserC
             'value' => function ($model) use ($relation) {
                 return $relation;
             },
-            'type' => $searchableType->getType()
+            'type' => $searchableType->getType(),
+            'dependency' => new AttributeDescriptorDependency(['class' => $modelClass])
         ]);
         if ($recursive) {
             foreach ($searchableType->getSearchableAttributes(false) as $attribute) {
+                $attribute->dependency = new AttributeDescriptorDependency([
+                    'class' => $modelClass,
+                    'attribute' => $attribute->value instanceof \Closure ? null : $attribute->name
+                ]);
                 $attribute->label = Inflector::titleize($name) . ' >> ' . $attribute->label;
                 $attribute->name = Inflector::variablize($label) . '.' . $attribute->name;
                 $searchableAttributes[] = $attribute;

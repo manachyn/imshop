@@ -2,17 +2,23 @@
 
 namespace im\search\components\search;
 
+use im\search\components\index\IndexableInterface;
 use im\search\components\query\BooleanQueryInterface;
+use im\search\components\query\facet\FacetInterface;
 use im\search\components\query\Match;
 use im\search\components\query\MultiMatch;
 use im\search\components\query\parser\QueryConverterInterface;
 use im\search\components\query\parser\QueryParser;
 use im\search\components\query\parser\QueryParserContextInterface;
 use im\search\components\query\parser\QueryParserInterface;
+use im\search\components\query\QueryInterface;
 use im\search\components\query\SearchQueryInterface;
+use im\search\components\query\Suggest;
+use im\search\components\query\SuggestionsQueryInterface;
 use im\search\components\query\Term;
 use im\search\components\searchable\AttributeDescriptor;
 use im\search\components\searchable\SearchableInterface;
+use im\search\components\SearchBehavior;
 use im\search\models\FacetSet;
 use Yii;
 use yii\base\Component;
@@ -85,10 +91,10 @@ class SearchComponent extends Component
      *
      * @param string $searchableType
      * @param SearchQueryInterface|string $searchQuery
-     * @param \im\search\components\query\facet\FacetInterface[] $facets
+     * @param FacetInterface[] $facets
      * @param Model $model
      * @param array $params
-     * @return \im\search\components\query\QueryInterface
+     * @return QueryInterface
      */
     public function getQuery($searchableType, $searchQuery = null, $facets = [], Model $model = null, $params = [])
     {
@@ -114,16 +120,44 @@ class SearchComponent extends Component
     }
 
     /**
+     * Return suggestions query.
+     *
+     * @param string $text
+     * @param SearchableInterface|string $searchableType
+     * @param SearchQueryInterface|string $searchQuery
+     * @return SuggestionsQueryInterface
+     */
+    public function getSuggestionsQuery($text, $searchableType, $searchQuery = null)
+    {
+        $searchableType = $this->normalizeSearchableType($searchableType);
+        if ($searchQuery) {
+            $searchQuery = $this->normalizeSearchableQuery($searchQuery, $searchableType);
+        }
+        $searchService = $searchableType->getSearchService();
+        $finder = $searchService->getFinder();
+        $query = $finder->findSuggestions($this->getSuggestQuery($text, $searchableType), $searchableType->getType(), $searchQuery);
+
+        return $query;
+    }
+
+
+    /**
      * Returns model facets.
      *
      * @param Model $model
+     * @param SearchableInterface|string|null $searchableType
      * @return \im\search\components\query\facet\FacetInterface[]
      */
-    public function getFacets(Model $model)
+    public function getFacets(Model $model, $searchableType = null)
     {
-        /** @var FacetSet $facetSet */
-        $facetSet = FacetSet::findOne(1);
-        $facets = $facetSet->facets;
+        $facets = [];
+        if ($model && $model->getBehavior('search')) {
+            /** @var SearchBehavior|Model $model */
+            $facets = $model->getFacets();
+        }
+        if ($facets && ($searchableType = $this->normalizeSearchableType($searchableType))) {
+            //TODO Delete unsupported facets for searchable type
+        }
 
         return $facets;
     }
@@ -138,6 +172,40 @@ class SearchComponent extends Component
     public function parseQuery($querySting, QueryParserContextInterface $context = null)
     {
         return $this->queryParser->parse($querySting, $context);
+    }
+
+    /**
+     * Applies full text search settings to query.
+     *
+     * @param SearchQueryInterface $searchQuery
+     * @param AttributeDescriptor[] $fullTextSearchAttributes
+     * @param string $fullTextSearchParam
+     * @return SearchQueryInterface
+     */
+    public function applyFullTextSearchSettings(SearchQueryInterface $searchQuery, $fullTextSearchAttributes, $fullTextSearchParam = 'text')
+    {
+        if ($fullTextSearchAttributes) {
+            if ($searchQuery instanceof BooleanQueryInterface) {
+                $subQueries = $searchQuery->getSubQueries();
+                $signs = $searchQuery->getSigns();
+                foreach ($subQueries as $key => $subQuery) {
+                    $subQueries[$key] = $this->applyFullTextSearchSettings($subQuery, $fullTextSearchAttributes, $fullTextSearchParam);
+                }
+                $searchQuery->setSubQueries($subQueries, $signs);
+            } elseif ($searchQuery instanceof Term) {
+                $field = $searchQuery->getField();
+                if ($field == $fullTextSearchParam) {
+                    $fields = array_map(function (AttributeDescriptor $attribute) {
+                        return $attribute->name;
+                    }, $fullTextSearchAttributes);
+                    $searchQuery = new MultiMatch($fields, $searchQuery);
+                } elseif (array_filter($fullTextSearchAttributes, function (AttributeDescriptor $attribute) use ($field) { return $attribute->name == $field; })) {
+                    $searchQuery = new Match($searchQuery->getField(), $searchQuery);
+                }
+            }
+        }
+
+        return $searchQuery;
     }
 
     /**
@@ -178,37 +246,23 @@ class SearchComponent extends Component
     }
 
     /**
-     * Applies full text search settings to query.
-     *
-     * @param SearchQueryInterface $searchQuery
-     * @param AttributeDescriptor[] $fullTextSearchAttributes
-     * @param string $fullTextSearchParam
-     * @return SearchQueryInterface
+     * @param string $text
+     * @param SearchableInterface $searchableType
+     * @return Suggest|null
      */
-    public function applyFullTextSearchSettings(SearchQueryInterface $searchQuery, $fullTextSearchAttributes, $fullTextSearchParam = 'text')
+    protected function getSuggestQuery($text, $searchableType)
     {
-        if ($fullTextSearchAttributes) {
-            if ($searchQuery instanceof BooleanQueryInterface) {
-                $subQueries = $searchQuery->getSubQueries();
-                $signs = $searchQuery->getSigns();
-                foreach ($subQueries as $key => $subQuery) {
-                    $subQueries[$key] = $this->applyFullTextSearchSettings($subQuery, $fullTextSearchAttributes, $fullTextSearchParam);
-                }
-                $searchQuery->setSubQueries($subQueries, $signs);
-            } elseif ($searchQuery instanceof Term) {
-                $field = $searchQuery->getField();
-                if ($field == $fullTextSearchParam) {
-                    $fields = array_map(function (AttributeDescriptor $attribute) {
-                        return $attribute->name;
-                    }, $fullTextSearchAttributes);
-                    $searchQuery = new MultiMatch($fields, $searchQuery);
-                } elseif (array_filter($fullTextSearchAttributes, function (AttributeDescriptor $attribute) use ($field) { return $attribute->name == $field; })) {
-                    $searchQuery = new Match($searchQuery->getField(), $searchQuery);
+        $suggestionsFields = [];
+        if ($searchableType instanceof IndexableInterface) {
+            $indexAttributes = $searchableType->getIndexMapping();
+            foreach ($indexAttributes as $attribute) {
+                if (!empty($attribute->params['suggestions'])) {
+                    $suggestionsFields[] = $attribute->name;
                 }
             }
         }
 
-        return $searchQuery;
+        return $suggestionsFields ? new Suggest($suggestionsFields, $text) : null;
     }
 
     /**

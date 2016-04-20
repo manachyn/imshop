@@ -40,6 +40,7 @@ class m150208_123637_create_catalog_tables extends Migration
                 'image_id' => Schema::TYPE_INTEGER . ' DEFAULT NULL',
                 'status' => 'tinyint(1) NOT NULL DEFAULT 1',
                 'template_id' => $this->integer()->defaultValue(null),
+                'facet_set_id' => $this->integer()->defaultValue(null),
                 'created_at' => Schema::TYPE_INTEGER . ' NOT NULL',
                 'updated_at' => Schema::TYPE_INTEGER . ' NOT NULL'
             ],
@@ -99,6 +100,7 @@ class m150208_123637_create_catalog_tables extends Migration
                 'image_id' => Schema::TYPE_INTEGER . ' DEFAULT NULL',
                 'status' => 'tinyint(1) NOT NULL DEFAULT 1',
                 'template_id' => $this->integer()->defaultValue(null),
+                'facet_set_id' => $this->integer()->defaultValue(null),
                 'created_at' => Schema::TYPE_INTEGER . ' NOT NULL',
                 'updated_at' => Schema::TYPE_INTEGER . ' NOT NULL'
             ],

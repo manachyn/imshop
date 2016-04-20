@@ -2,25 +2,63 @@
 
 namespace im\search;
 
+use im\base\routing\ModuleRulesTrait;
 use im\base\types\EntityType;
 use yii\base\BootstrapInterface;
 use Yii;
 use yii\web\Application;
 
+/**
+ * Class Bootstrap
+ * @package im\search
+ */
 class Bootstrap implements BootstrapInterface
 {
+    use ModuleRulesTrait;
+
+    /**
+     * Module routing.
+     *
+     * @return array
+     */
+    public function getRules()
+    {
+        return [
+            [
+                'class' => 'yii\rest\UrlRule',
+                'prefix' => 'api/v1',
+                'extraPatterns' => [
+                    'GET,HEAD suggest/<text:.+>' => 'suggest'
+                ],
+                'controller' => ['search' => 'search/rest/search']
+            ]
+        ];
+    }
+
+    /**
+     * Event handlers.
+     *
+     * @var array
+     */
+    public $eventHandlers = [
+        'im\search\components\EventsHandler'
+    ];
+
     /**
      * @inheritdoc
      */
     public function bootstrap($app)
     {
         $this->registerTranslations($app);
+        $this->addRules($app);
+        $this->registerDefinitions();
         $this->registerSearchService($app);
         $this->registerEntityTypes($app);
         if ($app instanceof Application) {
             $this->registerPageTypes($app);
             $this->registerWidgets($app);
         }
+        $this->registerEventHandlers();
     }
 
     /**
@@ -39,6 +77,18 @@ class Bootstrap implements BootstrapInterface
                 Module::$messagesCategory . '/index' => 'index.php'
             ]
         ];
+    }
+
+    /**
+     * Registers a class definitions in container.
+     */
+    public function registerDefinitions()
+    {
+        Yii::$container->set('im\search\models\SearchPage', [
+            'as template' => [
+                'class' => 'im\cms\components\TemplateBehavior'
+            ]
+        ]);
     }
 
     /**
@@ -94,5 +144,17 @@ class Bootstrap implements BootstrapInterface
         $typesRegister->registerEntityType(new EntityType('interval_facet', 'im\search\models\IntervalFacet', 'facets', Module::t('facet', 'Interval facet')));
         $typesRegister->registerEntityType(new EntityType('facet_term', 'im\search\models\FacetTerm', 'facet_values', Module::t('facet', 'Term')));
         $typesRegister->registerEntityType(new EntityType('facet_range', 'im\search\models\FacetRange', 'facet_values', Module::t('facet', 'Range')));
+        $typesRegister->registerEntityType(new EntityType('searchable_types_facet', 'im\search\models\SearchableTypesFacet', 'facets', Module::t('facet', 'Searchable types facet')));
+        $typesRegister->registerEntityType(new EntityType('searchable_types_facet_term', 'im\search\models\SearchableTypesFacetTerm', 'facet_values', Module::t('facet', 'Searchable types facet term')));
+    }
+
+    /**
+     * Registers event handlers.
+     */
+    public function registerEventHandlers()
+    {
+        foreach ($this->eventHandlers as $key => $handler) {
+            $this->eventHandlers[$key] = Yii::createObject($handler);
+        }
     }
 }

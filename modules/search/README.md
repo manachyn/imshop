@@ -25,6 +25,14 @@ http://www.webwash.net/tutorials/using-search-api-ranges-module-drupal-7
 http://localhost:9200/_search
 http://localhost:9200/products_index/_mapping/product
 http://localhost:9200/products_index/product/_search
+http://localhost:9200/products_index/product/_search?q=brand:Apple
+http://localhost:9200/products_index/_analyze?field=product.brand&text=Apple
+http://localhost:9200/_analyze?analyzer=standard&text=this is a test
+curl -XGET 'localhost:9200/products_index/_analyze?pretty=true&field=product.brand' -d 'Apple'
+Elasticsearch and case sensitive term queries
+https://medium.com/@lefloh/elasticsearch-and-case-sensitive-term-queries-6f6c516aebed#.bd2al6rxz
+http://techblog.realestate.com.au/implementing-autosuggest-in-elasticsearch/
+
 
 Relevance
 http://blog.qbox.io/optimizing-search-results-in-elasticsearch-with-scoring-and-boosting
@@ -34,6 +42,9 @@ https://www.elastic.co/guide/en/elasticsearch/reference/current/search-request-s
 Elasticsearch
 http://www.sitepoint.com/introduction-to-elasticsearch-in-php/
 http://elastica.io/getting-started/search-documents.html
+Suggestions
+https://www.elastic.co/blog/you-complete-me
+
 
 Zend search
 http://framework.zend.com/manual/2.2/en/modules/zendsearch.lucene.searching.html

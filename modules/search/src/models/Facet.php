@@ -349,6 +349,14 @@ class Facet extends ActiveRecord implements FacetInterface
     }
 
     /**
+     * @inheritdoc
+     */
+    public function isDisplayValuesWithoutResults()
+    {
+        return false;
+    }
+
+    /**
      * The name of the facet edit view
      * This should be in the format of 'path/to/view'.
      * @return string
@@ -423,7 +431,7 @@ class Facet extends ActiveRecord implements FacetInterface
                 }
             }
             if ($pks) {
-                $existingValues = FacetValue::find(['id' => $pks])->indexBy('id')->all();
+                $existingValues = FacetValue::find()->where(['id' => $pks])->indexBy('id')->all();
             }
             /** @var \im\search\components\SearchManager $searchManager */
             $searchManager = Yii::$app->get('searchManager');

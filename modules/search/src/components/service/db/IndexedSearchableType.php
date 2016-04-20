@@ -97,6 +97,9 @@ class IndexedSearchableType extends SearchableType implements IndexableInterface
                     if ($indexableAttribute->boost) {
                         $searchableAttribute->params['boost'] = (int) $indexableAttribute->boost;
                     }
+                    if ($indexableAttribute->suggestions) {
+                        $searchableAttribute->params['suggestions'] = (bool) $indexableAttribute->suggestions;
+                    }
                     $attributes[$name] = $searchableAttribute;
                 }
             }
@@ -150,5 +153,21 @@ class IndexedSearchableType extends SearchableType implements IndexableInterface
         }
 
         return $this->_documentToObjectTransformer;
+    }
+
+    /**
+     * @param DocumentToObjectTransformerInterface|string|array $documentToObjectTransformer
+     */
+    public function setDocumentToObjectTransformer($documentToObjectTransformer)
+    {
+        $this->_documentToObjectTransformer = $documentToObjectTransformer;
+    }
+
+    /**
+     * @param ObjectToDocumentTransformerInterface|string|array $objectToDocumentTransformer
+     */
+    public function setObjectToDocumentTransformer($objectToDocumentTransformer)
+    {
+        $this->_objectToDocumentTransformer = $objectToDocumentTransformer;
     }
 }
