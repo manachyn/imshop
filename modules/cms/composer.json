@@ -1,0 +1,38 @@
+{
+    "name": "imsoft/cms",
+    "description": "IM CMS module",
+    "version": "1.0.0",
+    "authors": [
+        {
+            "name": "Ivan Manachyn",
+            "email": "manachyn@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "im\\cms\\": "src/",
+            "im\\cms\\tests\\": "tests/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "im\\cms\\tests\\": "tests/"
+        }
+    },
+    "require": {
+        "php": ">=5.4.0",
+        "yiisoft/yii2": ">=2.0.6",
+        "yiisoft/yii2-jui": "*",
+        "2amigos/yii2-ckeditor-widget" : "~1.0",
+        "imsoft/base": "*",
+        "imsoft/forms": "*",
+        "imsoft/tree": "*",
+        "imsoft/seo": "*"
+    },
+    "require-dev": {
+        "codeception/codeception": "2.0.*",
+        "codeception/specify": "*",
+        "codeception/verify": "*"
+    }
+}

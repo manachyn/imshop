@@ -10,8 +10,15 @@ return [
     'id' => 'app-backend',
     'basePath' => dirname(__DIR__),
     'controllerNamespace' => 'backend\controllers',
-    'bootstrap' => ['log'],
-    'modules' => [],
+    'bootstrap' => [
+        'log',
+        'im\base\Bootstrap',
+        'im\cms\backend\Bootstrap',
+        'im\seo\backend\Bootstrap',
+    ],
+    'modules' => [
+        'cms' => 'im\cms\backend\Module',
+    ],
     'components' => [
         'user' => [
             'identityClass' => 'common\models\User',
@@ -29,14 +36,18 @@ return [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
-        /*
+//        'request' => [
+//            'baseUrl' => '/backend',
+//        ],
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
-            'rules' => [
-            ],
         ],
-        */
+        // Modules components
+        'typesRegister' => 'im\base\types\EntityTypesRegister',
+        'cms' => 'im\cms\components\Cms',
+        'layoutManager' => 'im\cms\components\LayoutManager',
+        'seo' => 'im\seo\components\Seo',
     ],
     'params' => $params,
 ];

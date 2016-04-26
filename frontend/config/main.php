@@ -9,9 +9,23 @@ $params = array_merge(
 return [
     'id' => 'app-frontend',
     'basePath' => dirname(__DIR__),
-    'bootstrap' => ['log'],
+    'bootstrap' => [
+        'log',
+        'im\base\Bootstrap',
+        'im\cms\frontend\Bootstrap'
+    ],
     'controllerNamespace' => 'frontend\controllers',
+    'modules' => [
+        'cms' => 'im\cms\Module',
+    ],
     'components' => [
+//        'request' => [
+//            'baseUrl' => '',
+//        ],
+        'urlManager' => [
+            'enablePrettyUrl' => true,
+            'showScriptName' => false,
+        ],
         'user' => [
             'identityClass' => 'common\models\User',
             'enableAutoLogin' => true,

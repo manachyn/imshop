@@ -1,0 +1,26 @@
+{
+    "name": "imsoft/tree",
+    "description": "IM Tree module",
+    "version": "1.0.0",
+    "authors": [
+        {
+            "name": "Ivan Manachyn",
+            "email": "manachyn@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "autoload": {
+      "psr-4": {
+        "im\\tree\\": "src/"
+      }
+    },
+    "autoload-dev": {
+      "psr-4": {
+        "im\\tree\\tests\\": "tests/"
+      }
+    },
+    "require": {
+        "creocoder/yii2-nested-sets": "*",
+        "bower-asset/jstree": "*"
+    }
+}
