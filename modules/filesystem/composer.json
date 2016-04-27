@@ -1,0 +1,26 @@
+{
+    "name": "imsoft/filesystem",
+    "description": "Filesystem module",
+    "version": "1.0.0",
+    "authors": [
+        {
+            "name": "Ivan Manachyn",
+            "email": "manachyn@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "im\\filesystem\\": "src/"
+        }
+    },
+    "require": {
+        "php": ">=5.4.0",
+        "yiisoft/yii2": ">=2.0.6",
+        "creocoder/yii2-flysystem": "*",
+        "league/flysystem-cached-adapter": "*",
+        "league/flysystem-aws-s3-v3": "*",
+        "imsoft/base": "*",
+        "imsoft/elfinder": "*"
+    }
+}

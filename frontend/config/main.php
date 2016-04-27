@@ -10,22 +10,18 @@ return [
     'id' => 'app-frontend',
     'basePath' => dirname(__DIR__),
     'bootstrap' => [
-        'log',
-        'im\base\Bootstrap',
-        'im\cms\frontend\Bootstrap'
+        'log' => 'log',
+        'base' => 'im\base\Bootstrap',
+        'cms' => 'im\cms\frontend\Bootstrap',
+        'imshop' => 'im\imshop\frontend\Bootstrap',
+        'search' => 'im\search\frontend\Bootstrap'
     ],
     'controllerNamespace' => 'frontend\controllers',
     'modules' => [
-        'cms' => 'im\cms\Module',
+        'cms' => 'im\cms\frontend\Module',
+        'search' => 'im\search\frontend\Module',
     ],
     'components' => [
-//        'request' => [
-//            'baseUrl' => '',
-//        ],
-        'urlManager' => [
-            'enablePrettyUrl' => true,
-            'showScriptName' => false,
-        ],
         'user' => [
             'identityClass' => 'common\models\User',
             'enableAutoLogin' => true,
@@ -42,14 +38,23 @@ return [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
-        /*
+//        'request' => [
+//            'baseUrl' => '/backend',
+//        ],
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
-            'rules' => [
-            ],
+            //'cache' => 'memCache',
+            'rules' => require(__DIR__ . '/rules.php')
         ],
-        */
+        'view' => [
+            'theme' => ['class' => 'im\imshop\Theme']
+        ],
+        'assetManager' => [
+            'bundles' => require(dirname(__DIR__) . '/assets/assets.php'),
+        ],
+        // Modules components
+        'templateManager' => 'im\cms\components\TemplateManager'
     ],
     'params' => $params,
 ];

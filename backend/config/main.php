@@ -10,13 +10,17 @@ return [
     'id' => 'app-backend',
     'basePath' => dirname(__DIR__),
     'controllerNamespace' => 'backend\controllers',
+    'defaultRoute' => 'backend/dashboard',
     'bootstrap' => [
-        'log',
-        'im\base\Bootstrap',
-        'im\cms\backend\Bootstrap',
-        'im\seo\backend\Bootstrap',
+        'log' => 'log',
+        'base' => 'im\base\Bootstrap',
+        'adminlte' => 'im\adminlte\Bootstrap',
+        'cms' => 'im\cms\backend\Bootstrap',
+        'seo' => 'im\seo\backend\Bootstrap',
+        'search' => 'im\search\backend\Bootstrap',
     ],
     'modules' => [
+        'backend' => 'im\backend\Module',
         'cms' => 'im\cms\backend\Module',
     ],
     'components' => [
@@ -45,6 +49,7 @@ return [
         ],
         // Modules components
         'typesRegister' => 'im\base\types\EntityTypesRegister',
+        'backendTheme' => 'im\adminlte\Theme',
         'cms' => 'im\cms\components\Cms',
         'layoutManager' => 'im\cms\components\LayoutManager',
         'seo' => 'im\seo\components\Seo',

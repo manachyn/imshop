@@ -1,0 +1,26 @@
+{
+    "name": "imsoft/search",
+    "description": "Search module",
+    "version": "1.0.0",
+    "authors": [
+        {
+            "name": "Ivan Manachyn",
+            "email": "manachyn@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "im\\search\\": "src/"
+        }
+    },
+    "require": {
+        "php": ">=5.4.0",
+        "yiisoft/yii2": ">=2.0.6",
+        "imsoft/base": "*",
+        "imsoft/forms": "*",
+        "imsoft/cms": "*",
+        "imsoft/catalog": "*",
+        "imsoft/fsm": "*"
+    }
+}

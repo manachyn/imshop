@@ -1,0 +1,24 @@
+{
+    "name": "imsoft/eav",
+    "description": "EAV module",
+    "version": "1.0.0",
+    "authors": [
+        {
+            "name": "Ivan Manachyn",
+            "email": "manachyn@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "im\\eav\\": "src/"
+        }
+    },
+    "require": {
+        "php": ">=5.4.0",
+        "yiisoft/yii2": ">=2.0.6",
+        "imsoft/base": "*",
+        "imsoft/forms": "*",
+        "kartik-v/yii2-widget-select2": "*"
+    }
+}

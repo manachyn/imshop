@@ -11,7 +11,7 @@
 class_name: AcceptanceTester
 modules:
     enabled:
-        - PhpBrowser
+        - WebDriver
         - im\cms\tests\codeception\common\_support\FixtureHelper
 # you can use WebDriver instead of PhpBrowser to test javascript and ajax.
 # This will require you to install selenium. See http://codeception.com/docs/04-AcceptanceTests#Selenium
@@ -22,7 +22,7 @@ modules:
         PhpBrowser:
 # PLEASE ADJUST IT TO THE ACTUAL ENTRY POINT WITHOUT PATH INFO
             url: http://localhost:8080
-#        WebDriver:
-#            url: http://localhost:8080
-#            browser: firefox
-#            restart: true
+        WebDriver:
+            url: http://localhost:8080
+            browser: firefox
+            restart: true

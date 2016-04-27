@@ -20,4 +20,19 @@ composer global require "codeception/codeception=2.0.*"
 composer global require "codeception/specify=*"
 composer global require "codeception/verify=*"
    
-/home/ubuntu/.composer/vendor/bin/codecept
+~/.composer/vendor/bin/codecept
+
+Selenium
+composer global require se/selenium-server-standalone
+~/.composer/vendor/bin/selenium-server-standalone
+
+
+## Build frontend assets
+
+```
+php yii webpack/webpack frontend/assets/compression/webpack.php
+```
+
+npm install
+webpack
+webpack-dev-server

@@ -9,8 +9,13 @@ $params = array_merge(
 return [
     'id' => 'app-console',
     'basePath' => dirname(__DIR__),
-    'bootstrap' => ['log'],
+    'bootstrap' => [
+        'log',
+    ],
     'controllerNamespace' => 'console\controllers',
+    'modules' => [
+        'webpack' => 'im\webpack\Module'
+    ],
     'components' => [
         'log' => [
             'targets' => [

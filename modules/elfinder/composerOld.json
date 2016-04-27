@@ -1,0 +1,33 @@
+{
+    "name": "vanik/yii2-elfinder",
+    "description": "Yii2 ElFinder.",
+    "type": "yii2-extension",
+    "keywords": ["yii2", "elfinder", "filemanager"],
+    "license": "BSD-3-Clause",
+    "minimum-stability": "dev",
+    "authors": [
+        {
+            "name": "Ivan Manachyn",
+            "email": "manachyn@gmail.com"
+        }
+    ],
+    "require": {
+        "yiisoft/yii2": "*",
+        "studio-42/elfinder": "2.1.*",
+        "mihaildev/yii2-elfinder": "*"
+    },
+    "autoload": {
+        "classmap": ["elFinderVolumeFlysystem.php"],
+        "psr-4": {
+            "im\\elfinder\\": "src"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.0.x-dev"
+        },
+        "asset-installer-paths": {
+            "bower-asset-library": "vendor/bower"
+        }
+    }
+}

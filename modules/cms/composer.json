@@ -28,7 +28,8 @@
         "imsoft/base": "*",
         "imsoft/forms": "*",
         "imsoft/tree": "*",
-        "imsoft/seo": "*"
+        "imsoft/seo": "*",
+        "imsoft/filesystem": "*"
     },
     "require-dev": {
         "codeception/codeception": "2.0.*",

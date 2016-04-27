@@ -1,0 +1,56 @@
+//== Colors
+$brand-primary: $brand-color !default;
+
+//== Scaffolding
+$body-bg: $white !default;
+$text-color: $grey5 !default;
+
+$link-color: $grey4 !default;
+$link-hover-color: $brand-color !default;
+
+//== Buttons
+$btn-default-color: $white !default;
+$btn-default-bg: $grey2 !default;
+$btn-default-border: $grey2 !default;
+
+$btn-primary-color: $white !default;
+$btn-primary-bg: $brand-primary !default;
+$btn-primary-border: $brand-primary !default;
+
+$btn-border-radius-base: 0 !default;
+$btn-border-radius-large: 0 !default;
+$btn-border-radius-small: 0 !default;
+
+//== Forms
+$input-bg: $grey1 !default;
+$input-bg-disabled: $grey1 !default;
+
+$input-color: $grey3 !default;
+$input-border: $grey1 !default;
+
+$input-border-radius: 0 !default;
+$input-border-radius-large: 0 !default;
+$input-border-radius-small: 0 !default;
+
+$input-border-focus: $grey1 !default;
+$input-color-placeholder: $grey3 !default;
+
+//== Navbar
+$navbar-default-color: $white !default;
+$navbar-default-bg: $grey6 !default;
+$navbar-default-border: $grey6 !default;
+
+$navbar-default-link-color: $white !default;
+$navbar-default-link-hover-color: $white !default;
+$navbar-default-link-hover-bg: $brand-color !default;
+$navbar-default-link-active-color: $white !default;
+$navbar-default-link-active-bg: $brand-color !default;
+
+//== Dropdowns
+//$dropdown-bg: $grey1 !default;
+$dropdown-border: $grey1 !default;
+$dropdown-fallback-border: $grey1 !default;
+
+$dropdown-divider-bg: $grey2 !default;
+
+

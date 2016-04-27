@@ -1,0 +1,6 @@
+.form-control {
+  @include box-shadow(none);
+  &:focus {
+    @include box-shadow(none);
+  }
+}

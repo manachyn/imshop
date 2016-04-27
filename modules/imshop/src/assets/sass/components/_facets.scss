@@ -1,0 +1,47 @@
+.facets, .facets ul {
+  margin-bottom: 0;
+  padding-left: 0;
+  list-style: none;
+
+  .facet {
+    margin-bottom: 10px;
+  }
+
+  .facet-values {
+    padding-left: 20px;
+  }
+
+  .facet-values ul {
+    padding-left: 20px;
+  }
+}
+
+.selected-facets, .selected-facets ul {
+  margin-bottom: 0;
+  padding-left: 0;
+  list-style: none;
+
+  .selected-facet {
+    margin-bottom: 10px;
+  }
+
+  .selected-facet-values {
+    padding-left: 20px;
+  }
+}
+
+.icon-facet-value-checkbox {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background: url("../images/facet-value-checkbox.png") no-repeat;
+  vertical-align: middle;
+}
+
+.icon-facet-value-remove {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background: url("../images/facet-value-remove.png") no-repeat;
+  vertical-align: middle;
+}

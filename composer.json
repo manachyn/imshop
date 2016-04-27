@@ -33,6 +33,54 @@
         {
             "type": "path",
             "url": "modules/seo"
+        },
+        {
+            "type": "path",
+            "url": "modules/adminlte"
+        },
+        {
+            "type": "path",
+            "url": "modules/imshop"
+        },
+        {
+            "type": "path",
+            "url": "modules/webpack"
+        },
+        {
+            "type": "path",
+            "url": "modules/catalog"
+        },
+        {
+            "type": "path",
+            "url": "modules/search"
+        },
+        {
+            "type": "path",
+            "url": "modules/eav"
+        },
+        {
+            "type": "path",
+            "url": "modules/variation"
+        },
+        {
+            "type": "path",
+            "url": "modules/filesystem"
+        },
+        {
+            "type": "path",
+            "url": "modules/elfinder"
+        },
+        {
+            "type": "path",
+            "url": "modules/fsm"
+        },
+        {
+            "type": "path",
+            "url": "modules/elasticsearch"
+        },
+        {
+            "type": "path",
+            "url": "modules/backend"
         }
     ],
     "require": {
@@ -40,7 +88,13 @@
         "yiisoft/yii2": ">=2.0.6",
         "yiisoft/yii2-bootstrap": "*",
         "yiisoft/yii2-swiftmailer": "*",
-        "imsoft/cms": "*"
+        "imsoft/adminlte": "*",
+        "imsoft/imshop": "*",
+        "imsoft/webpack": "*",
+        "imsoft/cms": "*",
+        "imsoft/catalog": "*",
+        "imsoft/elasticsearch": "*",
+        "imsoft/backend": "*"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",
