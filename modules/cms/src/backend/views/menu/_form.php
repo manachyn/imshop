@@ -15,6 +15,9 @@ use yii\widgets\ActiveForm;
 
 <?= $form->field($model, 'location')->dropDownList($model->getLocationsList()) ?>
 
-<?= Html::submitButton($model->isNewRecord ? Module::t('module', 'Create') : Module::t('module', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-primary' : 'btn btn-success']) ?>
+<?= Html::submitButton($model->isNewRecord ? Module::t('module', 'Create') : Module::t('module', 'Update'), [
+    'class' => $model->isNewRecord ? 'btn btn-primary' : 'btn btn-success',
+    'name' => 'submit-button'
+]) ?>
 
 <?php ActiveForm::end(); ?>

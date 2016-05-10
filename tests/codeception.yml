@@ -3,9 +3,12 @@ include:
   - codeception/console
   - codeception/backend
   - codeception/frontend
+  - ../modules/cms/tests/codeception/common
+  - ../modules/cms/tests/codeception/backend
 
 paths:
   log: codeception/_output
 
 settings:
+  bootstrap: _bootstrap.php
   colors: true

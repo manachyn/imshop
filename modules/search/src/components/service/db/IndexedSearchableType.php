@@ -50,7 +50,8 @@ class IndexedSearchableType extends SearchableType implements IndexableInterface
         if ($this->searchServiceId) {
             return parent::getSearchService();
         } else {
-            return $this->getIndex()->getSearchService();
+            $index = $this->getIndex();
+            return $index ? $index->getSearchService() : null;
         }
     }
 

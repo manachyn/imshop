@@ -51,6 +51,9 @@ class Bootstrap implements BootstrapInterface
         ];
     }
 
+    /**
+     * @return void
+     */
     public function setAliases()
     {
         Yii::setAlias('@im/base', __DIR__);

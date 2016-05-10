@@ -156,6 +156,8 @@ class TemplateManager extends Component
         }
         if (!empty($widgetsByArea[$area->code])) {
             $area->widgets = $widgetsByArea[$area->code];
+        } else {
+            $area->widgets = null;
         }
     }
 

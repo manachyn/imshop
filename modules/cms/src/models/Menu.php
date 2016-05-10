@@ -2,7 +2,7 @@
 
 namespace im\cms\models;
 
-use im\catalog\Module;
+use im\cms\Module;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;

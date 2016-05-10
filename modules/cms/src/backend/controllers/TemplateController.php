@@ -72,7 +72,7 @@ class TemplateController extends BackendController
         $templateManager = \Yii::$app->get('templateManager');
         if ($templateManager->saveTemplate($model, Yii::$app->request->post())) {
             Yii::$app->session->setFlash('success', Module::t('template', 'Template has been successfully created.'));
-            return $this->redirect(['index']);
+            return $this->redirect(['update', 'id' => $model->id]);
         } else {
             return $this->render('create', [
                 'model' => $model,
@@ -93,7 +93,7 @@ class TemplateController extends BackendController
         $templateManager = \Yii::$app->get('templateManager');
         if ($templateManager->saveTemplate($model, Yii::$app->request->post())) {
             Yii::$app->session->setFlash('success', Module::t('template', 'Template has been successfully saved.'));
-            return $this->redirect(['index']);
+            return $this->redirect(['update', 'id' => $model->id]);
         } else {
             return $this->render('update', [
                 'model' => $model,

@@ -45,13 +45,13 @@ $assetsPublishUrl = Yii::$app->assetManager->getPublishedUrl('@vendor/almasaeed2
                 'items' => [
                     [
                         'label' => Yii::t('app', 'Dashboard'),
-                        'url' => ['/backend/dashboard/index'],
+                        'url' => ['/dashboard/index'],
                         'icon' => 'fa fa-dashboard',
                         //'active' => Yii::$app->request->url === Yii::$app->homeUrl
                     ],
                     [
                         'label' => Yii::t('app', 'CMS'),
-                        'url' => ['/cms/backend/page/index'],
+                        'url' => ['/cms/page/index'],
                         'icon' => 'fa fa-sitemap',
                         'options' => [
                             'class' => 'treeview',
@@ -60,24 +60,24 @@ $assetsPublishUrl = Yii::$app->assetManager->getPublishedUrl('@vendor/almasaeed2
                         'items' => [
                             [
                                 'label' => Yii::t('app', 'Templates'),
-                                'url' => ['/cms/backend/template/index'],
+                                'url' => ['/cms/template/index'],
                                 'icon' => 'fa fa-circle-o',
                             ],
                             [
                                 'label' => Yii::t('app', 'Pages'),
-                                'url' => ['/cms/backend/page/index'],
+                                'url' => ['/cms/page/index'],
                                 'icon' => 'fa fa-circle-o',
                             ],
                             [
                                 'label' => Yii::t('app', 'Menus'),
-                                'url' => ['/cms/backend/menu/index'],
+                                'url' => ['/cms/menu/index'],
                                 'icon' => 'fa fa-circle-o',
                             ]
                         ],
                     ],
                     [
                         'label' => Yii::t('app', 'Catalog'),
-                        'url' => ['/catalog/backend/product/index'],
+                        'url' => ['/catalog/product/index'],
                         'icon' => 'fa fa-book',
                         'options' => [
                             'class' => 'treeview',
@@ -85,44 +85,44 @@ $assetsPublishUrl = Yii::$app->assetManager->getPublishedUrl('@vendor/almasaeed2
                         'items' => [
                             [
                                 'label' => Yii::t('app', 'Attributes'),
-                                'url' => ['/catalog/backend/product-attribute/index'],
+                                'url' => ['/catalog/product-attribute/index'],
                                 'icon' => 'fa fa-circle-o',
                             ],
                             [
                                 'label' => Yii::t('app', 'Values'),
-                                'url' => ['/eav/backend/value/index'],
+                                'url' => ['/eav/value/index'],
                                 'icon' => 'fa fa-circle-o',
                             ],
                             [
                                 'label' => Yii::t('app', 'Options'),
-                                'url' => ['/catalog/backend/product-option/index'],
+                                'url' => ['/catalog/product-option/index'],
                                 'icon' => 'fa fa-circle-o',
                             ],
                             [
                                 'label' => Yii::t('app', 'Product types'),
-                                'url' => ['/catalog/backend/product-type/index'],
+                                'url' => ['/catalog/product-type/index'],
                                 'icon' => 'fa fa-circle-o',
                             ],
                             [
                                 'label' => Yii::t('app', 'Categories'),
-                                'url' => ['/catalog/backend/product-category/index'],
+                                'url' => ['/catalog/product-category/index'],
                                 'icon' => 'fa fa-circle-o',
                             ],
                             [
                                 'label' => Yii::t('app', 'Brands'),
-                                'url' => ['/catalog/backend/brand/index'],
+                                'url' => ['/catalog/brand/index'],
                                 'icon' => 'fa fa-circle-o',
                             ],
                             [
                                 'label' => Yii::t('app', 'Products'),
-                                'url' => ['/catalog/backend/product/index'],
+                                'url' => ['/catalog/product/index'],
                                 'icon' => 'fa fa-circle-o',
                             ],
                         ],
                     ],
                     [
                         'label' => Yii::t('app', 'Search'),
-                        'url' => ['/search/backend/index/index'],
+                        'url' => ['/search/index/index'],
                         'icon' => 'fa fa-search',
                         'options' => [
                             'class' => 'treeview',
@@ -130,17 +130,17 @@ $assetsPublishUrl = Yii::$app->assetManager->getPublishedUrl('@vendor/almasaeed2
                         'items' => [
                             [
                                 'label' => Yii::t('app', 'Index'),
-                                'url' => ['/search/backend/index/index'],
+                                'url' => ['/search/index/index'],
                                 'icon' => 'fa fa-circle-o'
                             ],
                             [
                                 'label' => Yii::t('app', 'Facets'),
-                                'url' => ['/search/backend/facet/index'],
+                                'url' => ['/search/facet/index'],
                                 'icon' => 'fa fa-circle-o'
                             ],
                             [
                                 'label' => Yii::t('app', 'Facet sets'),
-                                'url' => ['/search/backend/facet-set/index'],
+                                'url' => ['/search/facet-set/index'],
                                 'icon' => 'fa fa-circle-o'
                             ]
                         ],
@@ -172,7 +172,7 @@ $assetsPublishUrl = Yii::$app->assetManager->getPublishedUrl('@vendor/almasaeed2
                     ],
                     [
                         'label' => Yii::t('app', 'Tasks'),
-                        'url' => ['/tasks/backend/task/index'],
+                        'url' => ['/tasks/task/index'],
                         'icon' => 'fa fa-tasks',
                         'options' => [
                             'class' => 'treeview',
@@ -180,7 +180,7 @@ $assetsPublishUrl = Yii::$app->assetManager->getPublishedUrl('@vendor/almasaeed2
                         'items' => [
                             [
                                 'label' => Yii::t('app', 'Tasks'),
-                                'url' => ['/tasks/backend/task/index'],
+                                'url' => ['/tasks/task/index'],
                                 'icon' => 'fa fa-circle-o'
                             ]
                         ],
@@ -190,7 +190,7 @@ $assetsPublishUrl = Yii::$app->assetManager->getPublishedUrl('@vendor/almasaeed2
         ); ?>
 <!--        <ul class="sidebar-menu">-->
 <!--            <li class="header">MAIN NAVIGATION</li>-->
-<!--            <li class="active"><a href="--><?//= Url::to(['/backend/dashboard/index']); ?><!--"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a></li>-->
+<!--            <li class="active"><a href="--><?//= Url::to(['/dashboard/index']); ?><!--"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a></li>-->
 <!--            <li class="treeview">-->
 <!--                <a href="#">-->
 <!--                    <i class="fa fa-sitemap"></i>-->
@@ -198,8 +198,8 @@ $assetsPublishUrl = Yii::$app->assetManager->getPublishedUrl('@vendor/almasaeed2
 <!--                    <i class="fa fa-angle-left pull-right"></i>-->
 <!--                </a>-->
 <!--                <ul class="treeview-menu">-->
-<!--                    <li><a href="--><?//= Url::to(['/cms/backend/page/index']); ?><!--"><i class="fa fa-circle-o"></i> Pages</a></li>-->
-<!--                    <li><a href="--><?//= Url::to(['/cms/backend/layout/index']); ?><!--"><i class="fa fa-circle-o"></i> Layouts</a></li>-->
+<!--                    <li><a href="--><?//= Url::to(['/cms/page/index']); ?><!--"><i class="fa fa-circle-o"></i> Pages</a></li>-->
+<!--                    <li><a href="--><?//= Url::to(['/cms/layout/index']); ?><!--"><i class="fa fa-circle-o"></i> Layouts</a></li>-->
 <!--                </ul>-->
 <!--            </li>-->
 <!--        </ul>-->

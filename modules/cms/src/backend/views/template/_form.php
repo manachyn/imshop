@@ -18,7 +18,7 @@ if ($model->widgetAreas) {
 
 <div class="template-form">
 
-    <?php $form = ActiveForm::begin(['fieldClass' => 'im\forms\widgets\ActiveField']); ?>
+    <?php $form = ActiveForm::begin(['id' => 'template-form', 'fieldClass' => 'im\forms\widgets\ActiveField', 'enableClientValidation' => false]); ?>
 
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
@@ -26,17 +26,20 @@ if ($model->widgetAreas) {
 
     <?= $form->field($model, 'default')->checkbox() ?>
 
-    <?php
+    <?php if ($model->layout) {
         Pjax::begin(['id' => 'layout-editor', 'enablePushState' => false]);
         echo $this->render('/layout/edit', [
             'layout' => $model->layout,
             'form' => $form
         ]);
         Pjax::end();
-    ?>
+    } ?>
 
     <div class="form-group">
-        <?= Html::submitButton($model->isNewRecord ? Module::t('module', 'Create') : Module::t('module', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-primary' : 'btn btn-success']) ?>
+        <?= Html::submitButton($model->isNewRecord ? Module::t('module', 'Create') : Module::t('module', 'Update'), [
+            'class' => $model->isNewRecord ? 'btn btn-primary' : 'btn btn-success',
+            'name' => 'submit-button'
+        ]) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

@@ -1,0 +1,14 @@
+{
+    "name": "im/ratchet",
+    "description": "Ratchet extension for Yii2",
+    "authors": [
+        {
+            "name": "Ivan Manachyn",
+            "email": "manachyn@gmail.com"
+        }
+    ],
+    "require": {
+        "cboden/ratchet": "*",
+        "react/zmq": "*"
+    }
+}

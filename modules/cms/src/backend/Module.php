@@ -34,6 +34,11 @@ class Module extends \yii\base\Module
     public function init()
     {
         parent::init();
+        $this->modules = [
+            'rest' => [
+                'class' => 'im\cms\rest\Module'
+            ]
+        ];
         $this->registerEventHandlers();
     }
 

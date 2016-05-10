@@ -21,6 +21,7 @@ class Bootstrap extends \im\seo\Bootstrap implements BootstrapInterface
      */
     public function bootstrap($app)
     {
+        parent::bootstrap($app);
         $this->registerTranslations($app);
         $this->registerEntityTypes();
         $this->registerEventHandlers($app);

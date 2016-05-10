@@ -13,7 +13,7 @@ class ChartJsAsset extends AssetBundle
     /**
      * @inheritdoc
      */
-    public $sourcePath = '@bower/chartjs/dist';
+    public $sourcePath = '@vendor/almasaeed2010/adminlte/plugins/chartjs';
 
     /**
      * @inheritdoc

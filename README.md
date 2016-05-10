@@ -9,6 +9,8 @@ http://www.elisdn.ru/blog/78/yii2-codeception-testing
 
 cd /path/to/project/frontend/web
 ln -s ../../backend/web admin
+cd /path/to/project/backend/web
+ln -s ../../frontend/web/files files
 
 chmod -R 0777 frontend/runtime
 chmod -R 0777 backend/runtime
@@ -20,12 +22,18 @@ composer global require "codeception/codeception=2.0.*"
 composer global require "codeception/specify=*"
 composer global require "codeception/verify=*"
    
-~/.composer/vendor/bin/codecept
+~/.composer/vendor/bin/codecept run
+
+~/.composer/vendor/bin/codecept run acceptance TemplatesCest:testCRUD
+~/.composer/vendor/bin/codecept run functional MenusCest
 
 Selenium
 composer global require se/selenium-server-standalone
 ~/.composer/vendor/bin/selenium-server-standalone
 
+php -S localhost:8080
+
+sudo rm -rf ../../../../../backend/web/assets/*
 
 ## Build frontend assets
 

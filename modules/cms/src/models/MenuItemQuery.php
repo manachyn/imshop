@@ -6,9 +6,9 @@ use im\tree\models\TreeQuery;
 
 /**
  * Class MenuItemQuery
- * @package im\catalog\models
  * @method MenuItemQuery roots
  * @method MenuItemQuery leaves
+ * @package im\cms\models
  */
 class MenuItemQuery extends TreeQuery
 {

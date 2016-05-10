@@ -5,6 +5,7 @@ namespace im\cms\backend\controllers;
 use im\base\controllers\BackendController;
 use im\cms\models\Menu;
 use im\cms\models\MenuSearch;
+use im\cms\Module;
 use Yii;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -63,6 +64,7 @@ class MenuController extends BackendController
         $model = new Menu();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            Yii::$app->session->setFlash('success', Module::t('menu', 'Menu has been successfully created.'));
             return $this->redirect(['update', 'id' => $model->id]);
         } else {
             return $this->render('create', [
@@ -82,7 +84,8 @@ class MenuController extends BackendController
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['index', 'id' => $model->id]);
+            Yii::$app->session->setFlash('success', Module::t('menu', 'Menu has been successfully saved.'));
+            return $this->redirect(['update', 'id' => $model->id]);
         } else {
             return $this->render('update', [
                 'model' => $model,
@@ -99,6 +102,7 @@ class MenuController extends BackendController
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
+        Yii::$app->session->setFlash('success', Module::t('menu', 'Menu has been successfully deleted.'));
 
         return $this->redirect(['index']);
     }

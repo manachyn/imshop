@@ -22,7 +22,7 @@
             this.options.sortable.element.on('sortupdate', $.proxy(this.onSortUpdate, this));
         }
         //this.$element.on('click.widget.edit', '[data-action="edit"]', $.proxy(this.onEdit, this));
-        this.$element.on('click.widget.remove', remove, $.proxy(this.onRemove, this));;
+        this.$element.on('click.widget.remove', remove, $.proxy(this.onRemove, this));
         this.$element.on('change.widgetArea.display', '[data-action="display"]', $.proxy(this.onDisplay, this));
     }
 
@@ -65,7 +65,7 @@
                 that.$temp.empty();
                 that.setPlaceholder();
             });
-            if (!this.options.form.fieldConfig.length) {
+            if (this.options.form.fieldConfig === undefined) {
                 this.options.form.fieldConfig = {};
             }
             this.options.form.fieldConfig.namePrefix = 'Widgets[' + this.options.widgetArea.code + ']';

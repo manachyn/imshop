@@ -1,6 +1,6 @@
 <?php
 
-namespace im\cms\tests\codeception\acceptance;
+namespace im\cms\tests\codeception\backend\acceptance;
 
 use im\cms\tests\codeception\backend\AcceptanceTester;
 use Yii;

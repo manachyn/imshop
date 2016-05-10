@@ -107,7 +107,7 @@ class LayoutManager extends Component
     public function getDefaultLayout()
     {
         $layouts = $this->getLayouts();
-        $defaultLayout = $layouts[0];
+        $defaultLayout = $layouts ? $layouts[0] : null;
         foreach ($layouts as $layout) {
             if ($layout->default) {
                 $defaultLayout = $layout;

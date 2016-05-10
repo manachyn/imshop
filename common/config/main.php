@@ -6,6 +6,7 @@ return [
         'seo' => 'im\seo\Bootstrap',
         'imshop' => 'im\imshop\Bootstrap',
         'elasticsearc' => 'im\elasticsearch\Bootstrap',
+        'tree' => 'im\tree\Bootstrap',
     ],
     'modules' => [
         'search' => 'im\search\Module',
@@ -21,6 +22,7 @@ return [
         'typesRegister' => 'im\base\types\EntityTypesRegister',
         'cms' => 'im\cms\components\Cms',
         'layoutManager' => 'im\cms\components\LayoutManager',
+        'templateManager' => 'im\cms\components\TemplateManager',
         'filesystem' => [
             'class' => 'im\filesystem\components\FilesystemComponent',
             'filesystems' => require(__DIR__ . '/filesystems.php')

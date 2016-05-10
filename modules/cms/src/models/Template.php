@@ -37,7 +37,8 @@ class Template extends ActiveRecord
         return [
             [['name'], 'required'],
             [['name'], 'string', 'max' => 100],
-            [['layout_id'], 'string', 'max' => 50]
+            [['layout_id'], 'string', 'max' => 50],
+            [['default'], 'integer']
         ];
     }
 

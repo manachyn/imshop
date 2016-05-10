@@ -142,6 +142,7 @@
             promise,
             parent,
             settings = {};
+        this.deleteNotPersisted();
         if (this.treeDetails) {
             if (this.tree.settings.core.data.beforeSend) {
                 settings.beforeSend = this.tree.settings.core.data.beforeSend;

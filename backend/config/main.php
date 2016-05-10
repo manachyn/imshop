@@ -15,9 +15,11 @@ return [
         'log' => 'log',
         'base' => 'im\base\Bootstrap',
         'adminlte' => 'im\adminlte\Bootstrap',
+        'imshop' => 'im\imshop\backend\Bootstrap',
         'cms' => 'im\cms\backend\Bootstrap',
         'seo' => 'im\seo\backend\Bootstrap',
         'search' => 'im\search\backend\Bootstrap',
+        'filesystem' => 'im\filesystem\Bootstrap'
     ],
     'modules' => [
         'backend' => 'im\backend\Module',
@@ -48,10 +50,7 @@ return [
             'showScriptName' => false,
         ],
         // Modules components
-        'typesRegister' => 'im\base\types\EntityTypesRegister',
         'backendTheme' => 'im\adminlte\Theme',
-        'cms' => 'im\cms\components\Cms',
-        'layoutManager' => 'im\cms\components\LayoutManager',
         'seo' => 'im\seo\components\Seo',
     ],
     'params' => $params,

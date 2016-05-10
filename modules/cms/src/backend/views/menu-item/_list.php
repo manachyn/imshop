@@ -26,7 +26,7 @@ $confirmationModalId = 'confirmation-modal';
     <div class="col-xs-4">
         <div class="box">
             <div class="box-header with-border">
-                <h3 class="box-title"><?= $this->params['subtitle'] ?></h3>
+                <h3 class="box-title"><?= Module::t('menu', 'Menu items') ?></h3>
                 <div class="box-tools pull-right">
                     <form method="post" action="#">
                         <div class="input-group">
@@ -60,9 +60,9 @@ $confirmationModalId = 'confirmation-modal';
             <div class="box-footer">
                 <div class="box-tools pull-right">
                     <?php JsTreeToolbar::begin(['tree' => $treeId]); ?>
-                    <button class="btn btn-sm btn-default" title="<?= Module::t('category', 'Create') ?>" data-toolbar-action="create"><span class="fa fa-plus" aria-hidden="true"></span></button>
-                    <button class="btn btn-sm btn-default" title="<?= Module::t('category', 'Edit') ?>" data-toolbar-action="edit" data-not-selected-message="<?= Module::t('category', 'Please, select category to edit') ?>"><span class="fa fa-pencil" aria-hidden="true"></span></button>
-                    <button class="btn btn-sm btn-default" title="<?= Module::t('category', 'Delete') ?>" data-toolbar-action="delete" data-not-selected-message="<?= Module::t('category', 'Please, select categories to delete') ?>"><span class="fa fa-trash-o" aria-hidden="true"></span></button>
+                    <button class="btn btn-sm btn-default" title="<?= Module::t('menu-item', 'Create') ?>" data-toolbar-action="create"><span class="fa fa-plus" aria-hidden="true"></span></button>
+                    <button class="btn btn-sm btn-default" title="<?= Module::t('menu-item', 'Edit') ?>" data-toolbar-action="edit" data-not-selected-message="<?= Module::t('menu-item', 'Please, select menu item to edit') ?>"><span class="fa fa-pencil" aria-hidden="true"></span></button>
+                    <button class="btn btn-sm btn-default" title="<?= Module::t('menu-item', 'Delete') ?>" data-toolbar-action="delete" data-not-selected-message="<?= Module::t('menu-item', 'Please, select menu item to delete') ?>"><span class="fa fa-trash-o" aria-hidden="true"></span></button>
                     <?php JsTreeToolbar::end(); ?>
                 </div>
                 <div class="clearfix"></div>

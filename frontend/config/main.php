@@ -13,7 +13,7 @@ return [
         'log' => 'log',
         'base' => 'im\base\Bootstrap',
         'cms' => 'im\cms\frontend\Bootstrap',
-        'imshop' => 'im\imshop\frontend\Bootstrap',
+        'imshop' => 'im\imshop\Bootstrap',
         'search' => 'im\search\frontend\Bootstrap'
     ],
     'controllerNamespace' => 'frontend\controllers',
@@ -53,8 +53,6 @@ return [
         'assetManager' => [
             'bundles' => require(dirname(__DIR__) . '/assets/assets.php'),
         ],
-        // Modules components
-        'templateManager' => 'im\cms\components\TemplateManager'
     ],
     'params' => $params,
 ];

@@ -56,6 +56,15 @@ class Layout extends Object
      */
     public function setWidgetAreas($widgetAreas)
     {
+        $availableWidgetAreas = $this->getAvailableWidgetAreas();
+        foreach($widgetAreas as $key => $widgetArea) {
+            foreach ($availableWidgetAreas as $availableWidgetArea) {
+                if ($availableWidgetArea->code == $widgetArea->code) {
+                    $widgetAreas[$key]->title = $availableWidgetArea->title;
+                    break;
+                }
+            }
+        }
         $this->_widgetAreas = $widgetAreas;
     }
 
