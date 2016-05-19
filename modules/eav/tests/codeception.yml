@@ -1,0 +1,9 @@
+include:
+  - codeception/common
+  - codeception/backend
+
+paths:
+  log: codeception/_output
+
+settings:
+  colors: true

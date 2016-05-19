@@ -2,9 +2,10 @@
 
 namespace im\config\components;
 
-use im\config\models\Config;
 use yii\base\Component;
 use Yii;
+use yii\db\Query;
+use yii\helpers\ArrayHelper;
 
 /**
  * Class DBConfigProvider
@@ -13,142 +14,114 @@ use Yii;
 class DBConfigProvider extends Component implements ConfigProviderInterface
 {
     /**
-     * @var array config cache
+     * @var string
      */
-    protected $data = array();
+    public $tableName = '{{%config}}';
 
-//    /**
-//     * @inheritdoc
-//     */
-//    public function init()
-//    {
-//        parent::init();
-//        $data  = Yii::$app->cache->get(__CLASS__);
-//        if ($data === false) {
-//            //TODO to use DAO
-//            $items = Config::find()->all();
-//            /** @var Config $item */
-//            foreach ($items as $item){
-//                if ($item->key)
-//                    $this->data[$item->key] = $item->value;
-//            }
-//            Yii::$app->cache->set(__CLASS__, $this->data, 60);
-//        }
-//        else {
-//            $this->data = $data;
-//        }
-//    }
+    /**
+     * @var array
+     */
+    protected $data = [];
 
     /**
      * {@inheritdoc}
      */
-    public function getIterator()
+    public function get($key, $context = null, $default = null)
     {
-        return new \ArrayIterator($this->data);
-    }
+        $value = $this->load($key, $context);
+        $value = ArrayHelper::map($value, 'key', 'value');
+        if (count($value) == 1 && substr($key, -1) != '*') {
+            $value = $value[$key];
+        }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function get($key, $default = null)
-    {
-        $this->load($key);
-        if (is_array($key))
-            return array_intersect_key($this->data, array_flip($key));
-        else
-            return isset($this->data[$key]) ? $this->data[$key] : $default;
+        return $value ?: $default;
     }
 
     /**
      * @inheritdoc
      */
-    public function set($key, $value)
+    public function set($key, $value, $context = null)
     {
-        $this->load($key);
-        $config = $this->has($key) ? Config::findOne(['key' => $key]) : new Config();
-        $config->key = $key;
-        $config->value = $this->data[$key] = $value;
-        $config->save();
-        Yii::$app->cache->set([__CLASS__, $key], $value);
+        if ($this->has($key, $context)) {
+            Yii::$app->db->createCommand()->update(
+                $this->tableName,
+                ['value' => $value],
+                ['key' => $key, 'context' => $context]
+            )->execute();
+        } else {
+            Yii::$app->db->createCommand()->insert($this->tableName, [
+                'key' => $key,
+                'value' => $value,
+                'context' => $context
+            ])->execute();
+        }
     }
 
     /**
      * {@inheritdoc}
      */
-    public function has($key)
+    public function has($key, $context = null)
     {
-        return array_key_exists($key, $this->data);
+        return (new Query())->from($this->tableName)->where(['key' => $key, 'context' => $context])->count();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function remove($key)
+    public function remove($key, $context = null)
     {
         $value = $this->get($key);
-        unset($this->data[$key]);
+        $where = ['key' => $key];
+        if ($context) {
+            $where['context'] = $context;
+        }
+        Yii::$app->db->createCommand()->delete($this->tableName, $where)->execute();
 
         return $value;
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $key
+     * @return string|array
      */
-    public function all()
+    protected function load($key, $context = null)
     {
-        return $this->data;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function offsetExists($offset)
-    {
-        return $this->has($offset);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function offsetGet($offset)
-    {
-        return $this->get($offset);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function offsetSet($offset, $value)
-    {
-        $this->set($offset, $value);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function offsetUnset($offset)
-    {
-        $this->remove($offset);
-    }
-
-    protected function load($key) {
-        if (is_array($key))
-            foreach ($key as $item) {
-                $this->load($item);
+        $query = (new Query())->select(['key', 'value', 'context'])->from($this->tableName);
+        if (substr($key, -1) == '*') {
+            $where = ['like', 'key', substr($key, 0, -1)];
+            if ($context) {
+                $where = ['and', $where, ['or', ['context' => $context], ['context' => null]]];
+            } else {
+                $where = ['and', $where, ['context' => $context]];
             }
-        elseif (!isset($this->data[$key])) {
-            $data  = Yii::$app->cache->get([__CLASS__, $key]);
-            if ($data === false) {
-                /** @var Config $config */
-                $config = Config::findOne(['key' => $key]);
-                if ($config !== null && $config->key) {
-                    $this->data[$config->key] = $config->value;
-                    Yii::$app->cache->set([__CLASS__, $key], $config->value);
-                }
-            }
-            else {
-                $this->data[$key] = $data;
+        } else {
+            if ($context) {
+                $where = ['and', ['key' => $key], ['or', ['context' => $context], ['context' => null]]];
+            } else {
+                $where = ['key' => $key, 'context' => $context];
             }
         }
+        $result = $query->where($where)->all();
+        if ($result && $context) {
+            $resultByContext = [];
+            foreach ($result as $item) {
+                $resultByContext[$item['context'] ?: '__noContext__'][$item['key']] = $item;
+            }
+            if (isset($resultByContext[$context])) {
+                $result = $resultByContext[$context];
+                if (isset($resultByContext['__noContext__'])) {
+                    foreach ($resultByContext['__noContext__'] as $item) {
+                        if (!isset($result[$item['key']])) {
+                            $result[$item['key']] = $item;
+                        }
+                    }
+                }
+            } else {
+                $result = $resultByContext['__noContext__'];
+            }
+        }
+
+        return $result;
     }
 }
+

@@ -13,6 +13,6 @@ class Config extends ComponentConfig
      */
     public function getEditView()
     {
-        return '@app/modules/cms/backend/views/_config';
+        return '@im/cms/backend/views/_config';
     }
 }

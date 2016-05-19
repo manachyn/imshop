@@ -38,8 +38,7 @@ class ElFinderAsset extends AssetBundle
      */
     public static function noConflict($view)
     {
-        //list(, $url) = \Yii::$app->assetManager->publish('@im/elfinder/assets');
-        list(, $url) = \Yii::$app->assetManager->publish('@app/modules/elfinder/src/assets');
+        list(, $url) = \Yii::$app->assetManager->publish('@im/elfinder/assets');
         //$view->registerJsFile($url . '/js/no.conflict.js', ['depends' => [JqueryAsset::className()]]);
         $view->registerCssFile($url . '/css/no.conflict.css');
     }

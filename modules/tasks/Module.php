@@ -26,7 +26,7 @@ class Module extends \yii\base\Module
         Yii::$app->i18n->translations['modules/tasks/*'] = [
             'class' => 'yii\i18n\PhpMessageSource',
             'sourceLanguage' => 'en-US',
-            'basePath' => '@app/modules/tasks/messages',
+            'basePath' => '@im/tasks/messages',
             'fileMap' => [
                 'modules/tasks/module' => 'module.php',
                 'modules/tasks/task' => 'tasks.php'

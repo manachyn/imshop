@@ -10,8 +10,7 @@ class ElFinderWidgetAsset extends AssetBundle
     /**
      * @inheritdoc
      */
-    //public $sourcePath = '@im/elfinder/assets';
-    public $sourcePath = '@app/modules/elfinder/src/assets';
+    public $sourcePath = '@im/elfinder/assets';
 
     /**
      * @inheritdoc
@@ -42,8 +41,7 @@ class ElFinderWidgetAsset extends AssetBundle
      */
     public static function noConflict($view)
     {
-        //list(, $url) = \Yii::$app->assetManager->publish('@im/elfinder/assets');
-        list(, $url) = \Yii::$app->assetManager->publish('@app/modules/elfinder/src/assets');
+        list(, $url) = \Yii::$app->assetManager->publish('@im/elfinder/assets');
         //$view->registerJsFile($url . '/js/no.conflict.js', ['depends' => [JqueryAsset::className()]]);
         $view->registerCssFile($url . '/css/no.conflict.css');
     }

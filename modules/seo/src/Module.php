@@ -17,12 +17,4 @@ class Module extends \yii\base\Module
      * @inheritdoc
      */
     public $controllerNamespace = 'im\seo\controllers';
-
-    /**
-     * @inheritdoc
-     */
-    public function init()
-    {
-        parent::init();
-    }
 }

@@ -1,11 +1,11 @@
 <?php
 
-namespace tests\codeception\common\unit;
+namespace im\cms\tests\codeception\common\unit;
 
 /**
  * @inheritdoc
  */
 class DbTestCase extends \yii\codeception\DbTestCase
 {
-    public $appConfig = '@tests/codeception/config/common/unit.php';
+    public $appConfig = '@im/cms/tests/codeception/config/common/unit.php';
 }

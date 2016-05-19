@@ -1,13 +1,20 @@
 {
-    "name": "im/image",
-    "description": "IM Image module",
+    "name": "imsoft/image",
+    "description": "Image module",
+    "version": "1.0.0",
     "authors": [
         {
             "name": "Ivan Manachyn",
             "email": "manachyn@gmail.com"
         }
     ],
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "im\\image\\": "src/"
+        }
+    },
     "require": {
-        "trntv/yii2-glide": "^1.0"
+        "league/glide": "*"
     }
 }

@@ -3,14 +3,12 @@
 namespace im\cms\backend;
 
 use im\base\routing\ModuleRulesTrait;
-use im\base\types\EntityType;
-use yii\base\BootstrapInterface;
 
 /**
  * Class Bootstrap
  * @package im\cms\backend
  */
-class Bootstrap extends \im\cms\Bootstrap implements BootstrapInterface
+class Bootstrap extends \im\cms\Bootstrap
 {
     use ModuleRulesTrait;
 

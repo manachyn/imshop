@@ -2,69 +2,28 @@
 
 namespace im\config\models;
 
-use Yii;
-use yii\db\ActiveRecord;
+use im\config\components\ConfigInterface;
+use yii\base\Model;
 
 /**
- * This is the model class for table "{{%config}}".
- *
- * @property integer $id
- * @property string $component
- * @property string $key
- * @property string $value
+ * Class Config
+ * @package im\config\models
  */
-class Config extends ActiveRecord
+abstract class Config extends Model implements ConfigInterface
 {
     /**
      * @inheritdoc
      */
-    public static function tableName()
+    public function getOptions()
     {
-        return '{{%config}}';
+        return $this->getAttributes();
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
+    public function getUserSpecificOptions()
     {
-        return [
-            [['key', 'value'], 'required'],
-            ['component', 'safe']
-        ];
+        return [];
     }
-
-    /**
-     * @inheritdoc
-     */
-    public function attributeLabels()
-    {
-        return [
-            'id' => 'ID',
-            'key' => 'Key',
-            'value' => 'Value',
-        ];
-    }
-
-    /**
-     * @param mixed $value
-     */
-    public function setValue($value)
-    {
-//        if (is_array($value) || is_object($value))
-//            $value = serialize($value);
-
-        $this->value = serialize($value);
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getValue()
-    {
-//        if (is_array($value) || is_object($value))
-//            $value = serialize($value);
-        return unserialize($this->value);
-    }
-
 }

@@ -22,5 +22,14 @@ return [
         'urlManager' => [
             'showScriptName' => true,
         ],
+        'filesystem' => [
+            'class' => 'im\filesystem\components\FilesystemComponent',
+            'filesystems' => [
+                'local' => [
+                    'class' => 'im\filesystem\components\flysystem\LocalFilesystem',
+                    'path' => '@webroot/test-files'
+                ]
+            ]
+        ],
     ],
 ];

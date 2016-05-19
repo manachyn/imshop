@@ -25,6 +25,7 @@
         "imsoft/eav": "*",
         "imsoft/variation": "*",
         "imsoft/search": "*",
-        "imsoft/filesystem": "*"
+        "imsoft/filesystem": "*",
+        "imsoft/ckeditor" : "*"
     }
 }

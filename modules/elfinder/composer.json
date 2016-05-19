@@ -12,7 +12,11 @@
     "autoload": {
         "psr-4": {
             "im\\elfinder\\": "src/"
-        }
+        },
+        "classmap": [
+            "elFinderVolumeFlysystem.php",
+            "elFinderVolumeS3.php"
+        ]
     },
     "require": {
         "php": ">=5.4.0",

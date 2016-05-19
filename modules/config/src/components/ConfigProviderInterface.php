@@ -6,48 +6,43 @@ namespace im\config\components;
  * Interface ConfigProviderInterface
  * @package im\config\components
  */
-interface ConfigProviderInterface extends \ArrayAccess, \IteratorAggregate
+interface ConfigProviderInterface
 {
     /**
-     * Returns the value/s given a key or array of keys from config
+     * Returns the value/s given a key or array of keys from config.
      *
      * @param string|array $key
-     * @param mixed $default The default value in case the key does not exist
-     *
+     * @param string $context
+     * @param mixed $default
      * @return mixed
      */
-    public function get($key, $default = null);
+    public function get($key, $context = null, $default = null);
 
     /**
-     * Set a value to config
-     *
-     * @param string $key   The key
-     * @param mixed  $value The value corresponding to the key
-     */
-    public function set($key, $value);
-
-    /**
-     * Tells if config contains `$key`
+     * Set a value to config.
      *
      * @param string $key
-     *
-     * @return Boolean
+     * @param mixed $value
+     * @param string $context
+     * @return
      */
-    public function has($key);
+    public function set($key, $value, $context = null);
+
+    /**
+     * Whether config exists.
+     *
+     * @param string $key
+     * @param string $context
+     * @return bool
+     */
+    public function has($key, $context = null);
 
     /**
      * Removes a value given a key
      *
      * @param string $key
-     *
+     * @param string $context
      * @return mixed The previous value
      */
-    public function remove($key);
-
-    /**
-     * Returns all values set in the config
-     *
-     * @return array
-     */
-    public function all();
+    public function remove($key, $context = null);
 }

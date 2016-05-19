@@ -81,6 +81,26 @@
         {
             "type": "path",
             "url": "modules/backend"
+        },
+        {
+            "type": "path",
+            "url": "modules/image"
+        },
+        {
+            "type": "path",
+            "url": "modules/ckeditor"
+        },
+        {
+            "type": "path",
+            "url": "modules/tinymce"
+        },
+        {
+            "type": "path",
+            "url": "modules/config"
+        },
+        {
+            "type": "path",
+            "url": "modules/wysiwyg"
         }
     ],
     "require": {

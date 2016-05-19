@@ -19,11 +19,19 @@ return [
         'cms' => 'im\cms\backend\Bootstrap',
         'seo' => 'im\seo\backend\Bootstrap',
         'search' => 'im\search\backend\Bootstrap',
-        'filesystem' => 'im\filesystem\Bootstrap'
+        'filesystem' => 'im\filesystem\Bootstrap',
+        'catalog' => 'im\catalog\backend\Bootstrap',
+        'eav' => 'im\eav\Bootstrap',
+        'elfinder' => 'im\elfinder\Bootstrap',
+        'wysiwyg' => 'im\wysiwyg\Bootstrap'
     ],
     'modules' => [
         'backend' => 'im\backend\Module',
         'cms' => 'im\cms\backend\Module',
+        'catalog' => 'im\catalog\backend\Module',
+        'eav' => 'im\eav\backend\Module',
+        'filesystem' => 'im\filesystem\Module',
+        'config' => 'im\config\Module'
     ],
     'components' => [
         'user' => [
@@ -48,10 +56,20 @@ return [
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
+            'rules' => require(__DIR__ . '/rules.php')
         ],
         // Modules components
         'backendTheme' => 'im\adminlte\Theme',
         'seo' => 'im\seo\components\Seo',
+        'elFinder' => array_merge(require(__DIR__ . '/filemanager.php'), [
+            'class' => '\im\elfinder\ElFinderComponent'
+        ])
+    ],
+    'controllerMap' => [
+        'elfinder' => [
+            'class' => 'im\elfinder\ElFinderController',
+            'enableCsrfValidation' => false,
+        ]
     ],
     'params' => $params,
 ];

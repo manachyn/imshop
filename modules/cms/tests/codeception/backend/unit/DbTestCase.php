@@ -1,8 +1,12 @@
 <?php
 
-namespace tests\codeception\backend\unit;
+namespace im\cms\tests\codeception\backend\unit;
 
+/**
+ * Class DbTestCase
+ * @package im\cms\tests\codeception\backend\unit
+ */
 class DbTestCase extends \yii\codeception\DbTestCase
 {
-    public $appConfig = '@tests/codeception/config/backend/unit.php';
+    public $appConfig = '@im/cms/tests/codeception/config/backend/unit.php';
 }

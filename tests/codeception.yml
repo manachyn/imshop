@@ -5,6 +5,8 @@ include:
   - codeception/frontend
   - ../modules/cms/tests/codeception/common
   - ../modules/cms/tests/codeception/backend
+  - ../modules/eav/tests/codeception/common
+  - ../modules/eav/tests/codeception/backend
 
 paths:
   log: codeception/_output

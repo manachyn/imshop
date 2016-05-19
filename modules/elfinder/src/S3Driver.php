@@ -494,13 +494,16 @@ class S3Driver extends elFinderVolumeDriver
     }
 
     /**
-     * Return image size
-     *
-     * @param string $path
-     * @param string $mime
-     * @return array|bool
+     * @inheritdoc
      */
-    protected function getImageSize($path, $mime = '')
+    protected function _chmod($path, $mode) {
+        return false;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getImageSize($path, $mime = '')
     {
         $size = false;
         if ($mime === '' || strtolower(substr($mime, 0, 5)) === 'image') {

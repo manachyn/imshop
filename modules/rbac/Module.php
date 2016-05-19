@@ -26,7 +26,7 @@ class Module extends \yii\base\Module
         Yii::$app->i18n->translations['modules/rbac'] = [
             'class' => 'yii\i18n\PhpMessageSource',
             'sourceLanguage' => 'en-US',
-            'basePath' => '@app/modules/rbac/messages',
+            'basePath' => '@im/rbac/messages',
             'fileMap' => [
                 'modules/rbac' => 'rbac.php'
             ]

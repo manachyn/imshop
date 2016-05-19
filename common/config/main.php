@@ -34,5 +34,10 @@ return [
                 ['http_address' => '127.0.0.1:9200']
             ]
         ],
+        'configManager' => 'im\config\components\ConfigManager',
+        'config' => [
+            'class' => 'im\config\components\Config',
+            'configManager' => 'configManager'
+        ]
     ],
 ];

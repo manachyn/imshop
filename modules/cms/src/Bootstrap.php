@@ -23,7 +23,9 @@ class Bootstrap implements BootstrapInterface
         $this->registerDefinitions();
         $this->registerEntityTypes();
         $this->registerPageTypes();
-        $this->registerWidgets($app);
+        if ($app instanceof \yii\web\Application) {
+            $this->registerWidgets($app);
+        }
         $this->registerSearchableTypes($app);
         $this->setAliases();
     }

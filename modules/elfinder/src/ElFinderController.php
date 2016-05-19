@@ -11,8 +11,11 @@ use yii\helpers\Url;
 use yii\web\Controller;
 use Yii;
 use yii\web\JsExpression;
-use yii\web\Request;
 
+/**
+ * Class ElFinderController
+ * @package im\elfinder
+ */
 class ElFinderController extends Controller
 {
     /**
@@ -57,9 +60,9 @@ class ElFinderController extends Controller
         $connector->run();
     }
 
-    public function actionManager(Request $request)
+    public function actionManager()
     {
-        return $this->renderFile(__DIR__ . '/views/manager.php', ['options' => $this->getManagerOptions($request->get())]);
+        return $this->renderFile(__DIR__ . '/views/manager.php', ['options' => $this->getManagerOptions(Yii::$app->request->get())]);
     }
 
     public function getManagerOptions(array $params)

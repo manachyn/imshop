@@ -53,6 +53,23 @@ return [
         'assetManager' => [
             'bundles' => require(dirname(__DIR__) . '/assets/assets.php'),
         ],
+        'glide' => [
+            'class' => 'im\image\glide\Glide',
+            'signKey' => 'akqTelFIql',
+            'servers' => [
+                'local' => [
+                    'source' => '@frontend/web/files',
+                    'cache' => '@frontend/runtime/cache/glide'
+                ],
+                's3' => [
+                    'filesystem' => 's3',
+                    'cache' => '@frontend/runtime/cache/glide'
+                ]
+            ]
+        ],
+    ],
+    'controllerMap' => [
+        'glide' => 'im\image\glide\controllers\GlideController'
     ],
     'params' => $params,
 ];

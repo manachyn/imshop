@@ -23,14 +23,14 @@ class GlideAction extends Action
      * @throws NotFoundHttpException
      * @throws NotSupportedException
      */
-    public function run($server, $path, Request $request)
+    public function run($server, $path)
     {
 
         if (!$this->getServer($server)->sourceFileExists($path)) {
             throw new NotFoundHttpException;
         }
         if ($this->getComponent()->signKey) {
-            if (!$this->validateRequest($request)) {
+            if (!$this->validateRequest(Yii::$app->request)) {
                 throw new BadRequestHttpException;
             };
         }

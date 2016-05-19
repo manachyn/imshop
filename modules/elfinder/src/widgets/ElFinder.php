@@ -9,6 +9,7 @@ use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Json;
 use yii\helpers\Url;
+use yii\web\JsExpression;
 
 class ElFinder extends Widget
 {
@@ -44,6 +45,55 @@ class ElFinder extends Widget
         parent::init();
         $this->initOptions();
         echo Html::beginTag('div', $this->options) . "\n";
+    }
+
+    /**
+     * Get file manager options for CKEditor.
+     *
+     * @param string|array $managerRoute
+     * @param array $options
+     * @return array
+     */
+    public static function getCKEditorOptions($managerRoute, $options = [])
+    {
+        $managerRoute = (array) $managerRoute;
+
+        return ArrayHelper::merge([
+            'filebrowserBrowseUrl' => Url::to($managerRoute),
+            'filebrowserImageBrowseUrl' => Url::to(ArrayHelper::merge($managerRoute, ['filter'=>'image'])),
+            'filebrowserFlashBrowseUrl' => Url::to(ArrayHelper::merge($managerRoute, ['filter'=>'flash'])),
+        ], $options);
+    }
+
+    /**
+     * Get file manager options for TinyMCE.
+     *
+     * @param string|array $managerRoute
+     * @param array $options
+     * @return array
+     */
+    public static function getTinyMCEOptions($managerRoute, $options = [])
+    {
+        $managerUrl = Url::to($managerRoute);
+
+        return ArrayHelper::merge([
+            'file_browser_callback' => new JsExpression("
+                function elFinderBrowser (field_name, url, type, win) {
+                  tinymce.activeEditor.windowManager.open({
+                    file: '$managerUrl',
+                    title: 'elFinder 2.0',
+                    width: 900,
+                    height: 450,
+                    resizable: 'yes'
+                  }, {
+                    setUrl: function (url) {
+                      win.document.getElementById(field_name).value = url;
+                    }
+                  });
+                  return false;
+                }
+            ")
+        ], $options);
     }
 
 //    public static function getManagerUrl($controller, $params = [])

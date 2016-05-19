@@ -24,12 +24,12 @@
         "php": ">=5.4.0",
         "yiisoft/yii2": ">=2.0.6",
         "yiisoft/yii2-jui": "*",
-        "2amigos/yii2-ckeditor-widget" : "~1.0",
         "imsoft/base": "*",
         "imsoft/forms": "*",
         "imsoft/tree": "*",
         "imsoft/seo": "*",
-        "imsoft/filesystem": "*"
+        "imsoft/filesystem": "*",
+        "imsoft/wysiwyg" : "*"
     },
     "require-dev": {
         "codeception/codeception": "2.0.*",

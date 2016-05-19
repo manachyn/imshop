@@ -11,11 +11,15 @@ cd /path/to/project/frontend/web
 ln -s ../../backend/web admin
 cd /path/to/project/backend/web
 ln -s ../../frontend/web/files files
+ln -s ../../frontend/web/uploads uploads
+ln -s ../../frontend/web/test-files test-files // For tests
 
 chmod -R 0777 frontend/runtime
 chmod -R 0777 backend/runtime
 chmod -R 0777 frontend/web/assets
 chmod -R 0777 backend/web/assets
+chmod -R 0777 frontend/web/files
+chmod -R 0777 frontend/web/uploads 
 
 
 composer global require "codeception/codeception=2.0.*"

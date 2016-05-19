@@ -9,8 +9,7 @@ class JqueryMigrateAsset extends AssetBundle
     /**
      * @inheritdoc
      */
-    //public $sourcePath = '@im/elfinder/assets';
-    public $sourcePath = '@app/modules/elfinder/src/assets';
+    public $sourcePath = '@im/elfinder/assets';
 
     /**
      * @inheritdoc
