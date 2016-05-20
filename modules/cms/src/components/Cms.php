@@ -7,42 +7,17 @@ use im\cms\models\Page;
 use yii\base\Component;
 use Yii;
 use yii\base\InvalidParamException;
-use yii\caching\Cache;
-use yii\caching\Dependency;
 
+/**
+ * Class Cms
+ * @package im\cms\components
+ */
 class Cms extends Component
 {
     /**
-     * @var Cache|string the cache object or the ID of the cache application component
-     * that is used for page caching.
-     * @see enablePageCache
-     */
-    public $pageCache = 'cache';
-
-    /**
-     * @var boolean whether to enable page caching.
-     * Note that in order to enable page caching, a valid cache component as specified
-     * by [[pageCache]] must be enabled and [[enablePageCache]] must be set true.
-     * @see pageCache
-     */
-    public $enablePageCache = false;
-
-    /**
-     * @var integer number of seconds that the page data can remain valid in cache.
-     * Use 0 to indicate that the cached data will never expire.
-     */
-    public $pageCacheDuration = 0;
-
-    /**
-     * @var array|Dependency the dependency that the cached page content depends on.
-     * This can be either a [[Dependency]] object or a configuration array for creation the dependency object.
-     */
-    public $pageCacheDependency;
-
-    /**
      * @var CacheManager
      */
-    public $_cacheManager = 'im\cms\components\CacheManager';
+    private $_cacheManager = 'im\cms\components\CacheManager';
 
     /**
      * Registers page type.
@@ -99,4 +74,13 @@ class Cms extends Component
 
         return $this->_cacheManager;
     }
+
+    /**
+     * @param CacheManager|string|array|bool $cacheManager
+     */
+    public function setCacheManager($cacheManager)
+    {
+        $this->_cacheManager = $cacheManager;
+    }
 }
+

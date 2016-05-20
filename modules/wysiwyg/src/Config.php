@@ -23,7 +23,7 @@ class Config extends BaseConfig implements EditableConfigInterface
     /**
      * @var string
      */
-    public $editor = self::EDITOR_TINYMCE;
+    public $editor = self::EDITOR_CKEDITOR;
 
     /**
      * @var string

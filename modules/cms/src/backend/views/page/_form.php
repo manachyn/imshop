@@ -7,6 +7,7 @@ use im\forms\components\FieldSet;
 use im\forms\components\Tab;
 use im\forms\components\TabSet;
 use im\tinymce\TinyMCE;
+use im\wysiwyg\WysiwygEditor;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
@@ -15,6 +16,8 @@ use yii\widgets\Pjax;
 /* @var $this yii\web\View */
 /* @var $model im\cms\models\Page */
 /* @var $form yii\widgets\ActiveForm */
+
+$wysiwygConfig = Yii::$app->get('config')->get('wysiwyg.*');
 
 ?>
 
@@ -28,17 +31,23 @@ use yii\widgets\Pjax;
             $model->isNewRecord ? $form->field($model, 'type')->dropDownList($model::getTypesList(), ['data-field' => 'type']) : null,
             $form->field($model, 'title')->textInput(['maxlength' => true]),
             $form->field($model, 'slug')->textInput(['maxlength' => true]),
+            $form->field($model, 'content')->widget(WysiwygEditor::className(), [
+                'options' => ['rows' => 6],
+                'editor' => $wysiwygConfig['wysiwyg.editor'],
+                'preset' => $wysiwygConfig['wysiwyg.preset'],
+                'fileManagerRoute' => ['/elfinder/manager']
+            ]),
 //            $form->field($model, 'content')->widget(CKEditor::className(), [
 //                'options' => ['rows' => 6],
 //                'clientOptions' => array_merge(ElFinder::getCKEditorOptions(['/elfinder/manager']), [
 //                    'extraPlugins' => 'btgrid'
 //                ])
 //            ]),
-            $form->field($model, 'content')->widget(TinyMCE::className(), [
-                'options' => ['rows' => 6],
-                'preset' => 'full',
-                'clientOptions' => ElFinder::getTinyMCEOptions(['/elfinder/manager'])
-            ]),
+//            $form->field($model, 'content')->widget(TinyMCE::className(), [
+//                'options' => ['rows' => 6],
+//                'preset' => 'full',
+//                'clientOptions' => ElFinder::getTinyMCEOptions(['/elfinder/manager'])
+//            ]),
             $form->field($model, 'status')->dropDownList($model::getStatusesList())
         ])
     ])

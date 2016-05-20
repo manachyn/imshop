@@ -2,8 +2,6 @@
 
 namespace im\filesystem\components\flysystem\adapters;
 
-
-
 use League\Flysystem\AdapterInterface;
 
 class AwsS3Adapter extends \League\Flysystem\AwsS3v3\AwsS3Adapter

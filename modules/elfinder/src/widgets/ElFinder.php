@@ -60,8 +60,8 @@ class ElFinder extends Widget
 
         return ArrayHelper::merge([
             'filebrowserBrowseUrl' => Url::to($managerRoute),
-            'filebrowserImageBrowseUrl' => Url::to(ArrayHelper::merge($managerRoute, ['filter'=>'image'])),
-            'filebrowserFlashBrowseUrl' => Url::to(ArrayHelper::merge($managerRoute, ['filter'=>'flash'])),
+            'filebrowserImageBrowseUrl' => Url::to(ArrayHelper::merge($managerRoute, ['filter' => 'image'])),
+            'filebrowserFlashBrowseUrl' => Url::to(ArrayHelper::merge($managerRoute, ['filter' => 'flash'])),
         ], $options);
     }
 
@@ -74,11 +74,11 @@ class ElFinder extends Widget
      */
     public static function getTinyMCEOptions($managerRoute, $options = [])
     {
-        $managerUrl = Url::to($managerRoute);
+        $managerUrl = Url::to(ArrayHelper::merge($managerRoute, ['TinyMCE' => 1]));
 
         return ArrayHelper::merge([
             'file_browser_callback' => new JsExpression("
-                function elFinderBrowser (field_name, url, type, win) {
+                function (field_name, url, type, win) {
                   tinymce.activeEditor.windowManager.open({
                     file: '$managerUrl',
                     title: 'elFinder 2.0',

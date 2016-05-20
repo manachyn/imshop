@@ -16,14 +16,14 @@ class CacheManager extends Component
     /**
      * @var \yii\caching\Cache[]
      */
-    protected $caches = [
+    public $caches = [
         'defaultCache' => 'cache'
     ];
 
     /**
      * @var string
      */
-    protected $defaultCache = 'defaultCache';
+    public $defaultCache = 'defaultCache';
 
     /**
      * Maps data class to cache name.

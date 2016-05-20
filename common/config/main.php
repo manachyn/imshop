@@ -15,12 +15,24 @@ return [
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],
+        'contentCache' => [
+            'class' => 'yii\caching\FileCache',
+            'cachePath' => '@frontend/runtime/cache'
+        ],
         'memCache' => [
             'class' => 'yii\caching\MemCache',
         ],
         // Modules components
         'typesRegister' => 'im\base\types\EntityTypesRegister',
-        'cms' => 'im\cms\components\Cms',
+        'cms' => [
+            'class' => 'im\cms\components\Cms',
+            'cacheManager' => [
+                'class' => 'im\cms\components\CacheManager',
+                'caches' => [
+                    'defaultCache' => 'contentCache'
+                ]
+            ]
+        ],
         'layoutManager' => 'im\cms\components\LayoutManager',
         'templateManager' => 'im\cms\components\TemplateManager',
         'filesystem' => [

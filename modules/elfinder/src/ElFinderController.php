@@ -77,6 +77,8 @@ class ElFinderController extends Controller
 
         if (isset($params['CKEditor'])) {
             $options = ArrayHelper::merge($options, $this->getCKEditorManagerOptions($params));
+        } elseif (isset($params['TinyMCE'])) {
+            $options = ArrayHelper::merge($options, $this->getTinyMCEManagerOptions($params));
         }
 
         //$options['commandsOptions']['getfile']['onlyURL'] = true;
@@ -102,6 +104,30 @@ class ElFinderController extends Controller
             if (isset($params['langCode'])) {
                 $options['lang'] = $params['langCode'];
             }
+        }
+
+        return $options;
+    }
+
+    public function getTinyMCEManagerOptions(array $params)
+    {
+        $options = [];
+        if (isset($params['TinyMCE'])) {
+            $options['getFileCallback'] = new JsExpression("
+                function(file) {
+                    // file.url - commandsOptions.getfile.onlyURL = false (default)
+                    // file     - commandsOptions.getfile.onlyURL = true
+                    // pass selected file path to TinyMCE
+                    parent.tinymce.activeEditor.windowManager.getParams().setUrl(file.url);
+
+                    // force the TinyMCE dialog to refresh and fill in the image dimensions
+                    var t = parent.tinymce.activeEditor.windowManager.windows[0];
+                    t.find('#src').fire('change');
+
+                    // close popup window
+                    parent.tinymce.activeEditor.windowManager.close();
+                }
+            ");
         }
 
         return $options;
