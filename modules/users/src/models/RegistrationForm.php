@@ -56,8 +56,8 @@ class RegistrationForm extends Model
         return [
             ['username', 'filter', 'filter' => 'trim'],
             ['username', 'required'],
-            ['username', 'unique', 'targetClass' => $module->userModel/*, 'message' => 'This username has already been taken.'*/],
             ['username', 'string', 'min' => 2, 'max' => 100],
+            ['username', 'unique', 'targetClass' => $module->userModel/*, 'message' => 'This username has already been taken.'*/],
 
             ['email', 'filter', 'filter' => 'trim'],
             ['email', 'required'],

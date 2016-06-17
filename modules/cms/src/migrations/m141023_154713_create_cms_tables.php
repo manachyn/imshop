@@ -17,8 +17,12 @@ class m141023_154713_create_cms_tables extends Migration
             '{{%pages}}',
             [
                 'id' => $this->primaryKey(),
+                'tree' => Schema::TYPE_INTEGER,
+                'lft' => Schema::TYPE_INTEGER . ' NOT NULL',
+                'rgt' => Schema::TYPE_INTEGER . ' NOT NULL',
+                'depth' => Schema::TYPE_INTEGER . ' NOT NULL',
                 'type' => $this->string(100)->notNull(),
-                'title' => $this->string(100)->notNull(),
+                'title' => $this->string(255)->notNull(),
                 'slug' => $this->string(100)->notNull(),
                 'content' => $this->text()->notNull(),
                 'status' => $this->boolean()->defaultValue(0),
@@ -28,6 +32,9 @@ class m141023_154713_create_cms_tables extends Migration
             ],
             $tableOptions
         );
+        $this->createIndex('lft_rgt', '{{%pages}}', 'lft, rgt');
+        $this->createIndex('depth', '{{%pages}}', 'depth');
+        $this->createIndex('tree', '{{%pages}}', 'tree');
         $this->createIndex('slug', '{{%pages}}', 'slug');
         $this->createIndex('status', '{{%pages}}', 'status');
         $this->createIndex('type', '{{%pages}}', 'type');
@@ -40,8 +47,9 @@ class m141023_154713_create_cms_tables extends Migration
             [
                 'id' => $this->primaryKey(),
                 'entity_id' => $this->integer()->defaultValue(null),
-                'meta_title' => $this->string(70)->notNull(),
-                'meta_description' => $this->string(160)->notNull(),
+                'meta_title' => $this->string()->notNull(),
+                'meta_keywords' => $this->string()->notNull(),
+                'meta_description' => $this->string()->notNull(),
                 'meta_robots' => $this->string(50)->notNull(),
                 'custom_meta' => $this->text()->notNull()
             ],
@@ -83,7 +91,7 @@ class m141023_154713_create_cms_tables extends Migration
 
         // Menu items
         $this->createTable(
-            '{{%menus_items}}',
+            '{{%menu_items}}',
             [
                 'id' => $this->primaryKey(),
                 'tree' => $this->integer()->defaultValue(null),
@@ -97,9 +105,10 @@ class m141023_154713_create_cms_tables extends Migration
                 'target_blank' => $this->boolean()->defaultValue(0),
                 'css_classes' => $this->string(100)->notNull(),
                 'rel' => $this->string(100)->notNull(),
-                'page_id' => $this->integer()->defaultValue(null),
                 'status' => $this->boolean()->defaultValue(1),
                 'visibility' => $this->string(100)->notNull(),
+                'items_display' => $this->boolean(),
+                'items_css_classes' => $this->string(100)->notNull(),
                 'icon_id' => $this->integer()->defaultValue(null),
                 'active_icon_id' => $this->integer()->defaultValue(null),
                 'video_id' => $this->integer()->defaultValue(null)
@@ -108,16 +117,16 @@ class m141023_154713_create_cms_tables extends Migration
         );
 
         // Indexes
-        $this->createIndex('lft_rgt', '{{%menus_items}}', 'lft, rgt');
-        $this->createIndex('depth', '{{%menus_items}}', 'depth');
-        $this->createIndex('tree', '{{%menus_items}}', 'tree');
-        $this->createIndex('name', '{{%menus_items}}', 'label');
-        $this->createIndex('menu_id_status', '{{%menus_items}}', ['menu_id', 'status']);
+        $this->createIndex('lft_rgt', '{{%menu_items}}', 'lft, rgt');
+        $this->createIndex('depth', '{{%menu_items}}', 'depth');
+        $this->createIndex('tree', '{{%menu_items}}', 'tree');
+        $this->createIndex('name', '{{%menu_items}}', 'label');
+        $this->createIndex('menu_id_status', '{{%menu_items}}', ['menu_id', 'status']);
         // Foreign Keys
-        $this->addForeignKey('FK_menus_items_menu_id', '{{%menus_items}}', 'menu_id', '{{%menus}}', 'id', 'CASCADE', 'CASCADE');
-        $this->addForeignKey('FK_menus_items_icon_id', '{{%menus_items}}', 'icon_id', '{{%menu_item_files}}', 'id', 'SET NULL', 'CASCADE');
-        $this->addForeignKey('FK_menus_items_active_icon_id', '{{%menus_items}}', 'active_icon_id', '{{%menu_item_files}}', 'id', 'SET NULL', 'CASCADE');
-        $this->addForeignKey('FK_menus_items_video_id', '{{%menus_items}}', 'video_id', '{{%menu_item_files}}', 'id', 'SET NULL', 'CASCADE');
+        $this->addForeignKey('FK_menu_items_menu_id', '{{%menu_items}}', 'menu_id', '{{%menus}}', 'id', 'CASCADE', 'CASCADE');
+        $this->addForeignKey('FK_menu_items_icon_id', '{{%menu_items}}', 'icon_id', '{{%menu_item_files}}', 'id', 'SET NULL', 'CASCADE');
+        $this->addForeignKey('FK_menu_items_active_icon_id', '{{%menu_items}}', 'active_icon_id', '{{%menu_item_files}}', 'id', 'SET NULL', 'CASCADE');
+        $this->addForeignKey('FK_menu_items_video_id', '{{%menu_items}}', 'video_id', '{{%menu_item_files}}', 'id', 'SET NULL', 'CASCADE');
 
 
         // Templates
@@ -200,7 +209,7 @@ class m141023_154713_create_cms_tables extends Migration
         $this->dropTable('{{%widgets}}');
         $this->dropTable('{{%widget_areas}}');
         $this->dropTable('{{%templates}}');
-        $this->dropTable('{{%menus_items}}');
+        $this->dropTable('{{%menu_items}}');
         $this->dropTable('{{%menus}}');
         $this->dropTable('{{%page_meta}}');
         $this->dropTable('{{%pages}}');

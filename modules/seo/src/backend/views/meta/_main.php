@@ -8,12 +8,20 @@
 
 <div class="row">
 
-    <div class="col-sm-6">
+    <div class="col-sm-12">
         <?= !isset($attributes) || in_array('meta_title', $attributes) ? $form->field($model, 'meta_title')->textInput(['maxlength' => true]) : '' ?>
     </div>
 
+</div>
+
+<div class="row">
+
     <div class="col-sm-6">
-        <?= !isset($attributes) || in_array('meta_description', $attributes) ? $form->field($model, 'meta_description')->textInput(['maxlength' => true]) : '' ?>
+        <?= !isset($attributes) || in_array('meta_keywords', $attributes) ? $form->field($model, 'meta_keywords')->textarea(['maxlength' => true]) : '' ?>
+    </div>
+
+    <div class="col-sm-6">
+        <?= !isset($attributes) || in_array('meta_description', $attributes) ? $form->field($model, 'meta_description')->textarea(['maxlength' => true]) : '' ?>
     </div>
 
 </div>

@@ -50,6 +50,7 @@ class m150208_123637_create_catalog_tables extends Migration
         $this->createIndex('lft_rgt', '{{%categories}}', 'lft, rgt');
         $this->createIndex('depth', '{{%categories}}', 'depth');
         $this->createIndex('tree', '{{%categories}}', 'tree');
+        $this->createIndex('slug', '{{%categories}}', 'slug');
         $this->createIndex('name', '{{%categories}}', 'name');
         $this->createIndex('description', '{{%categories}}', 'description');
         $this->addForeignKey('FK_categories_image_id', '{{%categories}}', 'image_id', '{{%category_files}}', 'id', 'SET NULL', 'CASCADE');
@@ -60,8 +61,9 @@ class m150208_123637_create_catalog_tables extends Migration
             [
                 'id' => Schema::TYPE_PK,
                 'entity_id' => Schema::TYPE_INTEGER . ' DEFAULT NULL',
-                'meta_title' => Schema::TYPE_STRING . '(70) NOT NULL',
-                'meta_description' => Schema::TYPE_STRING . '(160) NOT NULL',
+                'meta_title' => Schema::TYPE_STRING . '(255) NOT NULL',
+                'meta_keywords' => Schema::TYPE_STRING . '(255) NOT NULL',
+                'meta_description' => Schema::TYPE_STRING . '(255) NOT NULL',
                 'meta_robots' => Schema::TYPE_STRING . '(50) NOT NULL',
                 'custom_meta' => Schema::TYPE_TEXT . ' NOT NULL',
             ],
@@ -120,8 +122,9 @@ class m150208_123637_create_catalog_tables extends Migration
             [
                 'id' => Schema::TYPE_PK,
                 'entity_id' => Schema::TYPE_INTEGER . ' DEFAULT NULL',
-                'meta_title' => Schema::TYPE_STRING . '(70) NOT NULL',
-                'meta_description' => Schema::TYPE_STRING . '(160) NOT NULL',
+                'meta_title' => Schema::TYPE_STRING . '(255) NOT NULL',
+                'meta_keywords' => Schema::TYPE_STRING . '(255) NOT NULL',
+                'meta_description' => Schema::TYPE_STRING . '(255) NOT NULL',
                 'meta_robots' => Schema::TYPE_STRING . '(50) NOT NULL',
                 'custom_meta' => Schema::TYPE_TEXT . ' NOT NULL',
             ],
@@ -210,8 +213,9 @@ class m150208_123637_create_catalog_tables extends Migration
             [
                 'id' => Schema::TYPE_PK,
                 'entity_id' => Schema::TYPE_INTEGER . ' DEFAULT NULL',
-                'meta_title' => Schema::TYPE_STRING . '(70) NOT NULL',
-                'meta_description' => Schema::TYPE_STRING . '(160) NOT NULL',
+                'meta_title' => Schema::TYPE_STRING . '(255) NOT NULL',
+                'meta_keywords' => Schema::TYPE_STRING . '(255) NOT NULL',
+                'meta_description' => Schema::TYPE_STRING . '(255) NOT NULL',
                 'meta_robots' => Schema::TYPE_STRING . '(50) NOT NULL',
                 'custom_meta' => Schema::TYPE_TEXT . ' NOT NULL',
             ],
@@ -242,6 +246,7 @@ class m150208_123637_create_catalog_tables extends Migration
                 'attribute_id' => Schema::TYPE_INTEGER . ' NOT NULL',
                 'attribute_name' => Schema::TYPE_STRING . '(100) NOT NULL', // Denormalization for performance
                 'attribute_type' => Schema::TYPE_STRING . '(100) NOT NULL', // Denormalization for performance
+                'value_id' => Schema::TYPE_INTEGER . ' NOT NULL',
                 'string_value' => Schema::TYPE_STRING . '(255) NOT NULL',
                 'value_entity_id' => Schema::TYPE_INTEGER . ' DEFAULT NULL'
             ],
@@ -249,6 +254,7 @@ class m150208_123637_create_catalog_tables extends Migration
         );
         $this->addForeignKey('FK_eav_product_values_entity_id', '{{%eav_product_values}}', 'entity_id', '{{%products}}', 'id', 'CASCADE', 'CASCADE');
         $this->addForeignKey('FK_eav_product_values_attribute_id', '{{%eav_product_values}}', 'attribute_id', '{{%eav_attributes}}', 'id', 'CASCADE', 'CASCADE');
+        $this->addForeignKey('FK_eav_product_values_value_id', '{{%eav_product_values}}', 'value_id', '{{%eav_values}}', 'id', 'CASCADE', 'CASCADE');
         $this->createIndex('attribute_name', '{{%eav_product_values}}', 'attribute_name');
         $this->createIndex('string_value', '{{%eav_product_values}}', 'string_value');
         $this->createIndex('value_entity_id', '{{%eav_product_values}}', 'value_entity_id');

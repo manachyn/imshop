@@ -130,7 +130,7 @@ class IndexedSearchableType extends SearchableType implements IndexableInterface
      */
     public function getObjectToDocumentTransformer()
     {
-        if (!$this->_objectToDocumentTransformer instanceof DocumentToObjectTransformerInterface) {
+        if (!$this->_objectToDocumentTransformer instanceof ObjectToDocumentTransformerInterface) {
             if (is_string($this->_objectToDocumentTransformer)) {
                 $this->_objectToDocumentTransformer = ['class' => $this->_objectToDocumentTransformer];
             }
@@ -145,7 +145,7 @@ class IndexedSearchableType extends SearchableType implements IndexableInterface
      */
     public function getDocumentToObjectTransformer()
     {
-        if (!$this->_documentToObjectTransformer instanceof ObjectToDocumentTransformerInterface) {
+        if (!$this->_documentToObjectTransformer instanceof DocumentToObjectTransformerInterface) {
             if (is_string($this->_documentToObjectTransformer)) {
                 $this->_documentToObjectTransformer = ['class' => $this->_documentToObjectTransformer];
             }

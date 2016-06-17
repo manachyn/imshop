@@ -21,6 +21,11 @@ http://www.slideshare.net/lucenerevolution/seeley-solr-facetseurocon2011
 Ranges
 https://www.drupal.org/project/facetapi_ranges
 http://www.webwash.net/tutorials/using-search-api-ranges-module-drupal-7
+Mysql faceted search
+http://www.mightywebdeveloper.com/coding/faceted-navigation-in-php-mysql/2/
+http://stackoverflow.com/questions/1831035/mysql-and-faceted-navigation-filter-by-attributes
+http://thedigilife.com/faceted-search-layered-search-on-mysql-database-with-example/
+
 
 http://localhost:9200/_search
 http://localhost:9200/products_index/_mapping/product

@@ -1,0 +1,22 @@
+{
+    "name": "imsoft/rbac",
+    "description": "RBAC module",
+    "version": "1.0.0",
+    "authors": [
+        {
+            "name": "Ivan Manachyn",
+            "email": "manachyn@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "im\\rbac\\": "src/",
+            "im\\rbac\\tests\\": "tests/"
+        }
+    },
+    "require": {
+        "php": ">=5.4.0",
+        "yiisoft/yii2": ">=2.0.6"
+    }
+}

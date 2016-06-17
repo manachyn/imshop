@@ -58,7 +58,7 @@ trait EavTrait
         $attributes = $this->normalizeEAttributes($attributes);
         $this->relatedEAttributes = $attributes;
         foreach ($attributes as $attribute) {
-            if ($attribute instanceof AttributeValueInterface) {
+            if ($attribute instanceof AttributeValueInterface && ($attribute->entity_id !== $this->id || $attribute->entity_type !== $this->getEntityType())) {
                 $attribute->setEntity($this);
             }
         }

@@ -2,13 +2,15 @@
 
 namespace im\cms\models;
 
-use im\base\interfaces\ModelBehaviorInterface;
+use creocoder\nestedsets\NestedSetsBehavior;
+use im\base\traits\ModelBehaviorTrait;
 use im\cms\Module;
+use im\tree\models\Tree;
 use Yii;
 use yii\behaviors\SluggableBehavior;
 use yii\behaviors\TimestampBehavior;
-use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Url;
 
 /**
  * This is the model class for table "{{%pages}}".
@@ -21,9 +23,17 @@ use yii\helpers\ArrayHelper;
  * @property integer $created_at
  * @property integer $updated_at
  * @property integer $status
+ *
+ * @method PageQuery parents(integer $depth = null)
+ * @method PageQuery children(integer $depth = null)
+ * @method PageQuery leaves()
+ * @method PageQuery prev()
+ * @method PageQuery next()
  */
-class Page extends ActiveRecord
+class Page extends Tree
 {
+    use ModelBehaviorTrait;
+
     const TYPE = 'page';
 
     const STATUS_DELETED = -1;
@@ -31,6 +41,21 @@ class Page extends ActiveRecord
     const STATUS_PUBLISHED = 1;
 
     const DEFAULT_STATUS = self::STATUS_UNPUBLISHED;
+
+    /**
+     * @var int
+     */
+    protected $parentId;
+
+    /**
+     * @var Page[]
+     */
+    protected $parents = [];
+
+    /**
+     * @var Page|null
+     */
+    protected $parent;
 
     /**
      * @inheritdoc
@@ -70,7 +95,11 @@ class Page extends ActiveRecord
                 'class' => SluggableBehavior::className(),
                 'attribute' => 'title',
                 'ensureUnique' => true
-            ]
+            ],
+            'tree' => [
+                'class' => NestedSetsBehavior::className(),
+                'treeAttribute' => 'tree'
+            ],
         ];
     }
 
@@ -83,7 +112,7 @@ class Page extends ActiveRecord
             [['title'], 'required'],
             ['status', 'default', 'value' => self::DEFAULT_STATUS],
             ['status', 'in', 'range' => array_keys(self::getStatusesList())],
-            [['content'], 'safe']
+            [['slug', 'content', 'parentId'], 'safe']
         ];
     }
 
@@ -99,7 +128,8 @@ class Page extends ActiveRecord
             'content' => Module::t('page', 'Content'),
             'created_at' => Module::t('page', 'Created At'),
             'updated_at' => Module::t('page', 'Updated At'),
-            'status' => Module::t('page', 'Status')
+            'status' => Module::t('page', 'Status'),
+            'parent' => Module::t('page', 'Parent'),
         ];
     }
 
@@ -114,13 +144,69 @@ class Page extends ActiveRecord
     }
 
     /**
-     * Gets page url.
+     * Returns url.
      *
+     * @param boolean|string $scheme the URI scheme to use in the generated URL
      * @return string
      */
-    public function getUrl()
+    public function getUrl($scheme = false)
     {
-        return $this->slug != 'index' ? $this->slug : '/';
+        $parts = [];
+        if ($parent = $this->getParent()) {
+            $parts[] = trim($parent->getUrl($scheme), '/');
+        }
+        if ($this->slug != 'index') {
+            $parts[] = $this->slug;
+        }
+
+        return Url::to(['/cms/page/view', 'path' => implode('/', $parts)], $scheme);
+    }
+
+    /**
+     * @return Page[]
+     */
+    public function getParents()
+    {
+        if (!$this->parents) {
+            $this->parents = $this->parents()->all();
+        }
+
+        return $this->parents;
+    }
+
+    /**
+     * @return Page|null
+     */
+    public function getParent()
+    {
+        if (!$this->parent) {
+            $this->parent = $this->parents(1)->one();
+        }
+
+        return $this->parent;
+    }
+
+    /**
+     * @return int
+     */
+    public function getParentId()
+    {
+        if (isset($this->parentId)) {
+            return $this->parentId;
+        } elseif ($parent = $this->parents(1)->one()) {
+            /** @var Page $parent */
+            return $parent->id;
+        }
+
+        return null;
+    }
+
+    /**
+     * @param int $parentId
+     */
+    public function setParentId($parentId)
+    {
+        $this->parentId = $parentId;
     }
 
     /**
@@ -172,33 +258,20 @@ class Page extends ActiveRecord
      */
     public static function findByPath($path)
     {
-        return static::find()->andWhere(['slug' => $path]);
+//        $parts = explode('/', $path);
+//        /** @var Page $page */
+//        $page = static::find()->andWhere(['slug' => array_pop($parts)])->one();
+//        $parents = $page->parents()->all();
+        return static::findBySlug($path);
     }
 
     /**
-     * @inheritdoc
+     * @param string $slug
+     * @return PageQuery
      */
-    public function load($data, $formName = null)
+    public static function findBySlug($slug)
     {
-        return parent::load($data, $formName) && $this->loadBehaviors($data);
-    }
-
-    /**
-     * Populates the model behaviors with the data from end user.
-     * @param array $data the data array.
-     * @return boolean whether the model behaviors is successfully populated with some data.
-     */
-    public function loadBehaviors($data)
-    {
-        $loaded = true;
-        foreach ($this->getBehaviors() as $behavior) {
-            if ($behavior instanceof ModelBehaviorInterface) {
-                if (!$behavior->load($data)) {
-                    $loaded = false;
-                }
-            }
-        }
-
-        return $loaded;
+        return static::find()->andWhere(['slug' => $slug]);
     }
 }
+

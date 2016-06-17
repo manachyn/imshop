@@ -100,7 +100,7 @@ class PageController extends CrudController
     {
         return [
             'model' => ['title', 'content', 'status', 'layout_id'],
-            'pageMeta' => ['meta_title', 'meta_description', 'meta_robots', 'custom_meta'],
+            'pageMeta' => ['meta_title', 'meta_keywords', 'meta_description', 'meta_robots', 'custom_meta'],
             'openGraph' => ['title', 'type', 'url', 'image', 'description', 'site_name', 'video']
         ];
     }

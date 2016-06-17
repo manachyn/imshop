@@ -7,6 +7,7 @@ use im\cms\models\PageSearch;
 use im\cms\Module;
 use im\cms\models\Page;
 use Yii;
+use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
 
 /**
@@ -22,21 +23,13 @@ class PageController extends CrudController
     public function init()
     {
         parent::init();
-
-        if (!isset($this->successCreate))
-            $this->successCreate = Module::t('page', 'Page has been successfully created.');
-        if (!isset($this->errorCreate))
-            $this->errorCreate = Module::t('page', 'Page has not been created. Please try again!');
-        if (!isset($this->successUpdate))
-            $this->successUpdate = Module::t('page', 'Page has been successfully saved.');
-        if (!isset($this->successBatchUpdate))
-            $this->successBatchUpdate = Module::t('page', '{count} pages have been successfully saved.');
-        if (!isset($this->errorUpdate))
-            $this->errorUpdate = Module::t('page', 'Page has not been saved. Please try again!');
-        if (!isset($this->successDelete))
-            $this->successDelete = Module::t('page', 'Page has been successfully deleted.');
-        if (!isset($this->successBatchDelete))
-            $this->successBatchDelete = Module::t('page', 'Pages have been successfully deleted.');
+        $this->successCreate = Module::t('page', 'Page has been successfully created.');
+        $this->errorCreate = Module::t('page', 'Page has not been created. Please try again!');
+        $this->successUpdate = Module::t('page', 'Page has been successfully saved.');
+        $this->successBatchUpdate = Module::t('page', '{count} pages have been successfully saved.');
+        $this->errorUpdate = Module::t('page', 'Page has not been saved. Please try again!');
+        $this->successDelete = Module::t('page', 'Page has been successfully deleted.');
+        $this->successBatchDelete = Module::t('page', 'Pages have been successfully deleted.');
     }
 
     /**
@@ -100,7 +93,7 @@ class PageController extends CrudController
     {
         return [
             'model' => ['title', 'content', 'status', 'layout_id'],
-            'pageMeta' => ['meta_title', 'meta_description', 'meta_robots', 'custom_meta'],
+            'pageMeta' => ['meta_title', 'meta_keywords', 'meta_description', 'meta_robots', 'custom_meta'],
             'openGraph' => ['title', 'type', 'url', 'image', 'description', 'site_name', 'video']
         ];
     }
@@ -123,5 +116,33 @@ class PageController extends CrudController
         }
 
         return $this->findModels($id, $with);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function saveModels($models, $create = false, $parameters = [])
+    {
+        /** @var Page $node */
+        $node = ArrayHelper::remove($models, 'model');
+
+        return $this->saveNode($node, $node->getParentId()) && parent::saveModels($models);
+    }
+
+    /**
+     * @param Page $node
+     * @param int|null $parent
+     * @return bool
+     */
+    protected function saveNode($node, $parent = null)
+    {
+        if (!empty($parent)) {
+            $parent = $this->findModel($parent);
+            return $node->appendTo($parent, false);
+        } elseif (!$node->isRoot()) {
+            return $node->makeRoot(false);
+        } else {
+            return $node->save(false);
+        }
     }
 }

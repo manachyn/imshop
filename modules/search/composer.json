@@ -11,7 +11,8 @@
     "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
-            "im\\search\\": "src/"
+            "im\\search\\": "src/",
+            "im\\search\\tests\\": "tests/"
         }
     },
     "require": {
@@ -21,6 +22,7 @@
         "imsoft/forms": "*",
         "imsoft/cms": "*",
         "imsoft/catalog": "*",
-        "imsoft/fsm": "*"
+        "imsoft/fsm": "*",
+        "imsoft/users" : "*"
     }
 }

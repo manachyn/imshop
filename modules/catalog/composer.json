@@ -26,6 +26,7 @@
         "imsoft/variation": "*",
         "imsoft/search": "*",
         "imsoft/filesystem": "*",
-        "imsoft/ckeditor" : "*"
+        "imsoft/ckeditor" : "*",
+        "imsoft/users" : "*"
     }
 }

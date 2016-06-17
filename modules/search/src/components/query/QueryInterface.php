@@ -17,7 +17,7 @@ interface QueryInterface extends \yii\db\QueryInterface
      *
      * @param SearchQueryInterface $searchQuery
      */
-    public function setSearchQuery($searchQuery);
+    public function setSearchQuery(SearchQueryInterface $searchQuery);
 
     /**
      * Returns search query.

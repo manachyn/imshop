@@ -53,3 +53,6 @@ $layoutManager->registerWidgetClass('im\cms\models\ContentWidget');
 
 'typesRegister' => 'im\base\types\EntityTypesRegister',
 'layoutManager' => 'im\cms\components\LayoutManager',
+
+
+php yii migrate --migrationPath=@im/cms/migrations

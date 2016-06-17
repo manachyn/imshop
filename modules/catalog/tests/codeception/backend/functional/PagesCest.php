@@ -49,6 +49,7 @@ class PagesCest extends FunctionalCest
         ];
         $pageMetaData = [
             'meta_title' => 'Meta title',
+            'meta_keywords' => 'Meta keywords',
             'meta_description' => 'Meta description',
             'custom_meta' => 'Custom meta',
             'metaRobotsDirectives' => 'noindex'

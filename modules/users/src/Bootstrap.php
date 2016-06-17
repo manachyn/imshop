@@ -2,19 +2,25 @@
 
 namespace im\users;
 
+use im\rbac\components\AuthDataProviderInterface;
 use Yii;
 use yii\base\Application;
 use yii\base\BootstrapInterface;
 use yii\console\Application as ConsoleApplication;
 
-class Bootstrap implements BootstrapInterface
+/**
+ * Class Bootstrap
+ * @package im\users
+ */
+class Bootstrap implements BootstrapInterface, AuthDataProviderInterface
 {
     /**
      * @inheritdoc
      */
     public function bootstrap($app)
     {
-        Yii::setAlias('@im/users', __DIR__);
+        $this->registerTranslations($app);
+        $this->setAliases();
 
 //        /** @var $module Module */
 //        $module = $app->getModule('users');
@@ -64,14 +70,47 @@ class Bootstrap implements BootstrapInterface
 //    }
 
     /**
-     * Adds module rules.
+     * Register module translations.
      *
      * @param Application $app
      */
-    public function addRules($app)
+    public function registerTranslations($app)
     {
-        $app->getUrlManager()->addRules([
+        $app->i18n->translations[Module::$messagesCategory . '/*'] = [
+            'class' => 'yii\i18n\PhpMessageSource',
+            'sourceLanguage' => 'en-US',
+            'basePath' => '@im/users/messages',
+            'fileMap' => [
+                Module::$messagesCategory => 'module.php',
+                Module::$messagesCategory . '/user' => 'user.php'
+            ]
+        ];
+    }
 
-        ], false);
+    /**
+     * @return void
+     */
+    public function setAliases()
+    {
+        Yii::setAlias('@im/users', __DIR__);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getAuthItems()
+    {
+        $config = require(__DIR__ . '/config/rbac.php');
+
+        return $config['items'];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getAuthRules()
+    {
+        return [];
     }
 }
+

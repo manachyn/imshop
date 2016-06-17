@@ -12,6 +12,9 @@ use yii\base\Model;
  */
 trait ModelBehaviorTrait
 {
+    /**
+     * @inheritdoc
+     */
     public function load($data, $formName = null)
     {
         return parent::load($data, $formName) && $this->loadBehaviors($data);

@@ -60,10 +60,10 @@ class Menu extends Widget
         $layoutManager = Yii::$app->get('layoutManager');
         $menu = $layoutManager->getMenu($this->location);
 
-        return $this->render('menu/menu', [
+        return $menu ? $this->render('menu/menu', [
             'widget' => $this,
             'items' => $menu->items
-        ]);
+        ]) : '';
     }
 
     /**

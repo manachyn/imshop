@@ -26,6 +26,21 @@ class Profile extends ActiveRecord implements ProfileInterface
     const SCENARIO_REGISTER = 'register';
 
     /**
+     * @var string the name of the create scenario.
+     */
+    const SCENARIO_CREATE = 'create';
+
+    /**
+     * @var string the name of the update scenario.
+     */
+    const SCENARIO_UPDATE = 'update';
+
+    /**
+     * @var string the name of the profile scenario.
+     */
+    const SCENARIO_PROFILE = 'profile';
+
+    /**
      * @var string the name of the connect scenario.
      */
     const SCENARIO_CONNECT = 'connect';
@@ -52,7 +67,9 @@ class Profile extends ActiveRecord implements ProfileInterface
     {
         return [
             static::SCENARIO_DEFAULT => ['first_name', 'last_name', 'user_id'],
-            static::SCENARIO_REGISTER => ['first_name', 'last_name', 'user_id']
+            static::SCENARIO_REGISTER => ['first_name', 'last_name', 'user_id'],
+            static::SCENARIO_CREATE => ['first_name', 'last_name', 'user_id'],
+            static::SCENARIO_UPDATE => ['first_name', 'last_name', 'user_id']
         ];
     }
 
@@ -96,3 +113,4 @@ class Profile extends ActiveRecord implements ProfileInterface
         list($this->first_name, $this->last_name) = explode(' ', $fullName);
     }
 }
+

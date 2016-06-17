@@ -8,6 +8,7 @@ use im\search\components\query\QueryInterface;
 use im\search\components\query\QueryResultInterface;
 use im\search\components\query\Range;
 use im\search\components\query\SearchQueryInterface;
+use im\search\components\query\Suggest;
 use im\search\components\query\Term;
 use im\search\components\searchable\AttributeDescriptor;
 use im\search\components\searchable\SearchableInterface;
@@ -95,6 +96,38 @@ class Query extends ActiveQuery implements QueryInterface
     }
 
     /**
+     * @inheritdoc
+     */
+    public function getOrderBy()
+    {
+        // TODO: Implement getOrderBy() method.
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setFacets($facets)
+    {
+        // TODO: Implement setFacets() method.
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getSuggestQuery()
+    {
+        // TODO: Implement getSuggestQuery() method.
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setSuggestQuery(Suggest $suggestQuery)
+    {
+        // TODO: Implement
+    }
+
+    /**
      * Returns condition by search query.
      *
      * @param SearchQueryInterface $query
@@ -122,16 +155,16 @@ class Query extends ActiveQuery implements QueryInterface
                 $name = $query->getField();
             }
             $attribute = $this->getSearchableAttribute($name);
-            if ($attribute->value and $attribute->value instanceof \Closure) {
+            if ($attribute->value && ($attribute->value instanceof \Closure)) {
                 $attributeValue = call_user_func_array($attribute->value, [new $this->modelClass]);
                 if ($attributeValue instanceof ActiveQuery) {
                     $modelClass = $attributeValue->modelClass;
                     $relationTable = $modelClass::tableName();
-                    if (!isset($this->_joined[$attribute->name])) {
-                        $this->joinWith($attribute->name, false);
-                        $this->_joined[$attribute->name] = true;
+                    $joinName = isset($attribute->params['relationName']) ? $attribute->params['relationName'] : $attribute->name;
+                    if (!isset($this->_joined[$joinName])) {
+                        $this->joinWith($joinName, false);
+                        $this->_joined[$joinName] = true;
                     }
-                    ;
                     $field = $relationTable . '.' . ($childName ?: $name);
                 }
             }

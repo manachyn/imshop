@@ -5,6 +5,10 @@ namespace im\cms\backend;
 use im\base\traits\ModuleTranslateTrait;
 use Yii;
 
+/**
+ * Class Module
+ * @package im\cms\backend
+ */
 class Module extends \yii\base\Module
 {
     use ModuleTranslateTrait;

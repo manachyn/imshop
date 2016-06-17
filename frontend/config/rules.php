@@ -25,6 +25,7 @@ return [
         'class' => 'im\base\routing\GroupUrlRule',
         'pattern' => '<path:.+>',
         'defaults' => ['path' => 'index'],
+        'encodeParams' => false,
         'resolvers' => [
             [
                 'class' => 'im\base\routing\ModelRouteResolver',
@@ -32,9 +33,9 @@ return [
                 'modelClass' => 'im\catalog\models\Product'
             ],
             [
-                'class' => 'im\base\routing\ModelRouteResolver',
+                'class' => 'im\cms\components\PageModelRouteResolver',
                 'route' => 'cms/page/view',
-                'modelClass' => 'im\cms\models\Page'
+                'modelClass' => 'im\cms\models\Page',
             ],
         ]
     ]

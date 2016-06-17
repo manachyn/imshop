@@ -20,8 +20,8 @@ class m141204_151109_create_config_tables extends Migration
             ],
             $tableOptions
         );
-        $this->createIndex('component', '{{%config}}', 'component');
         $this->createIndex('key', '{{%config}}', 'key');
+        $this->createIndex('context', '{{%config}}', 'context');
     }
 
     public function down()

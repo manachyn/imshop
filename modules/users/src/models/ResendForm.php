@@ -78,4 +78,12 @@ class ResendForm extends Model
 
         return $this->_user;
     }
+
+    /**
+     * @param User $user
+     */
+    public function setUser($user)
+    {
+        $this->_user = $user;
+    }
 }

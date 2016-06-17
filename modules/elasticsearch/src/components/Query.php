@@ -146,7 +146,7 @@ class Query extends \yii\elasticsearch\Query implements QueryInterface
     /**
      * @inheritdoc
      */
-    public function setSearchQuery($searchQuery)
+    public function setSearchQuery(SearchQueryInterface $searchQuery)
     {
         $this->_searchQuery = $searchQuery;
     }

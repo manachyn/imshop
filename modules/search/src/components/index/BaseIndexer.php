@@ -91,6 +91,7 @@ abstract class BaseIndexer implements IndexerInterface
         $document = $transformer->transform($object, $mapping);
         $document->setIndex($index->getName());
         $document->setType($type);
+
         return $this->insertDocument($document);
     }
 

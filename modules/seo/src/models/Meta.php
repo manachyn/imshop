@@ -17,6 +17,7 @@ use yii\web\View;
  * @property integer $entity_id
  * @property string $entity_type
  * @property string $meta_title
+ * @property string $meta_keywords
  * @property string $meta_description
  * @property string $meta_robots
  * @property string $custom_meta
@@ -52,8 +53,8 @@ class Meta extends ActiveRecord implements MetaInterface
         return [
             [['entity_id'], 'integer'],
             [['custom_meta'], 'string'],
-            [['meta_title'], 'string', 'max' => 70],
-            [['meta_description'], 'string', 'max' => 160],
+            [['meta_title'], 'string', 'max' => 255],
+            [['meta_keywords', 'meta_description'], 'string', 'max' => 255],
             [['meta_robots', 'metaRobotsDirectives'], 'safe'],
             [['socialMeta'], 'im\base\validators\RelationValidator']
         ];
@@ -68,6 +69,7 @@ class Meta extends ActiveRecord implements MetaInterface
             'id' => Module::t('meta', 'ID'),
             'entity_id' => Module::t('meta', 'Entity ID'),
             'meta_title' => Module::t('meta', 'Meta Title'),
+            'meta_keywords' => Module::t('meta', 'Meta Keywords'),
             'meta_description' => Module::t('meta', 'Meta Description'),
             'meta_robots' => Module::t('meta', 'Meta Robots'),
             'metaRobotsDirectives' => Module::t('meta', 'Meta Robots'),
@@ -176,6 +178,8 @@ class Meta extends ActiveRecord implements MetaInterface
     public function applyTo(View $view)
     {
         $view->params['metaTitle'] = $this->meta_title ? TemplateHelper::evaluateTemplate($this->meta_title, ['model' => $this->entity]) : $view->title;
+        if ($this->meta_keywords)
+            $view->registerMetaTag(['name' => 'keywords', 'content' => TemplateHelper::evaluateTemplate($this->meta_keywords, ['model' => $this->entity])], 'keywords');
         if ($this->meta_description)
             $view->registerMetaTag(['name' => 'description', 'content' => TemplateHelper::evaluateTemplate($this->meta_description, ['model' => $this->entity])], 'description');
         if ($this->meta_robots)

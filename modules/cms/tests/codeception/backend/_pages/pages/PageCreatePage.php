@@ -16,7 +16,8 @@ class PageCreatePage extends BasePage
         'status' => ['select'],
         'content' => ['textarea'],
         'meta_title' => ['input'],
-        'meta_description' => ['input'],
+        'meta_keywords' => ['textarea'],
+        'meta_description' => ['textarea'],
         'custom_meta' => ['textarea'],
         'metaRobotsDirectives' => ['checkbox', true],
     ];

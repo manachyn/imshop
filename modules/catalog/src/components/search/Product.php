@@ -7,6 +7,10 @@ use im\search\components\searchable\AttributeDescriptor;
 use im\search\components\service\db\IndexedSearchableType;
 use Yii;
 
+/**
+ * Class Product
+ * @package im\catalog\components\search
+ */
 class Product extends IndexedSearchableType
 {
     /**
@@ -24,7 +28,7 @@ class Product extends IndexedSearchableType
         // EAV
         $searchableAttributes = array_merge($searchableAttributes, $this->getSearchableEAVAttributes($entityType));
         // Relations
-        $searchableAttributes = array_merge($searchableAttributes, $this->getRelationAttributes($model->getCategoriesRelation(), 'categories'));
+        $searchableAttributes = array_merge($searchableAttributes, $this->getRelationAttributes($model->getCategoriesRelation(), 'categoriesRelation', 'categories'));
         $searchableAttributes[] = new AttributeDescriptor([
             'name' => 'all_categories',
             'label' => 'All categories (including  category parents)',
@@ -41,7 +45,7 @@ class Product extends IndexedSearchableType
                 return array_values($value);
             }
         ]);
-        $searchableAttributes = array_merge($searchableAttributes, $this->getRelationAttributes($model->getBrandRelation(), 'brand'));
+        $searchableAttributes = array_merge($searchableAttributes, $this->getRelationAttributes($model->getBrandRelation(), 'brandRelation', 'brand'));
 
         return $searchableAttributes;
     }

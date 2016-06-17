@@ -34,7 +34,7 @@ class Bootstrap extends \im\cms\Bootstrap
                     'PUT,PATCH {id}/move' => 'move',
                     'POST search' => 'search'
                 ],
-                'controller' => ['menu-items' => 'cms/rest/menu-item']
+                'controller' => ['menu-items' => 'cms/rest/menu-item', 'pages' => 'cms/rest/page']
             ],
             [
                 'class' => 'yii\rest\UrlRule',

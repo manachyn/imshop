@@ -1,0 +1,30 @@
+{
+    "name": "imsoft/users",
+    "description": "Users module",
+    "version": "1.0.0",
+    "authors": [
+        {
+            "name": "Ivan Manachyn",
+            "email": "manachyn@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "im\\users\\": "src/",
+            "im\\users\\tests\\": "tests/"
+        }
+    },
+    "require": {
+        "php": ">=5.4.0",
+        "yiisoft/yii2": ">=2.0.6",
+        "yiisoft/yii2-authclient": "~2.0.0",
+        "imsoft/rbac": "*"
+    },
+    "require-dev": {
+        "yiisoft/yii2-codeception": "~2.0",
+        "codeception/specify": "*",
+        "codeception/verify": "*",
+        "codeception/aspect-mock": "*"
+    }
+}

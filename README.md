@@ -48,3 +48,13 @@ php yii webpack/webpack frontend/assets/compression/webpack.php
 npm install
 webpack
 webpack-dev-server
+
+
+Migrations
+php yii migrate --migrationPath=@im/config/migrations
+php yii migrate --migrationPath=@im/cms/migrations
+php yii migrate --migrationPath=@im/seo/migrations
+php yii migrate --migrationPath=@im/eav/migrations
+php yii migrate --migrationPath=@im/variation/migrations
+php yii migrate --migrationPath=@im/catalog/migrations // Only after eav and variation
+php yii migrate --migrationPath=@im/blog/migrations // Only after cms

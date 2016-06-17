@@ -13,19 +13,15 @@ return [
         'log' => 'log',
         'base' => 'im\base\Bootstrap',
         'cms' => 'im\cms\frontend\Bootstrap',
-        'imshop' => 'im\imshop\Bootstrap',
         'search' => 'im\search\frontend\Bootstrap'
     ],
     'controllerNamespace' => 'frontend\controllers',
     'modules' => [
         'cms' => 'im\cms\frontend\Module',
         'search' => 'im\search\frontend\Module',
+        'users' => 'im\users\Module'
     ],
     'components' => [
-        'user' => [
-            'identityClass' => 'common\models\User',
-            'enableAutoLogin' => true,
-        ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
             'targets' => [
@@ -48,10 +44,10 @@ return [
             'rules' => require(__DIR__ . '/rules.php')
         ],
         'view' => [
-            'theme' => ['class' => 'im\imshop\Theme']
+            'theme' => ['class' => 'im\pkbnt\components\Theme']
         ],
         'assetManager' => [
-            'bundles' => require(dirname(__DIR__) . '/assets/assets.php'),
+            'bundles' => require(dirname(dirname(__DIR__)) . '/modules/pkbnt/src/components/assets/assets.php'),
         ],
         'glide' => [
             'class' => 'im\image\glide\Glide',

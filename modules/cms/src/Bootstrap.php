@@ -105,15 +105,15 @@ class Bootstrap implements BootstrapInterface
      */
     public function registerSearchableTypes($app)
     {
-        /** @var \im\search\components\SearchManager $searchManager */
-        $searchManager = $app->get('searchManager');
-        $searchManager->registerSearchableType([
-            'class' => 'im\search\components\service\db\IndexedSearchableType',
-            'type' => 'page',
-            'searchResultsView' => '@im/cms/views/page/_site_search_results',
-            'modelClass' => 'im\cms\models\Page',
-            'objectToDocumentTransformer' => 'im\elasticsearch\components\ActiveRecordToElasticDocumentTransformer',
-        ]);
+//        /** @var \im\search\components\SearchManager $searchManager */
+//        $searchManager = $app->get('searchManager');
+//        $searchManager->registerSearchableType([
+//            'class' => 'im\search\components\service\db\IndexedSearchableType',
+//            'type' => 'page',
+//            'searchResultsView' => '@im/cms/views/page/_site_search_results',
+//            'modelClass' => 'im\cms\models\Page',
+//            'objectToDocumentTransformer' => 'im\elasticsearch\components\ActiveRecordToElasticDocumentTransformer',
+//        ]);
     }
 
     /**

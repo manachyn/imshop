@@ -7,7 +7,6 @@ use im\users\traits\ModuleTrait;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
-use yii\helpers\ArrayHelper;
 use yii\web\IdentityInterface;
 use Yii;
 
@@ -57,14 +56,19 @@ class User extends ActiveRecord implements IdentityInterface
     const SCENARIO_UPDATE = 'update';
 
     /**
+     * @var string the name of the profile scenario.
+     */
+    const SCENARIO_PROFILE = 'profile';
+
+    /**
      * @var string the name of the connect scenario.
      */
     const SCENARIO_CONNECT = 'connect';
 
     /**
-     * @var int inactive status
+     * @var int not confirmed status
      */
-    const STATUS_INACTIVE = 0;
+    const STATUS_NOT_CONFIRMED = 0;
 
     /**
      * @var int active status
@@ -80,10 +84,6 @@ class User extends ActiveRecord implements IdentityInterface
      * @var int deleted status
      */
     const STATUS_DELETED = 3;
-
-    const ROLE_USER = 10;
-
-    const ROLE_DEFAULT = 'user';
 
     /**
      * @var string|null Password
@@ -127,14 +127,11 @@ class User extends ActiveRecord implements IdentityInterface
             ['email', 'string', 'max' => 255],
             ['email', 'unique'],
 
-            ['password', 'required', 'on' => [static::SCENARIO_REGISTER]],
+            ['password', 'required', 'on' => [static::SCENARIO_REGISTER, static::SCENARIO_CREATE]],
             ['password', 'string', 'min' => 6],
 
-            ['status', 'default', 'value' => $this->module->registrationConfirmation ? static::STATUS_INACTIVE : static::STATUS_ACTIVE],
+            ['status', 'default', 'value' => $this->module->registrationConfirmation ? static::STATUS_NOT_CONFIRMED : static::STATUS_ACTIVE],
             ['status', 'in', 'range' => array_keys(static::getStatusesList())],
-
-            ['role', 'default', 'value' => static::ROLE_DEFAULT],
-            ['role', 'in', 'range' => [static::ROLE_DEFAULT]],
 
             [['registration_ip', 'last_login_ip', 'created_at', 'updated_at', 'confirmed_at', 'last_login_at', 'blocked_at'], 'safe']
         ];
@@ -149,6 +146,8 @@ class User extends ActiveRecord implements IdentityInterface
             self::SCENARIO_LOGIN => ['username', 'password'],
             self::SCENARIO_REGISTER => ['username', 'email', 'password'],
             self::SCENARIO_CONNECT => ['username', 'email'],
+            self::SCENARIO_CREATE => ['username', 'email', 'password', 'status'],
+            self::SCENARIO_UPDATE => ['username', 'email', 'password', 'status']
         ];
     }
 
@@ -302,28 +301,6 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
-     * @inheritdoc
-     */
-    public function afterSave($insert, $changedAttributes)
-    {
-        parent::afterSave($insert, $changedAttributes);
-
-//        if ($this->profile !== null) {
-//            $this->profile->save(false);
-//        }
-
-//        $auth = Yii::$app->authManager;
-//        $name = $this->role ? $this->role : static::ROLE_DEFAULT;
-//        $role = $auth->getRole($name);
-//
-//        if (!$insert) {
-//            $auth->revokeAll($this->id);
-//        }
-//
-//        $auth->assign($role, $this->id);
-    }
-
-    /**
      * Returns profile relation.
      *
      * @return ActiveQuery
@@ -353,8 +330,9 @@ class User extends ActiveRecord implements IdentityInterface
     public static function getStatusesList()
     {
         return [
-            static::STATUS_INACTIVE => Module::t('users', 'Inactive'),
             static::STATUS_ACTIVE => Module::t('users', 'Active'),
+            static::STATUS_NOT_CONFIRMED => Module::t('users', 'Not confirmed'),
+            static::STATUS_BLOCKED => Module::t('users', 'Blocked'),
             static::STATUS_DELETED => Module::t('users', 'Deleted')
         ];
     }
@@ -370,16 +348,6 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
-     * Return roles list.
-     *
-     * @return array
-     */
-    public static function getRolesList()
-    {
-        return Yii::$app->authManager ? ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'description') : array();
-    }
-
-    /**
      * Check user confirmation status.
      *
      * @return bool whether the user is confirmed.
@@ -390,6 +358,16 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
+     * Check user not confirmed status.
+     *
+     * @return bool whether the user is not confirmed.
+     */
+    public function isNotConfirmed()
+    {
+        return $this->status === static::STATUS_NOT_CONFIRMED;
+    }
+
+    /**
      * Check user active status.
      *
      * @return bool whether the user is activated.
@@ -397,6 +375,16 @@ class User extends ActiveRecord implements IdentityInterface
     public function isActive()
     {
         return $this->status === static::STATUS_ACTIVE;
+    }
+
+    /**
+     * Check user blocked status.
+     *
+     * @return bool whether the user is blocked.
+     */
+    public function isBlocked()
+    {
+        return $this->status === static::STATUS_BLOCKED;
     }
 
     /**
@@ -416,4 +404,14 @@ class User extends ActiveRecord implements IdentityInterface
         $this->status = static::STATUS_ACTIVE;
         $this->blocked_at = null;
     }
+
+    /**
+     * Confirms the user.
+     */
+    public function confirm()
+    {
+        $this->status = static::STATUS_ACTIVE;
+        $this->confirmed_at = time();
+    }
 }
+

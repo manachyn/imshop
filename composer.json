@@ -12,7 +12,8 @@
         "irc": "irc://irc.freenode.net/yii",
         "source": "https://github.com/yiisoft/yii2"
     },
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "repositories": [
         {
             "type": "path",
@@ -101,6 +102,26 @@
         {
             "type": "path",
             "url": "modules/wysiwyg"
+        },
+        {
+            "type": "path",
+            "url": "modules/lucene"
+        },
+        {
+            "type": "path",
+            "url": "modules/users"
+        },
+        {
+            "type": "path",
+            "url": "modules/rbac"
+        },
+        {
+            "type": "path",
+            "url": "modules/blog"
+        },
+        {
+            "type": "path",
+            "url": "modules/pkbnt"
         }
     ],
     "require": {
@@ -112,9 +133,15 @@
         "imsoft/imshop": "*",
         "imsoft/webpack": "*",
         "imsoft/cms": "*",
+        "imsoft/blog": "*",
         "imsoft/catalog": "*",
         "imsoft/elasticsearch": "*",
-        "imsoft/backend": "*"
+        "imsoft/lucene": "*",
+        "imsoft/backend": "*",
+        "imsoft/rbac": "*",
+        "himiklab/yii2-search-component-v2": "^2.0",
+        "yiisoft/yii2-authclient": "^2.0",
+        "imsoft/pkbnt": "*"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",
@@ -123,7 +150,8 @@
         "yiisoft/yii2-faker": "*",
         "codeception/codeception": "2.0.*",
         "codeception/specify": "*",
-        "codeception/verify": "*"
+        "codeception/verify": "*",
+        "codeception/aspect-mock": "*"
     },
     "config": {
         "process-timeout": 1800

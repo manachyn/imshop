@@ -29,7 +29,8 @@
         "imsoft/tree": "*",
         "imsoft/seo": "*",
         "imsoft/filesystem": "*",
-        "imsoft/wysiwyg" : "*"
+        "imsoft/wysiwyg" : "*",
+        "imsoft/users" : "*"
     },
     "require-dev": {
         "codeception/codeception": "2.0.*",

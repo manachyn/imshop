@@ -222,11 +222,18 @@ class SearchableType extends Object implements SearchableInterface, QueryParserC
     {
         $searchableAttributes = [];
         $eavAttributes = Attribute::findByEntityType($entityType);
-        foreach ($eavAttributes as $attribute) {
-            $searchableAttributes[] = new AttributeDescriptor([
-                'name' => $attribute->getName() . '_attr',
-                'label' => $attribute->getPresentation()
-            ]);
+        if ($eavAttributes) {
+            $attributesRelation = $this->getModel()->getEAttributesRelation();
+            foreach ($eavAttributes as $attribute) {
+                $searchableAttributes[] = new AttributeDescriptor([
+                    'name' => $attribute->getName() . '_attr',
+                    'label' => $attribute->getPresentation(),
+                    'value' => function ($model) use ($attributesRelation) {
+                        return $attributesRelation;
+                    },
+                    'params' => ['relationName' => $attributesRelation]
+                ]);
+            }
         }
 
         return $searchableAttributes;
@@ -234,12 +241,13 @@ class SearchableType extends Object implements SearchableInterface, QueryParserC
 
     /**
      * @param ActiveQuery $relation
+     * @param string $relationName
      * @param string $name
      * @param string $label
      * @param bool $recursive
-     * @return AttributeDescriptor[]
+     * @return \im\search\components\searchable\AttributeDescriptor[]
      */
-    protected function getRelationAttributes(ActiveQuery $relation, $name, $label = '', $recursive = true)
+    protected function getRelationAttributes(ActiveQuery $relation, $relationName, $name, $label = '', $recursive = true)
     {
         $searchableAttributes = [];
         $label = $label ?: $name;
@@ -263,7 +271,8 @@ class SearchableType extends Object implements SearchableInterface, QueryParserC
                 return $relation;
             },
             'type' => $searchableType->getType(),
-            'dependency' => new AttributeDescriptorDependency(['class' => $modelClass])
+            'dependency' => new AttributeDescriptorDependency(['class' => $modelClass]),
+            'params' => ['relationName' => $relationName]
         ]);
         if ($recursive) {
             foreach ($searchableType->getSearchableAttributes(false) as $attribute) {

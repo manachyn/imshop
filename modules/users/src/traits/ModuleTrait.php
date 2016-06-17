@@ -2,6 +2,8 @@
 
 namespace im\users\traits;
 
+use Yii;
+
 /**
  * Class ModuleTrait
  * Implements `getModule` method, to receive current module instance.
@@ -21,7 +23,7 @@ trait ModuleTrait
     public function getModule()
     {
         if ($this->_module === null) {
-            $this->_module = \Yii::$app->getModule('users');
+            $this->_module = Yii::$app->getModule('users');
         }
 
         return $this->_module;

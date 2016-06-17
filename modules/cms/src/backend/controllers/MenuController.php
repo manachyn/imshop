@@ -56,7 +56,7 @@ class MenuController extends BackendController
 
     /**
      * Creates a new model.
-     * If creation is successful, the browser will be redirected to the 'index' page.
+     * If creation is successful, the browser will be redirected to the 'update' page.
      * @return mixed
      */
     public function actionCreate()
@@ -75,7 +75,7 @@ class MenuController extends BackendController
 
     /**
      * Updates an existing model.
-     * If update is successful, the browser will be redirected to the 'index' page.
+     * If update is successful, the browser will be redirected to the 'update' page.
      * @param integer $id
      * @return mixed
      */

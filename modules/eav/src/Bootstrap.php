@@ -2,8 +2,13 @@
 
 namespace im\eav;
 
+use Yii;
 use yii\base\BootstrapInterface;
 
+/**
+ * Class Bootstrap
+ * @package im\eav
+ */
 class Bootstrap implements BootstrapInterface
 {
     /**
@@ -12,6 +17,7 @@ class Bootstrap implements BootstrapInterface
     public function bootstrap($app)
     {
         $this->registerTranslations($app);
+        $this->setAliases();
     }
 
     /**
@@ -31,5 +37,13 @@ class Bootstrap implements BootstrapInterface
                 Module::$messagesCategory . '/value' => 'value.php'
             ]
         ];
+    }
+
+    /**
+     * @return void
+     */
+    public function setAliases()
+    {
+        Yii::setAlias('@im/eav', __DIR__);
     }
 }

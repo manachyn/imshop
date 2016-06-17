@@ -2,13 +2,15 @@
 
 namespace im\cms\models;
 
-use yii\db\ActiveQuery;
+use im\tree\models\TreeQuery;
 
 /**
  * Class PageQuery
  * @package im\cms\models
+ * @method PageQuery roots
+ * @method PageQuery leaves
  */
-class PageQuery extends ActiveQuery
+class PageQuery extends TreeQuery
 {
     /**
      * @var string

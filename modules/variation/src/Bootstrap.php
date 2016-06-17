@@ -3,6 +3,7 @@
 namespace im\variation;
 
 use im\base\traits\ModuleTranslateTrait;
+use Yii;
 use yii\base\BootstrapInterface;
 
 class Bootstrap implements BootstrapInterface
@@ -20,6 +21,7 @@ class Bootstrap implements BootstrapInterface
     public function bootstrap($app)
     {
         $this->registerTranslations($app);
+        $this->setAliases();
     }
 
     /**
@@ -37,5 +39,13 @@ class Bootstrap implements BootstrapInterface
                 static::$messagesCategory => 'module.php'
             ]
         ];
+    }
+
+    /**
+     * @return void
+     */
+    public function setAliases()
+    {
+        Yii::setAlias('@im/variation', __DIR__);
     }
 }

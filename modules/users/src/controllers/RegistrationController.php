@@ -99,7 +99,7 @@ class RegistrationController extends Controller
         $userComponent = $this->getUserComponent();
 
         try {
-            if ($user = $userComponent->confirm($token)) {
+            if ($user = $userComponent->confirmByToken($token)) {
                 Yii::$app->session->setFlash('confirmation.success', Module::t('registration', 'Thank you! Registration is complete now.'));
                 if ($this->module->loginAfterRegistration) {
                     $userComponent->login($user);

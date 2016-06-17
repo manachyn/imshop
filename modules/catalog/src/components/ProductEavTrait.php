@@ -45,5 +45,17 @@ trait ProductEavTrait
         }
     }
 
-
-} 
+    /**
+     * @inheritdoc
+     */
+    public function setEAttributes($attributes)
+    {
+        $attributes = $this->normalizeEAttributes($attributes);
+        $this->relatedEAttributes = $attributes;
+        foreach ($attributes as $attribute) {
+            if ($attribute instanceof ProductAttributeValue && ($attribute->entity_id !== $this->id)) {
+                $attribute->setEntity($this);
+            }
+        }
+    }
+}

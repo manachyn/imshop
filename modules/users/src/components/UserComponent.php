@@ -6,6 +6,7 @@ use DateTime;
 use im\users\clients\ClientInterface;
 use im\users\models\Auth;
 use im\users\models\Profile;
+use im\users\models\ProfileForm;
 use im\users\models\Token;
 use im\users\traits\ModuleTrait;
 use im\users\models\RegistrationForm;
@@ -39,6 +40,36 @@ class UserComponent extends \yii\web\User
     const EVENT_AFTER_REGISTRATION = 'afterRegistration';
 
     /**
+     * @event ModelEvent an event that is triggered before user creation.
+     */
+    const EVENT_BEFORE_CREATION = 'beforeCreation';
+
+    /**
+     * @event Event an event that is triggered after a user is created.
+     */
+    const EVENT_AFTER_CREATION = 'afterCreation';
+
+    /**
+     * @event ModelEvent an event that is triggered before user updating.
+     */
+    const EVENT_BEFORE_UPDATING = 'beforeUpdating';
+
+    /**
+     * @event Event an event that is triggered after a user is updating.
+     */
+    const EVENT_AFTER_UPDATING = 'afterUpdating';
+
+    /**
+     * @event ModelEvent an event that is triggered before user deleting.
+     */
+    const EVENT_BEFORE_DELETING = 'beforeDeleting';
+
+    /**
+     * @event Event an event that is triggered after a user is deleting.
+     */
+    const EVENT_AFTER_DELETING = 'afterDeleting';
+
+    /**
      * @event ModelEvent an event that is triggered before user confirmation.
      */
     const EVENT_BEFORE_CONFIRMATION = 'beforeConfirmation';
@@ -58,7 +89,7 @@ class UserComponent extends \yii\web\User
     }
 
     /**
-     * Registers a user.
+     * Registers user.
      *
      * @param \im\users\models\RegistrationForm $form
      * @return User|null the saved user or null if saving fails
@@ -104,13 +135,105 @@ class UserComponent extends \yii\web\User
     }
 
     /**
+     * Creates user.
+     *
+     * @param array $data
+     * @return User|null the saved user or null if saving fails
+     */
+    public function create(array $data)
+    {
+        /** @var User $userClass */
+        $userClass = $this->module->backendUserModel;
+        /** @var User $user */
+        $user = Yii::createObject(['class' => $userClass, 'scenario' => $userClass::SCENARIO_CREATE]);
+        /** @var Profile $profileClass */
+        $profileClass = $this->module->profileModel;
+        /** @var Profile $profile */
+        $profile = Yii::createObject(['class' => $profileClass, 'scenario' => $profileClass::SCENARIO_CREATE]);
+
+        if ($user->load($data) && $profile->load($data)) {
+            $user->profile = $profile;
+            if ($user->status == $user::STATUS_BLOCKED && $user->getOldAttribute('status') != $user::STATUS_BLOCKED) {
+                $user->block();
+            }
+            $confirm = $user->status == $user::STATUS_ACTIVE && $user->getOldAttribute('status') == $user::STATUS_NOT_CONFIRMED;
+            if (!$this->beforeCreate($user)) {
+                return null;
+            }
+            if ($user->save() && $user->profile->save()) {
+                $user->link('profile', $user->profile);
+                $this->afterCreate($user);
+                if ($confirm) {
+                    $this->confirm($user);
+                }
+                return $user;
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Updates user.
+     *
+     * @param User $user
+     * @param array $data
+     * @return bool
+     */
+    public function update(User $user, array $data)
+    {
+        $user->scenario = $user::SCENARIO_UPDATE;
+        $profile = $user->profile;
+        $user->profile->scenario = $profile::SCENARIO_UPDATE;
+
+        if ($user->load($data) && $user->profile->load($data)) {
+            if ($user->status == $user::STATUS_BLOCKED && $user->getOldAttribute('status') != $user::STATUS_BLOCKED) {
+                $user->block();
+            }
+            $confirm = $user->status == $user::STATUS_ACTIVE && $user->getOldAttribute('status') == $user::STATUS_NOT_CONFIRMED;
+            if (!$this->beforeUpdate($user)) {
+                return false;
+            }
+            if ($user->save() && $user->profile->save()) {
+                $this->afterUpdate($user);
+                if ($confirm) {
+                    $this->confirm($user);
+                }
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Delete user.
+     *
+     * @param User $user
+     * @return bool
+     */
+    public function delete(User $user)
+    {
+        if (!$this->beforeDelete($user)) {
+            return false;
+        }
+        $user->delete();
+
+        return true;
+    }
+
+    /**
      * Confirms a user.
      *
      * @param string $token
      * @throws TokenException
      * @return User|null the confirmed user or null if confirmation fails
      */
-    public function confirm($token)
+    public function confirmByToken($token)
     {
         /** @var Token $tokenClass */
         $tokenClass = $this->module->tokenModel;
@@ -126,18 +249,60 @@ class UserComponent extends \yii\web\User
         /** @var User $user */
         $user = $userClass::findOne($token->user_id);
 
+        if ($confirmed = $this->confirm($user)) {
+            $token->delete();
+        }
+
+        return $confirmed;
+    }
+
+    /**
+     * Confirms user.
+     *
+     * @param User $user
+     * @return User|null the confirmed user or null if confirmation fails
+     */
+    public function confirm(User $user)
+    {
         if (!$this->beforeConfirm($user)) {
             return null;
         }
-        $user->status = $userClass::STATUS_ACTIVE;
-        $user->confirmed_at = time();
+        $user->confirm();
         if ($user->save()) {
-            $token->delete();
             $this->afterConfirm($user);
             return $user;
         } else {
             return null;
         }
+    }
+
+    /**
+     * Updates user profile.
+     *
+     * @param \im\users\models\ProfileForm $form
+     * @return bool
+     */
+    public function updateProfile(ProfileForm $form)
+    {
+        if ($form->validate()) {
+            $user = $form->getUser();
+            $profile = $user->profile;
+            $user->scenario = $user::SCENARIO_PROFILE;
+            $user->username = $form->username;
+            $user->email = $form->email;
+            $user->password = $form->password;
+            $user->profile->first_name = $form->firstName;
+            $user->profile->last_name = $form->lastName;
+            if (!$this->beforeUpdate($user)) {
+                return false;
+            }
+            if ($user->save($user->profile) && $profile->save()) {
+                $this->afterUpdate($user);
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -161,7 +326,8 @@ class UserComponent extends \yii\web\User
      * @param string $token
      * @return null|Token
      */
-    public function getPasswordRecoveryToken($token) {
+    public function getPasswordRecoveryToken($token)
+    {
         /** @var Token $tokenClass */
         $tokenClass = $this->module->tokenModel;
 
@@ -348,6 +514,87 @@ class UserComponent extends \yii\web\User
     {
         $event = new UserEvent(['user' => $user]);
         $this->trigger(self::EVENT_AFTER_REGISTRATION, $event);
+    }
+
+    /**
+     * This method is called at the beginning of user creation.
+     * The default implementation will trigger an [[EVENT_BEFORE_CREATION]] event.
+     *
+     * @param User $user user object
+     * @return bool whether the creation should continue.
+     */
+    protected function beforeCreate(User $user)
+    {
+        $event = new UserEvent(['user' => $user]);
+        $this->trigger(self::EVENT_BEFORE_CREATION, $event);
+
+        return $event->isValid;
+    }
+
+    /**
+     * This method is called at the end of user creation.
+     * The default implementation will trigger an [[EVENT_AFTER_CREATION]] event.
+     *
+     * @param User $user
+     */
+    protected function afterCreate(User $user)
+    {
+        $event = new UserEvent(['user' => $user]);
+        $this->trigger(self::EVENT_AFTER_CREATION, $event);
+    }
+
+    /**
+     * This method is called at the beginning of user updating.
+     * The default implementation will trigger an [[EVENT_BEFORE_UPDATING]] event.
+     *
+     * @param User $user user object
+     * @return bool whether the updating should continue.
+     */
+    protected function beforeUpdate(User $user)
+    {
+        $event = new UserEvent(['user' => $user]);
+        $this->trigger(self::EVENT_BEFORE_UPDATING, $event);
+
+        return $event->isValid;
+    }
+
+    /**
+     * This method is called at the end of user updating.
+     * The default implementation will trigger an [[EVENT_AFTER_UPDATING]] event.
+     *
+     * @param User $user
+     */
+    protected function afterUpdate(User $user)
+    {
+        $event = new UserEvent(['user' => $user]);
+        $this->trigger(self::EVENT_AFTER_UPDATING, $event);
+    }
+
+    /**
+     * This method is called at the beginning of user deleting.
+     * The default implementation will trigger an [[EVENT_BEFORE_DELETING]] event.
+     *
+     * @param User $user user object
+     * @return bool whether the deleting should continue.
+     */
+    protected function beforeDelete(User $user)
+    {
+        $event = new UserEvent(['user' => $user]);
+        $this->trigger(self::EVENT_BEFORE_DELETING, $event);
+
+        return $event->isValid;
+    }
+
+    /**
+     * This method is called at the end of user deleting.
+     * The default implementation will trigger an [[EVENT_AFTER_DELETING]] event.
+     *
+     * @param User $user
+     */
+    protected function afterDelete(User $user)
+    {
+        $event = new UserEvent(['user' => $user]);
+        $this->trigger(self::EVENT_AFTER_DELETING, $event);
     }
 
     /**

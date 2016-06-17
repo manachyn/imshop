@@ -28,16 +28,15 @@ return [
     'modules' => [
         'backend' => 'im\backend\Module',
         'cms' => 'im\cms\backend\Module',
+        'blog' => 'im\blog\backend\Module',
         'catalog' => 'im\catalog\backend\Module',
         'eav' => 'im\eav\backend\Module',
         'filesystem' => 'im\filesystem\Module',
-        'config' => 'im\config\Module'
+        'config' => 'im\config\Module',
+        'rbac' => 'im\rbac\backend\Module',
+        'users' => 'im\users\backend\Module'
     ],
     'components' => [
-        'user' => [
-            'identityClass' => 'common\models\User',
-            'enableAutoLogin' => true,
-        ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
             'targets' => [

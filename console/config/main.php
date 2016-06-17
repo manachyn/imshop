@@ -11,10 +11,19 @@ return [
     'basePath' => dirname(__DIR__),
     'bootstrap' => [
         'log',
+        'eav' => 'im\eav\Bootstrap',
+        'variation' => 'im\variation\Bootstrap',
     ],
     'controllerNamespace' => 'console\controllers',
     'modules' => [
-        'webpack' => 'im\webpack\Module'
+        'webpack' => 'im\webpack\Module',
+        'rbac' => [
+            'class' => 'im\rbac\Module',
+            'authDataProviders' => [
+                'im\rbac\Bootstrap',
+                'im\users\Bootstrap'
+            ]
+        ]
     ],
     'components' => [
         'log' => [

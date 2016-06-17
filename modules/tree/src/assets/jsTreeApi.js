@@ -275,7 +275,8 @@
             if (!this.options.input.$element) {
                 this.options.input.$element = $('#' + this.options.input.id);
             }
-            this.options.input.$element.append('<input type="hidden" name="' + this.options.input.name + '[]" value="' + id + '" />');
+            var name = this.options.multiple ? this.options.input.name + '[]' : this.options.input.name;
+            this.options.input.$element.append('<input type="hidden" name="' + name + '" value="' + id + '" />');
             this.options.checked.push(id);
         }
     };

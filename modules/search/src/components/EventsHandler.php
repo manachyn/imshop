@@ -44,6 +44,10 @@ class EventsHandler extends Component
             $searchService = $searchableType->getSearchService();
             if ($index && $searchService instanceof IndexSearchServiceInterface) {
                 $indexer = $searchService->getIndexer();
+                if (!$indexer->typeExists($index, $searchableType->getType())) {
+                    $mapping = $searchableType->getIndexMapping();
+                    $indexer->setMapping($index, $searchableType->getType(), $mapping);
+                }
                 $indexer->insertObject($index, $searchableType->getType(), $model);
             }
         }

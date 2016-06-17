@@ -9,6 +9,8 @@ use im\cms\models\widgets\WidgetArea;
 use Yii;
 use yii\base\Component;
 use yii\base\Event;
+use yii\caching\Cache;
+use yii\caching\TagDependency;
 use yii\db\AfterSaveEvent;
 
 class CmsBackendEventsHandler extends Component
@@ -55,6 +57,7 @@ class CmsBackendEventsHandler extends Component
         /** @var Page $page */
         $page = $event->sender;
         $this->invalidateCache([Page::className() . '::' . $page->getPrimaryKey()]);
+        $this->invalidateUrlManagerCache([Page::className() . '::' . $page->getOldAttribute('slug')]);
     }
 
     /**
@@ -80,6 +83,19 @@ class CmsBackendEventsHandler extends Component
         $cacheManager = $cms->getCacheManager();
         if ($cacheManager) {
             $cacheManager->deleteFromCacheByTags($tags);
+        }
+    }
+
+    /**
+     * Invalidate url manager tagged cache.
+     *
+     * @param array $tags
+     */
+    private function invalidateUrlManagerCache(array $tags)
+    {
+        $urlManager = Yii::$app->getUrlManager();
+        if ($urlManager->cache instanceof Cache) {
+            TagDependency::invalidate($urlManager->cache, $tags);
         }
     }
 

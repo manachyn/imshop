@@ -1,6 +1,5 @@
 <?php
 
-
 use im\catalog\Module;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;

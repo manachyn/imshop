@@ -31,7 +31,7 @@ class m150208_105944_create_eav_tables extends Migration
 
         // Values
         $this->createTable(
-            '{{%aev_values}}',
+            '{{%eav_values}}',
             [
                 'id' => Schema::TYPE_PK,
                 'attribute_id' => Schema::TYPE_INTEGER . ' NOT NULL',
@@ -62,8 +62,8 @@ class m150208_105944_create_eav_tables extends Migration
         $this->createIndex('entity_id', '{{%eav_entity_values}}', 'entity_id');
         $this->createIndex('entity_type', '{{%eav_entity_values}}', 'entity_type');
         $this->addForeignKey('FK_eav_entity_values_attribute_id', '{{%eav_entity_values}}', 'attribute_id', '{{%eav_attributes}}', 'id', 'CASCADE', 'CASCADE');
+        $this->addForeignKey('FK_eav_entity_values_value_id', '{{%eav_entity_values}}', 'value_id', '{{%eav_values}}', 'id', 'CASCADE', 'CASCADE');
         $this->createIndex('attribute_name', '{{%eav_entity_values}}', 'attribute_name');
-        $this->addForeignKey('FK_eav_entity_values_value_id', '{{%eav_product_values}}', 'value_id', '{{%eav_values}}', 'id', 'CASCADE', 'CASCADE');
         $this->createIndex('string_value', '{{%eav_entity_values}}', 'string_value');
         $this->createIndex('value_entity_id', '{{%eav_entity_values}}', 'value_entity_id');
     }

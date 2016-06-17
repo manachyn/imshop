@@ -40,7 +40,7 @@ class LoginForm extends Model
             ['username', 'required'],
             ['password', 'required'],
             ['password', 'validatePassword'],
-            ['password', 'validateAccount'],
+            ['username', 'validateAccount'],
             ['rememberMe', 'boolean']
         ];
     }
@@ -104,5 +104,13 @@ class LoginForm extends Model
         }
 
         return $this->_user;
+    }
+
+    /**
+     * @param User $user
+     */
+    public function setUser($user)
+    {
+        $this->_user = $user;
     }
 }

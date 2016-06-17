@@ -38,6 +38,11 @@ class JsTreeInput extends InputWidget
     public $value;
 
     /**
+     * @var bool
+     */
+    public $multiple = true;
+
+    /**
      * @inheritdoc
      */
     public function init()
@@ -91,8 +96,12 @@ class JsTreeInput extends InputWidget
         $tag = isset($options['tag']) ? $options['tag'] : 'div';
         $selected = [];
         if ($this->value) {
-            foreach ($this->value as $item) {
-                $selected[] = Html::hiddenInput($this->name . '[]', $item);
+            if ($this->multiple) {
+                foreach ($this->value as $item) {
+                    $selected[] = Html::hiddenInput($this->name . '[]', $item);
+                }
+            } else {
+                $selected[] = Html::hiddenInput($this->name, $this->value);
             }
         }
         return Html::tag($tag, $hidden . "\n" . implode("\n", $selected), $options);
@@ -115,12 +124,14 @@ class JsTreeInput extends InputWidget
             'searchUrl' => Url::to(['search']),
             'searchInput' => '.tree-search',
             'searchableAttributes' => false,
-            'checked' => $this->value,
-            'input' => $this->inputOptions
+            'checked' => $this->value ? (is_array($this->value) ? $this->value : [$this->value]) : [],
+            'input' => $this->inputOptions,
+            'multiple' => $this->multiple
         ], $this->apiOptions);
         $this->clientOptions = ArrayHelper::merge([
             'core' => [
                 'animation' => 0,
+                'multiple' => $this->multiple,
                 'data' => [
                     'url' => new JsExpression(
                             "function (node) {

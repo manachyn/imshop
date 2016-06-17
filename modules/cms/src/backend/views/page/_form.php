@@ -1,12 +1,10 @@
 <?php
 
-use im\ckeditor\CKEditor;
 use im\cms\Module;
-use im\elfinder\widgets\ElFinder;
 use im\forms\components\FieldSet;
 use im\forms\components\Tab;
 use im\forms\components\TabSet;
-use im\tinymce\TinyMCE;
+use im\tree\widgets\JsTreeInput;
 use im\wysiwyg\WysiwygEditor;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -29,6 +27,15 @@ $wysiwygConfig = Yii::$app->get('config')->get('wysiwyg.*');
     new TabSet('tabs', [
         new Tab('main', Module::t('category', 'Main'), [
             $model->isNewRecord ? $form->field($model, 'type')->dropDownList($model::getTypesList(), ['data-field' => 'type']) : null,
+            $form->field($model, 'parentId')->widget(JsTreeInput::className(), [
+                'multiple' => false,
+                'apiOptions' => [
+                    'rootsUrl' => Url::to(['/api/v1/pages/roots']),
+                    'childrenUrl' => Url::to(['/api/v1/pages/{id}/children']),
+                    'parentsUrl' => Url::to(['/api/v1/pages/{id}/ancestors']),
+                    'attributesMap' => ['id' => 'id', 'text' => 'title', 'children' => 'hasChildren', 'str' => 'string']
+                ]
+            ]),
             $form->field($model, 'title')->textInput(['maxlength' => true]),
             $form->field($model, 'slug')->textInput(['maxlength' => true]),
             $form->field($model, 'content')->widget(WysiwygEditor::className(), [

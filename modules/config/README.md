@@ -1,0 +1,1 @@
+php yii migrate --migrationPath=@im/config/migrations

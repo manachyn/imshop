@@ -14,8 +14,6 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="security-login">
 
-    <h1><?= Html::encode($this->title) ?></h1>
-
     <?php if ($message = Yii::$app->getSession()->getFlash('reset.success')) : ?>
         <div class="alert alert-success"><?= $message ?></div>
     <?php elseif ($message = Yii::$app->getSession()->getFlash('reset.token.error')): ?>

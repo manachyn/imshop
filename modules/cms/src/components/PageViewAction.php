@@ -108,7 +108,7 @@ class PageViewAction extends ModelViewAction implements ModelContextInterface
         /* @var $modelClass Page */
         $modelClass = $this->modelClass;
         /** @var Page $model */
-        $model = $modelClass::findByPath($path)->published()->one();
+        $model = $modelClass::findBySlug(array_pop(explode('/', $path)))->published()->one();
         if ($model) {
             foreach ($this->getRelationForLoad($model) as $relation) {
                 $model->$relation;

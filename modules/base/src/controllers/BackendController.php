@@ -4,7 +4,6 @@ namespace im\base\controllers;
 
 use Yii;
 use yii\base\Theme;
-use yii\filters\AccessControl;
 use yii\web\Controller;
 
 /**
@@ -30,22 +29,5 @@ class BackendController extends Controller
             $this->getView()->theme = $backendTheme;
         }
     }
-
-    /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-//            'access' => [
-//                'class' => AccessControl::className(),
-//                'rules' => [
-//                    [
-//                        'allow' => true,
-//                        'roles' => ['accessBackend']
-//                    ]
-//                ]
-//            ]
-        ];
-    }
 }
+

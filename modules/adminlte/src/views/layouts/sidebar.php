@@ -154,15 +154,20 @@ $assetsPublishUrl = Yii::$app->assetManager->getPublishedUrl('@vendor/almasaeed2
                         ],
                         'items' => [
                             [
-                                'label' => Yii::t('app', 'User'),
+                                'label' => Yii::t('app', 'Users'),
                                 'url' => ['/users/backend'],
                                 'icon' => 'fa fa-circle-o'
                             ],
-//                            [
-//                                'label' => Yii::t('app', 'Role'),
-//                                'url' => ['/role/index'],
-//                                'icon' => 'fa fa-lock',
-//                            ],
+                            [
+                                'label' => Yii::t('app', 'Roles'),
+                                'url' => ['/rbac/role/index'],
+                                'icon' => 'fa fa-circle-o',
+                            ],
+                            [
+                                'label' => Yii::t('app', 'Permissions'),
+                                'url' => ['/rbac/permission/index'],
+                                'icon' => 'fa fa-circle-o',
+                            ],
                         ],
                     ],
                     [

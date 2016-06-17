@@ -3,8 +3,8 @@ var path = require('path');
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 module.exports = {
     entry: {
-        home: "./frontend/web/assets/home",
-        main: "./frontend/web/assets/main"
+        home: "./frontend/web/assets/home.js",
+        main: "./frontend/web/assets/main.js"
     },
     output: {
         path: path.join(__dirname, "frontend/web/compiled-assets"),

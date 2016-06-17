@@ -221,10 +221,12 @@ class LayoutManager extends Component
     {
         /** @var Menu $menu */
         $menu = Menu::find()->where(['location' => $location])->one();
-        $items = $menu->getItems()->where(['status' => MenuItem::STATUS_ACTIVE])->with(['icon', 'activeIcon', 'video'])->all();
-        if ($items) {
-            $items = TreeHelper::buildNodesTree($items);
-            $menu->populateRelation('items', $items);
+        if ($menu) {
+            $items = $menu->getItems()->where(['status' => MenuItem::STATUS_ACTIVE])->with(['icon', 'activeIcon', 'video'])->all();
+            if ($items) {
+                $items = TreeHelper::buildNodesTree($items);
+                $menu->populateRelation('items', $items);
+            }
         }
 
         return $menu;
