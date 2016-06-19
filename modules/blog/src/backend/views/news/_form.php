@@ -17,7 +17,11 @@ $wysiwygConfig = Yii::$app->get('config')->get('wysiwyg.*');
 
 ?>
 
-<?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
+<?php $form = ActiveForm::begin([
+    'id' => 'article-form',
+    'fieldClass' => 'im\forms\widgets\ActiveField',
+    'options' => ['enctype' => 'multipart/form-data']
+]); ?>
 
 <?= new FieldSet('news', [
     new TabSet('tabs', [

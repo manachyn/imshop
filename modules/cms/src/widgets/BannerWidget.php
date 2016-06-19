@@ -1,17 +1,16 @@
 <?php
 
-namespace im\cms\models\widgets;
+namespace im\cms\widgets;
 
+use im\cms\models\widgets\Widget;
 use im\cms\Module;
 
 /**
- * Content widget model class.
- *
- * @property string $content
+ * This is the model class for table "{{%banner_widgets}}".
  */
-class ContentWidget extends Widget
+class BannerWidget extends Widget
 {
-    const TYPE = 'content';
+    const TYPE = 'banner';
 
     /**
      * @inheritdoc
@@ -19,7 +18,7 @@ class ContentWidget extends Widget
     public function rules()
     {
         return array_merge(parent::rules(), [
-            [['content'], 'required']
+            [['banner_id'], 'safe']
         ]);
     }
 
@@ -30,7 +29,7 @@ class ContentWidget extends Widget
     {
         return [
             'id' => Module::t('page', 'ID'),
-            'content' => Module::t('page', 'Content')
+            'banner_id' => Module::t('page', 'Banner')
         ];
     }
 
@@ -39,7 +38,7 @@ class ContentWidget extends Widget
      */
     public function getCMSTitle()
     {
-        return Module::t('page', 'Content widget');
+        return Module::t('page', 'Banner widget');
     }
 
     /**
@@ -47,7 +46,7 @@ class ContentWidget extends Widget
      */
     public function getCMSDescription()
     {
-        return Module::t('page', 'Widget for displaying content blocks on the page.');
+        return Module::t('page', 'Widget for displaying banners on the page.');
     }
 
     /**
@@ -55,14 +54,7 @@ class ContentWidget extends Widget
      */
     public function getEditView()
     {
-        return '@im/cms/backend/views/widgets/content-widget/_form';
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function run()
-    {
-        return $this->content;
+        return '';
+        //return '@app/modules/cms/backend/views/widgets/banner-widget/_form';
     }
 }

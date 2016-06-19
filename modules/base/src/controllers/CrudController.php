@@ -488,12 +488,12 @@ abstract class CrudController extends BackendController
      * @param array $data
      * @return ActiveRecord[]
      */
-    protected function findModelsToBatchUpdate($ids, $data)
+    protected function findModelsToBatchUpdate($ids, array $data)
     {
         return $this->findModels($ids);
     }
 
-    protected function getBatchEditableAttributes($models)
+    protected function getBatchEditableAttributes(array $models)
     {
         return [];
     }

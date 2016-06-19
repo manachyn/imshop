@@ -1,7 +1,7 @@
 ## Build frontend assets
 
 ```
-php yii webpack/webpack frontend/assets/compression/webpack.php
+php yii webpack/webpack modules/pkbnt/src/components/assets/compression/webpack.php
 ```
 
 npm install

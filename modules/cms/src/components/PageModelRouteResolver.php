@@ -25,7 +25,8 @@ class PageModelRouteResolver extends ModelRouteResolver
         /* @var $modelClass Page */
         $modelClass = $this->modelClass;
         $condition = ['path' => $params['path']];
-        $pagePath = array_pop(explode('/', $params['path']));
+        $parts = explode('/', $params['path']);
+        $pagePath = array_pop($parts);
         $urlManager = Yii::$app->getUrlManager();
         if ($urlManager->cache instanceof Cache) {
             $cacheKey = array_merge([$this->modelClass], $condition);

@@ -12,4 +12,4 @@
     </article>
     <?php endforeach ?>
 </section>
-<? endif ?>
+<?php endif ?>

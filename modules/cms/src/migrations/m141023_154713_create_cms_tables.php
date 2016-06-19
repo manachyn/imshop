@@ -63,7 +63,9 @@ class m141023_154713_create_cms_tables extends Migration
             [
                 'id' => $this->primaryKey(),
                 'name' => $this->string(100)->notNull(),
-                'location' => $this->string(100)->notNull()
+                'location' => $this->string(100)->notNull(),
+                'created_at' => $this->integer()->notNull(),
+                'updated_at' => $this->integer()->notNull()
             ],
             $tableOptions
         );
@@ -151,7 +153,7 @@ class m141023_154713_create_cms_tables extends Migration
                 'code' => $this->string(50)->notNull(),
                 'template_id' => $this->integer()->defaultValue(null),
                 'owner_id' => $this->integer()->defaultValue(null),
-                'owner_type' => $this->string(100)->notNull(),
+                'owner_type' => $this->string(100)->defaultValue(null),
                 'display' => $this->boolean()->defaultValue(1),
                 'created_at' => $this->integer()->notNull(),
                 'updated_at' => $this->integer()->notNull()
@@ -174,8 +176,9 @@ class m141023_154713_create_cms_tables extends Migration
             [
                 'id' => $this->primaryKey(),
                 'widget_type' => $this->string(100)->notNull(),
-                'content' => $this->text()->notNull(),
-                'banner_id' => $this->integer()->notNull()
+                'title' => $this->string()->defaultValue(null),
+                'content' => $this->text(),
+                'banner_id' => $this->integer()->defaultValue(null)
             ],
             $tableOptions
         );

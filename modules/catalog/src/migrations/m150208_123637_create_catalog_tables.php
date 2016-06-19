@@ -328,7 +328,7 @@ class m150208_123637_create_catalog_tables extends Migration
 
 
         if ($this->db->schema->getTableSchema('{{%widgets}}', true)) {
-            $this->addColumn('{{%widgets}}', 'depth', Schema::TYPE_INTEGER);
+            $this->addColumn('{{%widgets}}', 'depth', $this->integer()->defaultValue(null));
         }
     }
 

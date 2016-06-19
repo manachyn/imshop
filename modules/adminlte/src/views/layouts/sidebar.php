@@ -76,6 +76,27 @@ $assetsPublishUrl = Yii::$app->assetManager->getPublishedUrl('@vendor/almasaeed2
                         ],
                     ],
                     [
+                        'label' => Yii::t('app', 'News'),
+                        'url' => ['/blog/news/index'],
+                        'icon' => 'fa fa-newspaper-o',
+                        'options' => [
+                            'class' => 'treeview',
+                        ],
+                        //'visible' => Yii::$app->user->can('readPost'),
+                        'items' => [
+                            [
+                                'label' => Yii::t('app', 'News'),
+                                'url' => ['/blog/news/index'],
+                                'icon' => 'fa fa-circle-o',
+                            ],
+                            [
+                                'label' => Yii::t('app', 'Articles'),
+                                'url' => ['/blog/article/index'],
+                                'icon' => 'fa fa-circle-o',
+                            ]
+                        ],
+                    ],
+                    [
                         'label' => Yii::t('app', 'Catalog'),
                         'url' => ['/catalog/product/index'],
                         'icon' => 'fa fa-book',

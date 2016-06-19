@@ -8,7 +8,7 @@ use im\cms\models\widgets\Widget;
 
 /**
  * Class LastArticlesWidget
- * @package im\blog\models\widgets
+ * @package im\blog\widgets
  * @property int $display_count
  */
 class LastArticlesWidget extends Widget
@@ -66,7 +66,7 @@ class LastArticlesWidget extends Widget
     {
         return $this->render('last_articles', [
             'widget' => $this,
-            'news' => Article::getLastArticles($this->display_count)
+            'articles' => Article::getLastArticles($this->display_count)
         ]);
     }
 }

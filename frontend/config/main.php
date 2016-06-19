@@ -13,11 +13,13 @@ return [
         'log' => 'log',
         'base' => 'im\base\Bootstrap',
         'cms' => 'im\cms\frontend\Bootstrap',
+        'seo' => 'im\seo\frontend\Bootstrap',
         'search' => 'im\search\frontend\Bootstrap'
     ],
     'controllerNamespace' => 'frontend\controllers',
     'modules' => [
         'cms' => 'im\cms\frontend\Module',
+        'catalog' => 'im\catalog\Module',
         'search' => 'im\search\frontend\Module',
         'users' => 'im\users\Module'
     ],
@@ -34,9 +36,9 @@ return [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
-//        'request' => [
-//            'baseUrl' => '/backend',
-//        ],
+        'request' => [
+            'baseUrl' => '',
+        ],
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
@@ -63,6 +65,7 @@ return [
                 ]
             ]
         ],
+        'seo' => 'im\seo\components\Seo'
     ],
     'controllerMap' => [
         'glide' => 'im\image\glide\controllers\GlideController'

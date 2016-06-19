@@ -8,7 +8,7 @@ use im\cms\models\widgets\Widget;
 
 /**
  * Class LastNewsWidget
- * @package im\blog\models\widgets
+ * @package im\blog\widgets
  * @property int $display_count
  */
 class LastNewsWidget extends Widget

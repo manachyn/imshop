@@ -178,12 +178,15 @@ class Meta extends ActiveRecord implements MetaInterface
     public function applyTo(View $view)
     {
         $view->params['metaTitle'] = $this->meta_title ? TemplateHelper::evaluateTemplate($this->meta_title, ['model' => $this->entity]) : $view->title;
-        if ($this->meta_keywords)
+        if ($this->meta_keywords) {
             $view->registerMetaTag(['name' => 'keywords', 'content' => TemplateHelper::evaluateTemplate($this->meta_keywords, ['model' => $this->entity])], 'keywords');
-        if ($this->meta_description)
+        }
+        if ($this->meta_description) {
             $view->registerMetaTag(['name' => 'description', 'content' => TemplateHelper::evaluateTemplate($this->meta_description, ['model' => $this->entity])], 'description');
-        if ($this->meta_robots)
+        }
+        if ($this->meta_robots) {
             $view->registerMetaTag(['name' => 'robots', 'content' => $this->meta_robots], 'robots');
+        }
         if ($this->custom_meta) {
             $view->params['customMeta'] = isset($view->params['customMeta'])
                 ? $view->params['customMeta'] .= "\n" . $this->custom_meta : "\n" . $this->custom_meta;

@@ -5,18 +5,23 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $widget im\blog\models\widgets\LastNewsWidget */
+/* @var $model im\blog\widgets\LastNewsWidget */
 /* @var $form yii\widgets\ActiveForm|im\forms\components\DynamicActiveForm */
+/* @var $fieldConfig array */
 
+$fieldConfig = isset($fieldConfig) ? $fieldConfig : [];
 ?>
 
-<?php $form = ActiveForm::begin(['id' => 'last-news-widget-form', 'options' => ['data-pjax' => 1]]); ?>
+<?php if (!isset($form)) {
+    $form = ActiveForm::begin(['id' => 'last-news-widget-form', 'options' => ['data-pjax' => 1]]);
+} ?>
 
-<?= $form->field($widget, 'display_count') ?>
+<?= $form->field($model, 'display_count', $fieldConfig) ?>
 
-<?= Html::submitButton(
-    Module::t('page', 'Save'),
-    ['class' => $widget->isNewRecord ? 'btn btn-primary btn-large' : 'btn btn-success btn-large']
-) ?>
+<?php if (!isset($form)) {
 
-<?php ActiveForm::end(); ?>
+    echo Html::submitButton(Module::t('module', 'Save'), ['class' => $model->isNewRecord ? 'btn btn-primary' : 'btn btn-success']);
+
+    ActiveForm::end();
+
+} ?>

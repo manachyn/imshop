@@ -24,10 +24,16 @@ use im\pkbnt\widgets\FlashMessages;
 <?= $this->render('//layouts/top-menu') ?>
 <div class="container">
     <div class="row">
-        <div class="col-md-10 col-md-push-2">
+        <div class="col-md-10">
             <?= $this->render('//layouts/content', ['content' => $content]) ?>
+            <div class="clearfix"></div>
+            <?= WidgetArea::widget([
+                'code' => 'bottom',
+                'layout' => 'main',
+                'context' => $this->context
+            ]) ?>
         </div>
-        <div class="col-md-2 col-md-pull-10">
+        <div class="col-md-2">
             <?= WidgetArea::widget([
                 'code' => 'sidebar',
                 'layout' => 'main',

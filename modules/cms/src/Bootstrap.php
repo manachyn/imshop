@@ -74,8 +74,8 @@ class Bootstrap implements BootstrapInterface
     public function registerWidgets($app)
     {
         $layoutManager = $app->get('layoutManager');
-        $layoutManager->registerWidget('im\cms\models\widgets\ContentWidget');
-        $layoutManager->registerWidget('im\cms\models\widgets\BannerWidget');
+        $layoutManager->registerWidget('im\cms\widgets\ContentWidget');
+        $layoutManager->registerWidget('im\cms\widgets\BannerWidget');
     }
 
     /**

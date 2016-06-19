@@ -14,6 +14,7 @@ use Yii;
  *
  * @property integer $id
  * @property string $widget_type
+ * @property string $title
  * @property string $type
  */
 abstract class Widget extends ActiveRecord implements ViewContextInterface
@@ -43,6 +44,16 @@ abstract class Widget extends ActiveRecord implements ViewContextInterface
     public static function tableName()
     {
         return '{{%widgets}}';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+            [['title'], 'string', 'max' => 255]
+        ];
     }
 
     /**

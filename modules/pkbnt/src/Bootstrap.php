@@ -2,8 +2,9 @@
 
 namespace im\pkbnt;
 
-use yii\base\BootstrapInterface;
 use Yii;
+use yii\base\Application;
+use yii\base\BootstrapInterface;
 
 /**
  * Class Bootstrap
@@ -17,6 +18,28 @@ class Bootstrap implements BootstrapInterface
     public function bootstrap($app)
     {
         $this->setAliases();
+        $this->registerLayouts($app);
+    }
+
+    /**
+     * @param Application $app
+     */
+    public function registerLayouts($app)
+    {
+        /** @var \im\cms\components\LayoutManager $layoutManager */
+        $layoutManager = $app->get('layoutManager');
+        $layoutManager->registerLayout([
+            'class' => 'im\cms\components\Layout',
+            'id' => 'main',
+            'name' => 'Two columns, right sidebar',
+            'default' => true,
+            'availableWidgetAreas' => [
+                ['class' => 'im\cms\components\WidgetAreaDescriptor', 'code' => 'bottom', 'title' => 'Bottom'],
+                ['class' => 'im\cms\components\WidgetAreaDescriptor', 'code' => 'sidebar', 'title' => 'Sidebar']
+            ]
+        ]);
+        $layoutManager->registerMenuLocation(['class' => 'im\cms\components\MenuLocationDescriptor', 'code' => 'top', 'name' => 'Top menu']);
+        $layoutManager->registerMenuLocation(['class' => 'im\cms\components\MenuLocationDescriptor', 'code' => 'bottom', 'name' => 'Bottom menu']);
     }
 
     /**

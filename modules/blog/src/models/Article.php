@@ -85,7 +85,7 @@ class Article extends ActiveRecord
                     ],
                     'uploadedVideo' => [
                         'filesystem' => 'local',
-                        'path' => '/menus',
+                        'path' => '/articles',
                         'fileName' => '{model.slug}.{file.extension}',
                         'relation' => 'video',
                         'deleteOnUnlink' => true
@@ -100,7 +100,7 @@ class Article extends ActiveRecord
                 ],
                 'relations' => [
                     'imageRelation' => $this->hasOne(ArticleFile::className(), ['id' => 'image_id']),
-                    'videoRelation' => $this->hasOne(MenuItemFile::className(), ['id' => 'video_id'])
+                    'videoRelation' => $this->hasOne(ArticleFile::className(), ['id' => 'video_id'])
                 ]
             ]
         ];

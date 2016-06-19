@@ -12,6 +12,7 @@ use im\filesystem\components\FilesBehavior;
 use im\tree\models\Tree;
 use Intervention\Image\Constraint;
 use Intervention\Image\ImageManagerStatic;
+use Yii;
 use yii\behaviors\SluggableBehavior;
 use yii\behaviors\TimestampBehavior;
 use yii\helpers\Url;
@@ -45,7 +46,7 @@ class Category extends Tree
      */
     public static function instantiate($row)
     {
-        return \Yii::createObject(static::className());
+        return Yii::createObject(static::className());
     }
 
     /**
@@ -64,7 +65,8 @@ class Category extends Tree
             'timestamp' => TimestampBehavior::className(),
             'sluggable' => [
                 'class' => SluggableBehavior::className(),
-                'attribute' => 'name'
+                'attribute' => 'name',
+                'immutable' => true
             ],
             'tree' => [
                 'class' => NestedSetsBehavior::className(),

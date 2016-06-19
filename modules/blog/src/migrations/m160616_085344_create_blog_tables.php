@@ -25,7 +25,7 @@ class m160616_085344_create_blog_tables extends Migration
                 'id' => $this->primaryKey(),
                 'filesystem' => $this->string(100)->notNull(),
                 'path' => $this->string()->notNull(),
-                'title' =>$this->string()->notNull(),
+                'title' =>$this->string()->defaultValue(null),
                 'size' => $this->integer(),
                 'mime_type' => $this->string(100)->notNull(),
                 'created_at' => $this->integer()->notNull(),
@@ -103,7 +103,7 @@ class m160616_085344_create_blog_tables extends Migration
         $this->createIndex('entity_type', '{{%article_meta}}', 'entity_type');
 
         if ($this->db->schema->getTableSchema('{{%widgets}}', true)) {
-            $this->addColumn('{{%widgets}}', 'display_count', Schema::TYPE_INTEGER);
+            $this->addColumn('{{%widgets}}', 'display_count', $this->integer()->defaultValue(null));
         }
     }
 

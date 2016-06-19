@@ -22,7 +22,7 @@ class m150806_091325_create_search_tables extends Migration
         ], $tableOptions);
 
         $this->createIndex('name', '{{%indexes}}', 'name');
-        $this->createIndex('type', '{{%type}}', 'type');
+        $this->createIndex('type', '{{%indexes}}', 'type');
 
         // Index attributes
         $this->createTable('{{%index_attributes}}', [
@@ -54,7 +54,7 @@ class m150806_091325_create_search_tables extends Migration
             'multivalue' => $this->boolean()->defaultValue(0)
         ], $tableOptions);
 
-        $this->addForeignKey('FK_facets_attribute_id', '{{%facets}}', 'attribute_id', '{{%eav_attributes}}', 'id', 'CASCADE', 'CASCADE');
+        //$this->addForeignKey('FK_facets_attribute_id', '{{%facets}}', 'attribute_id', '{{%eav_attributes}}', 'id', 'CASCADE', 'CASCADE');
 
         // Facet values
         $this->createTable('{{%facet_values}}', [
@@ -95,7 +95,7 @@ class m150806_091325_create_search_tables extends Migration
             'sort' => $this->integer()->defaultValue(null)
         ], $tableOptions);
 
-        $this->addForeignKey('FK_facet_ranges_facet_id', '{{%facet_ranges}}', 'facet_id', '{{%facets}}', 'id', 'CASCADE', 'CASCADE');
+        $this->addForeignKey('FK_facet_terms_facet_id', '{{%facet_terms}}', 'facet_id', '{{%facets}}', 'id', 'CASCADE', 'CASCADE');
 
         // Facet sets
         $this->createTable('{{%facet_sets}}', [

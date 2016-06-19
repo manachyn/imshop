@@ -81,6 +81,7 @@ class DynamicActiveField extends ActiveField
         $config['model'] = $this->model;
         $config['attribute'] = $this->attribute;
         $config['view'] = $this->form ? $this->form->getView() : \Yii::$app->getView();
+        $config['options'] = $this->inputOptions;
         $this->parts['{input}'] = $class::widget($config);
 
         return $this;

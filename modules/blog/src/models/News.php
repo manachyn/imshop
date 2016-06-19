@@ -4,6 +4,7 @@ namespace im\blog\models;
 
 use im\blog\Module;
 use Yii;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 
 /**
@@ -18,6 +19,25 @@ class News extends Article
     public static function tableName()
     {
         return '{{%news}}';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function behaviors()
+    {
+        return ArrayHelper::merge(parent::behaviors(), [
+            'files' => [
+                'attributes' => [
+                    'uploadedImage' => [
+                        'path' => '/news'
+                    ],
+                    'uploadedVideo' => [
+                        'path' => '/news'
+                    ]
+                ]
+            ]
+        ]);
     }
 
     /**

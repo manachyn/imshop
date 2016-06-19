@@ -10,6 +10,7 @@ return [
         'elasticsearc' => 'im\elasticsearch\Bootstrap',
         'tree' => 'im\tree\Bootstrap',
         'catalog' => 'im\catalog\Bootstrap',
+        'search' => 'im\search\Bootstrap',
         'blog' => 'im\blog\Bootstrap',
         'users' => 'im\users\Bootstrap'
     ],

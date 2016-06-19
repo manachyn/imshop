@@ -78,3 +78,6 @@ http://imshop.loc/laptops/text=Apples%20phone
 http://kempe.net/blog/2015/02/25/elasticsearch-query-full-text-search.html
 
 http://imshop.loc/laptops/status=1%20or%20title=Test
+
+
+php yii migrate --migrationPath=@im/search/migrations

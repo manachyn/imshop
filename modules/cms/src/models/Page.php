@@ -94,7 +94,8 @@ class Page extends Tree
             'sluggable' => [
                 'class' => SluggableBehavior::className(),
                 'attribute' => 'title',
-                'ensureUnique' => true
+                'ensureUnique' => true,
+                'immutable' => true
             ],
             'tree' => [
                 'class' => NestedSetsBehavior::className(),

@@ -62,7 +62,9 @@ class OpenGraph extends SocialMeta
     {
         $attributes = $this->getAttributes(null, ['id', 'meta_id', 'meta_type', 'social_type']);
         foreach ($attributes as $name => $value) {
-            $view->registerMetaTag(['property' => 'og:' . $name, 'content' => $value]);
+            if ($value) {
+                $view->registerMetaTag(['property' => 'og:' . $name, 'content' => $value]);
+            }
         }
     }
 }

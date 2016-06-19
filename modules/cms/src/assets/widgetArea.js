@@ -65,7 +65,7 @@
                 that.$temp.empty();
                 that.setPlaceholder();
             });
-            if (this.options.form.fieldConfig === undefined) {
+            if (this.options.form.fieldConfig === undefined || $.isEmptyObject(this.options.form.fieldConfig)) {
                 this.options.form.fieldConfig = {};
             }
             this.options.form.fieldConfig.namePrefix = 'Widgets[' + this.options.widgetArea.code + ']';

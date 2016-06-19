@@ -2,16 +2,11 @@
 
 namespace im\catalog\rest;
 
-use Yii;
-
+/**
+ * Class Module
+ * @package im\catalog\rest
+ */
 class Module extends \yii\base\Module
 {
     public $controllerNamespace = 'im\catalog\rest\controllers';
-
-    public function init()
-    {
-        parent::init();
-
-        // custom initialization code goes here
-    }
 }

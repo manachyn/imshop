@@ -22,7 +22,7 @@ if ($icon) {
 }
 
 echo Html::beginTag($tag, $itemOptions);
-echo Html::a($item->label, $item->url, $item->getLinkHtmlAttributes());
+echo Html::a($item->label, '/' . trim($item->url, '/'), $item->getLinkHtmlAttributes());
 if ((!$widget->depth || $level < $widget->depth) && $items = $item->children) :
     if ($level == 1 && ($item->items_display == MenuItem::DISPLAY_FULL_WIDTH_DROPDOWN || $item->items_display == MenuItem::DISPLAY_GRID) && $item->video) :
         if ($item->items_display == MenuItem::DISPLAY_FULL_WIDTH_DROPDOWN) :

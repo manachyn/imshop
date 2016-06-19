@@ -51,4 +51,19 @@ class ActiveField extends \yii\widgets\ActiveField
 
         return parent::checkbox($options, $enclosedByLabel);
     }
-} 
+
+    /**
+     * @inheritdoc
+     */
+    public function widget($class, $config = [])
+    {
+        /* @var $class \yii\base\Widget */
+        $config['model'] = $this->model;
+        $config['attribute'] = $this->attribute;
+        $config['view'] = $this->form->getView();
+        $config['options'] = $this->inputOptions;
+        $this->parts['{input}'] = $class::widget($config);
+
+        return $this;
+    }
+}

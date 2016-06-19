@@ -27,6 +27,7 @@ class Bootstrap implements BootstrapInterface
             $this->registerPageTypes($app);
             $this->registerWidgets($app);
         }
+        $this->setAliases();
     }
 
     /**
@@ -114,5 +115,13 @@ class Bootstrap implements BootstrapInterface
         $typesRegister->registerEntityType(new EntityType('facet_range', 'im\search\models\FacetRange', 'facet_values', Module::t('facet', 'Range')));
         $typesRegister->registerEntityType(new EntityType('searchable_types_facet', 'im\search\models\SearchableTypesFacet', 'facets', Module::t('facet', 'Searchable types facet')));
         $typesRegister->registerEntityType(new EntityType('searchable_types_facet_term', 'im\search\models\SearchableTypesFacetTerm', 'facet_values', Module::t('facet', 'Searchable types facet term')));
+    }
+
+    /**
+     * @return void
+     */
+    public function setAliases()
+    {
+        Yii::setAlias('@im/search', __DIR__);
     }
 }

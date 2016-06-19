@@ -89,8 +89,8 @@ class Bootstrap implements BootstrapInterface
     public function registerWidgets($app)
     {
         $layoutManager = $app->get('layoutManager');
-        $layoutManager->registerWidget('im\blog\models\widgets\LastNewsWidget');
-        $layoutManager->registerWidget('im\blog\models\widgets\LastArticlesWidget');
+        $layoutManager->registerWidget('im\blog\widgets\LastNewsWidget');
+        $layoutManager->registerWidget('im\blog\widgets\LastArticlesWidget');
     }
 
     /**

@@ -15,7 +15,6 @@ return [
         'log' => 'log',
         'base' => 'im\base\Bootstrap',
         'adminlte' => 'im\adminlte\Bootstrap',
-        'imshop' => 'im\imshop\backend\Bootstrap',
         'cms' => 'im\cms\backend\Bootstrap',
         'seo' => 'im\seo\backend\Bootstrap',
         'search' => 'im\search\backend\Bootstrap',
@@ -49,9 +48,9 @@ return [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
-//        'request' => [
-//            'baseUrl' => '/backend',
-//        ],
+        'request' => [
+            'baseUrl' => '/admin',
+        ],
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
