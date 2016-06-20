@@ -2,7 +2,7 @@
 return [
     'roots' => [
         [
-            'path' => '@webroot/uploads',
+            'path' => '@frontend/uploads',
             'url' => '/uploads',
             'alias' => ['modules/filesystem/module', 'Uploads']
         ],

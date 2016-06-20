@@ -40,8 +40,9 @@ class GroupUrlRule extends UrlRule
         if (!$controller) {
             list(, $params) = parent::parseRequest($manager, $request);
             foreach ($this->resolvers as $resolver) {
-                if ($route = $resolver->resolve($params)) {
-                    return [$route, $params];
+                list($route, $resolvedParams) = $resolver->resolve($params);
+                if ($route) {
+                    return [$route, $resolvedParams ?: $params];
                 }
             }
         }

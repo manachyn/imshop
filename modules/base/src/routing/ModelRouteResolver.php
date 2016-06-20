@@ -1,6 +1,7 @@
 <?php
 
 namespace im\base\routing;
+
 use Yii;
 use yii\caching\Cache;
 use yii\db\ActiveRecordInterface;
@@ -63,7 +64,7 @@ class ModelRouteResolver extends Object implements RouteResolverInterface
             $match = $modelClass::find()->where($condition)->asArray()->count();
         }
 
-        return $match ? $this->getRoute() : false;
+        return $match ? [$this->getRoute(), $params] : false;
     }
 
     /**

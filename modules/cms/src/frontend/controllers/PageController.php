@@ -21,6 +21,10 @@ class PageController extends Controller
                 'class' => 'im\cms\components\PageViewAction',
                 'modelClass' => 'im\cms\models\Page'
             ],
+            'child' => [
+                'class' => 'im\cms\components\PageChildViewAction',
+                'modelClass' => 'im\cms\models\Page'
+            ],
         ];
     }
 }

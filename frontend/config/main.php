@@ -20,6 +20,7 @@ return [
     'modules' => [
         'cms' => 'im\cms\frontend\Module',
         'catalog' => 'im\catalog\Module',
+        'blog' => 'im\blog\frontend\Module',
         'search' => 'im\search\frontend\Module',
         'users' => 'im\users\Module'
     ],

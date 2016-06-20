@@ -35,6 +35,7 @@ return [
             [
                 'class' => 'im\cms\components\PageModelRouteResolver',
                 'route' => 'cms/page/view',
+                'childRoute' => 'cms/page/child',
                 'modelClass' => 'im\cms\models\Page',
             ],
         ]

@@ -56,7 +56,7 @@ class PageViewAction extends ModelViewAction implements ModelContextInterface
             }
         }
 
-        return $this->render($this->view, $model);
+        return $this->render($this->view, ['model' => $model]);
     }
 
     /**
@@ -120,15 +120,11 @@ class PageViewAction extends ModelViewAction implements ModelContextInterface
     }
 
     /**
-     * Renders a view.
-     *
-     * @param string $viewName view name
-     * @param Page $model model for render
-     * @return string result of the rendering
+     * @inheritdoc
      */
-    protected function render($viewName, $model)
+    protected function render($viewName, array $params)
     {
-        return $this->controller->render($viewName, ['model' => $model]);
+        return $this->controller->render($viewName, $params);
     }
 
     /**

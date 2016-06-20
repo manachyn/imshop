@@ -81,4 +81,12 @@ class News extends Article
     {
         return static::find()->published()->orderBy(['created_at' => SORT_DESC])->limit($count)->all();
     }
+
+    /**
+     * @inheritdoc
+     */
+    public static function getViewRoute()
+    {
+        return 'blog/news/view';
+    }
 }

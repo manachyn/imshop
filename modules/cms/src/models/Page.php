@@ -4,6 +4,7 @@ namespace im\cms\models;
 
 use creocoder\nestedsets\NestedSetsBehavior;
 use im\base\traits\ModelBehaviorTrait;
+use im\cms\components\PageInterface;
 use im\cms\Module;
 use im\tree\models\Tree;
 use Yii;
@@ -30,7 +31,7 @@ use yii\helpers\Url;
  * @method PageQuery prev()
  * @method PageQuery next()
  */
-class Page extends Tree
+class Page extends Tree implements PageInterface
 {
     use ModelBehaviorTrait;
 
@@ -264,6 +265,14 @@ class Page extends Tree
 //        $page = static::find()->andWhere(['slug' => array_pop($parts)])->one();
 //        $parents = $page->parents()->all();
         return static::findBySlug($path);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function getViewRoute()
+    {
+        return '';
     }
 
     /**

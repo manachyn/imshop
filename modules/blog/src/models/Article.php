@@ -5,6 +5,7 @@ namespace im\blog\models;
 use im\base\behaviors\RelationsBehavior;
 use im\base\traits\ModelBehaviorTrait;
 use im\blog\Module;
+use im\cms\components\PageInterface;
 use im\filesystem\components\FileInterface;
 use im\filesystem\components\FilesBehavior;
 use Intervention\Image\Constraint;
@@ -13,7 +14,6 @@ use Yii;
 use yii\behaviors\SluggableBehavior;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
-use yii\helpers\Inflector;
 use yii\helpers\Url;
 
 /**
@@ -27,7 +27,7 @@ use yii\helpers\Url;
  * @property integer $updated_at
  * @property integer $status
  */
-class Article extends ActiveRecord
+class Article extends ActiveRecord implements PageInterface, \Serializable
 {
     use ModelBehaviorTrait;
 
@@ -193,7 +193,15 @@ class Article extends ActiveRecord
      */
     public static function findBySlug($slug)
     {
-        return static::find()->andWhere(['slug' => $slug]);
+        return static::find()->andWhere(['slug' => $slug])->published();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function getViewRoute()
+    {
+        return 'blog/article/view';
     }
 
     /**
@@ -205,5 +213,28 @@ class Article extends ActiveRecord
     public static function getLastArticles($count = 10)
     {
         return static::find()->published()->orderBy(['created_at' => SORT_DESC])->limit($count)->all();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function serialize()
+    {
+        return serialize([
+            'attributes' => $this->getAttributes(),
+            'related' => $this->getRelatedRecords()
+        ]);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function unserialize($serialized)
+    {
+        $data = unserialize($serialized);
+        $this->setAttributes($data['attributes']);
+        foreach ($data['related'] as $name => $value) {
+            $this->populateRelation($name, $value);
+        }
     }
 }

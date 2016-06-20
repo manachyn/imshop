@@ -15,6 +15,11 @@ use yii\caching\TagDependency;
 class PageModelRouteResolver extends ModelRouteResolver
 {
     /**
+     * @var string
+     */
+    public $childRoute;
+
+    /**
      * @inheritdoc
      */
     public function resolve($params)
@@ -26,19 +31,42 @@ class PageModelRouteResolver extends ModelRouteResolver
         $modelClass = $this->modelClass;
         $condition = ['path' => $params['path']];
         $parts = explode('/', $params['path']);
-        $pagePath = array_pop($parts);
+        //$pagePath = array_pop($parts);
         $urlManager = Yii::$app->getUrlManager();
+        $match = false;
         if ($urlManager->cache instanceof Cache) {
             $cacheKey = array_merge([$this->modelClass], $condition);
             if (($match = $urlManager->cache->get($cacheKey)) === false) {
-                $match = $modelClass::findBySlug($pagePath)->asArray()->count();
-                $dependency = new TagDependency(['tags' => [$this->modelClass . '::' . $pagePath]]);
-                $urlManager->cache->set($cacheKey, $match, 0, $dependency);
+                foreach (array_reverse($parts) as $key => $slug) {
+                    if ($match = $modelClass::findBySlug($slug)->asArray()->count()) {
+                        if ($key > 0) {
+                            $params = array_merge($params, [
+                                'path' => implode('/', array_slice($parts, 0, -$key)),
+                                'childPath' => implode('/', array_slice($parts, -$key))
+                            ]);
+                            $this->route = $this->childRoute;
+                        }
+                        $dependency = new TagDependency(['tags' => [$this->modelClass . '::' . $slug]]);
+                        $urlManager->cache->set($cacheKey, $match, 0, $dependency);
+                        break;
+                    }
+                }
             }
         } else {
-            $match = $modelClass::findBySlug($pagePath)->asArray()->count();
+            foreach (array_reverse($parts) as $key => $slug) {
+                if ($match = $modelClass::findBySlug($slug)->asArray()->count()) {
+                    if ($key > 0) {
+                        $params = array_merge($params, [
+                            'path' => implode('/', array_slice($parts, 0, -$key)),
+                            'childPath' => implode('/', array_slice($parts, -$key))
+                        ]);
+                        $this->route = $this->childRoute;
+                    }
+                    break;
+                }
+            }
         }
 
-        return $match ? $this->getRoute() : false;
+        return $match ? [$this->getRoute(), $params] : false;
     }
 }
