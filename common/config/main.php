@@ -91,7 +91,7 @@ return [
             'signKey' => 'akqTelFIql',
             'servers' => [
                 'local' => [
-                    'source' => '@frontend/web/files',
+                    'source' => '@www/files',
                     'cache' => '@frontend/runtime/cache/glide'
                 ],
                 's3' => [

@@ -18,6 +18,7 @@ class Bootstrap implements BootstrapInterface
      */
     public function bootstrap($app)
     {
+        $this->setAliases();
         $this->registerTranslations($app);
         $this->registerDefinitions();
         $this->registerEntityTypes($app);
@@ -25,7 +26,6 @@ class Bootstrap implements BootstrapInterface
         if ($app instanceof \yii\web\Application) {
             $this->registerWidgets($app);
         }
-        $this->setAliases();
     }
 
     /**

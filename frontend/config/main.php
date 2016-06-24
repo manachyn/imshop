@@ -8,13 +8,15 @@ $params = array_merge(
 
 return [
     'id' => 'app-frontend',
+    'language' => 'ru',
     'basePath' => dirname(__DIR__),
     'bootstrap' => [
         'log' => 'log',
         'base' => 'im\base\Bootstrap',
         'cms' => 'im\cms\frontend\Bootstrap',
         'seo' => 'im\seo\frontend\Bootstrap',
-        'search' => 'im\search\frontend\Bootstrap'
+        'search' => 'im\search\frontend\Bootstrap',
+        //'elasticsearch' => 'im\elasticsearch\Bootstrap',
     ],
     'controllerNamespace' => 'frontend\controllers',
     'modules' => [
@@ -50,26 +52,11 @@ return [
             'theme' => ['class' => 'im\pkbnt\components\Theme']
         ],
         'assetManager' => [
-            'bundles' => require(dirname(dirname(__DIR__)) . '/modules/pkbnt/src/components/assets/assets.php'),
+            'bundles' => require(__DIR__ . '/../../vendor/imsoft/pkbnt/src/components/assets/assets.php'),
         ],
-        'glide' => [
-            'class' => 'im\image\glide\Glide',
-            'signKey' => 'akqTelFIql',
-            'servers' => [
-                'local' => [
-                    'source' => '@frontend/web/files',
-                    'cache' => '@frontend/runtime/cache/glide'
-                ],
-                's3' => [
-                    'filesystem' => 's3',
-                    'cache' => '@frontend/runtime/cache/glide'
-                ]
-            ]
-        ],
-        'seo' => 'im\seo\components\Seo'
-    ],
-    'controllerMap' => [
-        'glide' => 'im\image\glide\controllers\GlideController'
+        'seo' => 'im\seo\components\Seo',
+        'categorySearch' => 'im\catalog\components\search\CategorySearchComponent',
+        'pageFinder' => 'im\cms\components\PageFinder'
     ],
     'params' => $params,
 ];

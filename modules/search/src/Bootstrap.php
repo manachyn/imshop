@@ -2,7 +2,6 @@
 
 namespace im\search;
 
-use im\base\routing\ModuleRulesTrait;
 use im\base\types\EntityType;
 use yii\base\BootstrapInterface;
 use Yii;
@@ -19,6 +18,7 @@ class Bootstrap implements BootstrapInterface
      */
     public function bootstrap($app)
     {
+        $this->setAliases();
         $this->registerTranslations($app);
         $this->registerDefinitions();
         $this->registerSearchService($app);
@@ -27,7 +27,6 @@ class Bootstrap implements BootstrapInterface
             $this->registerPageTypes($app);
             $this->registerWidgets($app);
         }
-        $this->setAliases();
     }
 
     /**
