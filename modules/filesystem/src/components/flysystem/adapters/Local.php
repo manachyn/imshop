@@ -16,7 +16,7 @@ class Local extends \League\Flysystem\Adapter\Local
     public function getUrl($path)
     {
         $path = $this->applyPathPrefix($path);
-        $relativeToWeb = substr($path, strlen(Yii::getAlias('@frontend') . DIRECTORY_SEPARATOR . 'web') + 1);
+        $relativeToWeb = substr($path, strlen(Yii::getAlias('@www')) + 1);
         if ($relativeToWeb) {
             return Url::to('/' . trim($relativeToWeb, '/'));
         } else {
