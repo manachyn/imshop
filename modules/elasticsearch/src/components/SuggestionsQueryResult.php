@@ -2,14 +2,13 @@
 
 namespace im\elasticsearch\components;
 
-use im\search\components\index\Document;
-use im\search\components\query\IndexQueryResultInterface;
-use im\search\components\query\QueryInterface;
 use im\search\components\query\SuggestionOption;
 use im\search\components\query\SuggestionsQueryInterface;
-use ReflectionClass;
-use yii\helpers\Inflector;
 
+/**
+ * Class SuggestionsQueryResult
+ * @package im\elasticsearch\components
+ */
 class SuggestionsQueryResult extends \im\search\components\query\SuggestionsQueryResult
 {
     /**

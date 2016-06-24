@@ -3,9 +3,15 @@
 namespace im\search\components\service\db;
 
 use im\search\components\finder\BaseFinder;
+use im\search\components\query\QueryInterface;
 use im\search\components\query\SearchQueryInterface;
+use im\search\components\query\Suggest;
 use Yii;
 
+/**
+ * Class Finder
+ * @package im\search\components\service\db
+ */
 class Finder extends BaseFinder
 {
     /**
@@ -43,5 +49,28 @@ class Finder extends BaseFinder
         $type = $this->getSearchableType($type);
 
         return $type->modelClass;
+    }
+
+    /**
+     * Finds text suggestions.
+     *
+     * @param Suggest $suggest
+     * @param string $type
+     * @param SearchQueryInterface|null $query
+     * @return QueryInterface
+     */
+    public function findSuggestions(Suggest $suggest, $type, SearchQueryInterface $query = null)
+    {
+        $params = [
+            'class' => SuggestionsQuery::className(),
+            'searchableType' => $this->getSearchableType($type),
+            'suggestQuery' => $suggest
+        ];
+        if ($query) {
+            $params['searchQuery'] = $query;
+        }
+        $query = Yii::createObject($params, [$this->getModelClass($type)]);
+
+        return $query;
     }
 }

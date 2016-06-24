@@ -44,6 +44,11 @@ class Product extends ActiveRecord implements ProductInterface
     const DEFAULT_STATUS = self::STATUS_ACTIVE;
 
     /**
+     * @var ProductFile
+     */
+    protected $cover;
+
+    /**
      * @inheritdoc
      */
     public static function instantiate($row)
@@ -68,7 +73,8 @@ class Product extends ActiveRecord implements ProductInterface
             'sluggable' => [
                 'class' => SluggableBehavior::className(),
                 'attribute' => 'title',
-                'ensureUnique' => true
+                'ensureUnique' => true,
+                'immutable' => true
             ],
             'timestamp' => TimestampBehavior::className(),
             'files' => [
@@ -116,7 +122,7 @@ class Product extends ActiveRecord implements ProductInterface
         return [
             [['title'], 'required'],
             ['price', 'default', 'value' => 0],
-            [['sku', 'slug', 'description', 'quantity', 'price', 'status', 'brand_id', 'type_id', 'eAttributes', 'categories'], 'safe'],
+            [['sku', 'slug', 'short_description', 'description', 'quantity', 'price', 'status', 'brand_id', 'type_id', 'eAttributes', 'categories'], 'safe'],
             [['eAttributes'], 'im\base\validators\RelationValidator'],
             //[['uploadedImages'], 'file', 'skipOnEmpty' => false, 'maxFiles' => 4],
         ];
@@ -132,6 +138,7 @@ class Product extends ActiveRecord implements ProductInterface
             'sku' => Module::t('product', 'SKU'),
             'title' => Module::t('product', 'Title'),
             'slug' => Module::t('product', 'URL'),
+            'short_description' => Module::t('product', 'Short description'),
             'description' => Module::t('product', 'Description'),
             'quantity' => Module::t('product', 'Quantity'),
             'price' => Module::t('product', 'Price'),
@@ -362,6 +369,19 @@ class Product extends ActiveRecord implements ProductInterface
     public function getUrl($scheme = false)
     {
         return Url::to(['/catalog/product/view', 'path' => $this->slug], $scheme);
+    }
+
+    /**
+     * @return ProductFile
+     */
+    public function getCover()
+    {
+        if (!$this->cover) {
+            $cover = $this->imagesRelation()->where(['type' => ProductFile::TYPE_COVER])->one();
+            $this->cover = $cover ?: $this->imagesRelation()->orderBy('sort')->one();
+        }
+
+        return $this->cover;
     }
 
     /**

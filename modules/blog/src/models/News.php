@@ -68,7 +68,11 @@ class News extends Article
      */
     public function getUrl($scheme = false)
     {
-        return Url::to(['/blog/news/view', 'path' => $this->slug], $scheme);
+        /** @var \im\cms\components\PageFinder $finder */
+        $finder = Yii::$app->get('pageFinder');
+        $newsPage = $finder->findModel(['type' => NewsListPage::TYPE, 'status' => NewsListPage::STATUS_PUBLISHED]);
+
+        return $newsPage ? Url::to(['/cms/page/view', 'path' => $newsPage->getUrl() . '/' . $this->slug], $scheme) : '';
     }
 
     /**

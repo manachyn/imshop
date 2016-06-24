@@ -5,7 +5,7 @@ return [
     ['pattern' => 'storage/<server:\w+>/<path:(.*)>', 'route' => 'glide/index', 'encodeParams' => false],
     [
         'class' => 'im\base\routing\GroupUrlRule',
-        'pattern' => '<path:[a-zA-Z0-9_\-]+>/<query:.+>',
+        'pattern' => '<path:[a-zA-Z0-9_\-.]+>/<query:.+>',
         'defaults' => ['query' => ''],
         'encodeParams' => false,
         'resolvers' => [
@@ -14,11 +14,11 @@ return [
                 'route' => 'catalog/product-category/view',
                 'modelClass' => 'im\catalog\models\ProductCategory'
             ],
-            [
-                'class' => 'im\base\routing\ModelRouteResolver',
-                'route' => 'search/search-page/view',
-                'modelClass' => 'im\search\models\SearchPage'
-            ]
+//            [
+//                'class' => 'im\base\routing\ModelRouteResolver',
+//                'route' => 'search/search-page/view',
+//                'modelClass' => 'im\search\models\SearchPage'
+//            ]
         ]
     ],
     [

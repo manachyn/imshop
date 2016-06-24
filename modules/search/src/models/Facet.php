@@ -357,6 +357,14 @@ class Facet extends ActiveRecord implements FacetInterface
     }
 
     /**
+     * @inheritdoc
+     */
+    public function isDisplaySelectedValues()
+    {
+        return true;
+    }
+
+    /**
      * The name of the facet edit view
      * This should be in the format of 'path/to/view'.
      * @return string

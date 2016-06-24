@@ -35,6 +35,20 @@ class PageController extends CrudController
     /**
      * @inheritdoc
      */
+    public function actionDelete($id)
+    {
+        /** @var Page $model */
+        $model = $this->findModel($id);
+        $model->deleteWithChildren();
+        $this->setFlashMessages('delete');
+        if (($result = $this->afterDelete()) !== null) {
+            return $result;
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
     protected function getModelClass()
     {
         return Page::className();

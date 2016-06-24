@@ -6,26 +6,29 @@
  * @var \im\catalog\models\ProductCategory $model Model
  */
 
+use yii\widgets\ListView;
+
 $this->title = $model->name;
-//$model->pageMeta->applyTo($this);
 $this->params['breadcrumbs'] = [
     $this->title
 ];
 $this->params['model'] = $model;
 ?>
-<?= $model->description ?>
+
+<?= ListView::widget([
+    'dataProvider' => $productsDataProvider,
+    'itemView' => '@im/catalog/views/product/_list_item.php',
+    'layout' => "{summary}\n<div class='row'>{items}</div>\n{pager}",
+    'itemOptions' => ['class' => 'col-xs-6 col-sm-4 col-md-4 col-lg-3'],
+    'emptyText' => ''
+]) ?>
 
 <div class="row">
 <?php foreach ($model->children(1)->all() as $category) : ?>
     <div class="col-xs-6 col-sm-4 col-md-4 col-lg-3">
-        <?= $this->render('_item', ['model' => $category]) ?>
+        <?= $this->render('_list_item', ['model' => $category]) ?>
     </div>
 <?php endforeach ?>
 </div>
 
-<?= \yii\widgets\ListView::widget([
-    'dataProvider' => $productsDataProvider,
-    'itemView' => '@im/catalog/views/product/_item.php',
-    'layout' => "{summary}\n<div class='row'>{items}</div>\n{pager}",
-    'itemOptions' => ['class' => 'col-xs-6 col-sm-4 col-md-4 col-lg-3']
-]) ?>
+<?= $model->content ?>

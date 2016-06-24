@@ -196,7 +196,7 @@ class FieldSet extends Set
         try {
             return $this->renderSet();
         } catch (\Exception $e) {
-            return '';
+            return $e->getMessage();
         }
     }
 

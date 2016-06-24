@@ -110,25 +110,28 @@ class Bootstrap implements BootstrapInterface
     {
         /** @var \im\search\components\SearchManager $searchManager */
         $searchManager = $app->get('searchManager');
+//        $searchManager->registerSearchableType([
+//            'class' => 'im\catalog\components\search\IndexedProduct',
+//            'type' => 'product',
+//            'modelClass' => 'im\catalog\models\Product',
+//            'default' => true,
+//            'objectToDocumentTransformer' => 'im\elasticsearch\components\ActiveRecordToElasticDocumentTransformer',
+//            'searchResultsView' => '@im/catalog/views/product/_site_search_results'
+//        ]);
         $searchManager->registerSearchableType([
             'class' => 'im\catalog\components\search\Product',
-            'type' => 'product',
             'modelClass' => 'im\catalog\models\Product',
-            'default' => true,
-            'objectToDocumentTransformer' => 'im\elasticsearch\components\ActiveRecordToElasticDocumentTransformer',
+            'type' => 'product',
+            'searchServiceId' => 'db',
             'searchResultsView' => '@im/catalog/views/product/_site_search_results'
         ]);
         $searchManager->registerSearchableType([
             'class' => 'im\catalog\components\search\ProductCategory',
             'type' => 'product_category',
-            'modelClass' => 'im\catalog\models\ProductCategory'
+            'modelClass' => 'im\catalog\models\ProductCategory',
+            'searchServiceId' => 'db',
+            'searchResultsView' => '@im/catalog/views/product-category/_site_search_results'
         ]);
-//        $searchManager->registerSearchableType([
-//            'class' => 'im\search\components\service\db\SearchableType',
-//            'modelClass' => 'im\catalog\models\Product',
-//            'type' => 'product',
-//            'searchServiceId' => 'db'
-//        ]);
     }
 
     /**

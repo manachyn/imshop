@@ -3,13 +3,13 @@ return [
     'vendorPath' => dirname(dirname(__DIR__)) . '/vendor',
     'bootstrap' => [
         'config' => '\im\config\Bootstrap',
-        'cms' => 'im\cms\Bootstrap',
         'seo' => 'im\seo\Bootstrap',
         //'imshop' => 'im\imshop\Bootstrap',
         'pkbnt' => 'im\pkbnt\Bootstrap',
         'elasticsearc' => 'im\elasticsearch\Bootstrap',
         'tree' => 'im\tree\Bootstrap',
         'catalog' => 'im\catalog\Bootstrap',
+        'cms' => 'im\cms\Bootstrap',
         'search' => 'im\search\Bootstrap',
         'blog' => 'im\blog\Bootstrap',
         'users' => 'im\users\Bootstrap'
@@ -86,5 +86,22 @@ return [
 //                ]
             ],
         ],
+        'glide' => [
+            'class' => 'im\image\glide\Glide',
+            'signKey' => 'akqTelFIql',
+            'servers' => [
+                'local' => [
+                    'source' => '@frontend/web/files',
+                    'cache' => '@frontend/runtime/cache/glide'
+                ],
+                's3' => [
+                    'filesystem' => 's3',
+                    'cache' => '@frontend/runtime/cache/glide'
+                ]
+            ]
+        ],
+    ],
+    'controllerMap' => [
+        'glide' => 'im\image\glide\controllers\GlideController'
     ],
 ];

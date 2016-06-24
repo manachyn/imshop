@@ -2,59 +2,36 @@
 
 namespace im\catalog\components\search;
 
-use im\catalog\models\Product as ProductModel;
 use im\search\components\searchable\AttributeDescriptor;
-use im\search\components\service\db\IndexedSearchableType;
-use Yii;
+use im\search\components\service\db\SearchableType;
 
 /**
  * Class Product
  * @package im\catalog\components\search
  */
-class Product extends IndexedSearchableType
+class Product extends SearchableType
 {
+    use SearchableProductTrait;
+
     /**
      * @inheritdoc
      */
-    public function getSearchableAttributes($recursive = true)
+    public function getFullTextSearchAttributes()
     {
-        /** @var \im\catalog\models\Product $model */
-        $model = $this->getModel();
-        $entityType = 'product';
-
-        $searchableAttributes = [];
-        // Attributes
-        $searchableAttributes = array_merge($searchableAttributes, $this->getSearchableModelAttributes($model));
-        // EAV
-        $searchableAttributes = array_merge($searchableAttributes, $this->getSearchableEAVAttributes($entityType));
-        // Relations
-        $searchableAttributes = array_merge($searchableAttributes, $this->getRelationAttributes($model->getCategoriesRelation(), 'categoriesRelation', 'categories'));
-        $searchableAttributes[] = new AttributeDescriptor([
-            'name' => 'all_categories',
-            'label' => 'All categories (including  category parents)',
-            'value' => function (ProductModel $model) {
-                $allCategories = $categories = $model->getCategories();
-                foreach ($categories as $category) {
-                    $allCategories = array_merge($allCategories, $category->parents()->all());
-                }
-                $value = [];
-                foreach ($allCategories as $category) {
-                    $value[$category->id] = $category->id;
-                }
-
-                return array_values($value);
-            }
-        ]);
-        $searchableAttributes = array_merge($searchableAttributes, $this->getRelationAttributes($model->getBrandRelation(), 'brandRelation', 'brand'));
-
-        return $searchableAttributes;
+        return [
+            new AttributeDescriptor(['name' => 'title']),
+            new AttributeDescriptor(['name' => 'short_description']),
+            new AttributeDescriptor(['name' => 'description'])
+        ];
     }
 
     /**
      * @inheritdoc
      */
-    public function getTextFields()
+    public function getSuggestionsAttributes()
     {
-        return array_merge(parent::getTextFields(), ['title', 'description']);
+        return [
+            new AttributeDescriptor(['name' => 'title'])
+        ];
     }
 }

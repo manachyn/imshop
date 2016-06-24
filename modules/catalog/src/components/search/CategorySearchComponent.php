@@ -2,7 +2,6 @@
 
 namespace im\catalog\components\search;
 
-
 use im\catalog\models\CategoriesFacet;
 use im\catalog\models\Category;
 use im\search\components\index\IndexableInterface;
@@ -29,6 +28,7 @@ class CategorySearchComponent extends SearchComponent
 
     /**
      * @inheritdoc
+     * @param \im\search\components\query\facet\FacetInterface[] $facets
      */
     public function getQuery($searchableType, $searchQuery = null, $facets = [], Model $model = null, $params = [])
     {
@@ -102,7 +102,7 @@ class CategorySearchComponent extends SearchComponent
                 }
             }
         } else {
-            $categoryQuery = new Term('categoriesRelation.id', $category->id);
+            $categoryQuery = new Term('categories.id', $category->id);
         }
 
         return $categoryQuery;

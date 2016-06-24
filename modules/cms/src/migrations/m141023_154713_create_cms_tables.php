@@ -27,6 +27,7 @@ class m141023_154713_create_cms_tables extends Migration
                 'content' => $this->text()->notNull(),
                 'status' => $this->boolean()->defaultValue(0),
                 'template_id' => $this->integer()->defaultValue(null),
+                'facet_set_id' => $this->integer()->defaultValue(null),
                 'created_at' => $this->integer()->notNull(),
                 'updated_at' => $this->integer()->notNull()
             ],

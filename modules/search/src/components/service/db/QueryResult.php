@@ -5,6 +5,10 @@ namespace im\search\components\service\db;
 use im\search\components\query\QueryInterface;
 use im\search\components\query\QueryResultInterface;
 
+/**
+ * Class QueryResult
+ * @package im\search\components\service\db
+ */
 class QueryResult extends \im\search\components\query\QueryResult implements QueryResultInterface
 {
     /**
@@ -15,6 +19,7 @@ class QueryResult extends \im\search\components\query\QueryResult implements Que
     {
         parent::__construct($query);
         $this->objects = $objects;
+        $this->init();
     }
     /**
      * @inheritdoc
@@ -22,5 +27,13 @@ class QueryResult extends \im\search\components\query\QueryResult implements Que
     public function getSelectedFacets()
     {
         return [];
+    }
+
+    /**
+     * Init result
+     */
+    protected function init()
+    {
+
     }
 }

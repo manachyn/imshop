@@ -15,6 +15,7 @@ use yii\helpers\Url;
  * Product category model class.
  *
  * @property Product[] $products
+ * @property ProductCategoryFile $image
  */
 class ProductCategory extends Category implements \Serializable
 {

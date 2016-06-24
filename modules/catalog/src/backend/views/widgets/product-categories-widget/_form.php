@@ -16,7 +16,9 @@ $fieldConfig = isset($fieldConfig) ? $fieldConfig : [];
     $form = ActiveForm::begin(['id' => 'product-categories-widget', 'options' => ['data-pjax' => 1]]);
 } ?>
 
-<?= $form->field($model, 'depth', $fieldConfig)->textInput() ?>
+<?= $form->field($model, 'title', $fieldConfig) ?>
+
+<?= $form->field($model, 'depth', $fieldConfig) ?>
 
 <?php if (!isset($form)) {
 

@@ -2,6 +2,8 @@
 
 namespace im\search\widgets;
 
+use im\search\components\SearchManager;
+use Yii;
 use yii\base\Widget;
 
 /**
@@ -15,6 +17,9 @@ class SearchWidget extends Widget
      */
     public function run()
     {
-        return $this->render('search', []);
+        /** @var SearchManager $searchManager */
+        $searchManager = Yii::$app->get('searchManager');
+
+        return $this->render('search', ['action' => $searchManager->getSearchPageUrl()]);
     }
 }

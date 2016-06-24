@@ -15,7 +15,7 @@ $level = isset($level) ? $level : 1;
 <ul<?= $level == 1 ? ' class="facet-values"' : '' ?>>
 <?php foreach ($values as $value) :
     if ($value->getResultsCount() || $facet->isDisplayValuesWithoutResults()) : ?>
-    <li class="facet-value">
+    <li class="facet-value<?php if ($value->isSelected()) echo ' facet-value-selected'; ?>">
     <?= $this->render('facet_value', ['value' => $value, 'facet' => $facet, 'searchQuery' => $searchQuery, 'level' => $level]) ?>
     <?php if ($value instanceof TreeFacetValueInterface) : ?>
         <?= $this->render('facet_values', ['values' => $value->getChildren(), 'facet' => $facet, 'searchQuery' => $searchQuery, 'level' => $level + 1]) ?>

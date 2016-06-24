@@ -30,7 +30,7 @@ class PageChildViewAction extends PageViewAction
             if (is_subclass_of($childClass, PageInterface::class)) {
                 /** @var PageInterface $childClass */
                 if ($route = $childClass::getViewRoute()) {
-                    Yii::$app->runAction($route, ['path' => $childPath, 'parentPage' => $model]);
+                    return Yii::$app->runAction($route, ['path' => $childPath, 'parentPage' => $model]);
                 }
             }
         }

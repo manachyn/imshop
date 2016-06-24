@@ -83,7 +83,6 @@ interface FacetInterface
      */
     public function getValueInstances(array $configs);
 
-
     /**
      * Sets facet context.
      *
@@ -111,4 +110,11 @@ interface FacetInterface
      * @return bool
      */
     public function isDisplayValuesWithoutResults();
+
+    /**
+     * Whether to display facet facet selected.
+     *
+     * @return bool
+     */
+    public function isDisplaySelectedValues();
 }

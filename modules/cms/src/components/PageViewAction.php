@@ -46,15 +46,11 @@ class PageViewAction extends ModelViewAction implements ModelContextInterface
         if (!$model) {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
-        $this->setModel($model);
-        if ($model && $model->getBehavior('template')) {
-            /** @var TemplateBehavior|Page $model */
-            /** @var \im\cms\models\Template $template */
-            $template = $model->template;
-            if ($template && $layout = $template->getLayout()) {
-                $this->controller->layout = '//' . $layout->id;
-            }
+        if ($route = $model::getViewRoute()) {
+            return Yii::$app->runAction($route, array_merge(Yii::$app->request->getQueryParams(), ['model' => $model]));
         }
+        $this->setModel($model);
+        $this->setTemplate($model);
 
         return $this->render($this->view, ['model' => $model]);
     }
@@ -64,59 +60,30 @@ class PageViewAction extends ModelViewAction implements ModelContextInterface
      *
      * @param string $path
      * @return Page|null
-     * @throws InvalidConfigException
      */
     public function findModel($path)
     {
-        /** @var \im\cms\components\Cms $cms */
-        $cms = Yii::$app->get('cms');
-        $cacheManager = $cms->getCacheManager();
-        if ($cacheManager) {
-            $cacheKey = [$this->modelClass, $path];
-            return $cacheManager->getFromCache($this->modelClass, $cacheKey, function () use ($path) {
-                return $this->loadModel($path);
-            });
-        }
+        /** @var \im\cms\components\PageFinder $finder */
+        $finder = Yii::$app->get('pageFinder');
 
-        return $this->loadModel($path);
-    }
-
-
-    /**
-     * @param Page $model
-     *
-     * @return array
-     */
-    protected function getRelationForLoad(Page $model)
-    {
-        $relations = [];
-        if ($model->getBehavior('template')) {
-            $relations[] = 'template';
-        }
-
-        return $relations;
+        return $finder->findByPath($path);
     }
 
     /**
-     * Loads page model with relations from database by it's path.
+     * Set controller layout based on model template.
      *
-     * @param string $path page path
-     * @return Page|null the loaded model
+     * @param Model $model
      */
-    protected function loadModel($path)
+    protected function setTemplate(Model $model)
     {
-        /* @var $modelClass Page */
-        $modelClass = $this->modelClass;
-        $parts = explode('/', $path);
-        /** @var Page $model */
-        $model = $modelClass::findBySlug(array_pop($parts))->published()->one();
-        if ($model) {
-            foreach ($this->getRelationForLoad($model) as $relation) {
-                $model->$relation;
+        if ($model && $model->getBehavior('template')) {
+            /** @var TemplateBehavior $model */
+            /** @var \im\cms\models\Template $template */
+            $template = $model->template;
+            if ($template && $layout = $template->getLayout()) {
+                $this->controller->layout = '//' . $layout->id;
             }
         }
-
-        return $model;
     }
 
     /**

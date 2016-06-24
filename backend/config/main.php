@@ -33,7 +33,8 @@ return [
         'filesystem' => 'im\filesystem\Module',
         'config' => 'im\config\Module',
         'rbac' => 'im\rbac\backend\Module',
-        'users' => 'im\users\backend\Module'
+        'users' => 'im\users\backend\Module',
+        'search' => 'im\search\backend\Module'
     ],
     'components' => [
         'log' => [

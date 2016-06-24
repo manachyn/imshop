@@ -254,13 +254,11 @@ class SearchComponent extends Component
     protected function getSuggestQuery($text, $searchableType)
     {
         $suggestionsFields = [];
-        if ($searchableType instanceof IndexableInterface) {
-            $indexAttributes = $searchableType->getIndexMapping();
-            foreach ($indexAttributes as $attribute) {
-                if (!empty($attribute->params['suggestions'])) {
-                    $suggestionsFields[] = $attribute->name;
-                }
-            }
+        if ($searchableType) {
+            $suggestionsAttributes = $searchableType->getSuggestionsAttributes();
+            $suggestionsFields = array_map(function (AttributeDescriptor $attribute) {
+                return $attribute->name;
+            }, $suggestionsAttributes);
         }
 
         return $suggestionsFields ? new Suggest($suggestionsFields, $text) : null;

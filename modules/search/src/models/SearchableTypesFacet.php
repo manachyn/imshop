@@ -39,6 +39,14 @@ class SearchableTypesFacet extends TermsFacet
     /**
      * @inheritdoc
      */
+    public function isDisplaySelectedValues()
+    {
+        return false;
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function getEditView()
     {
         return '@im/search/backend/views/searchable-types-facet/_form.php';

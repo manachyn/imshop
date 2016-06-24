@@ -46,6 +46,7 @@ class PageModelRouteResolver extends ModelRouteResolver
                             ]);
                             $this->route = $this->childRoute;
                         }
+                        $match = [$this->getRoute(), $params];
                         $dependency = new TagDependency(['tags' => [$this->modelClass . '::' . $slug]]);
                         $urlManager->cache->set($cacheKey, $match, 0, $dependency);
                         break;
@@ -62,11 +63,12 @@ class PageModelRouteResolver extends ModelRouteResolver
                         ]);
                         $this->route = $this->childRoute;
                     }
+                    $match = [$this->getRoute(), $params];
                     break;
                 }
             }
         }
 
-        return $match ? [$this->getRoute(), $params] : false;
+        return $match ?: false;
     }
 }

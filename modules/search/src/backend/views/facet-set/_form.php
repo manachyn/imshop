@@ -19,7 +19,9 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'facets')->widget(Select2::classname(), [
-        'data' => ArrayHelper::map(Facet::find()->asArray()->orderBy('name')->all(), 'id', 'name'),
+        'data' => ArrayHelper::map(Facet::find()->orderBy('name')->all(), 'id', function (Facet $facet) {
+            return $facet->getName() . ' - ' . $facet->getLabel();
+        }),
         'options' => ['multiple' => true]
     ]); ?>
 

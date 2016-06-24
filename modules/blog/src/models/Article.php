@@ -26,6 +26,8 @@ use yii\helpers\Url;
  * @property integer $created_at
  * @property integer $updated_at
  * @property integer $status
+ * @property ArticleFile $image
+ * @property ArticleFile $video
  */
 class Article extends ActiveRecord implements PageInterface, \Serializable
 {
@@ -153,7 +155,11 @@ class Article extends ActiveRecord implements PageInterface, \Serializable
      */
     public function getUrl($scheme = false)
     {
-        return Url::to(['/blog/article/view', 'path' => $this->slug], $scheme);
+        /** @var \im\cms\components\PageFinder $finder */
+        $finder = Yii::$app->get('pageFinder');
+        $articlesPage = $finder->findModel(['type' => ArticlesListPage::TYPE, 'status' => ArticlesListPage::STATUS_PUBLISHED]);
+
+        return $articlesPage ? Url::to(['/cms/page/view', 'path' => $articlesPage->getUrl() . '/' . $this->slug], $scheme) : '';
     }
 
     /**

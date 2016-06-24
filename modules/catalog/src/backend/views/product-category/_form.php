@@ -9,6 +9,7 @@ use im\forms\components\ContentBlock;
 use im\forms\components\FieldSet;
 use im\forms\components\Tab;
 use im\forms\components\TabSet;
+use im\wysiwyg\WysiwygEditor;
 use yii\data\ActiveDataProvider;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
@@ -17,10 +18,12 @@ use yii\widgets\ActiveForm;
 /* @var $model im\catalog\models\ProductCategory */
 /* @var $form yii\widgets\ActiveForm */
 
-\yii\jui\JuiAsset::register($this);
-$dataProvider = new ActiveDataProvider([
-    'query' => $model->imageRelation()
-]);
+//\yii\jui\JuiAsset::register($this);
+//$dataProvider = new ActiveDataProvider([
+//    'query' => $model->imageRelation()
+//]);
+
+$wysiwygConfig = Yii::$app->get('config')->get('wysiwyg.*');
 ?>
 
 <?php $form = ActiveForm::begin(['id' => 'category-form', 'fieldClass' => 'im\forms\widgets\ActiveField', 'options' => ['enctype' => 'multipart/form-data']]); ?>
@@ -31,6 +34,12 @@ $dataProvider = new ActiveDataProvider([
             $form->field($model, 'name')->textInput(['maxlength' => true]),
             $form->field($model, 'slug')->textInput(['maxlength' => true]),
             $form->field($model, 'description')->textarea(),
+            $form->field($model, 'content')->widget(WysiwygEditor::className(), [
+                'options' => ['rows' => 6],
+                'editor' => $wysiwygConfig['wysiwyg.editor'],
+                'preset' => $wysiwygConfig['wysiwyg.preset'],
+                'fileManagerRoute' => ['/elfinder/manager']
+            ]),
             $form->field($model, 'status')->dropDownList($model::getStatusesList()),
         ]),
         new Tab('images', Module::t('category', 'Images'), [

@@ -50,7 +50,7 @@ class FacetsWidget extends Widget
             $searchQuery = $result->getQuery()->getSearchQuery();
             $selectedFacets = [];
             foreach ($result->getFacets() as $facet) {
-                if ($values = $facet->getValues()) {
+                if ($facet->isDisplaySelectedValues() && ($values = $facet->getValues())) {
                     $selectedValues = array_filter($values, function (FacetValueInterface $value) use ($searchQuery) {
                         return $value->isSelected($searchQuery);
                     });

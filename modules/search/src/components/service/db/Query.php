@@ -4,6 +4,8 @@ namespace im\search\components\service\db;
 
 use im\search\components\query\Boolean;
 use im\search\components\query\facet\FacetInterface;
+use im\search\components\query\Match;
+use im\search\components\query\MultiMatch;
 use im\search\components\query\QueryInterface;
 use im\search\components\query\QueryResultInterface;
 use im\search\components\query\Range;
@@ -15,7 +17,10 @@ use im\search\components\searchable\SearchableInterface;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
-
+/**
+ * Class Query
+ * @package im\search\components\service\db
+ */
 class Query extends ActiveQuery implements QueryInterface
 {
     /**
@@ -63,6 +68,17 @@ class Query extends ActiveQuery implements QueryInterface
     /**
      * @inheritdoc
      */
+    public function setFacets($facets)
+    {
+        $this->_facets = [];
+        foreach ($facets as $facet) {
+            $this->addFacet($facet);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function addFacet(FacetInterface $facet)
     {
         $this->_facets[$facet->getName()] = $facet;
@@ -101,14 +117,6 @@ class Query extends ActiveQuery implements QueryInterface
     public function getOrderBy()
     {
         // TODO: Implement getOrderBy() method.
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function setFacets($facets)
-    {
-        // TODO: Implement setFacets() method.
     }
 
     /**
@@ -179,6 +187,14 @@ class Query extends ActiveQuery implements QueryInterface
             }
             if ($condition) {
                 $condition = count($condition) == 1 ? $condition[0] : array_merge(['and'], $condition);
+            }
+        } elseif ($query instanceof Match) {
+            $condition = ['like', $query->getField(), $query->getTerm()->getTerm()];
+        } elseif ($query instanceof MultiMatch) {
+            $condition = ['or'];
+            $term = $query->getTerm()->getTerm();
+            foreach (array_values($query->getFields()) as $field) {
+                $condition[] = ['like', $field, $term];
             }
         }
 

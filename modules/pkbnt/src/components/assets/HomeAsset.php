@@ -19,7 +19,8 @@ class HomeAsset extends AssetBundle
     /**
      * @inheritdoc
      */
-    public $baseUrl = YII_ENV_DEV ? 'http://localhost:8080/' : '/';
+    //public $baseUrl = YII_ENV_DEV ? 'http://localhost:8080/' : '/';
+    public $baseUrl = '/';
 
     /**
      * @inheritdoc

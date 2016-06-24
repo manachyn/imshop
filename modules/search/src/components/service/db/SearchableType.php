@@ -179,6 +179,21 @@ class SearchableType extends Object implements SearchableInterface, QueryParserC
     /**
      * @inheritdoc
      */
+    public function getSuggestionsAttributes()
+    {
+        $suggestionAttributes = [];
+        if ($this instanceof IndexableInterface) {
+            $suggestionAttributes = array_filter($this->getIndexMapping(), function (AttributeDescriptor $attribute) {
+                return !empty($attribute->params['suggestions']);
+            });
+        }
+
+        return $suggestionAttributes;
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function getTextFields()
     {
         return ['text'];

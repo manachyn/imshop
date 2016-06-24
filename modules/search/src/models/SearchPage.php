@@ -18,8 +18,16 @@ class SearchPage extends Page
      */
     public function behaviors()
     {
-        return [
+        return array_merge(parent::behaviors(), [
             'search' => SearchBehavior::className()
-        ];
+        ]);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function getViewRoute()
+    {
+        return 'search/search-page/view';
     }
 }

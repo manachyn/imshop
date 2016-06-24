@@ -33,9 +33,8 @@ class SearchController extends Controller
      * @param string $type
      * @return array
      */
-    public function actionSuggest($text)
+    public function actionSuggest($text, $type = '')
     {
-        $type = '';
         $searchManager = $this->getSearchManager();
         $searchableType = $type ? $searchManager->getSearchableType($type) : $searchManager->getDefaultSearchableType();
         $query = $searchManager->getSearchComponent()->getSuggestionsQuery($text, $searchableType);

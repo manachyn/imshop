@@ -3,14 +3,9 @@
 namespace im\catalog\controllers;
 
 use im\catalog\models\CategoriesFacetValue;
-use im\catalog\models\Product;
 use im\catalog\models\ProductCategory;
-use im\search\components\index\IndexableInterface;
-use im\search\components\query\FieldQueryInterface;
 use im\search\components\query\QueryResultInterface;
-use im\search\components\query\Term;
 use im\search\components\search\SearchResultContextInterface;
-use im\search\components\SearchManager;
 use Yii;
 use yii\web\NotFoundHttpException;
 
@@ -24,11 +19,6 @@ class ProductCategoryController extends CategoryController implements SearchResu
      * @var QueryResultInterface
      */
     private $_searchResult;
-
-    /**
-     * @var SearchManager
-     */
-    private $_searchManager;
 
     /**
      * @var \im\catalog\components\search\CategorySearchComponent
@@ -92,46 +82,6 @@ class ProductCategoryController extends CategoryController implements SearchResu
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
-    }
-
-    /**
-     * @param ProductCategory $model
-     * @return FieldQueryInterface[]
-     */
-    protected function getSearchQueries(ProductCategory $model)
-    {
-        $categoryQuery = null;
-        $categoryParentsQuery = null;
-        $searchableType = $this->getSearchManager()->getSearchableTypeByClass(Product::className());
-        if ($searchableType instanceof IndexableInterface) {
-            $mapping = $searchableType->getIndexMapping();
-            foreach ($mapping as $name => $attribute) {
-                if ($name == 'all_categories') {
-                    $categoryParentsQuery = new Term($attribute->name, $model->id);
-                } else {
-                    $nameParts = explode('.', $name);
-                    if (count($nameParts) == 2 && $nameParts[0] == 'categories') {
-                        $categoryQuery = new Term($attribute->name, $model->{$nameParts[1]});
-                    }
-                }
-            }
-        } else {
-            $categoryQuery = new Term('categoriesRelation.id', $model->id);
-        }
-
-        return [$categoryQuery, $categoryParentsQuery];
-    }
-
-    /**
-     * @return SearchManager
-     */
-    protected function getSearchManager()
-    {
-        if (!$this->_searchManager) {
-            $this->_searchManager = Yii::$app->get('searchManager');
-        }
-
-        return $this->_searchManager;
     }
 
     /**

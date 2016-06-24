@@ -11,6 +11,7 @@ use im\search\components\searchable\AttributeDescriptor;
 use im\search\components\searchable\SearchableInterface;
 use im\search\components\service\SearchServiceInterface;
 use im\search\models\IndexAttribute;
+use im\search\models\SearchPage;
 use Yii;
 use yii\base\Component;
 use yii\base\InvalidParamException;
@@ -300,6 +301,20 @@ class SearchManager extends Component
     public function getFacetValueTypes()
     {
         return Yii::$app->get('typesRegister')->getEntityTypes('facet_values');
+    }
+
+    /**
+     * Get search page url.
+     *
+     * @return string
+     */
+    public function getSearchPageUrl()
+    {
+        /** @var \im\cms\components\PageFinder $finder */
+        $finder = Yii::$app->get('pageFinder');
+        $page = $finder->findModel(['type' => SearchPage::TYPE, 'status' => SearchPage::STATUS_PUBLISHED]);
+
+        return $page ? $page->getUrl() : '';
     }
 
     /**

@@ -7,6 +7,7 @@ use im\forms\components\FieldSet;
 use im\forms\components\Tab;
 use im\forms\components\TabSet;
 use im\tree\widgets\JsTreeInput;
+use im\wysiwyg\WysiwygEditor;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -15,6 +16,8 @@ use yii\widgets\ActiveForm;
 /* @var $this yii\web\View */
 /* @var $model im\catalog\models\Product */
 /* @var $form yii\widgets\ActiveForm */
+
+$wysiwygConfig = Yii::$app->get('config')->get('wysiwyg.*');
 
 ?>
 
@@ -26,7 +29,13 @@ use yii\widgets\ActiveForm;
             $form->field($model, 'sku')->textInput(['maxlength' => true]),
             $form->field($model, 'title')->textInput(['maxlength' => true]),
             $form->field($model, 'slug')->textInput(['maxlength' => true]),
-            $form->field($model, 'description')->textarea(['maxlength' => true]),
+            $form->field($model, 'short_description')->textarea(),
+            $form->field($model, 'description')->widget(WysiwygEditor::className(), [
+                'options' => ['rows' => 6],
+                'editor' => $wysiwygConfig['wysiwyg.editor'],
+                'preset' => $wysiwygConfig['wysiwyg.preset'],
+                'fileManagerRoute' => ['/elfinder/manager']
+            ]),
             $form->field($model, 'brand_id')->dropDownList(
                 ArrayHelper::map(Brand::find()->asArray()->orderBy('name')->all(), 'id', 'name'),
                 ['prompt' => '']

@@ -22,6 +22,8 @@ $fieldConfig = isset($fieldConfig) ? $fieldConfig : [];
 
 <?= $form->field($model, 'title', $fieldConfig)->textInput(['maxlength' => true]) ?>
 
+<?= $form->field($model, 'type', $fieldConfig)->dropDownList($model::getTypesList(), ['prompt' => '']) ?>
+
 <?= $form->field($model, 'sort', $fieldConfig)->hiddenInput(['data-field' => 'sort'])->label(false) ?>
 
 <?= $form->field($model, 'id', $fieldConfig)->hiddenInput()->label(false) ?>

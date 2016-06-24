@@ -192,16 +192,28 @@ class CacheManager extends Component
      * Adds object to cache.
      *
      * @param array $key
-     * @param object $object
+     * @param array|object $data
      */
-    public function addToCache($key, $object)
+    public function addToCache($key, $data)
     {
-        if ($object && $cache = $this->getCacheFor($object)) {
-            if ($tags = $this->getTagsFor($object)) {
+        $tags = [];
+        if (is_array($data)) {
+            $first = reset($data);
+            $cache = $this->getCacheFor($first);
+            foreach ($data as $object) {
+                $tags = array_merge($tags, $this->getTagsFor($object));
+            }
+            $tags = array_unique($tags);
+        } else {
+            $cache = $this->getCacheFor($data);
+            $tags = $this->getTagsFor($data);
+        }
+        if ($data && $cache) {
+            if ($tags) {
                 $dependency = new TagDependency(['tags' => $tags]);
-                $cache->set($key, $object, 0, $dependency);
+                $cache->set($key, $data, 0, $dependency);
             } else {
-                $cache->set($key, $object);
+                $cache->set($key, $data);
             }
         }
     }

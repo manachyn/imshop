@@ -48,6 +48,13 @@ interface SearchableInterface
     public function getFullTextSearchAttributes();
 
     /**
+     * Returns suggestions attributes.
+     *
+     * @return AttributeDescriptor[]
+     */
+    public function getSuggestionsAttributes();
+
+    /**
      * Returns the name of the view for rendering search results.
      *
      * @return string

@@ -37,6 +37,16 @@ trait FacetValueTrait
     private $_routeParams = [];
 
     /**
+     * @var SearchQueryInterface
+     */
+    private $_searchQuery;
+
+    /**
+     * @var bool
+     */
+    private $_isSelected = false;
+
+    /**
      * @inheritdoc
      */
     public function getFacet()
@@ -97,7 +107,12 @@ trait FacetValueTrait
      */
     public function isSelected(SearchQueryInterface $searchQuery = null)
     {
-        return $searchQuery ? SearchQueryHelper::isIncludeQuery($searchQuery, $this->getValueSearchQuery(), $this->getValueOperator()) : false;
+        if ($searchQuery !== $this->_searchQuery) {
+            $this->_isSelected = $searchQuery ? SearchQueryHelper::isIncludeQuery($searchQuery, $this->getValueSearchQuery(), $this->getValueOperator()) : false;
+            $this->_searchQuery = $searchQuery;
+        }
+
+        return $this->_isSelected;
     }
 
     /**

@@ -25,6 +25,7 @@ class Bootstrap implements BootstrapInterface
             $this->registerPageTypes($app);
             $this->registerWidgets($app);
         }
+        $this->registerSearchableTypes($app);
         $this->setAliases();
     }
 
@@ -103,6 +104,31 @@ class Bootstrap implements BootstrapInterface
         $typesRegister->registerEntityType(new EntityType('article', 'im\blog\models\Article'));
         $typesRegister->registerEntityType(new EntityType('news', 'im\blog\models\News'));
         $typesRegister->registerEntityType(new EntityType('article_meta', 'im\blog\models\ArticleMeta'));
+    }
+
+    /**
+     * Registers searchable types.
+     *
+     * @param Application $app
+     */
+    public function registerSearchableTypes($app)
+    {
+        /** @var \im\search\components\SearchManager $searchManager */
+        $searchManager = $app->get('searchManager');
+        $searchManager->registerSearchableType([
+            'class' => 'im\blog\components\search\News',
+            'type' => 'news',
+            'modelClass' => 'im\blog\models\News',
+            'searchServiceId' => 'db',
+            'searchResultsView' => '@im/blog/frontend/views/news/_site_search_results',
+        ]);
+        $searchManager->registerSearchableType([
+            'class' => 'im\blog\components\search\Article',
+            'type' => 'article',
+            'modelClass' => 'im\blog\models\Article',
+            'searchServiceId' => 'db',
+            'searchResultsView' => '@im/blog/frontend/views/article/_site_search_results',
+        ]);
     }
 
     /**

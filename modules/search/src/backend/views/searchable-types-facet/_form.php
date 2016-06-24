@@ -31,7 +31,7 @@ ListViewAsset::register($this);
 
     <?= $form->field($model, 'label')->textInput(['maxlength' => true]) ?>
 
-    <label><?= Module::t('facet', 'Custom values') ?></label>
+    <label><?= Module::t('facet', 'Values') ?></label>
     <div data-toolbar="facet-values-list">
         <button class="btn btn-success" type="button" data-action="add" data-action-params='{"itemType":"searchable_types_facet_term"}'>
             <?= Module::t('facet', 'Add value') ?>

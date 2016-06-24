@@ -1,6 +1,7 @@
 <?php
 
 namespace im\search\models;
+use im\search\components\query\SearchQueryInterface;
 use im\search\components\searchable\SearchableInterface;
 use Yii;
 use yii\helpers\ArrayHelper;
@@ -40,5 +41,15 @@ class SearchableTypesFacetTerm extends FacetTerm
         return ArrayHelper::map(Yii::$app->get('searchManager')->getSearchableTypes(), 'type', function (SearchableInterface $searchableType) {
             return Inflector::titleize($searchableType->getType());
         });
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function isSelected(SearchQueryInterface $searchQuery = null)
+    {
+        $selected = Yii::$app->request->get('type', Yii::$app->get('searchManager')->getDefaultSearchableType()->getType());
+
+        return $selected == $this->getKey();
     }
 }

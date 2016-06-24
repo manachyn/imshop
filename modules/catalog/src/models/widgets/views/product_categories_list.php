@@ -12,7 +12,14 @@ use im\tree\widgets\Tree;
     'itemView' => '@im/catalog/views/product-category/_tree_item',
     'depth' => $widget->depth
 ])) : ?>
-    <nav class="product-categories-tree">
-        <?= $tree ?>
-    </nav>
+    <section class="widget product-categories-list-widget">
+        <?php if ($widget->title) : ?>
+            <h2 class="widget-title"><?= $widget->title ?></h2>
+        <?php endif ?>
+        <nav class="product-categories-tree">
+            <?= $tree ?>
+        </nav>
+    </section>
 <?php endif ?>
+
+

@@ -11,15 +11,21 @@ use im\cms\models\widgets\Widget;
  * Product categories list widget.
  *
  * @package im\catalog\models\widgets
+ * @property int $depth
  */
 class ProductCategoriesList extends Widget
 {
     const TYPE = 'categories';
 
     /**
-     * @var int
+     * @inheritdoc
      */
-    public $depth;
+    public function rules()
+    {
+        return array_merge(parent::rules(), [
+            [['depth'], 'number', 'integerOnly' => true]
+        ]);
+    }
 
     /**
      * @inheritdoc

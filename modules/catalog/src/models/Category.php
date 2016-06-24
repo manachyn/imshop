@@ -24,7 +24,9 @@ use yii\helpers\Url;
  * @property string $name
  * @property string $slug
  * @property string $description
+ * @property string $content
  * @property bool $status
+ * @property bool $image
  *
  * @method CategoryQuery parents(integer $depth = null)
  * @method CategoryQuery children(integer $depth = null)
@@ -111,8 +113,8 @@ class Category extends Tree
     {
         return [
             [['name'], 'required'],
-            [['name', 'slug', 'description'], 'string', 'max' => 255],
-            [['status'], 'safe']
+            [['name', 'slug'], 'string', 'max' => 255],
+            [['description', 'status', 'content'], 'safe']
         ];
     }
 
@@ -126,6 +128,7 @@ class Category extends Tree
             'name' => Module::t('category', 'Name'),
             'slug' => Module::t('category', 'URL'),
             'description' => Module::t('category', 'Description'),
+            'content' => Module::t('category', 'Content'),
             'status' => Module::t('product', 'Status'),
             'created_at' => Module::t('category', 'Created At'),
             'updated_at' => Module::t('category', 'Updated At'),
