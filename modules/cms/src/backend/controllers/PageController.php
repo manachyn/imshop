@@ -8,7 +8,6 @@ use im\cms\Module;
 use im\cms\models\Page;
 use Yii;
 use yii\helpers\ArrayHelper;
-use yii\web\NotFoundHttpException;
 
 /**
  * Class PageController implements the CRUD actions for Page model.
@@ -70,31 +69,6 @@ class PageController extends CrudController
         $type = Yii::$app->request->get('type');
 
         return Yii::$app->get('cms')->getPageInstance($type);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    protected function findModels($id, $with = [])
-    {
-        /** @var Page $modelClass */
-        $modelClass = $this->getModelClass();
-        $query = $modelClass::find()->andWhere(['id' => $id]);
-        $query->type = null;
-        if ($with) {
-            $query->with($with);
-        }
-        if (is_array($id)) {
-            $model = $query->all();
-        } else {
-            $model = $query->one();
-        }
-
-        if ($model !== null) {
-            return $model;
-        } else {
-            throw new NotFoundHttpException('The requested model does not exist.');
-        }
     }
 
     /**

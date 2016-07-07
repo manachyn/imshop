@@ -141,7 +141,9 @@
         "imsoft/rbac": "*",
         "himiklab/yii2-search-component-v2": "^2.0",
         "yiisoft/yii2-authclient": "^2.0",
-        "imsoft/pkbnt": "*"
+        "imsoft/pkbnt": "*",
+        "limion/yii2-jquery-fileupload-widget": "~1.0",
+        "2amigos/yii2-file-upload-widget": "~1.0"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",
