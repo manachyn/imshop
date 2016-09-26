@@ -1,0 +1,20 @@
+{
+    "name": "imsoft/shortcodes",
+    "description": "Shortcodes",
+    "version": "1.0.0",
+    "authors": [
+        {
+            "name": "Ivan Manachyn",
+            "email": "manachyn@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "im\\shortcodes\\": "src/"
+        }
+    },
+    "require": {
+        "tpoxa/shortcodes": "dev-master"
+    }
+}

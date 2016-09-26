@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "ce09824626ce97f80ea9113ddbc684c3",
-    "content-hash": "ddeb3ac7f78e746250fa9e2f32ad99f4",
+    "hash": "c938e874a84821938829338a8f1d058d",
+    "content-hash": "28ac77b4c91d23c5a9e03dd885b654ff",
     "packages": [
         {
             "name": "2amigos/yii2-ckeditor-widget",
@@ -1375,7 +1375,7 @@
             "dist": {
                 "type": "path",
                 "url": "modules/adminlte/",
-                "reference": "5b301e931a6c1fa84a1ab855c05387c324ce2585",
+                "reference": null,
                 "shasum": null
             },
             "require": {
@@ -1405,7 +1405,7 @@
             "dist": {
                 "type": "path",
                 "url": "modules/backend/",
-                "reference": "2afc92613aae26de7f87d3d6507c4804d9924d96",
+                "reference": null,
                 "shasum": null
             },
             "require": {
@@ -1433,7 +1433,7 @@
             "dist": {
                 "type": "path",
                 "url": "modules/base/",
-                "reference": "e9287381efda36c5cff0fdfa4ed0184b119204e4",
+                "reference": null,
                 "shasum": null
             },
             "require": {
@@ -1465,7 +1465,7 @@
             "dist": {
                 "type": "path",
                 "url": "modules/blog/",
-                "reference": "ca1684f27a376bcda11dff6b4626676e8e218b75",
+                "reference": null,
                 "shasum": null
             },
             "require": {
@@ -1510,7 +1510,7 @@
             "dist": {
                 "type": "path",
                 "url": "modules/catalog/",
-                "reference": "33d0e92085c7f063b244a6eb5e60fbb4e8784871",
+                "reference": null,
                 "shasum": null
             },
             "require": {
@@ -1547,7 +1547,7 @@
             "dist": {
                 "type": "path",
                 "url": "modules/ckeditor/",
-                "reference": "578ad95e1ee9e35950870f160a0858aeda3d8499",
+                "reference": null,
                 "shasum": null
             },
             "require": {
@@ -1575,7 +1575,7 @@
             "dist": {
                 "type": "path",
                 "url": "modules/cms/",
-                "reference": "3502bcadf74b511e4c6d309e70907fff14e21006",
+                "reference": null,
                 "shasum": null
             },
             "require": {
@@ -1621,7 +1621,7 @@
             "dist": {
                 "type": "path",
                 "url": "modules/config/",
-                "reference": "acb4867f40c34abf30690f1062ea911a412b70ab",
+                "reference": null,
                 "shasum": null
             },
             "require": {
@@ -1650,7 +1650,7 @@
             "dist": {
                 "type": "path",
                 "url": "modules/eav/",
-                "reference": "9922fb3fb102e3ffd82ebdf50c1e247d880489e7",
+                "reference": null,
                 "shasum": null
             },
             "require": {
@@ -1680,7 +1680,7 @@
             "dist": {
                 "type": "path",
                 "url": "modules/elasticsearch/",
-                "reference": "61ba11b80eb636166355bd48facad1eaae89f649",
+                "reference": null,
                 "shasum": null
             },
             "require": {
@@ -1709,7 +1709,7 @@
             "dist": {
                 "type": "path",
                 "url": "modules/elfinder/",
-                "reference": "4d78704f97b43c7e991545b85594b02d9f06cc33",
+                "reference": null,
                 "shasum": null
             },
             "require": {
@@ -1745,7 +1745,7 @@
             "dist": {
                 "type": "path",
                 "url": "modules/filesystem/",
-                "reference": "108c88d238d8e3154684dfd8214e0722e3fcb62a",
+                "reference": null,
                 "shasum": null
             },
             "require": {
@@ -1778,7 +1778,7 @@
             "dist": {
                 "type": "path",
                 "url": "modules/forms/",
-                "reference": "7a79458d9043d3c152cd91dbf1a5a75afa3bc4f7",
+                "reference": null,
                 "shasum": null
             },
             "require": {
@@ -1810,7 +1810,7 @@
             "dist": {
                 "type": "path",
                 "url": "modules/fsm/",
-                "reference": "1fd7ed47d2ecde8929660dc0957bbeb95cad4fce",
+                "reference": null,
                 "shasum": null
             },
             "require": {
@@ -1837,7 +1837,7 @@
             "dist": {
                 "type": "path",
                 "url": "modules/image/",
-                "reference": "822224bc2fa52d1c6c28d40dde64c2d2a11da197",
+                "reference": null,
                 "shasum": null
             },
             "require": {
@@ -1863,7 +1863,7 @@
             "dist": {
                 "type": "path",
                 "url": "modules/imshop/",
-                "reference": "0b157cc46ed5545f9c02fd1be72b33472d58e835",
+                "reference": null,
                 "shasum": null
             },
             "require": {
@@ -1891,7 +1891,7 @@
             "dist": {
                 "type": "path",
                 "url": "modules/lucene/",
-                "reference": "2599eea8d4a8c4de51f56babd7987be6618d2856",
+                "reference": null,
                 "shasum": null
             },
             "require": {
@@ -1920,7 +1920,7 @@
             "dist": {
                 "type": "path",
                 "url": "modules/pkbnt/",
-                "reference": "03e43f9727815a7c85b02397ca16fa78e5b1d38c",
+                "reference": null,
                 "shasum": null
             },
             "require": {
@@ -1948,7 +1948,7 @@
             "dist": {
                 "type": "path",
                 "url": "modules/rbac/",
-                "reference": "0bfd7f1fef14c3af7a89d18e2c60fa13b7d10ac9",
+                "reference": null,
                 "shasum": null
             },
             "require": {
@@ -1976,7 +1976,7 @@
             "dist": {
                 "type": "path",
                 "url": "modules/search/",
-                "reference": "d36375a1a0821c55147a2f1db263019582e7c7bf",
+                "reference": null,
                 "shasum": null
             },
             "require": {
@@ -2009,7 +2009,7 @@
             "dist": {
                 "type": "path",
                 "url": "modules/seo/",
-                "reference": "bfc8bddead6fadb30061e3b2feefab0d0065a2e3",
+                "reference": null,
                 "shasum": null
             },
             "require": {
@@ -2043,7 +2043,7 @@
             "dist": {
                 "type": "path",
                 "url": "modules/tinymce/",
-                "reference": "f0e327af17cdd75a8950b986bbecc91c87ad320d",
+                "reference": null,
                 "shasum": null
             },
             "require": {
@@ -2071,7 +2071,7 @@
             "dist": {
                 "type": "path",
                 "url": "modules/tree/",
-                "reference": "c660207541547ad14e7975a7f314bf4d13a3c2f7",
+                "reference": null,
                 "shasum": null
             },
             "require": {
@@ -2103,7 +2103,7 @@
             "dist": {
                 "type": "path",
                 "url": "modules/users/",
-                "reference": "2da60bfc0f4e4c59ec215424380d68b2ff328a29",
+                "reference": null,
                 "shasum": null
             },
             "require": {
@@ -2132,7 +2132,7 @@
             "dist": {
                 "type": "path",
                 "url": "modules/variation/",
-                "reference": "30883dbba52cee2ce038db8174b451b14d1c98b0",
+                "reference": null,
                 "shasum": null
             },
             "require": {
@@ -2160,7 +2160,7 @@
             "dist": {
                 "type": "path",
                 "url": "modules/webpack/",
-                "reference": "6a64ac4ca9de33845d228558d5c962e9a217021f",
+                "reference": null,
                 "shasum": null
             },
             "require": {
@@ -2187,7 +2187,7 @@
             "dist": {
                 "type": "path",
                 "url": "modules/wysiwyg/",
-                "reference": "26ed2a6746415aa7d2240f5461410abcdb4956fe",
+                "reference": null,
                 "shasum": null
             },
             "require": {
@@ -3019,6 +3019,43 @@
                 "wysiwyg"
             ],
             "time": "2016-06-08 12:10:06"
+        },
+        {
+            "name": "tpoxa/shortcodes",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tpoxa/yii2-shortcodes.git",
+                "reference": "876b3f7cce394defe4bb7a944af3efa516632e51"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tpoxa/yii2-shortcodes/zipball/876b3f7cce394defe4bb7a944af3efa516632e51",
+                "reference": "876b3f7cce394defe4bb7a944af3efa516632e51",
+                "shasum": ""
+            },
+            "type": "yii2-extension",
+            "autoload": {
+                "psr-4": {
+                    "tpoxa\\shortcodes\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Maksym Trofimenko",
+                    "email": "gtpoxa@gmail.com"
+                }
+            ],
+            "description": "Wordpress style shorttags support for Yii2",
+            "keywords": [
+                "shortcode",
+                "yii2"
+            ],
+            "time": "2014-10-05 12:44:21"
         },
         {
             "name": "yiisoft/yii2",
@@ -5928,7 +5965,9 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "tpoxa/shortcodes": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
