@@ -13,6 +13,7 @@ use yii\db\ActiveRecord;
 /**
  * Product type model class.
  *
+ * @property int $id
  * @property string $name
  * @property ProductType $relatedParent
  * @property ProductAttribute[] $relatedEAttributes

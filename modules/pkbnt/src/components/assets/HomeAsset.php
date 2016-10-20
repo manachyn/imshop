@@ -2,12 +2,12 @@
 
 namespace im\pkbnt\components\assets;
 
-use Yii;
 use yii\web\AssetBundle;
 
 /**
  * Class HomeAsset
  * @package im\pkbnt\components\assets
+ * @author Ivan Manachyn <manachyn@gmail.com>
  */
 class HomeAsset extends AssetBundle
 {

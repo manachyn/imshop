@@ -29,10 +29,14 @@ use yii\helpers\Url;
  * @property string $slug
  * @property string $description
  * @property string $short_description
+ * @property float $price
+ * @property int $status
+ * @property int $availability
  * @property int $created_at
  * @property int $updated_at
  *
  * @property ProductType $relatedProductType
+ * @property ProductCategory[] $categories
  */
 class Product extends ActiveRecord implements ProductInterface
 {
@@ -83,17 +87,17 @@ class Product extends ActiveRecord implements ProductInterface
                     'uploadedImages' => [
                         'filesystem' => 'local',
                         'path' => '/products/{model.id}',
-                        'fileName' => '{model.slug}.{file.extension}',
+                        'fileName' => '{file.filename}.{file.extension}',
                         'multiple' => true,
                         'relation' => 'images',
-                        'on beforeSave' => function (FileInterface $file) {
-                            $image = ImageManagerStatic::make($file->getPath());
-                            $image->resize(1000, null, function (Constraint $constraint) {
-                                $constraint->aspectRatio();
-                                $constraint->upsize();
-                            });
-                            $image->save($file->getPath(), 100);
-                        },
+//                        'on beforeSave' => function (FileInterface $file) {
+//                            $image = ImageManagerStatic::make($file->getPath());
+//                            $image->resize(1000, null, function (Constraint $constraint) {
+//                                $constraint->aspectRatio();
+//                                $constraint->upsize();
+//                            });
+//                            $image->save($file->getPath(), 100);
+//                        },
                         'on afterDeleteAll' => function(StorageConfig $config, FilesystemComponent $filesystemComponent) {
                             $path = $config->resolvePath($this);
                             $filesystemComponent->deleteDirectory($path, $config->filesystem);

@@ -2,25 +2,17 @@
 
 namespace im\cms\widgets;
 
-use im\cms\models\widgets\Widget;
+use im\cms\models\widgets\ModelWidget;
 use im\cms\Module;
 
 /**
- * This is the model class for table "{{%banner_widgets}}".
+ * Class BannerWidget
+ * @package im\cms\widgets
+ * @author Ivan Manachyn <manachyn@gmail.com>
  */
-class BannerWidget extends Widget
+class BannerWidget extends ModelWidget
 {
     const TYPE = 'banner';
-
-    /**
-     * @inheritdoc
-     */
-    public function rules()
-    {
-        return array_merge(parent::rules(), [
-            [['banner_id'], 'safe']
-        ]);
-    }
 
     /**
      * @inheritdoc
@@ -28,8 +20,8 @@ class BannerWidget extends Widget
     public function attributeLabels()
     {
         return [
-            'id' => Module::t('page', 'ID'),
-            'banner_id' => Module::t('page', 'Banner')
+            'id' => Module::t('widget', 'ID'),
+            'model_id' => Module::t('widget', 'Banner')
         ];
     }
 
@@ -38,7 +30,7 @@ class BannerWidget extends Widget
      */
     public function getCMSTitle()
     {
-        return Module::t('page', 'Banner widget');
+        return Module::t('widget', 'Banner widget');
     }
 
     /**
@@ -46,7 +38,7 @@ class BannerWidget extends Widget
      */
     public function getCMSDescription()
     {
-        return Module::t('page', 'Widget for displaying banners on the page.');
+        return Module::t('widget', 'Widget for displaying banners on the page.');
     }
 
     /**

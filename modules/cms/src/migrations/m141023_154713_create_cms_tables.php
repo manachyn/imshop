@@ -24,7 +24,7 @@ class m141023_154713_create_cms_tables extends Migration
                 'type' => $this->string(100)->notNull(),
                 'title' => $this->string(255)->notNull(),
                 'slug' => $this->string(100)->notNull(),
-                'content' => $this->text()->notNull(),
+                'content' => $this->text()->defaultValue(null),
                 'status' => $this->boolean()->defaultValue(0),
                 'template_id' => $this->integer()->defaultValue(null),
                 'facet_set_id' => $this->integer()->defaultValue(null),
@@ -47,12 +47,12 @@ class m141023_154713_create_cms_tables extends Migration
             '{{%page_meta}}',
             [
                 'id' => $this->primaryKey(),
-                'entity_id' => $this->integer()->defaultValue(null),
-                'meta_title' => $this->string()->notNull(),
-                'meta_keywords' => $this->string()->notNull(),
-                'meta_description' => $this->string()->notNull(),
-                'meta_robots' => $this->string(50)->notNull(),
-                'custom_meta' => $this->text()->notNull()
+                'entity_id' => $this->integer()->notNull(),
+                'meta_title' => $this->string()->defaultValue(null),
+                'meta_keywords' => $this->string()->defaultValue(null),
+                'meta_description' => $this->string()->defaultValue(null),
+                'meta_robots' => $this->string(50)->defaultValue(null),
+                'custom_meta' => $this->text()->defaultValue(null)
             ],
             $tableOptions
         );
@@ -64,7 +64,7 @@ class m141023_154713_create_cms_tables extends Migration
             [
                 'id' => $this->primaryKey(),
                 'name' => $this->string(100)->notNull(),
-                'location' => $this->string(100)->notNull(),
+                'location' => $this->string(100)->defaultValue(null),
                 'created_at' => $this->integer()->notNull(),
                 'updated_at' => $this->integer()->notNull()
             ],
@@ -103,15 +103,15 @@ class m141023_154713_create_cms_tables extends Migration
                 'depth' => $this->integer()->notNull(),
                 'menu_id' => $this->integer()->notNull(),
                 'label' => $this->string()->notNull(),
-                'title' => $this->string()->notNull(),
+                'title' => $this->string()->defaultValue(null),
                 'url' => $this->string()->notNull(),
                 'target_blank' => $this->boolean()->defaultValue(0),
-                'css_classes' => $this->string(100)->notNull(),
-                'rel' => $this->string(100)->notNull(),
+                'css_classes' => $this->string(100)->defaultValue(null),
+                'rel' => $this->string(100)->defaultValue(null),
                 'status' => $this->boolean()->defaultValue(1),
-                'visibility' => $this->string(100)->notNull(),
-                'items_display' => $this->boolean(),
-                'items_css_classes' => $this->string(100)->notNull(),
+                'visibility' => $this->string(100)->defaultValue(null),
+                'items_display' => $this->boolean()->defaultValue(null),
+                'items_css_classes' => $this->string(100)->defaultValue(null),
                 'icon_id' => $this->integer()->defaultValue(null),
                 'active_icon_id' => $this->integer()->defaultValue(null),
                 'video_id' => $this->integer()->defaultValue(null)
@@ -179,7 +179,7 @@ class m141023_154713_create_cms_tables extends Migration
                 'widget_type' => $this->string(100)->notNull(),
                 'title' => $this->string()->defaultValue(null),
                 'content' => $this->text(),
-                'banner_id' => $this->integer()->defaultValue(null)
+                'model_id' => $this->integer()->defaultValue(null)
             ],
             $tableOptions
         );

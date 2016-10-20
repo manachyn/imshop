@@ -1,20 +1,21 @@
 <?php
-Yii::setAlias('@webroot', dirname(dirname(__DIR__)) . '/web');
+Yii::setAlias('@webroot', Yii::getAlias('@frontend') . '/web');
 Yii::setAlias('@web', '/');
 
 return [
     'entryPoints' => [
         'home' => [
-            'class' => 'im\imshop\HomeEntryPointAsset',
+            'class' => 'im\imshop\components\assets\HomeEntryPointAsset',
             'depends' => [
-                'im\imshop\ThemeAsset',
-                'frontend\assets\FrontendAsset'
+                'im\imshop\components\assets\ThemeAsset',
+                'im\imshop\components\assets\FrontendAsset'
             ]
         ],
         'main' => [
-            'class' => 'im\imshop\MainEntryPointAsset',
+            'class' => 'im\imshop\components\assets\MainEntryPointAsset',
             'depends' => [
-                'im\imshop\ThemeAsset'
+                'im\imshop\components\assets\ThemeAsset',
+                'im\imshop\components\assets\FrontendAsset'
             ]
         ]
     ],

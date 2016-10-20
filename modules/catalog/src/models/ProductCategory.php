@@ -35,7 +35,8 @@ class ProductCategory extends Category implements \Serializable
             'sluggable' => [
                 'class' => SluggableBehavior::className(),
                 'attribute' => 'name',
-                'ensureUnique' => true
+                'ensureUnique' => true,
+                'immutable' => true
             ],
             'tree' => [
                 'class' => NestedSetsBehavior::className(),
@@ -47,7 +48,7 @@ class ProductCategory extends Category implements \Serializable
                     'uploadedImage' => [
                         'filesystem' => 'local',
                         'path' => '/categories',
-                        'fileName' => '{model.slug}.{file.extension}',
+                        'fileName' => '{file.filename}.{file.extension}',
                         'relation' => 'image',
                         'deleteOnUnlink' => true,
                         'on beforeSave' => function (FileInterface $file) {

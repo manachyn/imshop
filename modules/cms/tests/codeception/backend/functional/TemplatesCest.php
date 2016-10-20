@@ -97,7 +97,7 @@ class TemplatesCest extends FunctionalCest
                     'sort' => 1
                 ],
                 2 => [
-                    'banner_id' => time(),
+                    'model_id' => time(),
                     'type' => 'banner',
                     'sort' => 2
                 ]

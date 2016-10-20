@@ -22,12 +22,14 @@ use yii\helpers\Url;
  * @property integer $id
  * @property string $title
  * @property string $slug
+ * @property string $announce
  * @property string $content
  * @property integer $created_at
  * @property integer $updated_at
  * @property integer $status
  * @property ArticleFile $image
  * @property ArticleFile $video
+ * @property ArticleCategory[] $categories
  */
 class Article extends ActiveRecord implements PageInterface, \Serializable
 {
@@ -65,7 +67,8 @@ class Article extends ActiveRecord implements PageInterface, \Serializable
             'sluggable' => [
                 'class' => SluggableBehavior::className(),
                 'attribute' => 'title',
-                'ensureUnique' => true
+                'ensureUnique' => true,
+                'immutable' => true
             ],
             'files' => [
                 'class' => FilesBehavior::className(),
@@ -73,7 +76,7 @@ class Article extends ActiveRecord implements PageInterface, \Serializable
                     'uploadedImage' => [
                         'filesystem' => 'local',
                         'path' => '/articles',
-                        'fileName' => '{model.slug}.{file.extension}',
+                        'fileName' => '{file.filename}.{file.extension}',
                         'relation' => 'image',
                         'deleteOnUnlink' => true,
                         'on beforeSave' => function (FileInterface $file) {
@@ -117,6 +120,7 @@ class Article extends ActiveRecord implements PageInterface, \Serializable
             [['title'], 'required'],
             ['status', 'default', 'value' => self::DEFAULT_STATUS],
             ['status', 'in', 'range' => array_keys(self::getStatusesList())],
+            [['announce'], 'string', 'max' => 255],
             [['slug', 'content'], 'safe']
         ];
     }
@@ -130,6 +134,7 @@ class Article extends ActiveRecord implements PageInterface, \Serializable
             'id' => Module::t('article', 'ID'),
             'title' => Module::t('article', 'Title'),
             'slug' => Module::t('article', 'Slug'),
+            'announce' => Module::t('article', 'Announce'),
             'content' => Module::t('article', 'Content'),
             'created_at' => Module::t('article', 'Created At'),
             'updated_at' => Module::t('article', 'Updated At'),
@@ -219,6 +224,23 @@ class Article extends ActiveRecord implements PageInterface, \Serializable
     public static function getLastArticles($count = 10)
     {
         return static::find()->published()->orderBy(['created_at' => SORT_DESC])->limit($count)->all();
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCategoriesRelation()
+    {
+        return $this->hasMany(ArticleCategory::className(), ['id' => 'category_id'])
+            ->viaTable('{{%articles_categories}}', ['article_id' => 'id']);
+    }
+
+    /**
+     * @return ArticleCategory[]
+     */
+    public function getCategories()
+    {
+        return $this->getCategoriesRelation()->all();
     }
 
     /**

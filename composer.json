@@ -122,6 +122,14 @@
         {
             "type": "path",
             "url": "modules/pkbnt"
+        },
+        {
+            "type": "path",
+            "url": "modules/carousel"
+        },
+        {
+            "type": "path",
+            "url": "modules/viaz"
         }
     ],
     "require": {
@@ -143,7 +151,9 @@
         "yiisoft/yii2-authclient": "^2.0",
         "imsoft/pkbnt": "*",
         "limion/yii2-jquery-fileupload-widget": "~1.0",
-        "2amigos/yii2-file-upload-widget": "~1.0"
+        "2amigos/yii2-file-upload-widget": "~1.0",
+        "bower-asset/OwlCarousel": "^1.31",
+        "imsoft/viaz": "*"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",

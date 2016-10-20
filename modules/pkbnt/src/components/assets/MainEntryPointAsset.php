@@ -7,6 +7,7 @@ use yii\web\AssetBundle;
 /**
  * Class MainEntryPointAsset
  * @package im\pkbnt\components\assets
+ * @author Ivan Manachyn <manachyn@gmail.com>
  */
 class MainEntryPointAsset extends AssetBundle
 {

@@ -13,7 +13,7 @@ class m150208_123637_create_catalog_tables extends Migration
         $this->createTable(
             '{{%category_files}}',
             [
-                'id' => Schema::TYPE_PK,
+                'id' => $this->primaryKey(),
                 'filesystem' => Schema::TYPE_STRING . '(100) NOT NULL',
                 'path' => Schema::TYPE_STRING . ' NOT NULL',
                 'title' => Schema::TYPE_STRING . ' NOT NULL',
@@ -29,7 +29,7 @@ class m150208_123637_create_catalog_tables extends Migration
         $this->createTable(
             '{{%categories}}',
             [
-                'id' => Schema::TYPE_PK,
+                'id' => $this->primaryKey(),
                 'tree' => Schema::TYPE_INTEGER,
                 'lft' => Schema::TYPE_INTEGER . ' NOT NULL',
                 'rgt' => Schema::TYPE_INTEGER . ' NOT NULL',
@@ -60,7 +60,7 @@ class m150208_123637_create_catalog_tables extends Migration
         $this->createTable(
             '{{%category_meta}}',
             [
-                'id' => Schema::TYPE_PK,
+                'id' => $this->primaryKey(),
                 'entity_id' => Schema::TYPE_INTEGER . ' DEFAULT NULL',
                 'meta_title' => Schema::TYPE_STRING . '(255) NOT NULL',
                 'meta_keywords' => Schema::TYPE_STRING . '(255) NOT NULL',
@@ -76,14 +76,14 @@ class m150208_123637_create_catalog_tables extends Migration
         $this->createTable(
             '{{%product_category_files}}',
             [
-                'id' => Schema::TYPE_PK,
-                'filesystem' => Schema::TYPE_STRING . '(100) NOT NULL',
-                'path' => Schema::TYPE_STRING . ' NOT NULL',
-                'title' => Schema::TYPE_STRING . ' NOT NULL',
-                'size' => Schema::TYPE_INTEGER,
-                'mime_type' => Schema::TYPE_STRING . ' NOT NULL',
-                'created_at' => Schema::TYPE_INTEGER,
-                'updated_at' => Schema::TYPE_INTEGER
+                'id' => $this->primaryKey(),
+                'filesystem' => $this->string(100)->notNull(),
+                'path' => $this->string()->notNull(),
+                'title' => $this->string()->defaultValue(null),
+                'size' => $this->integer()->notNull(),
+                'mime_type' => $this->string()->notNull(),
+                'created_at' => $this->integer()->notNull(),
+                'updated_at' => $this->integer()->notNull(),
             ],
             $tableOptions
         );
@@ -92,15 +92,15 @@ class m150208_123637_create_catalog_tables extends Migration
         $this->createTable(
             '{{%product_categories}}',
             [
-                'id' => Schema::TYPE_PK,
+                'id' => $this->primaryKey(),
                 'tree' => Schema::TYPE_INTEGER,
                 'lft' => Schema::TYPE_INTEGER . ' NOT NULL',
                 'rgt' => Schema::TYPE_INTEGER . ' NOT NULL',
                 'depth' => Schema::TYPE_INTEGER . ' NOT NULL',
                 'name' => Schema::TYPE_STRING . '(255) NOT NULL',
                 'slug' => Schema::TYPE_STRING . '(255) NOT NULL',
-                'description' => $this->text()->notNull(),
-                'content' => $this->text()->notNull(),
+                'description' => $this->text()->defaultValue(null),
+                'content' => $this->text()->defaultValue(null),
                 'image_id' => Schema::TYPE_INTEGER . ' DEFAULT NULL',
                 'status' => 'tinyint(1) NOT NULL DEFAULT 1',
                 'template_id' => $this->integer()->defaultValue(null),
@@ -121,13 +121,13 @@ class m150208_123637_create_catalog_tables extends Migration
         $this->createTable(
             '{{%product_category_meta}}',
             [
-                'id' => Schema::TYPE_PK,
-                'entity_id' => Schema::TYPE_INTEGER . ' DEFAULT NULL',
-                'meta_title' => Schema::TYPE_STRING . '(255) NOT NULL',
-                'meta_keywords' => Schema::TYPE_STRING . '(255) NOT NULL',
-                'meta_description' => Schema::TYPE_STRING . '(255) NOT NULL',
-                'meta_robots' => Schema::TYPE_STRING . '(50) NOT NULL',
-                'custom_meta' => Schema::TYPE_TEXT . ' NOT NULL',
+                'id' => $this->primaryKey(),
+                'entity_id' => $this->integer()->notNull(),
+                'meta_title' => $this->string()->defaultValue(null),
+                'meta_keywords' => $this->string()->defaultValue(null),
+                'meta_description' => $this->string()->defaultValue(null),
+                'meta_robots' => $this->string(50)->defaultValue(null),
+                'custom_meta' => $this->text()->defaultValue(null)
             ],
             $tableOptions
         );
@@ -137,7 +137,7 @@ class m150208_123637_create_catalog_tables extends Migration
         $this->createTable(
             '{{%brands}}',
             [
-                'id' => Schema::TYPE_PK,
+                'id' => $this->primaryKey(),
                 'name' => Schema::TYPE_STRING . ' NOT NULL',
                 'created_at' => Schema::TYPE_INTEGER . ' NOT NULL',
                 'updated_at' => Schema::TYPE_INTEGER . ' NOT NULL'
@@ -149,7 +149,7 @@ class m150208_123637_create_catalog_tables extends Migration
         $this->createTable(
             '{{%product_types}}',
             [
-                'id' => Schema::TYPE_PK,
+                'id' => $this->primaryKey(),
                 'name' => Schema::TYPE_STRING . '(100) NOT NULL',
                 'parent_id' => Schema::TYPE_INTEGER . ' DEFAULT NULL'
 
@@ -189,18 +189,19 @@ class m150208_123637_create_catalog_tables extends Migration
         $this->createTable(
             '{{%products}}',
             [
-                'id' => Schema::TYPE_PK,
+                'id' => $this->primaryKey(),
                 'sku' => Schema::TYPE_STRING . '(100) NOT NULL',
                 'title' => Schema::TYPE_STRING . ' NOT NULL',
                 'slug' => Schema::TYPE_STRING . '(100) NOT NULL',
-                'description' => $this->text()->notNull(),
-                'short_description' => $this->text()->notNull(),
-                'quantity' => Schema::TYPE_STRING . ' NOT NULL',
+                'description' => $this->text()->defaultValue(null),
+                'short_description' => $this->text()->defaultValue(null),
+                'quantity' => $this->string()->defaultValue(null),
                 'price' => $this->decimal(10, 2)->notNull(),
-                'status' => 'tinyint(1) NOT NULL DEFAULT 0',
+                'availability' => $this->boolean()->defaultValue(1),
+                'status' => $this->boolean()->defaultValue(0),
                 'brand_id' => Schema::TYPE_INTEGER . ' DEFAULT NULL',
                 'type_id' => Schema::TYPE_INTEGER . ' DEFAULT NULL',
-                'available_on' => Schema::TYPE_INTEGER . ' NOT NULL',
+                'available_on' => $this->integer()->defaultValue(null),
                 'created_at' => Schema::TYPE_INTEGER . ' NOT NULL',
                 'updated_at' => Schema::TYPE_INTEGER . ' NOT NULL'
             ],
@@ -213,13 +214,13 @@ class m150208_123637_create_catalog_tables extends Migration
         $this->createTable(
             '{{%product_meta}}',
             [
-                'id' => Schema::TYPE_PK,
+                'id' => $this->primaryKey(),
                 'entity_id' => Schema::TYPE_INTEGER . ' DEFAULT NULL',
-                'meta_title' => Schema::TYPE_STRING . '(255) NOT NULL',
-                'meta_keywords' => Schema::TYPE_STRING . '(255) NOT NULL',
-                'meta_description' => Schema::TYPE_STRING . '(255) NOT NULL',
-                'meta_robots' => Schema::TYPE_STRING . '(50) NOT NULL',
-                'custom_meta' => Schema::TYPE_TEXT . ' NOT NULL',
+                'meta_title' => $this->string()->defaultValue(null),
+                'meta_keywords' => $this->string()->defaultValue(null),
+                'meta_description' => $this->text()->defaultValue(null),
+                'meta_robots' => $this->string(50)->defaultValue(null),
+                'custom_meta' => $this->text()->defaultValue(null),
             ],
             $tableOptions
         );
@@ -243,14 +244,14 @@ class m150208_123637_create_catalog_tables extends Migration
         $this->createTable(
             '{{%eav_product_values}}',
             [
-                'id' => Schema::TYPE_PK,
+                'id' => $this->primaryKey(),
                 'entity_id' => Schema::TYPE_INTEGER . ' NOT NULL',
                 'attribute_id' => Schema::TYPE_INTEGER . ' NOT NULL',
                 'attribute_name' => Schema::TYPE_STRING . '(100) NOT NULL', // Denormalization for performance
                 'attribute_type' => Schema::TYPE_STRING . '(100) NOT NULL', // Denormalization for performance
-                'value_id' => Schema::TYPE_INTEGER . ' NOT NULL',
-                'string_value' => Schema::TYPE_STRING . '(255) NOT NULL',
-                'value_entity_id' => Schema::TYPE_INTEGER . ' DEFAULT NULL'
+                'value_id' => $this->integer()->defaultValue(null),
+                'string_value' => $this->string()->defaultValue(null),
+                'value_entity_id' => $this->integer()->defaultValue(null)
             ],
             $tableOptions
         );
@@ -265,7 +266,7 @@ class m150208_123637_create_catalog_tables extends Migration
         $this->createTable(
             '{{%product_option_values}}',
             [
-                'id' => Schema::TYPE_PK,
+                'id' => $this->primaryKey(),
                 'option_id' => Schema::TYPE_INTEGER . ' NOT NULL',
                 'value' => Schema::TYPE_STRING . ' NOT NULL'
             ],
@@ -277,7 +278,7 @@ class m150208_123637_create_catalog_tables extends Migration
         $this->createTable(
             '{{%product_variants}}',
             [
-                'id' => Schema::TYPE_PK,
+                'id' => $this->primaryKey(),
                 'entity_id' => Schema::TYPE_INTEGER . ' DEFAULT NULL',
                 'presentation' => Schema::TYPE_STRING . ' NOT NULL',
                 'sku' => Schema::TYPE_STRING . '(100) NOT NULL',
@@ -296,7 +297,7 @@ class m150208_123637_create_catalog_tables extends Migration
             '{{%product_variant_option_values}}',
             [
                 'product_variant_id' => Schema::TYPE_INTEGER . ' NOT NULL',
-                'option_value_id' => Schema::TYPE_INTEGER . ' NOT NULL'
+                'option_value_id' => ScheSchema::TYPE_STRING . ' NOT NULL',ma::TYPE_INTEGER . ' NOT NULL'
 
             ],
             $tableOptions
@@ -309,18 +310,18 @@ class m150208_123637_create_catalog_tables extends Migration
         $this->createTable(
             '{{%product_files}}',
             [
-                'id' => Schema::TYPE_PK,
-                'product_id' => Schema::TYPE_INTEGER,
-                'attribute' => Schema::TYPE_STRING . '(100) NOT NULL',
-                'filesystem' => Schema::TYPE_STRING . '(100) NOT NULL',
-                'path' => Schema::TYPE_STRING . ' NOT NULL',
-                'title' => Schema::TYPE_STRING . ' NOT NULL',
-                'size' => Schema::TYPE_INTEGER,
-                'mime_type' => Schema::TYPE_STRING . ' NOT NULL',
-                'created_at' => Schema::TYPE_INTEGER,
-                'updated_at' => Schema::TYPE_INTEGER,
-                'sort' => Schema::TYPE_INTEGER,
-                'type' => $this->boolean(),
+                'id' => $this->primaryKey(),
+                'product_id' => $this->integer()->notNull(),
+                'attribute' => $this->string(100)->notNull(),
+                'filesystem' => $this->string(100)->notNull(),
+                'path' => $this->string()->notNull(),
+                'title' => $this->string()->defaultValue(null),
+                'size' => $this->integer()->notNull(),
+                'mime_type' => $this->string()->notNull(),
+                'created_at' => $this->integer()->notNull(),
+                'updated_at' => $this->integer()->notNull(),
+                'sort' => $this->integer()->defaultValue(null),
+                'type' => $this->boolean()->defaultValue(0),
             ],
             $tableOptions
         );

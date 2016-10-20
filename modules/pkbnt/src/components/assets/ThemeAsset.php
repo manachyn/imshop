@@ -7,6 +7,7 @@ use yii\web\AssetBundle;
 /**
  * Class ThemeAsset
  * @package im\pkbnt\components\assets
+ * @author Ivan Manachyn <manachyn@gmail.com>
  */
 class ThemeAsset extends AssetBundle
 {

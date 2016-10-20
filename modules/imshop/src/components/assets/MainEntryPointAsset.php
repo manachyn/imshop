@@ -1,9 +1,14 @@
 <?php
 
-namespace im\imshop;
+namespace im\imshop\components\assets;
 
 use yii\web\AssetBundle;
 
+/**
+ * Class MainEntryPointAsset
+ * @package im\imshop\components\assets
+ * @author Ivan Manachyn <manachyn@gmail.com>
+ */
 class MainEntryPointAsset extends AssetBundle
 {
     /**

@@ -1,0 +1,26 @@
+.list {
+  margin-bottom: 0;
+  padding-left: 0;
+  list-style: none;
+  @include clearfix;
+
+  > li {
+    position: relative;
+    display: block;
+
+    > a {
+      position: relative;
+      display: block;
+    }
+  }
+
+  > li > a > img {
+    max-width: none;
+  }
+
+  &.horizontal {
+    > li {
+      float: left;
+    }
+  }
+}

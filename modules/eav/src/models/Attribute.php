@@ -16,6 +16,7 @@ use yii\helpers\Inflector;
  * @property integer $id
  * @property string $name
  * @property string $presentation
+ * @property string $unit
  * @property string $type
  * @property string $entity_type
  * @property string $field_config_data
@@ -60,7 +61,7 @@ class Attribute extends ActiveRecord implements AttributeInterface
             [['name', 'presentation', 'type'], 'required'],
             //['name', 'unique'],
             ['type', 'default', 'value' => self::DEFAULT_TYPE],
-            [['fieldConfig', 'rulesConfig', 'predefined_values'], 'safe'],
+            [['unit', 'fieldConfig', 'rulesConfig', 'predefined_values'], 'safe'],
         ];
     }
 

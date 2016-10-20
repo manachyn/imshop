@@ -9,6 +9,8 @@
     "test": "tests"
   },
   "dependencies": {
+    "jquery": "^2.2.4",
+    "owl.carousel": "^2.1.4",
     "typeahead.js": "^0.11.1"
   },
   "devDependencies": {
@@ -19,6 +21,7 @@
     "css-loader": "^0.23.1",
     "extract-text-webpack-plugin": "^1.0.1",
     "file-loader": "^0.8.5",
+    "imports-loader": "^0.6.5",
     "style-loader": "^0.13.0",
     "url-loader": "^0.5.7",
     "webpack": "^1.13.0",

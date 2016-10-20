@@ -1,9 +1,14 @@
 <?php
 
-namespace im\imshop;
+namespace im\imshop\components\assets;
 
 use yii\web\AssetBundle;
 
+/**
+ * Class ThemeAsset
+ * @package im\imshop\components\assets
+ * @author Ivan Manachyn <manachyn@gmail.com>
+ */
 class ThemeAsset extends AssetBundle
 {
     /**
@@ -42,6 +47,6 @@ class ThemeAsset extends AssetBundle
      * @inheritdoc
      */
     public $depends = [
-        'im\imshop\FontAwesomeAsset'
+        'im\imshop\components\assets\FontAwesomeAsset'
     ];
 }

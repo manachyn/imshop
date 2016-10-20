@@ -12,7 +12,7 @@ use yii\widgets\ActiveForm;
 
 <?php $form = ActiveForm::begin(['id' => 'content-widget-form', 'options' => ['data-pjax' => 1]]); ?>
 
-<?= $form->field($model, 'banner_id')->textInput() ?>
+<?= $form->field($model, 'model_id')->textInput() ?>
 
 <?= Html::submitButton(
     Module::t('page', 'Save'),

@@ -1,0 +1,20 @@
+{
+    "name": "imsoft/carousel",
+    "description": "Carousel",
+    "version": "1.0.0",
+    "authors": [
+        {
+            "name": "Ivan Manachyn",
+            "email": "manachyn@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "im\\carousel\\": "src/"
+        }
+    },
+    "require": {
+        "bower-asset/OwlCarousel": "*"
+    }
+}

@@ -29,12 +29,18 @@ module.exports = {
         ]
     },
     plugins: [
+           new webpack.ProvidePlugin({
+               $: "jquery",
+               jQuery: "jquery",
+               "window.jQuery": "jquery"
+           }),
         new ExtractTextPlugin("[name].css")
     ],
     resolve: {
         //root: path.resolve(__dirname),
         alias: {
             'im/search': path.join(__dirname, "vendor/imsoft/search/src/assets/js"),
+            'im/carousel': path.join(__dirname, "vendor/imsoft/carousel/src/assets/js"),
         },
         //modulesDirectories: ["node_modules", "vendor/bower"],
         extensions: ['', '.js', '.jsx']

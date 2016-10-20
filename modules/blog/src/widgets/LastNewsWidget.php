@@ -10,6 +10,7 @@ use im\cms\models\widgets\Widget;
  * Class LastNewsWidget
  * @package im\blog\widgets
  * @property int $display_count
+ * @property int $category_id
  */
 class LastNewsWidget extends Widget
 {

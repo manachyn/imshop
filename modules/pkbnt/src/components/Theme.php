@@ -2,8 +2,6 @@
 
 namespace im\pkbnt\components;
 
-use Yii;
-
 /**
  * Class Theme
  * @package im\pkbnt

@@ -51,6 +51,8 @@ webpack-dev-server
 nodejs node_modules/webpack-dev-server/bin/webpack-dev-server.js
 nodejs node_modules/webpack/bin/webpack.js
 
+Create migration
+php yii migrate/create create_banners_tables --migrationPath=@im/cms/migrations
 
 Migrations
 php yii migrate --migrationPath=@im/config/migrations

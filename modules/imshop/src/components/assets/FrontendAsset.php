@@ -1,19 +1,20 @@
 <?php
 
-namespace frontend\assets;
+namespace im\imshop\components\assets;
 
 use yii\web\AssetBundle;
 
 /**
  * Class FrontendAsset
- * @package app\assets
+ * @package im\imshop\components\assets
+ * @author Ivan Manachyn <manachyn@gmail.com>
  */
 class FrontendAsset extends AssetBundle
 {
     /**
      * @inheritdoc
      */
-    public $sourcePath = '@frontend/assets';
+    public $sourcePath = '@im/imshop/assets';
 
     /**
      * @inheritdoc

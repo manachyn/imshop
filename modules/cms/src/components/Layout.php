@@ -26,7 +26,7 @@ class Layout extends Object
     /**
      * @var WidgetArea[]
      */
-    public $_widgetAreas;
+    public $_widgetAreas = [];
 
     /**
      * @var array|WidgetAreaDescriptor[]

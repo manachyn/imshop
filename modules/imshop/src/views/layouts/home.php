@@ -7,7 +7,7 @@
  * @var string $content Content
  */
 
-use im\imshop\HomeAsset;
+use im\imshop\components\assets\HomeAsset;
 use im\imshop\widgets\FlashMessages;
 
 HomeAsset::register($this);

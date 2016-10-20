@@ -6,7 +6,8 @@ use yii\web\AssetBundle;
 
 /**
  * Class FrontendAsset
- * @package app\assets
+ * @package im\pkbnt\components\assets
+ * @author Ivan Manachyn <manachyn@gmail.com>
  */
 class FrontendAsset extends AssetBundle
 {

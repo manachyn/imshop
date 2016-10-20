@@ -3,12 +3,9 @@
 namespace im\catalog\backend\controllers;
 
 use im\base\controllers\CrudController;
-use im\catalog\components\ProductTypeInterface;
 use im\catalog\models\Product;
 use im\catalog\models\ProductSearch;
-use im\catalog\models\ProductType;
 use im\catalog\Module;
-use im\eav\models\Attribute;
 use Yii;
 
 /**
@@ -59,6 +56,6 @@ class ProductController extends CrudController
      */
     protected function createModel()
     {
-        return \Yii::createObject($this->getModelClass());
+        return Yii::createObject($this->getModelClass());
     }
 }

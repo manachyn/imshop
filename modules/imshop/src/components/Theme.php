@@ -1,8 +1,6 @@
 <?php
 
-namespace im\imshop;
-
-use Yii;
+namespace im\imshop\components;
 
 /**
  * IMShop theme.

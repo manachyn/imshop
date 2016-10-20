@@ -47,7 +47,7 @@ if ($model->widgetAreas) {
 </div>
 
 <?php
-$url = Url::to(['layout/form', 'template'=> $model->isNewRecord ? '' : $model->id, 'id' => '']);
+$url = Url::to(['layout/form', 'template' => $model->isNewRecord ? '' : $model->id, 'id' => '']);
 $form = json_encode($form);
 $script = <<<JS
     var layout = $('[name="Template[layout_id]"]'),

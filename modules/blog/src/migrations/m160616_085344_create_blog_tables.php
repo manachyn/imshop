@@ -41,7 +41,8 @@ class m160616_085344_create_blog_tables extends Migration
                 'id' => $this->primaryKey(),
                 'title' => $this->string()->notNull(),
                 'slug' => $this->string(100)->notNull(),
-                'content' => $this->text()->notNull(),
+                'announce' => $this->text()->defaultValue(null),
+                'content' => $this->text()->defaultValue(null),
                 'status' => $this->boolean()->defaultValue(0),
                 'image_id' => $this->integer()->defaultValue(null),
                 'video_id' => $this->integer()->defaultValue(null),
@@ -66,8 +67,8 @@ class m160616_085344_create_blog_tables extends Migration
                 'id' => $this->primaryKey(),
                 'title' => $this->string()->notNull(),
                 'slug' => $this->string(100)->notNull(),
-                'announce' => $this->string()->notNull(),
-                'content' => $this->text()->notNull(),
+                'announce' => $this->text()->defaultValue(null),
+                'content' => $this->text()->defaultValue(null),
                 'status' => $this->boolean()->defaultValue(0),
                 'image_id' => $this->integer()->defaultValue(null),
                 'video_id' => $this->integer()->defaultValue(null),
@@ -91,11 +92,11 @@ class m160616_085344_create_blog_tables extends Migration
                 'id' => $this->primaryKey(),
                 'entity_id' => $this->integer()->defaultValue(null),
                 'entity_type' => $this->string(100)->notNull(),
-                'meta_title' => $this->string()->notNull(),
-                'meta_keywords' => $this->string()->notNull(),
-                'meta_description' => $this->string()->notNull(),
-                'meta_robots' => $this->string(50)->notNull(),
-                'custom_meta' => $this->text()->notNull()
+                'meta_title' => $this->string()->defaultValue(null),
+                'meta_keywords' => $this->string()->defaultValue(null),
+                'meta_description' => $this->string()->defaultValue(null),
+                'meta_robots' => $this->string(50)->defaultValue(null),
+                'custom_meta' => $this->text()->defaultValue(null)
             ],
             $tableOptions
         );
@@ -104,7 +105,73 @@ class m160616_085344_create_blog_tables extends Migration
 
         if ($this->db->schema->getTableSchema('{{%widgets}}', true)) {
             $this->addColumn('{{%widgets}}', 'display_count', $this->integer()->defaultValue(null));
+            $this->addColumn('{{%widgets}}', 'category_id', $this->integer()->defaultValue(null));
+            $this->addColumn('{{%widgets}}', 'columns', $this->integer()->defaultValue(null));
+            $this->addColumn('{{%widgets}}', 'template', $this->integer()->defaultValue(null));
+            $this->createIndex('category_id', '{{%widgets}}', 'category_id');
         }
+
+        // Article categories
+        $this->createTable(
+            '{{%article_categories}}',
+            [
+                'id' => $this->primaryKey(),
+                'tree' => $this->integer()->notNull(),
+                'lft' => $this->integer()->notNull(),
+                'rgt' => $this->integer()->notNull(),
+                'depth' => $this->integer()->notNull(),
+                'name' => $this->string()->notNull(),
+                'slug' => $this->string()->notNull(),
+                'status' => $this->boolean()->defaultValue(1),
+                'created_at' => $this->integer()->defaultValue(null),
+                'updated_at' => $this->integer()->defaultValue(null),
+            ],
+            $tableOptions
+        );
+
+        $this->createIndex('lft_rgt', '{{%article_categories}}', 'lft, rgt');
+        $this->createIndex('depth', '{{%article_categories}}', 'depth');
+        $this->createIndex('tree', '{{%article_categories}}', 'tree');
+
+        // Article categories pivot table
+        $this->createTable('{{%articles_categories}}', [
+            'article_id' => $this->integer()->notNull(),
+            'category_id' => $this->integer()->notNull()
+        ], $tableOptions);
+        $this->addForeignKey('FK_articles_categories_article_id', '{{%articles_categories}}', 'article_id', '{{%articles}}', 'id', 'CASCADE', 'CASCADE');
+        $this->addForeignKey('FK_articles_categories_category_id', '{{%articles_categories}}', 'category_id', '{{%article_categories}}', 'id', 'CASCADE', 'CASCADE');
+
+
+        // News categories
+        $this->createTable(
+            '{{%news_categories}}',
+            [
+                'id' => $this->primaryKey(),
+                'tree' => $this->integer()->notNull(),
+                'lft' => $this->integer()->notNull(),
+                'rgt' => $this->integer()->notNull(),
+                'depth' => $this->integer()->notNull(),
+                'name' => $this->string()->notNull(),
+                'slug' => $this->string()->notNull(),
+                'status' => $this->boolean()->defaultValue(1),
+                'created_at' => $this->integer()->defaultValue(null),
+                'updated_at' => $this->integer()->defaultValue(null),
+            ],
+            $tableOptions
+        );
+
+        $this->createIndex('lft_rgt', '{{%news_categories}}', 'lft, rgt');
+        $this->createIndex('depth', '{{%news_categories}}', 'depth');
+        $this->createIndex('tree', '{{%news_categories}}', 'tree');
+
+        // News categories pivot table
+        $this->createTable('{{%news_categories_pivot}}', [
+            'news_id' => $this->integer()->notNull(),
+            'category_id' => $this->integer()->notNull()
+        ], $tableOptions);
+        $this->addForeignKey('FK_news_categories_pivot_article_id', '{{%news_categories_pivot}}', 'news_id', '{{%news}}', 'id', 'CASCADE', 'CASCADE');
+        $this->addForeignKey('FK_news_categories_pivot_category_id', '{{%news_categories_pivot}}', 'category_id', '{{%news_categories}}', 'id', 'CASCADE', 'CASCADE');
+
     }
 
     /**
@@ -119,6 +186,9 @@ class m160616_085344_create_blog_tables extends Migration
         $this->dropTable('{{%news}}');
         if ($this->db->schema->getTableSchema('{{%widgets}}', true)) {
             $this->dropColumn('{{%widgets}}', 'display_count');
+            $this->dropColumn('{{%widgets}}', 'category_id');
+            $this->dropColumn('{{%widgets}}', 'columns');
+            $this->dropColumn('{{%widgets}}', 'template');
         }
         $this->execute('SET FOREIGN_KEY_CHECKS = 1');
     }

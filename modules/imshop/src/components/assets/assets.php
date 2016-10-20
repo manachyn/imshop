@@ -17,7 +17,7 @@ return [
         'js' => [],
         'css' => [],
         'depends' => [
-            'im\\imshop\\HomeAsset',
+            'im\\imshop\\components\\assets\\HomeAsset',
         ],
     ],
     'yii\\bootstrap\\BootstrapAsset' => [
@@ -25,7 +25,7 @@ return [
         'js' => [],
         'css' => [],
         'depends' => [
-            'im\\imshop\\HomeAsset',
+            'im\\imshop\\components\\assets\\HomeAsset',
         ],
     ],
     'yii\bootstrap\BootstrapPluginAsset' => [
@@ -33,7 +33,7 @@ return [
         'js' => [],
         'css' => [],
         'depends' => [
-            'im\\imshop\\HomeAsset',
+            'im\\imshop\\components\\assets\\HomeAsset',
         ],
     ]
 ];

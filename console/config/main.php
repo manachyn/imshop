@@ -23,7 +23,8 @@ return [
                 'im\rbac\Bootstrap',
                 'im\users\Bootstrap'
             ]
-        ]
+        ],
+        'pkbnt' => 'im\pkbnt\Module',
     ],
     'components' => [
         'log' => [
