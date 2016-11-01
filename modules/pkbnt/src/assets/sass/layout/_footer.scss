@@ -1,3 +1,14 @@
 .footer {
-  background: #14a59e url("../images/footer-green.jpg") no-repeat;
+  background: #14a59e url("../images/footer-green.jpg") no-repeat center;
+  padding: 20px 0;
+  color: #FFF;
+  margin-top: 20px;
+
+  a {
+    color: #FFF;
+  }
+
+  p {
+    margin: 0;
+  }
 }

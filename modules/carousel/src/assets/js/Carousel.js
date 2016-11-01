@@ -1,4 +1,5 @@
 import 'owl.carousel/dist/assets/owl.carousel.css';
+import 'owl.carousel/dist/assets/owl.theme.default.css';
 import $ from 'jquery';
 import 'imports?jQuery=jquery!owl.carousel';
 

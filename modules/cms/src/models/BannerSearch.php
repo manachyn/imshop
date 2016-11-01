@@ -7,9 +7,9 @@ use yii\base\Model;
 use yii\data\ActiveDataProvider;
 
 /**
- * GallerySearch represents the model behind the search form about `im\cms\models\Gallery`.
+ * BannerSearch represents the model behind the search form about `im\cms\models\Banner`.
  */
-class GallerySearch extends Gallery
+class BannerSearch extends Banner
 {
     /**
      * @inheritdoc
@@ -38,7 +38,7 @@ class GallerySearch extends Gallery
      */
     public function search($params)
     {
-        $query = Gallery::find();
+        $query = Banner::find();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

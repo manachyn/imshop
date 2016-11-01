@@ -1,7 +1,21 @@
 <?php
+
+namespace im\forms\components;
+
 /**
- * Created by PhpStorm.
- * User: ubuntu
- * Date: 29.10.16
- * Time: 18:32
+ * Interface FormInterface
+ * @package im\forms\components
+ * @author Ivan Manachyn <manachyn@gmail.com>
  */
+interface FormInterface
+{
+    /**
+     * @return string
+     */
+    public function getName();
+
+    /**
+     * @return string
+     */
+    public function render();
+}

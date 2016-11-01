@@ -3,21 +3,22 @@
 namespace im\blog\frontend\controllers;
 
 use im\base\context\ModelContextInterface;
-use im\blog\models\NewsListPage;
-use im\blog\models\NewsSearch;
+use im\blog\models\ArticleSearch;
+use im\blog\models\ArticlesListPage;
 use Yii;
 use yii\base\Model;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
 /**
- * Class SearchPageController
- * @package im\search\controllers
+ * Class ArticlesListPageController
+ * @package im\blog\frontend\controllers
+ * @author Ivan Manachyn <manachyn@gmail.com>
  */
-class NewsListPageController extends Controller implements ModelContextInterface
+class ArticlesListPageController extends Controller implements ModelContextInterface
 {
     /**
-     * @var NewsListPage
+     * @var ArticlesListPage
      */
     private $_model;
 
@@ -25,7 +26,7 @@ class NewsListPageController extends Controller implements ModelContextInterface
      * Display news list page.
      *
      * @param string $path
-     * @param NewsListPage|null $model
+     * @param ArticlesListPage|null $model
      * @return string
      * @throws NotFoundHttpException
      */
@@ -33,9 +34,10 @@ class NewsListPageController extends Controller implements ModelContextInterface
     {
         $model = $model ?: $this->findModel($path);
         $this->setModel($model);
-        $searchModel = new NewsSearch();
+        $searchModel = new ArticleSearch();
         $searchModel->category_id = $model->category_id;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->pagination->route = '/cms/page/view';
 
         return $this->render('view', [
             'model' => $model,
@@ -63,7 +65,7 @@ class NewsListPageController extends Controller implements ModelContextInterface
      * Find page by path.
      *
      * @param string $path
-     * @return NewsListPage
+     * @return ArticlesListPage
      * @throws NotFoundHttpException
      */
     protected function findModel($path)

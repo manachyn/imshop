@@ -4,3 +4,8 @@
     @include box-shadow(none);
   }
 }
+
+div.required label.control-label:after {
+  content: " *";
+  color: red;
+}

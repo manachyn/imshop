@@ -10,7 +10,6 @@ use Yii;
  *
  * @property integer $id
  * @property integer $widget_id
- * @property string $widget_type
  * @property integer $owner_id
  * @property string $owner_type
  * @property integer $widget_area_id
@@ -32,7 +31,7 @@ class WidgetAreaItem extends ActiveRecord
     public function rules()
     {
         return [
-            [['widget_id', 'widget_type', 'owner_id', 'owner_type', 'widget_area_id', 'sort'], 'safe']
+            [['widget_id', 'owner_id', 'owner_type', 'widget_area_id', 'sort'], 'safe']
         ];
     }
 } 

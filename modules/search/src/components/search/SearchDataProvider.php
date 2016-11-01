@@ -41,7 +41,7 @@ class SearchDataProvider extends BaseDataProvider
         }
         $result = $this->query->result();
         if ($pagination !== false) {
-            $pagination->totalCount = $result->getTotal();
+            $pagination->totalCount = $this->query instanceof ActiveQuery ? $this->getTotalCount() : $result->getTotal();
             $this->setTotalCount($result->getTotal());
         }
 

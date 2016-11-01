@@ -4,6 +4,7 @@ namespace im\cms;
 
 use im\base\routing\ModuleRulesTrait;
 use im\base\types\EntityType;
+use im\cms\frontend\forms\FeedbackForm;
 use yii\base\Application;
 use yii\base\BootstrapInterface;
 use Yii;
@@ -23,10 +24,9 @@ class Bootstrap implements BootstrapInterface
         $this->registerDefinitions();
         $this->registerEntityTypes();
         $this->registerPageTypes();
-        if ($app instanceof \yii\web\Application) {
-            $this->registerWidgets($app);
-        }
+        $this->registerWidgets($app);
         $this->registerSearchableTypes($app);
+        $this->registerForms($app);
         $this->setAliases();
     }
 
@@ -44,7 +44,8 @@ class Bootstrap implements BootstrapInterface
             'fileMap' => [
                 Module::$messagesCategory => 'module.php',
                 Module::$messagesCategory . '/page' => 'page.php',
-                Module::$messagesCategory . '/menu' => 'menu.php'
+                Module::$messagesCategory . '/menu' => 'menu.php',
+                Module::$messagesCategory . '/feedback-request' => 'feedback-request.php'
             ]
         ];
     }
@@ -76,6 +77,8 @@ class Bootstrap implements BootstrapInterface
         $layoutManager = $app->get('layoutManager');
         $layoutManager->registerWidget('im\cms\widgets\ContentWidget');
         $layoutManager->registerWidget('im\cms\widgets\BannerWidget');
+        $layoutManager->registerWidget('im\cms\widgets\MenuWidget');
+        $layoutManager->registerWidget('im\cms\widgets\FormWidget');
     }
 
     /**
@@ -121,6 +124,18 @@ class Bootstrap implements BootstrapInterface
             'searchServiceId' => 'db',
             'searchResultsView' => '@im/cms/frontend/views/page/_site_search_results',
         ]);
+    }
+
+    /**
+     * Register forms
+     *
+     * @param Application $app
+     */
+    public function registerForms($app)
+    {
+        /** @var \im\forms\components\FormsManager $formsManager */
+        $formsManager = $app->get('formsManager');
+        $formsManager->registerForm('feedback', FeedbackForm::class);
     }
 
     /**

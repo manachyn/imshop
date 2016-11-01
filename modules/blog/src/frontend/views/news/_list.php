@@ -3,13 +3,13 @@
 use yii\widgets\ListView;
 
 /* @var $this yii\web\View */
-/* @var $context im\search\models\SearchPage */
-/* @var $dataProvider im\search\components\search\SearchDataProvider */
-/* @var $searchableType im\search\components\searchable\SearchableInterface */
+/* @var $context im\blog\models\NewsListPage */
+/* @var $dataProvider yii\data\ActiveDataProvider */
 
 echo ListView::widget([
+    'id' => 'news-list',
     'dataProvider' => $dataProvider,
-    'itemView' => '@im/blog/frontend/views/news/_site_search_results_item.php',
-    'layout' => "{summary}\n<div class='row'>{items}</div>\n{pager}",
-    'itemOptions' => ['class' => 'col-xs-12 search-results-item search-results-product-category']
+    'itemView' => '_list_item',
+    //'layout' => "{summary}\n<div class='row'>{items}</div>\n{pager}",
+    'itemOptions' => ['class' => 'news-list-item']
 ]);

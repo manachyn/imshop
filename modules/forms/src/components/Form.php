@@ -1,15 +1,24 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: ubuntu
- * Date: 29.10.16
- * Time: 18:33
- */
 
 namespace im\forms\components;
 
-
-class Form
+/**
+ * Class StaticForm
+ * @package im\forms\components
+ * @author Ivan Manachyn <manachyn@gmail.com>
+ */
+abstract class StaticForm implements FormInterface
 {
+    /**
+     * @return string
+     */
+    abstract public function getView();
 
+    /**
+     * @inheritdoc
+     */
+    public function render()
+    {
+        // TODO: Implement render() method.
+    }
 }

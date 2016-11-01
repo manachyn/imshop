@@ -9,6 +9,8 @@ use im\cms\models\widgets\WidgetArea as WidgetAreaModel;
 use yii\base\InvalidConfigException;
 use yii\base\Widget;
 use Yii;
+use yii\helpers\ArrayHelper;
+use yii\helpers\Html;
 use yii\web\Controller;
 
 class WidgetArea extends Widget
@@ -32,6 +34,11 @@ class WidgetArea extends Widget
      * @var mixed
      */
     public $context;
+
+    /**
+     * @var array
+     */
+    public $containerOptions = [];
 
     /**
      * @var WidgetAreaModel
@@ -75,10 +82,19 @@ class WidgetArea extends Widget
     public function run()
     {
         if ($this->_widgetArea) {
+            $options = $this->containerOptions;
+            $tag = ArrayHelper::remove($options, 'tag');
+            Html::addCssClass($options, 'widget-container');
             foreach ($this->_widgetArea->widgets as $widget) {
                 $widget->context = $this->context;
                 if ($output = $widget->run()) {
+                    if ($tag) {
+                        echo Html::beginTag($tag, $options);
+                    }
                     echo "\n" . $output;
+                    if ($tag) {
+                        echo Html::endTag($tag);
+                    }
                 }
             }
         }

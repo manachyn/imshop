@@ -46,22 +46,32 @@ class News extends Article
      */
     public function getUrl($scheme = false)
     {
-        /** @var \im\cms\components\PageFinder $finder */
-        $finder = Yii::$app->get('pageFinder');
-        $newsPage = $finder->findModel(['type' => NewsListPage::TYPE, 'status' => NewsListPage::STATUS_PUBLISHED]);
+//        /** @var \im\cms\components\PageFinder $finder */
+//        $finder = Yii::$app->get('pageFinder');
+//        $newsPage = $finder->findModel(['type' => NewsListPage::TYPE, 'status' => NewsListPage::STATUS_PUBLISHED]);
+//
+//        return $newsPage ? Url::to(['/cms/page/view', 'path' => $newsPage->getUrl() . '/' . $this->slug], $scheme) : '';
 
-        return $newsPage ? Url::to(['/cms/page/view', 'path' => $newsPage->getUrl() . '/' . $this->slug], $scheme) : '';
+        return Url::to(['/cms/page/view', 'path' => $this->slug], $scheme);
     }
 
     /**
      * Get last news.
      *
      * @param int $count
+     * @param int $category
      * @return News[]
      */
-    public static function getLastNews($count = 10)
+    public static function getLastNews($count = 10, $category = null)
     {
-        return static::find()->published()->orderBy(['created_at' => SORT_DESC])->limit($count)->all();
+        $query = static::find()->published()->orderBy(['created_at' => SORT_DESC])->limit($count);
+        if ($category) {
+            $query->innerJoin(
+                '{{%news_categories_pivot}}',
+                '{{%news}}.id = {{%news_categories_pivot}}.news_id AND {{%news_categories_pivot}}.category_id = :category_id', ['category_id' => $category]);
+        }
+
+        return $query->all();
     }
 
     /**

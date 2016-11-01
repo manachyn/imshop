@@ -6,7 +6,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model im\cms\models\widgets\ContentWidget */
+/* @var $model im\cms\widgets\ContentWidget */
 /* @var $form yii\widgets\ActiveForm|im\forms\components\DynamicActiveForm */
 /* @var $fieldConfig array */
 

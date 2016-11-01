@@ -16,6 +16,7 @@ return [
         'cms' => 'im\cms\frontend\Bootstrap',
         'seo' => 'im\seo\frontend\Bootstrap',
         'search' => 'im\search\frontend\Bootstrap',
+        'form' => 'im\forms\Bootstrap',
         //'elasticsearch' => 'im\elasticsearch\Bootstrap',
     ],
     'controllerNamespace' => 'frontend\controllers',
@@ -49,18 +50,19 @@ return [
             'rules' => require(__DIR__ . '/rules.php')
         ],
         'view' => [
-            //'theme' => ['class' => 'im\pkbnt\components\Theme']
+            'theme' => ['class' => 'im\pkbnt\components\Theme']
             //'theme' => ['class' => 'im\imshop\components\Theme']
-            'theme' => ['class' => 'im\viaz\components\Theme']
+            //'theme' => ['class' => 'im\viaz\components\Theme']
         ],
         'assetManager' => [
-            //'bundles' => require(__DIR__ . '/../../vendor/imsoft/pkbnt/src/components/assets/assets.php'),
+            'bundles' => require(__DIR__ . '/../../vendor/imsoft/pkbnt/src/components/assets/assets.php'),
             //'bundles' => require(__DIR__ . '/../../vendor/imsoft/imshop/src/components/assets/assets.php'),
-            'bundles' => require(__DIR__ . '/../../vendor/imsoft/viaz/src/components/assets/assets.php'),
+            //'bundles' => require(__DIR__ . '/../../vendor/imsoft/viaz/src/components/assets/assets.php'),
         ],
         'seo' => 'im\seo\components\Seo',
         'categorySearch' => 'im\catalog\components\search\CategorySearchComponent',
-        'pageFinder' => 'im\cms\components\PageFinder'
+        'pageFinder' => 'im\cms\components\PageFinder',
+        //'shortcodes' => 'im\shortcodes\Shortcode'
     ],
     'params' => $params,
 ];

@@ -6,7 +6,7 @@ return [
         'js' => [],
         'css' => [],
         'depends' => [
-            'im\\pkbnt\\components\\assets\\HomeAsset',
+            //'im\\pkbnt\\components\\assets\\HomeAsset',
         ],
     ],
     'yii\\bootstrap\\BootstrapAsset' => [
@@ -14,7 +14,7 @@ return [
         'js' => [],
         'css' => [],
         'depends' => [
-            'im\\pkbnt\\components\\assets\\HomeAsset',
+            //'im\\pkbnt\\components\\assets\\HomeAsset',
         ],
     ],
     'yii\bootstrap\BootstrapPluginAsset' => [
@@ -22,7 +22,7 @@ return [
         'js' => [],
         'css' => [],
         'depends' => [
-            'im\\pkbnt\\components\\assets\\HomeAsset',
+            //'im\\pkbnt\\components\\assets\\HomeAsset',
         ],
     ]
 ];

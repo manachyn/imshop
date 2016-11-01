@@ -11,9 +11,11 @@ $this->title = $model->title;
 foreach ($model->getParents() as $parent) {
     $this->params['breadcrumbs'][] = ['label' => $parent->title, 'url' => $parent->getUrl()];
 }
-$this->params['breadcrumbs'][] = $this->title;
+if ($model->slug != 'index') {
+    $this->params['breadcrumbs'][] = $model->getUrl();
+}
 //$this->params['model'] = $model;
 ?>
 <div class="typography">
-    <?= $model->content ?>
+    <?= Yii::$app->get('shortcodes')->parse($model->content) ?>
 </div>

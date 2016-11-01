@@ -1,9 +1,8 @@
 <?php
 
 /* @var $this yii\web\View */
-/* @var $model im\search\models\SearchPage */
-/* @var $dataProvider im\search\components\search\SearchDataProvider */
-/* @var $searchableType im\search\components\searchable\SearchableInterface */
+/* @var $model im\blog\models\NewsListPage */
+/* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = $model->title;
 $this->params['breadcrumbs'] = [$this->title];
@@ -16,13 +15,8 @@ $this->params['breadcrumbs'] = [$this->title];
 <?php endif ?>
 
 <?php if ($dataProvider) : ?>
-<div class="search-results">
-<?= $searchableType->getSearchResultsView()
-    ? $this->render($searchableType->getSearchResultsView(), [
-        'context' => $model,
-        'dataProvider' => $dataProvider,
-        'searchableType' => $searchableType
-    ]) : ''
-?>
-</div>
+<?= $this->render('../news/_list', [
+    'context' => $model,
+    'dataProvider' => $dataProvider
+]) ?>
 <?php endif ?>

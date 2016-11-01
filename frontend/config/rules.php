@@ -38,6 +38,16 @@ return [
                 'childRoute' => 'cms/page/child',
                 'modelClass' => 'im\cms\models\Page',
             ],
+            [
+                'class' => 'im\base\routing\ModelRouteResolver',
+                'route' => 'blog/news/view',
+                'modelClass' => 'im\blog\models\News'
+            ],
+            [
+                'class' => 'im\base\routing\ModelRouteResolver',
+                'route' => 'blog/article/view',
+                'modelClass' => 'im\blog\models\Article'
+            ],
         ]
     ]
 ];

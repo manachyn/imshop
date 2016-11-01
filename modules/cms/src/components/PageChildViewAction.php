@@ -19,18 +19,20 @@ class PageChildViewAction extends PageViewAction
      * @throws \yii\web\NotFoundHttpException
      * @return mixed
      */
-    public function run($path, $childPath)
+    public function run($path = 'index', $childPath = null)
     {
-        $model = $this->findModel($path);
-        if (!$model) {
-            throw new NotFoundHttpException('The requested page does not exist.');
-        }
-        if ($model instanceof ModelsListPageInterface) {
-            $childClass = $model->getModelClass();
-            if (is_subclass_of($childClass, PageInterface::class)) {
-                /** @var PageInterface $childClass */
-                if ($route = $childClass::getViewRoute()) {
-                    return Yii::$app->runAction($route, ['path' => $childPath, 'parentPage' => $model]);
+        if ($childPath) {
+            $model = $this->findModel($path);
+            if (!$model) {
+                throw new NotFoundHttpException('The requested page does not exist.');
+            }
+            if ($model instanceof ModelsListPageInterface) {
+                $childClass = $model->getModelClass();
+                if (is_subclass_of($childClass, PageInterface::class)) {
+                    /** @var PageInterface $childClass */
+                    if ($route = $childClass::getViewRoute()) {
+                        return Yii::$app->runAction($route, ['path' => $childPath, 'parentPage' => $model]);
+                    }
                 }
             }
         }

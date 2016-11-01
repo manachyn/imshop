@@ -1,7 +1,7 @@
 <?php
 
 /* @var $this yii\web\View */
-/* @var $model im\blog\models\News */
+/* @var $model im\blog\models\Article */
 /* @var $image im\blog\models\ArticleFile */
 
 ?>

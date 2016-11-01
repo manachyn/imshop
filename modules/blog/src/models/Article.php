@@ -63,7 +63,7 @@ class Article extends ActiveRecord implements PageInterface, \Serializable
     public function behaviors()
     {
         return [
-            'timestamp' => TimestampBehavior::className(),
+            //'timestamp' => TimestampBehavior::className(),
             'sluggable' => [
                 'class' => SluggableBehavior::className(),
                 'attribute' => 'title',
@@ -120,8 +120,7 @@ class Article extends ActiveRecord implements PageInterface, \Serializable
             [['title'], 'required'],
             ['status', 'default', 'value' => self::DEFAULT_STATUS],
             ['status', 'in', 'range' => array_keys(self::getStatusesList())],
-            [['announce'], 'string', 'max' => 255],
-            [['slug', 'content'], 'safe']
+            [['slug', 'announce', 'content'], 'safe']
         ];
     }
 
@@ -160,11 +159,13 @@ class Article extends ActiveRecord implements PageInterface, \Serializable
      */
     public function getUrl($scheme = false)
     {
-        /** @var \im\cms\components\PageFinder $finder */
-        $finder = Yii::$app->get('pageFinder');
-        $articlesPage = $finder->findModel(['type' => ArticlesListPage::TYPE, 'status' => ArticlesListPage::STATUS_PUBLISHED]);
+//        /** @var \im\cms\components\PageFinder $finder */
+//        $finder = Yii::$app->get('pageFinder');
+//        $articlesPage = $finder->findModel(['type' => ArticlesListPage::TYPE, 'status' => ArticlesListPage::STATUS_PUBLISHED]);
+//
+//        return $articlesPage ? Url::to(['/cms/page/view', 'path' => $articlesPage->getUrl() . '/' . $this->slug], $scheme) : '';
 
-        return $articlesPage ? Url::to(['/cms/page/view', 'path' => $articlesPage->getUrl() . '/' . $this->slug], $scheme) : '';
+        return Url::to(['/cms/page/view', 'path' => $this->slug], $scheme);
     }
 
     /**
@@ -219,11 +220,19 @@ class Article extends ActiveRecord implements PageInterface, \Serializable
      * Get last articles.
      *
      * @param int $count
+     * @param int $category
      * @return Article[]
      */
-    public static function getLastArticles($count = 10)
+    public static function getLastArticles($count = 10, $category = null)
     {
-        return static::find()->published()->orderBy(['created_at' => SORT_DESC])->limit($count)->all();
+        $query = static::find()->published()->orderBy(['created_at' => SORT_DESC])->limit($count);
+        if ($category) {
+            $query->innerJoin(
+                '{{%articles_categories}}',
+                '{{%articles}}.id = {{%articles_categories}}.article_id AND {{%articles_categories}}.category_id = :category_id', ['category_id' => $category]);
+        }
+
+        return $query->all();
     }
 
     /**

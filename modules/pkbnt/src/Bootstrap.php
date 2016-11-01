@@ -34,7 +34,9 @@ class Bootstrap implements BootstrapInterface
             'name' => 'Two columns, right sidebar',
             'default' => true,
             'availableWidgetAreas' => [
-                ['class' => 'im\cms\components\WidgetAreaDescriptor', 'code' => 'bottom', 'title' => 'Bottom'],
+                ['class' => 'im\cms\components\WidgetAreaDescriptor', 'code' => 'top', 'title' => 'Top full wide block'],
+                ['class' => 'im\cms\components\WidgetAreaDescriptor', 'code' => 'beforeContent', 'title' => 'Before content'],
+                ['class' => 'im\cms\components\WidgetAreaDescriptor', 'code' => 'afterContent', 'title' => 'After content'],
                 ['class' => 'im\cms\components\WidgetAreaDescriptor', 'code' => 'sidebar', 'title' => 'Sidebar']
             ]
         ]);

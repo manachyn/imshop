@@ -131,7 +131,7 @@ class Page extends Tree implements PageInterface
             'created_at' => Module::t('page', 'Created At'),
             'updated_at' => Module::t('page', 'Updated At'),
             'status' => Module::t('page', 'Status'),
-            'parent' => Module::t('page', 'Parent'),
+            'parentId' => Module::t('page', 'Parent'),
         ];
     }
 

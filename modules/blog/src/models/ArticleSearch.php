@@ -12,6 +12,11 @@ use yii\data\ActiveDataProvider;
 class ArticleSearch extends Article
 {
     /**
+     * @var int
+     */
+    public $category_id;
+
+    /**
      * @inheritdoc
      */
     public function rules()
@@ -74,6 +79,13 @@ class ArticleSearch extends Article
      */
     protected function getQuery()
     {
-        return Article::find();
+        $query = Article::find();
+        if ($this->category_id) {
+            $query->innerJoin(
+                '{{%articles_categories}}',
+                '{{%articles}}.id = {{%articles_categories}}.article_id AND {{%articles_categories}}.category_id = :category_id', ['category_id' => $this->category_id]);
+        }
+
+        return $query;
     }
 }

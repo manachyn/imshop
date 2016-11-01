@@ -22,7 +22,8 @@ class LastNewsWidget extends Widget
     public function rules()
     {
         return array_merge(parent::rules(), [
-            [['display_count'], 'number']
+            [['display_count'], 'number'],
+            [['category_id'], 'integer']
         ]);
     }
 
@@ -67,7 +68,7 @@ class LastNewsWidget extends Widget
     {
         return $this->render('last_news', [
             'widget' => $this,
-            'news' => News::getLastNews($this->display_count)
+            'news' => News::getLastNews($this->display_count, $this->category_id)
         ]);
     }
 }

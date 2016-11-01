@@ -44,6 +44,16 @@ class Category extends Tree
     const DEFAULT_STATUS = self::STATUS_ACTIVE;
 
     /**
+     * @var Category[]
+     */
+    protected $parents = [];
+
+    /**
+     * @var Category|null
+     */
+    protected $parent;
+
+    /**
      * @inheritdoc
      */
     public static function instantiate($row)
@@ -173,5 +183,29 @@ class Category extends Tree
     public static function findByPath($path)
     {
         return static::find()->andWhere(['slug' => $path]);
+    }
+
+    /**
+     * @return Category[]
+     */
+    public function getParents()
+    {
+        if (!$this->parents) {
+            $this->parents = $this->parents()->all();
+        }
+
+        return $this->parents;
+    }
+
+    /**
+     * @return Category|null
+     */
+    public function getParent()
+    {
+        if (!$this->parent) {
+            $this->parent = $this->parents(1)->one();
+        }
+
+        return $this->parent;
     }
 }

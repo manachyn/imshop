@@ -6,11 +6,11 @@ use yii\grid\GridView;
 use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
-/* @var $searchModel im\cms\models\GallerySearch */
+/* @var $searchModel im\cms\models\BannerSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Module::t('gallery', 'Galleries');
-$this->params['subtitle'] = Module::t('gallery', 'Galleries list');
+$this->title = Module::t('banner', 'Banners');
+$this->params['subtitle'] = Module::t('banner', 'Banners list');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="box">

@@ -6,14 +6,15 @@
  * @var im\cms\models\Page $model Model
  */
 
-$this->title = $model->title;
 foreach ($model->getParents() as $parent) {
     $this->params['breadcrumbs'][] = ['label' => $parent->title, 'url' => $parent->getUrl()];
 }
-$this->params['breadcrumbs'][] = $this->title;
+if ($model->slug != 'index') {
+    $this->params['breadcrumbs'][] = $model->title;
+}
 //$this->params['model'] = $model;
 ?>
 <div class="typography">
     <?= $model->content ?>
-    Theme
+    <div class="clearfix"></div>
 </div>

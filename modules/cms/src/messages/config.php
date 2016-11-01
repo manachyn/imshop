@@ -12,13 +12,13 @@
 return [
     'color' => null,
     'interactive' => true,
-    'sourcePath' => '@yii',
-    'messagePath' => 'messages',
+    'sourcePath' => dirname(__DIR__),
+    'messagePath' => __DIR__,
     'languages' => [
         'en',
         'ru',
     ],
-    'translator' => 'Yii::t',
+    'translator' => 'Module::t',
     'sort' => false,
     'overwrite' => true,
     'removeUnused' => false,

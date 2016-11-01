@@ -1,13 +1,10 @@
 <?php
 
-namespace im\search\frontend\controllers;
+namespace im\blog\frontend\controllers;
 
 use im\base\context\ModelContextInterface;
-use im\catalog\models\CategoriesFacetValue;
-use im\search\components\query\QueryResultInterface;
-use im\search\components\search\SearchResultContextInterface;
-use im\search\components\searchable\SearchableInterface;
-use im\search\models\SearchPage;
+use im\blog\models\NewsListPage;
+use im\blog\models\NewsSearch;
 use Yii;
 use yii\base\Model;
 use yii\web\Controller;
@@ -17,73 +14,34 @@ use yii\web\NotFoundHttpException;
  * Class SearchPageController
  * @package im\search\controllers
  */
-class SearchPageController extends Controller implements ModelContextInterface, SearchResultContextInterface
+class NewsListPageController extends Controller implements ModelContextInterface
 {
     /**
-     * @var SearchPage
+     * @var NewsListPage
      */
     private $_model;
 
     /**
-     * @var QueryResultInterface
-     */
-    private $_searchResult;
-
-    /**
-     * @var \im\search\components\SearchManager
-     */
-    private $_searchManager;
-
-    /**
-     * Displays search page.
+     * Display news list page.
      *
      * @param string $path
-     * @param string $type
-     * @param string $query
-     * @param string $text
-     * @param SearchPage|null $model
+     * @param NewsListPage|null $model
      * @return string
      * @throws NotFoundHttpException
      */
-    public function actionView($path, $type = null, $query = '', $text = '', $model = null)
+    public function actionView($path, $model = null)
     {
-        $query = !$query && $text ? 'text=' . $text : $query;
         $model = $model ?: $this->findModel($path);
         $this->setModel($model);
-        $searchManager = $this->getSearchManager();
-        $searchableType = $type ? $searchManager->getSearchableType($type) : $searchManager->getDefaultSearchableType();
-        if ($query) {
-            $searchComponent = $this->getSearchComponent($searchableType);
-            $params = [];
-            if ($searchableType->getType() == 'product') {
-                $params['categoriesFacetValueRouteParams'] = function (CategoriesFacetValue $value) {
-                    return ['path' => $value->getEntity()->slug];
-                };
-            }
-            $dataProvider = $searchComponent->getSearchDataProvider(
-                $searchableType,
-                $query,
-                $searchComponent->getFacets($model),
-                $model,
-                $params
-            );
-            $dataProvider->prepare();
-            $this->_searchResult = $dataProvider->query->result();
-        }
+        $searchModel = new NewsSearch();
+        $searchModel->category_id = $model->category_id;
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->pagination->route = '/cms/page/view';
 
         return $this->render('view', [
             'model' => $model,
-            'dataProvider' => isset($dataProvider) ? $dataProvider : null,
-            'searchableType' => $searchableType
+            'dataProvider' => $dataProvider
         ]);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getResult()
-    {
-        return $this->_searchResult;
     }
 
     /**
@@ -102,12 +60,11 @@ class SearchPageController extends Controller implements ModelContextInterface, 
         $this->_model = $model;
     }
 
-
     /**
-     * Find search page by path.
+     * Find page by path.
      *
      * @param string $path
-     * @return SearchPage
+     * @return NewsListPage
      * @throws NotFoundHttpException
      */
     protected function findModel($path)
@@ -119,33 +76,5 @@ class SearchPageController extends Controller implements ModelContextInterface, 
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
-    }
-
-
-    /**
-     * Returns search manager.
-     *
-     * @return \im\search\components\SearchManager
-     */
-    protected function getSearchManager()
-    {
-        if (!$this->_searchManager) {
-            $this->_searchManager = Yii::$app->get('searchManager');
-        }
-
-        return $this->_searchManager;
-    }
-
-
-    /**
-     * Returns search component.
-     *
-     * @param SearchableInterface $searchableType
-     * @return \im\search\components\search\SearchComponent
-     */
-    protected function getSearchComponent(SearchableInterface $searchableType = null)
-    {
-        return $searchableType && $searchableType->getType() == 'product' ? Yii::$app->get('categorySearch')
-            : $this->getSearchManager()->getSearchComponent();
     }
 }

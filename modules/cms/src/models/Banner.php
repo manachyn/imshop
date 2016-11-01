@@ -3,6 +3,7 @@
 namespace im\cms\models;
 
 use im\base\behaviors\RelationsBehavior;
+use im\base\traits\ModelBehaviorTrait;
 use im\cms\Module;
 use im\filesystem\components\FilesBehavior;
 use im\filesystem\components\FilesystemComponent;
@@ -22,6 +23,8 @@ use yii\db\ActiveRecord;
  */
 class Banner extends ActiveRecord
 {
+    use ModelBehaviorTrait;
+
     const STATUS_ACTIVE = 1;
     const STATUS_INACTIVE = 0;
 
@@ -61,6 +64,9 @@ class Banner extends ActiveRecord
                 'class' => RelationsBehavior::className(),
                 'settings' => [
                     'items' => ['deleteOnUnlink' => true]
+                ],
+                'relations' => [
+                    'itemsRelation' => $this->hasMany(BannerItem::className(), ['banner_id' => 'id'])
                 ]
             ]
         ];
@@ -101,13 +107,5 @@ class Banner extends ActiveRecord
             self::STATUS_ACTIVE => Module::t('banner', 'Active'),
             self::STATUS_INACTIVE => Module::t('banner', 'Inactive')
         ];
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getItemsRelation()
-    {
-        return $this->hasMany(BannerItem::className(), ['banner_id' => 'id']);
     }
 }

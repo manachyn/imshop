@@ -12,6 +12,13 @@ class NewsSearch extends ArticleSearch
      */
     protected function getQuery()
     {
-        return News::find();
+        $query = News::find();
+        if ($this->category_id) {
+            $query->innerJoin(
+                '{{%news_categories_pivot}}',
+                '{{%news}}.id = {{%news_categories_pivot}}.news_id AND {{%news_categories_pivot}}.category_id = :category_id', ['category_id' => $this->category_id]);
+        }
+
+        return $query;
     }
 }

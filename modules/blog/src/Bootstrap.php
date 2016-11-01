@@ -67,6 +67,17 @@ class Bootstrap implements BootstrapInterface
                 'ownerType' => 'news'
             ]
         ]);
+
+        Yii::$container->set('im\blog\models\NewsListPage', [
+            'as seo' => [
+                'class' => 'im\seo\components\SeoBehavior',
+                'metaClass' => 'im\cms\models\PageMeta',
+                'ownerType' => false
+            ],
+            'as template' => [
+                'class' => 'im\cms\components\TemplateBehavior'
+            ]
+        ]);
     }
 
     /**

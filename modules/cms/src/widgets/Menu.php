@@ -17,6 +17,11 @@ class Menu extends Widget
     public $location;
 
     /**
+     * @var int
+     */
+    public $menuId;
+
+    /**
      * @var array the HTML attributes for the widget container tag.
      */
     public $options = [];
@@ -42,8 +47,8 @@ class Menu extends Widget
     public function init()
     {
         parent::init();
-        if ($this->location === null) {
-            throw new InvalidConfigException('The "location" property must be set.');
+        if (!$this->location && !$this->menuId) {
+            throw new InvalidConfigException('The "location" property or "menuId" must be set.');
         }
         Html::addCssClass($this->options, ['widget' => 'nav']);
         if ($this->dropDownCaret === null) {
@@ -58,7 +63,7 @@ class Menu extends Widget
     {
         /** @var \im\cms\components\LayoutManager $layoutManager */
         $layoutManager = Yii::$app->get('layoutManager');
-        $menu = $layoutManager->getMenu($this->location);
+        $menu = $layoutManager->getMenu($this->menuId ? ['id' => $this->menuId] : ['location' => $this->location]);
 
         return $menu ? $this->render('menu/menu', [
             'widget' => $this,

@@ -12,7 +12,7 @@ use yii\widgets\ActiveForm;
 
 ?>
 
-<div class="gallery-form">
+<div class="banner-form">
 
     <?php $form = ActiveForm::begin(['id' => 'template-form', 'fieldClass' => 'im\forms\widgets\ActiveField']); ?>
 
@@ -24,7 +24,7 @@ use yii\widgets\ActiveForm;
         'dataProvider' => new ActiveDataProvider([
             'query' => $model->itemsRelation()->orderBy('sort')
         ]),
-        'itemView' => '@im/cms/backend/views/gallery-item/_form',
+        'itemView' => '@im/cms/backend/views/banner-item/_form',
         'sortable' => true,
         'addLabel' => false,
         'viewParams' => ['form' => $form, 'fieldConfig' => ['namePrefix' => 'uploadedItems']]

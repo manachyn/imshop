@@ -210,6 +210,9 @@ class MenuItem extends Tree implements \Serializable
      */
     public function getHtmlAttributes()
     {
+        if ($this->isActive()) {
+            $this->_htmlAttributes['class'] = isset($this->_htmlAttributes['class']) ? array_merge($this->_htmlAttributes['class'], ['active']) : ['active'];
+        }
         if ($this->css_classes) {
             return array_merge_recursive($this->_htmlAttributes, ['class' => explode(' ', $this->css_classes)]);
         }

@@ -42,6 +42,7 @@ use im\filesystem\components\StorageConfig;
 use Yii;
 use yii\base\Model;
 use yii\console\Controller;
+use yii\db\IntegrityException;
 use yii\db\Query;
 
 /**
@@ -60,6 +61,14 @@ class ImportController extends Controller
      * @var \im\filesystem\components\FilesystemComponent
      */
     protected $filesystemComponent;
+
+    /**
+     * Import all
+     */
+    public function actionIndex()
+    {
+
+    }
 
     /**
      * Import banners
@@ -205,13 +214,25 @@ class ImportController extends Controller
         }
     }
 
+
+    /**
+     * Import articles and news
+     */
+    public function actionArticlesNews()
+    {
+        Article::deleteAll();
+        News::deleteAll();
+        $this->truncateTables(['{{%articles}}', '{{%article_meta}}', '{{%article_files}}', '{{%articles_categories}}']);
+        $this->truncateTables(['{{%news}}', '{{%news_categories_pivot}}']);
+        $this->importArticles();
+        $this->importNews();
+    }
+
     /**
      * Import articles
      */
-    public function actionArticles()
+    protected function importArticles()
     {
-        Article::deleteAll();
-        $this->truncateTables(['{{%articles}}', '{{%article_meta}}', '{{%article_files}}', '{{%articles_categories}}']);
         foreach ($this->getArticlesQuery()->batch(100, $this->getConnection()) as $items) {
             foreach ($items as $item) {
                 /** @var Article $article */
@@ -240,10 +261,8 @@ class ImportController extends Controller
     /**
      * Import news
      */
-    public function actionNews()
+    protected function importNews()
     {
-        Article::deleteAll();
-        $this->truncateTables(['{{%news}}', '{{%news_categories_pivot}}']);
         foreach ($this->getNewsQuery()->batch(100, $this->getConnection()) as $items) {
             foreach ($items as $item) {
                 /** @var News $news */
@@ -485,14 +504,23 @@ class ImportController extends Controller
         Page::deleteAll();
         $this->truncateTables([
             '{{%pages}}',
-            '{{%page_meta}}'
+            '{{%page_meta}}',
+            '{{%templates}}',
+            '{{%widget_areas}}',
+            '{{%widget_area_widgets}}'
         ]);
         foreach ($this->getPagesQuery()->batch(100, $this->getConnection()) as $pages) {
             foreach ($pages as $pageData) {
-                $this->createPageTemplate($pageData['id']);
+                list($template, $content, $pageType) = $this->createPageTemplate($pageData['id']);
+                /** @var Page $page */
                 $page = Yii::createObject(Page::class);
                 $page->attributes = $pageData;
                 $page->id = $pageData['id'];
+                $page->content = $content;
+                $page->template_id = $template->id;
+                if ($pageType) {
+                    $page->type = $pageType;
+                }
                 $page->created_at = strtotime($pageData['created_at']);
                 $page->makeRoot();
 
@@ -514,15 +542,22 @@ class ImportController extends Controller
         }
     }
 
+    /**
+     * @param $pageId
+     * @return array
+     */
     protected function createPageTemplate($pageId)
     {
-        $widgets = $this->getWidgetsQuery()->where(['page_id' => 19])->all($this->getConnection());
-        //$contactWidget = ContentWidget::find()->orderBy(['id' => SORT_DESC])->one();
+        //$this->saveContactsWidget();
+        $widgets = $this->getWidgetsQuery()->where(['page_id' => $pageId])->all($this->getConnection());
+        $contactWidget = ContentWidget::find()->where(['widget_type' => ContentWidget::TYPE])->orderBy(['id' => SORT_DESC])->one();
         $template = new Template(['name' => 'Template ' . $pageId, 'layout_id' => 'main']);
         $template->save();
+        $top = new WidgetArea(['code' => 'top', 'template_id' => $template->id, 'display' => 3]);
         $beforeContent = new WidgetArea(['code' => 'beforeContent', 'template_id' => $template->id, 'display' => 3]);
         $afterContent = new WidgetArea(['code' => 'afterContent', 'template_id' => $template->id, 'display' => 3]);
         $sidebar = new WidgetArea(['code' => 'sidebar', 'template_id' => $template->id, 'display' => 3]);
+        $top->save();
         $beforeContent->save();
         $afterContent->save();
         $sidebar->save();
@@ -542,29 +577,87 @@ class ImportController extends Controller
                 $contentAreas[] = $widgetAreas[$widget['field_number']];
             }
         }
+        $widgetsByArea[5] = [['id' => $contactWidget->id, 'field_number' => 5, 'block_rank' => 1 , 'action' => '']];
         sort($contentAreas);
         $content = '';
+        $pageType = '';
+
         foreach ($contentAreas as $contentArea) {
             $contentAreaWidgets = $widgetsByArea[$contentArea];
-            usort($contentAreaWidgets, function($a, $b) {
-                if ($a['block_rank'] == $b['block_rank']) {
-                    return 0;
-                }
-                return ($a['block_rank'] < $b['block_rank']) ? -1 : 1;
-            });
+            usort($contentAreaWidgets, [ImportController::class, 'cmpWidgets']);
             foreach ($contentAreaWidgets as $widget) {
                 if ($widget['action'] == 'showarticle') {
                     $article = $this->getArticle($widget['property1']);
                     if ($article) {
+                        if ($article['title']) {
+                            $content .= "<h1>{$article['title']}</h1>";
+                        }
                         $content .= $article['text'];
                     }
                 } else {
-                    $content .=
+                    $content .= "\n[widget id={$widget['id']}]\n";
                 }
             }
         }
 
-        $a = 1;
+        ksort($widgetsByArea);
+        foreach ($widgetsByArea as $areaId => $areaWidgets) {
+            if (!in_array($areaId, $contentAreas)) {
+                $i = 1;
+                usort($areaWidgets, [ImportController::class, 'cmpWidgets']);
+                foreach ($areaWidgets as $widget) {
+                    if ($widget['action'] == 'sitemap') {
+                        continue;
+                    }
+                    $widgetAreaItem = new WidgetAreaItem([
+                        'widget_id' => $widget['id'],
+                        'sort' => $i
+                    ]);
+                    if ($contentAreas) {
+                        if ($widgetAreas[$widget['field_number']] < min($contentAreas)) {
+                            $widgetAreaItem->widget_area_id = $beforeContent->id;
+                        } elseif ($widgetAreas[$widget['field_number']] > max($contentAreas)) {
+                            if ($widgetAreas[$widget['field_number']] > 3) {
+                                $widgetAreaItem->widget_area_id = $sidebar->id;
+                            } else {
+                                $widgetAreaItem->widget_area_id = $afterContent->id;
+                            }
+                        }
+                    } else {
+                        if ($widgetAreas[$widget['field_number']] > 3) {
+                            $widgetAreaItem->widget_area_id = $sidebar->id;
+                        } else {
+                            if ($widget['module_id'] == 5 && $widget['action'] == 'archive') {
+                                $pageType = 'news_list_page';
+                                unset($widgetAreaItem);
+                            } elseif ($widget['module_id'] == 17 && $widget['action'] == 'assortment') {
+                                $pageType = 'articles_list_page';
+                                unset($widgetAreaItem);
+                            } else {
+                                $widgetAreaItem->widget_area_id = $afterContent->id;
+                            }
+                        }
+                    }
+                    if (isset($widgetAreaItem)) {
+                        $i++;
+                        try {
+                            $widgetAreaItem->save();
+                        } catch (IntegrityException $e) {
+                            echo "Widget not found: {$widget['id']}", PHP_EOL;
+                        }
+                    }
+                }
+            }
+        }
+
+        return [$template, $content, $pageType];
+    }
+
+    public static function cmpWidgets($a, $b) {
+        if ($a['block_rank'] == $b['block_rank']) {
+            return 0;
+        }
+        return ($a['block_rank'] < $b['block_rank']) ? -1 : 1;
     }
 
     /**
@@ -586,18 +679,22 @@ class ImportController extends Controller
     protected function saveBannerWidget(array $data)
     {
         $banner = $this->getBannerQuery($data['property1'])->one($this->getConnection());
-        if ($banner['type'] == 1) {
-            $widget = new BannerWidget();
-            $widget->model_id = $banner['id'];
-        } else {
-            $widget = new ContentWidget();
-            $widget->content = $banner['text'];
-        }
-        $widget->id = $data['id'];
-        $widget->title = $banner['name'];
-        $widget->save();
+        if ($banner) {
+            if ($banner['type'] == 1) {
+                $widget = new BannerWidget();
+                $widget->model_id = $banner['id'];
+            } else {
+                $widget = new ContentWidget();
+                $widget->content = $banner['text'];
+            }
+            $widget->id = $data['id'];
+            $widget->title = $banner['name'];
+            $widget->save();
 
-        return $widget;
+            return $widget;
+        }
+
+        return null;
     }
 
     /**
@@ -636,6 +733,7 @@ class ImportController extends Controller
     {
         $widget = new LastArticlesWidget();
         $widget->id = $data['id'];
+        $widget->title = 'Статьи по теме';
         if ($data['property1']) {
             $widget->category_id = $data['property1'];
         }
@@ -680,6 +778,8 @@ class ImportController extends Controller
     {
         $widget = new LastNewsWidget();
         $widget->id = $data['id'];
+        $widget->title = 'Новости компании';
+        $widget->display_count = 4;
         $widget->category_id = $data['property1'];
         $widget->save();
 

@@ -13,7 +13,9 @@ class Theme extends \yii\base\Theme
      */
     public $pathMap = [
         '@app/views' => '@im/pkbnt/views',
-        '@app/modules' => '@im/pkbnt/modules',
-        '@app/widgets' => '@im/pkbnt/widgets'
+//        '@app/modules' => '@im/pkbnt/modules',
+//        '@app/widgets' => '@im/pkbnt/widgets',
+        '@im/cms/frontend/views' => '@im/pkbnt/modules/cms/frontend/views',
+        '@im/catalog/views' => '@im/pkbnt/modules/catalog/views'
     ];
 }

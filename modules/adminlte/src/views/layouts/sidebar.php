@@ -72,6 +72,16 @@ $assetsPublishUrl = Yii::$app->assetManager->getPublishedUrl('@vendor/almasaeed2
                                 'label' => Yii::t('app', 'Menus'),
                                 'url' => ['/cms/menu/index'],
                                 'icon' => 'fa fa-circle-o',
+                            ],
+                            [
+                                'label' => Yii::t('app', 'Banners'),
+                                'url' => ['/cms/banner/index'],
+                                'icon' => 'fa fa-circle-o',
+                            ],
+                            [
+                                'label' => Yii::t('app', 'Galleries'),
+                                'url' => ['/cms/gallery/index'],
+                                'icon' => 'fa fa-circle-o',
                             ]
                         ],
                     ],

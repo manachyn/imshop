@@ -4,10 +4,10 @@ use im\cms\Module;
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model im\cms\models\Gallery */
+/* @var $model im\cms\models\Banner */
 
-$this->title = Module::t('template', 'Galleries');
-$this->params['subtitle'] = Module::t('template', 'Gallery updating');
+$this->title = Module::t('template', 'Banners');
+$this->params['subtitle'] = Module::t('template', 'Banner updating');
 $this->params['breadcrumbs'] = [['label' => $this->title, 'url' => ['index']], $this->params['subtitle']];
 ?>
 <div class="box box-success">

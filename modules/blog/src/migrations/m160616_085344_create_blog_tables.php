@@ -111,6 +111,10 @@ class m160616_085344_create_blog_tables extends Migration
             $this->createIndex('category_id', '{{%widgets}}', 'category_id');
         }
 
+        if ($this->db->schema->getTableSchema('{{%pages}}', true)) {
+            $this->addColumn('{{%pages}}', 'category_id', $this->integer()->defaultValue(null));
+        }
+
         // Article categories
         $this->createTable(
             '{{%article_categories}}',
@@ -189,6 +193,9 @@ class m160616_085344_create_blog_tables extends Migration
             $this->dropColumn('{{%widgets}}', 'category_id');
             $this->dropColumn('{{%widgets}}', 'columns');
             $this->dropColumn('{{%widgets}}', 'template');
+        }
+        if ($this->db->schema->getTableSchema('{{%pages}}', true)) {
+            $this->dropColumn('{{%pages}}', 'category_id');
         }
         $this->execute('SET FOREIGN_KEY_CHECKS = 1');
     }

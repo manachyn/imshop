@@ -2,6 +2,7 @@
 
 namespace im\cms\widgets;
 
+use im\cms\models\Banner;
 use im\cms\models\widgets\ModelWidget;
 use im\cms\Module;
 
@@ -46,7 +47,25 @@ class BannerWidget extends ModelWidget
      */
     public function getEditView()
     {
-        return '';
-        //return '@app/modules/cms/backend/views/widgets/banner-widget/_form';
+        return '@im/cms/backend/views/widgets/banner-widget/_form';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function run()
+    {
+        return $this->render('banner', [
+            'widget' => $this,
+            'banner' => $this->loadBanner()
+        ]);
+    }
+
+    /**
+     * @return Banner
+     */
+    private function loadBanner()
+    {
+        return Banner::findOne($this->model_id);
     }
 }

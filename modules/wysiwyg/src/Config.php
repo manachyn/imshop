@@ -28,7 +28,7 @@ class Config extends BaseConfig implements EditableConfigInterface
     /**
      * @var string
      */
-    public $preset = self::PRESET_STANDARD;
+    public $preset = self::PRESET_FULL;
 
     /**
      * @inheritdoc

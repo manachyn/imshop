@@ -5,8 +5,8 @@ return [
         'config' => '\im\config\Bootstrap',
         'seo' => 'im\seo\Bootstrap',
         //'imshop' => 'im\imshop\Bootstrap',
-        //'pkbnt' => 'im\pkbnt\Bootstrap',
-        'viaz' => 'im\viaz\Bootstrap',
+        'pkbnt' => 'im\pkbnt\Bootstrap',
+        //'viaz' => 'im\viaz\Bootstrap',
         'elasticsearc' => 'im\elasticsearch\Bootstrap',
         'tree' => 'im\tree\Bootstrap',
         'catalog' => 'im\catalog\Bootstrap',
@@ -101,6 +101,7 @@ return [
                 ]
             ]
         ],
+        'formsManager' => 'im\forms\components\FormsManager',
     ],
     'controllerMap' => [
         'glide' => 'im\image\glide\controllers\GlideController'

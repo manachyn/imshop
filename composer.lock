@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "90ee664596455756b4b8f26c69675a9c",
-    "content-hash": "4a85266e15f7181e4ee5f1339bad9143",
+    "hash": "7bd7aad6081bc1dade0b921b35bab8f7",
+    "content-hash": "d0fbde5474a972142021a88429081a82",
     "packages": [
         {
             "name": "2amigos/yii2-ckeditor-widget",
@@ -1520,7 +1520,7 @@
             "dist": {
                 "type": "path",
                 "url": "modules/carousel",
-                "reference": "d08592c362e5683b7612e8893b438a5caa6b3874",
+                "reference": null,
                 "shasum": null
             },
             "require": {
@@ -1899,7 +1899,7 @@
             "dist": {
                 "type": "path",
                 "url": "modules/imshop",
-                "reference": "f81d356f795be37533524ef853da6c3bc6874b7a",
+                "reference": null,
                 "shasum": null
             },
             "require": {
@@ -2075,6 +2075,32 @@
             "description": "IM SEO module"
         },
         {
+            "name": "imsoft/shortcodes",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "modules/shortcodes",
+                "reference": "14b98241f868b6349609b4988b5b9771deaf44ac",
+                "shasum": null
+            },
+            "require": {
+                "tpoxa/shortcodes": "dev-master"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "im\\shortcodes\\": "src/"
+                }
+            },
+            "authors": [
+                {
+                    "name": "Ivan Manachyn",
+                    "email": "manachyn@gmail.com"
+                }
+            ],
+            "description": "Shortcodes"
+        },
+        {
             "name": "imsoft/tinymce",
             "version": "1.0.0",
             "dist": {
@@ -2197,7 +2223,7 @@
             "dist": {
                 "type": "path",
                 "url": "modules/viaz",
-                "reference": "99c588507ef95ada83d9e8d904fe2d29686dd4b8",
+                "reference": null,
                 "shasum": null
             },
             "require": {
@@ -3086,6 +3112,43 @@
                 "wysiwyg"
             ],
             "time": "2016-09-01 11:11:25"
+        },
+        {
+            "name": "tpoxa/shortcodes",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tpoxa/yii2-shortcodes.git",
+                "reference": "876b3f7cce394defe4bb7a944af3efa516632e51"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tpoxa/yii2-shortcodes/zipball/876b3f7cce394defe4bb7a944af3efa516632e51",
+                "reference": "876b3f7cce394defe4bb7a944af3efa516632e51",
+                "shasum": ""
+            },
+            "type": "yii2-extension",
+            "autoload": {
+                "psr-4": {
+                    "tpoxa\\shortcodes\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Maksym Trofimenko",
+                    "email": "gtpoxa@gmail.com"
+                }
+            ],
+            "description": "Wordpress style shorttags support for Yii2",
+            "keywords": [
+                "shortcode",
+                "yii2"
+            ],
+            "time": "2014-10-05 12:44:21"
         },
         {
             "name": "yiisoft/yii2",
@@ -5949,6 +6012,7 @@
                 "codeception",
                 "yii2"
             ],
+            "abandoned": "codeception/codeception",
             "time": "2016-03-17 03:41:26"
         },
         {
@@ -6101,7 +6165,9 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "tpoxa/shortcodes": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

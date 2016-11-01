@@ -37,10 +37,11 @@ class PageViewAction extends ModelViewAction implements ModelContextInterface
      * Displays a page.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param string $path page path
-     * @throws \yii\web\NotFoundHttpException
-     * @return string page content
+     * @param string $childPath
+     * @return string
+     * @throws NotFoundHttpException
      */
-    public function run($path = 'index')
+    public function run($path = 'index', $childPath = null)
     {
         $model = $this->findModel($path);
         if (!$model) {

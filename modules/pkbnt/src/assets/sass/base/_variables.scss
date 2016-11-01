@@ -1,14 +1,26 @@
-// Colors
+//== Colors
 $grey1: #f5f5f5 !default;
 $grey2: #c0c0c0 !default;
 $grey3: #999999 !default;
 $grey4: #909090 !default;
 $grey5: #888888 !default;
 $grey6: #606060 !default;
+$grey7: #4f4f4f !default;
 $white: #fff !default;
 $brand-color: #007f79 !default;
 
+//== Scaffolding
+$text-color: $grey7 !default;
+$link-color: $brand-color !default;
 
+//== Typography
+$font-family-sans-serif:  "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif !default;
+
+//== Alternate navbars
+$navbar-default-bg: $white !default;
+$navbar-default-brand-color: $grey7 !default;
+$navbar-default-brand-hover-color: $brand-color !default;
+$navbar-default-link-color: $grey7 !default;
 
 //=== Header
 // Colors

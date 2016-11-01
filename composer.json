@@ -130,6 +130,10 @@
         {
             "type": "path",
             "url": "modules/viaz"
+        },
+        {
+            "type": "path",
+            "url": "modules/shortcodes"
         }
     ],
     "require": {
@@ -153,7 +157,9 @@
         "limion/yii2-jquery-fileupload-widget": "~1.0",
         "2amigos/yii2-file-upload-widget": "~1.0",
         "bower-asset/OwlCarousel": "^1.31",
-        "imsoft/viaz": "*"
+        "imsoft/viaz": "*",
+        "tpoxa/shortcodes": "dev-master",
+        "imsoft/shortcodes": "^1.0"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",

@@ -49,8 +49,8 @@ class m141023_154713_create_cms_tables extends Migration
                 'id' => $this->primaryKey(),
                 'entity_id' => $this->integer()->notNull(),
                 'meta_title' => $this->string()->defaultValue(null),
-                'meta_keywords' => $this->string()->defaultValue(null),
-                'meta_description' => $this->string()->defaultValue(null),
+                'meta_keywords' => $this->text()->defaultValue(null),
+                'meta_description' => $this->text()->defaultValue(null),
                 'meta_robots' => $this->string(50)->defaultValue(null),
                 'custom_meta' => $this->text()->defaultValue(null)
             ],
@@ -178,6 +178,7 @@ class m141023_154713_create_cms_tables extends Migration
                 'id' => $this->primaryKey(),
                 'widget_type' => $this->string(100)->notNull(),
                 'title' => $this->string()->defaultValue(null),
+                'name' => $this->string()->defaultValue(null),
                 'content' => $this->text(),
                 'model_id' => $this->integer()->defaultValue(null)
             ],

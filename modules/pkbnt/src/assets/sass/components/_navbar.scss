@@ -37,3 +37,12 @@
     }
   }
 }
+
+.navbar-default {
+  .navbar-nav {
+    > li > a {
+      text-transform: uppercase;
+      border-radius: $border-radius-base;
+    }
+  }
+}

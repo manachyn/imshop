@@ -4,10 +4,10 @@ use im\cms\Module;
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model im\cms\models\Gallery */
+/* @var $model im\cms\models\Banner */
 
-$this->title = Module::t('gallery', 'Galleries');
-$this->params['subtitle'] = Module::t('gallery', 'Gallery creation');
+$this->title = Module::t('banner', 'Banners');
+$this->params['subtitle'] = Module::t('banner', 'Banner creation');
 $this->params['breadcrumbs'] = [['label' => $this->title, 'url' => ['index']], $this->params['subtitle']];
 ?>
 <div class="box box-primary">

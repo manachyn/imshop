@@ -22,7 +22,7 @@ class WysiwygEditor extends InputWidget
     /**
      * @var string
      */
-    public $preset = Config::PRESET_STANDARD;
+    public $preset = Config::PRESET_FULL;
 
     /**
      * @var array
@@ -51,7 +51,7 @@ class WysiwygEditor extends InputWidget
             $this->clientOptions = array_merge($fileMangerConfig, $this->clientOptions);
         }
         if ($this->editor == Config::EDITOR_CKEDITOR) {
-            $this->clientOptions['extraPlugins'] = 'btgrid,widgetbootstrap,layoutmanager';
+            $this->clientOptions['extraPlugins'] = 'richcombo,format,btgrid,widgetbootstrap,layoutmanager';
         }
         $this->_editor = Yii::createObject([
             'class' => $this->editor == Config::EDITOR_TINYMCE ? TinyMCE::class : CKEditor::class,

@@ -167,25 +167,25 @@ class LayoutManager extends Component
     }
 
     /**
-     * Returns menu by location.
+     * Returns menu by condition.
      *
-     * @param string $location
+     * @param array $condition
      * @return Menu|null
      */
-    public function getMenu($location)
+    public function getMenu(array $condition)
     {
         /** @var \im\cms\components\Cms $cms */
         $cms = Yii::$app->get('cms');
         $cacheManager = $cms->getCacheManager();
         if ($cacheManager) {
             $dataName = Menu::className();
-            $cacheKey = [$dataName, $location];
-            return $cacheManager->getFromCache($dataName, $cacheKey, function () use ($location) {
-                return $this->loadMenu($location);
+            $cacheKey = array_merge([$dataName], $condition);
+            return $cacheManager->getFromCache($dataName, $cacheKey, function () use ($condition) {
+                return $this->loadMenu($condition);
             });
         }
 
-        return $this->loadMenu($location);
+        return $this->loadMenu($condition);
     }
 
     /**
@@ -214,13 +214,13 @@ class LayoutManager extends Component
     /**
      * Loads menu with items from db.
      *
-     * @param string $location
+     * @param array $condition
      * @return Menu
      */
-    private function loadMenu($location)
+    private function loadMenu(array $condition)
     {
         /** @var Menu $menu */
-        $menu = Menu::find()->where(['location' => $location])->one();
+        $menu = Menu::find()->where($condition)->one();
         if ($menu) {
             $items = $menu->getItems()->where(['status' => MenuItem::STATUS_ACTIVE])->with(['icon', 'activeIcon', 'video'])->all();
             if ($items) {

@@ -13,6 +13,8 @@ return [
         'log',
         'eav' => 'im\eav\Bootstrap',
         'variation' => 'im\variation\Bootstrap',
+        'cms' => 'im\cms\Bootstrap',
+        'seo' => 'im\seo\backend\Bootstrap'
     ],
     'controllerNamespace' => 'console\controllers',
     'modules' => [

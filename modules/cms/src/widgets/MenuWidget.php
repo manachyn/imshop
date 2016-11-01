@@ -46,7 +46,16 @@ class MenuWidget extends ModelWidget
      */
     public function getEditView()
     {
-        return '';
-        //return '@app/modules/cms/backend/views/widgets/banner-widget/_form';
+        return '@im/cms/backend/views/widgets/menu-widget/_form';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function run()
+    {
+        return $this->render('menu', [
+            'widget' => $this
+        ]);
     }
 }

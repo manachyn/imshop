@@ -24,6 +24,6 @@ trait ModuleTranslateTrait
     {
         $category = static::$messagesCategory === $category ? $category : static::$messagesCategory . '/' . $category;
 
-        return Yii::t(static::$messagesCategory . '/' . $category, $message, $params, $language);
+        return Yii::t($category, $message, $params, $language);
     }
 }

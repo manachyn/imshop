@@ -8,6 +8,8 @@ use im\filesystem\models\DbFile;
  * Banner item model class.
  *
  * @property int $banner_id
+ * @property string $caption
+ * @property string $link
  */
 class BannerItem extends DbFile
 {
@@ -25,7 +27,8 @@ class BannerItem extends DbFile
     public function rules()
     {
         return array_merge(parent::rules(), [
-            [['banner_id'], 'integer']
+            [['banner_id', 'sort'], 'integer'],
+            [['caption', 'link'], 'safe'],
         ]);
     }
 }

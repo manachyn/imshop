@@ -10,7 +10,7 @@ use yii\bootstrap\NavBar;
 
 ?>
 
-<?php NavBar::begin(['brandLabel' => '<i class="fa fa-home"></i>', 'options' => ['class' => ['navbar-default', 'navbar-mega']]]);
+<?php NavBar::begin(['brandLabel' => '<i class="fa fa-home"></i>', 'options' => ['class' => ['navbar-default', 'navbar-mega', 'navbar-top']]]);
     echo Menu::widget([
         'location' => 'top',
         'itemView' => '@im/pkbnt/views/layouts/top_menu_item',

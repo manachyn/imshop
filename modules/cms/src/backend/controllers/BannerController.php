@@ -3,16 +3,16 @@
 namespace im\cms\backend\controllers;
 
 use im\base\controllers\CrudController;
-use im\cms\models\Gallery;
-use im\cms\models\GallerySearch;
+use im\cms\models\Banner;
+use im\cms\models\BannerSearch;
 use im\cms\Module;
 
 /**
- * Class GalleryController implements the CRUD actions for Gallery model.
- *
+ * Class BannerController
  * @package im\cms\backend\controllers
+ * @author Ivan Manachyn <manachyn@gmail.com>
  */
-class GalleryController extends CrudController
+class BannerController extends CrudController
 {
     /**
      * @inheritdoc
@@ -20,13 +20,13 @@ class GalleryController extends CrudController
     public function init()
     {
         parent::init();
-        $this->successCreate = Module::t('gallery', 'Gallery has been successfully created.');
-        $this->errorCreate = Module::t('gallery', 'Gallery has not been created. Please try again!');
-        $this->successUpdate = Module::t('gallery', 'Gallery has been successfully saved.');
-        $this->successBatchUpdate = Module::t('gallery', '{count} galleries have been successfully saved.');
-        $this->errorUpdate = Module::t('gallery', 'Gallery has not been saved. Please try again!');
-        $this->successDelete = Module::t('gallery', 'Gallery has been successfully deleted.');
-        $this->successBatchDelete = Module::t('gallery', 'Galleries have been successfully deleted.');
+        $this->successCreate = Module::t('banner', 'Banner has been successfully created.');
+        $this->errorCreate = Module::t('banner', 'Banner has not been created. Please try again!');
+        $this->successUpdate = Module::t('banner', 'Banner has been successfully saved.');
+        $this->successBatchUpdate = Module::t('banner', '{count} galleries have been successfully saved.');
+        $this->errorUpdate = Module::t('banner', 'Banner has not been saved. Please try again!');
+        $this->successDelete = Module::t('banner', 'Banner has been successfully deleted.');
+        $this->successBatchDelete = Module::t('banner', 'Galleries have been successfully deleted.');
     }
 
     /**
@@ -34,7 +34,7 @@ class GalleryController extends CrudController
      */
     protected function getModelClass()
     {
-        return Gallery::className();
+        return Banner::className();
     }
 
     /**
@@ -42,6 +42,6 @@ class GalleryController extends CrudController
      */
     protected function getSearchModelClass()
     {
-        return GallerySearch::className();
+        return BannerSearch::className();
     }
 }
