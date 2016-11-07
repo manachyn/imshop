@@ -10,6 +10,7 @@ use im\blog\models\News;
 use im\blog\models\NewsCategory;
 use im\blog\widgets\LastArticlesWidget;
 use im\blog\widgets\LastNewsWidget;
+use im\catalog\models\Manufacturer;
 use im\catalog\models\Product;
 use im\catalog\models\ProductAttribute;
 use im\catalog\models\ProductAttributeValue;
@@ -319,6 +320,22 @@ class ImportController extends Controller
                 $productType->attributes = $item;
                 $productType->id = $item['id'];
                 $productType->save();
+            }
+        }
+    }
+
+    /**
+     * Import manufacturers
+     */
+    public function actionManufacturers()
+    {
+        $this->truncateTables(['{{%manufacturers}}']);
+        foreach ($this->getManufacturersQuery()->batch(100, $this->getConnection()) as $items) {
+            foreach ($items as $item) {
+                $manufacturer = new Manufacturer();
+                $manufacturer->attributes = $item;
+                $manufacturer->id = $item['id'];
+                $manufacturer->save();
             }
         }
     }
@@ -1066,6 +1083,21 @@ class ImportController extends Controller
     /**
      * @return Query
      */
+    protected function getManufacturersQuery()
+    {
+        $query = new Query();
+        $query->select([
+            'id',
+            'ptype_name AS name'
+        ])
+            ->from('site_rus_catalog_ptypes');
+
+        return $query;
+    }
+
+    /**
+     * @return Query
+     */
     protected function getProductsQuery()
     {
         $query = new Query();
@@ -1073,11 +1105,13 @@ class ImportController extends Controller
             'id',
             'category_id',
             'group_id AS type_id',
+            'ptype_id AS manufacturer_id',
             'product_code AS sku',
             'product_title AS title',
             "CONCAT('product', id, '.htm') as slug",
             'product_inf AS short_description',
             'product_description AS description',
+            'product_type AS type',
             '(price_1 / 100) AS price',
             'image_middle AS image1',
             'image_big AS image2',

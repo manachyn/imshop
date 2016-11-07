@@ -42,7 +42,13 @@ class Bootstrap implements BootstrapInterface
             'basePath' => '@im/search/messages',
             'fileMap' => [
                 Module::$messagesCategory => 'module.php',
-                Module::$messagesCategory . '/index' => 'index.php'
+                Module::$messagesCategory . '/facet' => 'facet.php',
+                Module::$messagesCategory . '/facet-set' => 'facet-set.php',
+                Module::$messagesCategory . '/facet-value' => 'facet-value.php',
+                Module::$messagesCategory . '/index' => 'index.php',
+                Module::$messagesCategory . '/index-attribute' => 'index-attribute.php',
+                Module::$messagesCategory . '/search' => 'search.php',
+                Module::$messagesCategory . '/search-widget' => 'search-widget.php'
             ]
         ];
     }

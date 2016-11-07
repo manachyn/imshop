@@ -145,6 +145,14 @@ class Attribute extends ActiveRecord implements AttributeInterface
         return (bool) $this->predefined_values;
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function getUnit()
+    {
+        return $this->unit;
+    }
+
     public function getFieldConfig()
     {
         $config = unserialize($this->field_config_data);

@@ -43,6 +43,11 @@ class Bootstrap implements BootstrapInterface
             'fileMap' => [
                 Module::$messagesCategory => 'module.php',
                 Module::$messagesCategory . '/article' => 'article.php',
+                Module::$messagesCategory . '/news' => 'news.php',
+                Module::$messagesCategory . '/articles-list-page' => 'articles-list-page.php',
+                Module::$messagesCategory . '/news-list-page' => 'news-list-page.php',
+                Module::$messagesCategory . '/last-articles-widget' => 'last-articles-widget.php',
+                Module::$messagesCategory . '/last-news-widget' => 'last-news-widget.php',
             ]
         ];
     }

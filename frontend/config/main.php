@@ -62,7 +62,7 @@ return [
         'seo' => 'im\seo\components\Seo',
         'categorySearch' => 'im\catalog\components\search\CategorySearchComponent',
         'pageFinder' => 'im\cms\components\PageFinder',
-        //'shortcodes' => 'im\shortcodes\Shortcode'
+        'shortcodes' => 'im\shortcodes\Shortcode'
     ],
     'params' => $params,
 ];

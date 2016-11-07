@@ -1,4 +1,7 @@
 .header {
+  .header-row {
+    margin-top: 20px;
+  }
   .top-bar {
     background: $header-top-bar-background;
     color: $header-top-bar-color;
@@ -13,6 +16,12 @@
           padding: 5px 10px;
         }
       }
+    }
+
+    .slogan h2 {
+      font-size: 14px;
+      line-height: 30px;
+      margin: 0;
     }
   }
 
@@ -44,6 +53,7 @@
     .search-bar {
       position: relative;
       margin-bottom: 10px;
+      margin-left: 10px;
       button {
         position: absolute;
         right: 0;

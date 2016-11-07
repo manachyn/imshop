@@ -66,4 +66,11 @@ interface AttributeValueInterface
      * @return string
      */
     public function getType();
+
+    /**
+     * The unit of the attribute value.
+     *
+     * @return string
+     */
+    public function getUnit();
 }

@@ -52,4 +52,11 @@ interface AttributeInterface
      * @return bool
      */
     public function isValuesPredefined();
+
+    /**
+     * The unit of the attribute value.
+     *
+     * @return string
+     */
+    public function getUnit();
 } 

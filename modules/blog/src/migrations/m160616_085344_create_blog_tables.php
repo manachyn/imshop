@@ -106,6 +106,7 @@ class m160616_085344_create_blog_tables extends Migration
         if ($this->db->schema->getTableSchema('{{%widgets}}', true)) {
             $this->addColumn('{{%widgets}}', 'display_count', $this->integer()->defaultValue(null));
             $this->addColumn('{{%widgets}}', 'category_id', $this->integer()->defaultValue(null));
+            $this->addColumn('{{%widgets}}', 'list_url', $this->string()->defaultValue(null));
             $this->addColumn('{{%widgets}}', 'columns', $this->integer()->defaultValue(null));
             $this->addColumn('{{%widgets}}', 'template', $this->integer()->defaultValue(null));
             $this->createIndex('category_id', '{{%widgets}}', 'category_id');
@@ -191,6 +192,7 @@ class m160616_085344_create_blog_tables extends Migration
         if ($this->db->schema->getTableSchema('{{%widgets}}', true)) {
             $this->dropColumn('{{%widgets}}', 'display_count');
             $this->dropColumn('{{%widgets}}', 'category_id');
+            $this->dropColumn('{{%widgets}}', 'list_url');
             $this->dropColumn('{{%widgets}}', 'columns');
             $this->dropColumn('{{%widgets}}', 'template');
         }

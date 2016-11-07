@@ -1,5 +1,7 @@
 <?php
 
+use im\blog\Module;
+
 /* @var $this yii\web\View */
 /* @var $widget im\blog\widgets\LastNewsWidget */
 /* @var $articles im\blog\models\Article[] */
@@ -15,5 +17,8 @@
         <h2 class="last-articles-item-title"><a href="<?= $article->getUrl() ?>"><?= $article->title ?></a></h2>
     </article>
     <?php endforeach ?>
+    <?php if ($widget->list_url) : ?>
+        <a href="<?= $widget->list_url ?>" class="btn btn-default"><?= Module::t('last-articles-widget', 'All articles') ?></a>
+    <?php endif; ?>
 </section>
 <?php endif ?>

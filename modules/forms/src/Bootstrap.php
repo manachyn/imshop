@@ -28,7 +28,7 @@ class Bootstrap implements BootstrapInterface
     public function registerShortcodes($app)
     {
         /** @var \im\shortcodes\Shortcode $shortcodes */
-        //$shortcodes = $app->get('shortcodes');
-        //$shortcodes->register('form', [FormWidget::class, 'widget']);
+        $shortcodes = $app->get('shortcodes');
+        $shortcodes->register('form', [FormWidget::class, 'widget']);
     }
 }

@@ -260,6 +260,16 @@ class AttributeValue extends ActiveRecord implements AttributeValueInterface
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getUnit()
+    {
+        $this->assertAttributeIsSet();
+
+        return $this->getEAttribute()->getUnit();
+    }
+
+    /**
      * @param ActiveForm|array $form
      * @param array $options
      * @return ActiveField

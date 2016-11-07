@@ -43,7 +43,7 @@ trait EavTrait
     }
 
     /**
-     * @inheritdoc
+     * @return AttributeValueInterface[]
      */
     public function getEAttributes()
     {

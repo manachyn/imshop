@@ -16,6 +16,11 @@
     margin-bottom: 0;
 }
 
+/* Forms */
+.form-control.jstree {
+    height: auto;
+}
+
 /* Custom */
 .drop-area {
     background: #f4f4f4;

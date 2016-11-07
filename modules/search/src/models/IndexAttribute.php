@@ -58,16 +58,16 @@ class IndexAttribute extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => Module::t('indexAttribute', 'ID'),
-            'name' => Module::t('indexAttribute', 'Name'),
-            'index_name' => Module::t('indexAttribute', 'Name in index'),
-            'type' => Module::t('indexAttribute', 'Type'),
-            'index_type' => Module::t('indexAttribute', 'Index type'),
-            'label' => Module::t('indexAttribute', 'Label'),
-            'indexable' => Module::t('indexAttribute', 'Indexable'),
-            'full_text_search' => Module::t('indexAttribute', 'Full text search'),
-            'boost' => Module::t('indexAttribute', 'Search boost'),
-            'suggestions' => Module::t('indexAttribute', 'Suggestions')
+            'id' => Module::t('index-attribute', 'ID'),
+            'name' => Module::t('index-attribute', 'Name'),
+            'index_name' => Module::t('index-attribute', 'Name in index'),
+            'type' => Module::t('index-attribute', 'Type'),
+            'index_type' => Module::t('index-attribute', 'Index type'),
+            'label' => Module::t('index-attribute', 'Label'),
+            'indexable' => Module::t('index-attribute', 'Indexable'),
+            'full_text_search' => Module::t('index-attribute', 'Full text search'),
+            'boost' => Module::t('index-attribute', 'Search boost'),
+            'suggestions' => Module::t('index-attribute', 'Suggestions')
         ];
     }
 

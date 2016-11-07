@@ -52,8 +52,8 @@ class FacetSet extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => Module::t('facetSet', 'ID'),
-            'name' => Module::t('facetSet', 'Name')
+            'id' => Module::t('facet-set', 'ID'),
+            'name' => Module::t('facet-set', 'Name')
         ];
     }
 

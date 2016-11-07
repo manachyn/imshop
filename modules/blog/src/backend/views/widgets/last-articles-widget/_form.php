@@ -27,6 +27,8 @@ $fieldConfig = isset($fieldConfig) ? $fieldConfig : [];
 
 <?= $form->field($model, 'display_count', $fieldConfig) ?>
 
+<?= $form->field($model, 'list_url', $fieldConfig) ?>
+
 <?php if (!isset($form)) {
 
     echo Html::submitButton(Module::t('module', 'Save'), ['class' => $model->isNewRecord ? 'btn btn-primary' : 'btn btn-success']);

@@ -15,6 +15,6 @@ if ($model->slug != 'index') {
 //$this->params['model'] = $model;
 ?>
 <div class="typography">
-    <?= $model->content ?>
+    <?= Yii::$app->shortcodes->parse($model->content) ?>
     <div class="clearfix"></div>
 </div>

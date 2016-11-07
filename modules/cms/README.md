@@ -56,3 +56,4 @@ $layoutManager->registerWidgetClass('im\cms\models\ContentWidget');
 
 
 php yii migrate --migrationPath=@im/cms/migrations
+php yii message modules/blog/src/messages/config.php

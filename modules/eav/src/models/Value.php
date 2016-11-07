@@ -54,4 +54,12 @@ class Value extends ActiveRecord
     {
         return $this->hasOne(Attribute::className(), ['id' => 'attribute_id']);
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function __toString()
+    {
+        return $this->presentation;
+    }
 }

@@ -24,7 +24,6 @@ MainAsset::register($this);
 <?php $this->beginBody(); ?>
 <?= FlashMessages::widget(); ?>
 <?= $this->render('//layouts/header') ?>
-<?= $this->render('//layouts/top-menu') ?>
 <div class="widget-area-top">
 <?= WidgetArea::widget([
     'code' => 'top',
@@ -67,13 +66,7 @@ MainAsset::register($this);
         ]) ?>
     </div>
 </div>
-
-<footer class="footer">
-    <div class="container">
-        <p class="pull-left">&copy; <?= date('Y') ?> Вишневый сад. Все права защищены.</p>
-        <p class="pull-right">&nbsp;</p>
-    </div>
-</footer>
+<?= $this->render('//layouts/footer') ?>
 <?php $this->endBody(); ?>
 </body>
 </html>

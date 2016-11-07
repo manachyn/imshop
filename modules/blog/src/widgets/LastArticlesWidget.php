@@ -11,6 +11,7 @@ use im\cms\models\widgets\Widget;
  * @package im\blog\widgets
  * @property int $display_count
  * @property int $category_id
+ * @property int $list_url
  * @property int $columns
  * @property int $template
  */
@@ -25,7 +26,8 @@ class LastArticlesWidget extends Widget
     {
         return array_merge(parent::rules(), [
             [['display_count'], 'number'],
-            [['category_id'], 'integer']
+            [['category_id'], 'integer'],
+            [['list_url'], 'safe'],
         ]);
     }
 
@@ -35,7 +37,9 @@ class LastArticlesWidget extends Widget
     public function attributeLabels()
     {
         return [
-            'display_count' => Module::t('last_articles_widget', 'Articles count to display')
+            'display_count' => Module::t('last-articles-widget', 'Articles count to display'),
+            'category_id' => Module::t('last-articles-widget', 'Articles category'),
+            'list_url' => Module::t('last-articles-widget', 'All articles url'),
         ];
     }
 

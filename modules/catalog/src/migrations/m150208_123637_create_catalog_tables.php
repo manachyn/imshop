@@ -138,9 +138,19 @@ class m150208_123637_create_catalog_tables extends Migration
             '{{%brands}}',
             [
                 'id' => $this->primaryKey(),
-                'name' => Schema::TYPE_STRING . ' NOT NULL',
+                'name' => $this->string()->notNull(),
                 'created_at' => Schema::TYPE_INTEGER . ' NOT NULL',
                 'updated_at' => Schema::TYPE_INTEGER . ' NOT NULL'
+            ],
+            $tableOptions
+        );
+
+        // Manufacturers
+        $this->createTable(
+            '{{%manufacturers}}',
+            [
+                'id' => $this->primaryKey(),
+                'name' => $this->string()->notNull()
             ],
             $tableOptions
         );
@@ -195,20 +205,23 @@ class m150208_123637_create_catalog_tables extends Migration
                 'slug' => Schema::TYPE_STRING . '(100) NOT NULL',
                 'description' => $this->text()->defaultValue(null),
                 'short_description' => $this->text()->defaultValue(null),
+                'type' => $this->string()->defaultValue(null),
                 'quantity' => $this->string()->defaultValue(null),
                 'price' => $this->decimal(10, 2)->notNull(),
                 'availability' => $this->boolean()->defaultValue(1),
                 'status' => $this->boolean()->defaultValue(0),
-                'brand_id' => Schema::TYPE_INTEGER . ' DEFAULT NULL',
-                'type_id' => Schema::TYPE_INTEGER . ' DEFAULT NULL',
+                'brand_id' => $this->integer()->defaultValue(null),
+                'type_id' => $this->integer()->defaultValue(null),
+                'manufacturer_id' => $this->integer()->defaultValue(null),
                 'available_on' => $this->integer()->defaultValue(null),
-                'created_at' => Schema::TYPE_INTEGER . ' NOT NULL',
-                'updated_at' => Schema::TYPE_INTEGER . ' NOT NULL'
+                'created_at' => $this->integer()->notNull(),
+                'updated_at' => $this->integer()->notNull(),
             ],
             $tableOptions
         );
         $this->addForeignKey('FK_products_brand_id', '{{%products}}', 'brand_id', '{{%brands}}', 'id', 'SET NULL', 'CASCADE');
         $this->addForeignKey('FK_products_type_id', '{{%products}}', 'type_id', '{{%product_types}}', 'id', 'SET NULL', 'CASCADE');
+        $this->addForeignKey('FK_products_manufacturer_id', '{{%products}}', 'manufacturer_id', '{{%manufacturers}}', 'id', 'SET NULL', 'CASCADE');
 
         // Product meta
         $this->createTable(

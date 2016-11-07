@@ -1,5 +1,7 @@
 <?php
 
+use im\blog\Module;
+
 /* @var $this yii\web\View */
 /* @var $widget im\blog\widgets\LastNewsWidget */
 /* @var $news im\blog\models\News[] */
@@ -22,5 +24,8 @@
         <p class="last-news-item-announce"><?= $newsItem->announce ?></p>
     </article>
     <?php endforeach ?>
+    <?php if ($widget->list_url) : ?>
+        <a href="<?= $widget->list_url ?>" class="btn btn-default"><?= Module::t('last-news-widget', 'All news') ?></a>
+    <?php endif; ?>
 </section>
 <?php endif ?>

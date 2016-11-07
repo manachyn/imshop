@@ -15,19 +15,13 @@ $assetsPublishUrl = Yii::$app->assetManager->getPublishedUrl('@im/pkbnt/assets')
     <div class="top-bar">
         <div class="container">
             <div class="row">
-                <div class="col-xs-8 contacts">
-                    <ul class="list horizontal">
-                        <li><i class="fa fa-phone"></i> 044 123 45 67</li>
-                        <li><i class="fa fa-envelope"></i> info@domain.com</li>
-                    </ul>
+                <div class="col-xs-8 slogan">
+                    <h2>Теплицы - поликарбонат продажа - строительство конструкций</h2>
                 </div>
                 <div class="col-xs-4">
                     <div class="pull-right social-icons">
                         <ul class="list horizontal">
-                            <li><a href="#" class="facebook"><i class="fa fa-facebook"></i></a></li>
-                            <li><a href="#" class="twitter"><i class="fa fa-twitter"></i></a></li>
-                            <li><a href="#" class="linkedin"><i class="fa fa-linkedin"></i></a></li>
-                            <li><a href="#" class="google-plus"><i class="fa fa-google-plus"></i></a></li>
+                            <li><a href="https://www.facebook.com/polikarbonatvs" class="facebook"><i class="fa fa-facebook"></i></a></li>
                         </ul>
                     </div>
                 </div>
@@ -38,20 +32,23 @@ $assetsPublishUrl = Yii::$app->assetManager->getPublishedUrl('@im/pkbnt/assets')
         <div>
             <div class="container">
                 <div class="row">
-                    <div class="col-sm-4 logo">
+                    <div class="col-sm-3 logo">
                         <a href="<?= Yii::$app->homeUrl ?>"><img src="<?= $assetsPublishUrl ?>/images/logo.jpg"></a>
                     </div>
-                    <div class="col-sm-8">
-                        <div class="row">
-                            <div class="col-xs-6 col-sm-12">
-                                <div class="auth-bar pull-right">
-                                    <a href="" class="btn btn-link">Login</a><a href="" class="btn btn-link">Register</a>
-                                </div>
-                            </div>
-                            <div class="col-xs-6 col-sm-12">
+                    <div class="col-sm-9">
+                        <div class="row header-row">
+                            <div class="col-md-12">
                                 <div class="search-bar pull-right">
                                     <?= SearchWidget::widget(); ?>
                                 </div>
+                                <div class="contacts pull-right">
+                                    <span>044</span> 223-36-07
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row header-row">
+                            <div class="col-sm-12">
+                                <?= $this->render('//layouts/top-menu') ?>
                             </div>
                         </div>
                     </div>

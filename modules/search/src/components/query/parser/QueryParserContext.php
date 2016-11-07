@@ -202,7 +202,9 @@ class QueryParserContext
                 /** @var QueryEntryInterface $entry */
                 $entry = $conjunction[0][0];
                 $subQueries[] = $entry->getQuery();
-                $signs[end(array_keys($subQueries))] = $conjunction[0][1];
+                $keys = array_keys($subQueries);
+                $lastSign = end($keys);
+                $signs[$lastSign] = $conjunction[0][1];
             } else {
                 $subQuery = new Boolean();
                 foreach ($conjunction as $conjunctionEntry) {

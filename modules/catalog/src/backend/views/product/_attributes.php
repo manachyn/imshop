@@ -14,6 +14,8 @@ if (!$attributes) {
 }
 ?>
 
+<?= $form->field($model, 'type')->textInput(['maxlength' => true]) ?>
+
 <?= $form->field($model, 'type_id')->dropDownList(
     ArrayHelper::map(ProductType::find()->asArray()->orderBy('name')->all(), 'id', 'name'),
     ['prompt' => '']

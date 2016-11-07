@@ -36,6 +36,7 @@ use yii\helpers\Url;
  * @property int $updated_at
  *
  * @property ProductType $relatedProductType
+ * @property Manufacturer $manufacturer
  * @property ProductCategory[] $categories
  */
 class Product extends ActiveRecord implements ProductInterface
@@ -126,7 +127,7 @@ class Product extends ActiveRecord implements ProductInterface
         return [
             [['title'], 'required'],
             ['price', 'default', 'value' => 0],
-            [['sku', 'slug', 'short_description', 'description', 'quantity', 'price', 'status', 'brand_id', 'type_id', 'eAttributes', 'categories'], 'safe'],
+            [['sku', 'slug', 'short_description', 'description', 'type', 'quantity', 'price', 'status', 'brand_id', 'type_id', 'manufacturer_id', 'eAttributes', 'categories'], 'safe'],
             [['eAttributes'], 'im\base\validators\RelationValidator'],
             //[['uploadedImages'], 'file', 'skipOnEmpty' => false, 'maxFiles' => 4],
         ];
@@ -149,6 +150,7 @@ class Product extends ActiveRecord implements ProductInterface
             'status' => Module::t('product', 'Status'),
             'brand_id' => Module::t('product', 'Brand'),
             'type_id' => Module::t('product', 'Type'),
+            'type' => Module::t('product', 'Type name'),
             'available_on' => Module::t('product', 'Available On'),
             'created_at' => Module::t('product', 'Created At'),
             'updated_at' => Module::t('product', 'Updated At'),
@@ -181,6 +183,14 @@ class Product extends ActiveRecord implements ProductInterface
     public function getBrandRelation()
     {
         return $this->hasOne(Brand::className(), ['id' => 'brand_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getManufacturerRelation()
+    {
+        return $this->hasOne(Manufacturer::className(), ['id' => 'manufacturer_id']);
     }
 
     /**
@@ -386,6 +396,15 @@ class Product extends ActiveRecord implements ProductInterface
         }
 
         return $this->cover;
+    }
+
+    /**
+     * @param int $type
+     * @return ProductFile
+     */
+    public function getImage($type)
+    {
+        return $this->imagesRelation()->where(['type' => $type])->one();
     }
 
     /**
