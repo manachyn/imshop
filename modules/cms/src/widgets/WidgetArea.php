@@ -85,9 +85,14 @@ class WidgetArea extends Widget
             $options = $this->containerOptions;
             $tag = ArrayHelper::remove($options, 'tag');
             Html::addCssClass($options, 'widget-container');
+            $i = 0;
+            $len = count($this->_widgetArea->widgets);
             foreach ($this->_widgetArea->widgets as $widget) {
                 $widget->context = $this->context;
                 if ($output = $widget->run()) {
+                    if ($i == $len - 1) {
+                        Html::addCssClass($options, 'widget-container-last');
+                    }
                     if ($tag) {
                         echo Html::beginTag($tag, $options);
                     }
@@ -96,6 +101,7 @@ class WidgetArea extends Widget
                         echo Html::endTag($tag);
                     }
                 }
+                $i++;
             }
         }
     }

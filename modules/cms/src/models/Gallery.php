@@ -3,11 +3,11 @@
 namespace im\cms\models;
 
 use im\base\behaviors\RelationsBehavior;
+use im\base\traits\ModelBehaviorTrait;
 use im\cms\Module;
-use im\filesystem\components\FileInterface;
 use im\filesystem\components\FilesBehavior;
-use Intervention\Image\Constraint;
-use Intervention\Image\ImageManagerStatic;
+use im\filesystem\components\FilesystemComponent;
+use im\filesystem\components\StorageConfig;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 
@@ -19,9 +19,12 @@ use yii\db\ActiveRecord;
  * @property integer $created_at
  * @property integer $updated_at
  * @property integer $status
+ * @property GalleryItem[] $items
  */
 class Gallery extends ActiveRecord
 {
+    use ModelBehaviorTrait;
+
     const STATUS_ACTIVE = 1;
     const STATUS_INACTIVE = 0;
 
@@ -48,15 +51,11 @@ class Gallery extends ActiveRecord
                     'uploadedItems' => [
                         'filesystem' => 'local',
                         'path' => '/galleries/{model.id}',
+                        'multiple' => true,
                         'relation' => 'items',
-                        'deleteOnUnlink' => true,
-                        'on beforeSave' => function (FileInterface $file) {
-                            $image = ImageManagerStatic::make($file->getPath());
-                            $image->resize(100, null, function (Constraint $constraint) {
-                                $constraint->aspectRatio();
-                                $constraint->upsize();
-                            });
-                            $image->save($file->getPath(), 100);
+                        'on afterDeleteAll' => function(StorageConfig $config, FilesystemComponent $filesystemComponent) {
+                            $path = $config->resolvePath($this);
+                            $filesystemComponent->deleteDirectory($path, $config->filesystem);
                         }
                     ]
                 ]
@@ -65,6 +64,9 @@ class Gallery extends ActiveRecord
                 'class' => RelationsBehavior::className(),
                 'settings' => [
                     'items' => ['deleteOnUnlink' => true]
+                ],
+                'relations' => [
+                    'itemsRelation' => $this->hasMany(GalleryItem::className(), ['gallery_id' => 'id'])
                 ]
             ]
         ];
@@ -105,13 +107,5 @@ class Gallery extends ActiveRecord
             self::STATUS_ACTIVE => Module::t('gallery', 'Active'),
             self::STATUS_INACTIVE => Module::t('gallery', 'Inactive')
         ];
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function itemsRelation()
-    {
-        return $this->hasMany(MenuItem::className(), ['gallery_id' => 'id']);
     }
 }

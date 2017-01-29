@@ -24,25 +24,55 @@ MainAsset::register($this);
 <?php $this->beginBody(); ?>
 <?= FlashMessages::widget(); ?>
 <?= $this->render('//layouts/header') ?>
-<div class="widget-area-top">
-<?= WidgetArea::widget([
-    'code' => 'top',
-    'layout' => 'main',
-    'context' => $this->context
-]) ?>
-</div>
 <div class="container">
     <div class="row">
+        <div class="col-md-3">
+            <div class="widget-area-top-sidebar">
+                <?= WidgetArea::widget([
+                    'code' => 'topSidebar',
+                    'layout' => 'main',
+                    'context' => $this->context,
+                    'containerOptions' => [
+                        'tag' => 'div'
+                    ]
+                ]) ?>
+            </div>
+        </div>
         <div class="col-md-9">
-            <div class="widget-area-before-content">
-            <?= WidgetArea::widget([
+            <div class="widget-area-top">
+                <?= WidgetArea::widget([
+                    'code' => 'top',
+                    'layout' => 'main',
+                    'context' => $this->context
+                ]) ?>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-9">
+        <?php if (
+            $beforeContent = WidgetArea::widget([
                 'code' => 'beforeContent',
                 'layout' => 'main',
                 'context' => $this->context
-            ]) ?>
+            ])) :
+        ?>
+            <div class="widget-area-before-content">
+            <?= $beforeContent ?>
             </div>
-            <div class="clearfix"></div>
+        <?php endif; ?>
             <?= $this->render('//layouts/content', ['content' => $content]) ?>
+        <?php if (
+            $afterContent = WidgetArea::widget([
+                'code' => 'afterContent',
+                'layout' => 'main',
+                'context' => $this->context
+            ])) :
+        ?>
+            <div class="widget-area-after-content">
+                <?= $afterContent ?>
+            </div>
+        <?php endif; ?>
         </div>
         <div class="col-md-3">
             <aside class="widget-area-sidebar">
@@ -53,17 +83,6 @@ MainAsset::register($this);
             ]) ?>
             </aside>
         </div>
-    </div>
-    <div class="widget-area-after-content row">
-        <?= WidgetArea::widget([
-            'code' => 'afterContent',
-            'layout' => 'main',
-            'context' => $this->context,
-            'containerOptions' => [
-                'tag' => 'div',
-                'class' => 'col-md-6'
-            ]
-        ]) ?>
     </div>
 </div>
 <?= $this->render('//layouts/footer') ?>

@@ -3452,7 +3452,9 @@ div.required label.control-label:after {
   border-radius: 4px; }
 
 .navbar-top {
-  font-size: 13px; }
+  font-size: 12px; }
+  .navbar-top .navbar-nav a {
+    padding: 15px 10px; }
 
 .list-item-xs-1, .list-item-xs-2, .list-item-xs-3, .list-item-xs-4, .list-item-xs-5, .list-item-xs-6, .list-item-xs-7, .list-item-xs-8, .list-item-xs-9, .list-item-xs-10, .list-item-xs-11, .list-item-xs-12 {
   float: left; }
@@ -3851,7 +3853,7 @@ span.twitter-typeahead {
     font-size: 30px; }
 
 .widget-area-top .owl-carousel .item {
-  height: 513px; }
+  height: 665px; }
 
 .widget-area-top .carousel-caption {
   font-size: 20px;
@@ -3893,20 +3895,25 @@ span.twitter-typeahead {
       font-size: 18px; }
     .widget-area-top .carousel-caption h2 {
       font-size: 14px; } }
-.last-news-item-thumb {
-  float: left;
-  margin: 0 15px 5px 0; }
+.widget-area-top-sidebar .owl-carousel .item {
+  height: 150px; }
 
-.last-news-item-title {
-  font-size: 16px;
-  margin: 0 0 5px; }
+.last-news-item {
+  font-size: 12px; }
+  .last-news-item .last-news-item-thumb {
+    float: left;
+    margin: 0 7px 5px 0; }
+  .last-news-item .last-news-item-title {
+    font-size: 14px;
+    margin: 0 0 5px; }
+  .last-news-item .last-news-item-date {
+    color: #606060; }
 
-.last-news-item-date {
-  color: #606060; }
-
-.last-articles-item-title {
-  font-size: 16px;
-  margin: 0 0 5px; }
+.last-articles-item {
+  font-size: 12px; }
+  .last-articles-item .last-articles-item-title {
+    font-size: 14px;
+    margin: 0 0 5px; }
 
 .list-view .news-list-item {
   margin-bottom: 15px; }
@@ -3931,8 +3938,21 @@ span.twitter-typeahead {
 .list-view .search-results-item {
   margin-bottom: 15px; }
 
-.content {
-  margin-bottom: 50px; }
+.footer .nav {
+  list-style: outside none none;
+  margin-left: -5px;
+  padding-left: 0;
+  margin-bottom: 10px; }
+  .footer .nav li {
+    display: inline-block;
+    padding-left: 5px;
+    padding-right: 5px; }
+    .footer .nav li a {
+      display: inline;
+      padding: 0; }
+      .footer .nav li a:focus, .footer .nav li a:hover {
+        background: none;
+        text-decoration: underline; }
 
 .header .header-row {
   margin-top: 20px; }
@@ -3993,14 +4013,16 @@ span.twitter-typeahead {
 .widget-area-top {
   margin-bottom: 20px; }
 
-.widget-area-after-content .widget {
+.widget-area-top-sidebar .widget-container {
   background: #f5f5f5;
-  padding: 20px 30px; }
-  .widget-area-after-content .widget .widget-title {
-    font-size: 24px;
-    font-weight: 300;
-    line-height: 1;
-    margin-bottom: 20px; }
+  padding: 15px 15px 0; }
+  .widget-area-top-sidebar .widget-container.widget-container-last {
+    padding-bottom: 15px; }
+.widget-area-top-sidebar .widget .widget-title {
+  font-size: 18px;
+  font-weight: 300;
+  line-height: 1;
+  margin-bottom: 10px; }
 
 .widget-area-sidebar .widget-title {
   font-size: 20px;

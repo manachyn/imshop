@@ -34,7 +34,8 @@ class Bootstrap implements BootstrapInterface
             'name' => 'Two columns, right sidebar',
             'default' => true,
             'availableWidgetAreas' => [
-                ['class' => 'im\cms\components\WidgetAreaDescriptor', 'code' => 'top', 'title' => 'Top full wide block'],
+                ['class' => 'im\cms\components\WidgetAreaDescriptor', 'code' => 'top', 'title' => 'Top block'],
+                ['class' => 'im\cms\components\WidgetAreaDescriptor', 'code' => 'topSidebar', 'title' => 'Top sidebar'],
                 ['class' => 'im\cms\components\WidgetAreaDescriptor', 'code' => 'beforeContent', 'title' => 'Before content'],
                 ['class' => 'im\cms\components\WidgetAreaDescriptor', 'code' => 'afterContent', 'title' => 'After content'],
                 ['class' => 'im\cms\components\WidgetAreaDescriptor', 'code' => 'sidebar', 'title' => 'Sidebar']
@@ -42,6 +43,7 @@ class Bootstrap implements BootstrapInterface
         ]);
         $layoutManager->registerMenuLocation(['class' => 'im\cms\components\MenuLocationDescriptor', 'code' => 'top', 'name' => 'Top menu']);
         $layoutManager->registerMenuLocation(['class' => 'im\cms\components\MenuLocationDescriptor', 'code' => 'bottom', 'name' => 'Bottom menu']);
+        $layoutManager->registerMenuLocation(['class' => 'im\cms\components\MenuLocationDescriptor', 'code' => 'bottomRight', 'name' => 'Bottom right menu']);
     }
 
     /**

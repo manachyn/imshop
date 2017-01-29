@@ -45,7 +45,8 @@ class m160904_132447_create_banners_tables extends Migration
                 'mime_type' => $this->string()->notNull(),
                 'created_at' => $this->integer()->notNull(),
                 'updated_at' => $this->integer()->notNull(),
-                'sort' => $this->integer()->defaultValue(null)
+                'sort' => $this->integer()->defaultValue(null),
+                'status' => $this->boolean()->defaultValue(1),
             ],
             $tableOptions
         );

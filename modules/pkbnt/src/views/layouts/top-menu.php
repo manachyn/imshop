@@ -18,6 +18,6 @@ use yii\bootstrap\NavBar;
     echo Menu::widget([
         'location' => 'top',
         'itemView' => '@im/pkbnt/views/layouts/top_menu_item',
-        'options' => ['class' => 'navbar-nav navbar-right']
+        'options' => ['class' => 'navbar-nav']
     ]);
 NavBar::end(); ?>

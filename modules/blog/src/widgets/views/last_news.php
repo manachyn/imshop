@@ -1,6 +1,7 @@
 <?php
 
 use im\blog\Module;
+use yii\helpers\StringHelper;
 
 /* @var $this yii\web\View */
 /* @var $widget im\blog\widgets\LastNewsWidget */
@@ -21,11 +22,11 @@ use im\blog\Module;
         <?php } ?>
         <h2 class="last-news-item-title"><a href="<?= $newsItem->getUrl() ?>"><?= $newsItem->title ?></a></h2>
         <div class="last-news-item-date"><?= date('d.m.Y', $newsItem->created_at) ?></div>
-        <p class="last-news-item-announce"><?= $newsItem->announce ?></p>
+        <p class="last-news-item-announce clearfix"><?= StringHelper::truncateWords($newsItem->announce, 5) ?></p>
     </article>
     <?php endforeach ?>
     <?php if ($widget->list_url) : ?>
-        <a href="<?= $widget->list_url ?>" class="btn btn-default"><?= Module::t('last-news-widget', 'All news') ?></a>
+        <a href="<?= $widget->list_url ?>" class="btn btn-default btn-sm"><?= Module::t('last-news-widget', 'All news') ?></a>
     <?php endif; ?>
 </section>
 <?php endif ?>

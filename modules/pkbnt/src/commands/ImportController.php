@@ -23,6 +23,8 @@ use im\catalog\models\ProductType;
 use im\catalog\models\widgets\ProductCategoriesList;
 use im\cms\models\Banner;
 use im\cms\models\BannerItem;
+use im\cms\models\Gallery;
+use im\cms\models\GalleryItem;
 use im\cms\models\Menu;
 use im\cms\models\MenuItem;
 use im\cms\models\Page;
@@ -148,43 +150,44 @@ class ImportController extends Controller
      */
     public function actionWidgets()
     {
-        $this->truncateTables(['{{%widgets}}', '{{%widget_area_widgets}}']);
+//        $this->truncateTables(['{{%widgets}}', '{{%widget_area_widgets}}']);
         foreach ($this->getWidgetsQuery()->batch(100, $this->getConnection()) as $items) {
             foreach ($items as $item) {
                 switch ($item['module_id']) {
                     case 9:
-                        $this->saveBannerWidget($item);
+//                        $this->saveBannerWidget($item);
                         break;
                     case 50:
-                        $this->saveMenuWidget($item);
+//                        $this->saveMenuWidget($item);
                         break;
                     case 7:
                         //$this->saveArticleWidget($item);
                         break;
                     case 19:
-                        $this->saveGalleryWidget($item);
+                        //$this->saveGalleryWidget($item);
+                        $this->updateGalleryWidget($item);
                         break;
                     case 51:
-                        $this->saveArticleCatWidget($item);
+//                        $this->saveArticleCatWidget($item);
                         break;
                     case 52:
-                        $this->saveFeedbackWidget($item);
+//                        $this->saveFeedbackWidget($item);
                         break;
                     case 5:
-                        $this->saveNewsWidget($item);
+//                        $this->saveNewsWidget($item);
                         break;
                     case 3:
                         //$this->savePagesWidget($item); // Sitemap
                         break;
                     case 17:
-                        $this->saveCatalogWidget($item);
+//                        $this->saveCatalogWidget($item);
                         break;
                     default:
                         echo "Unsupported module {$item['module_id']}", PHP_EOL;
                 }
             }
         }
-        $this->saveContactsWidget();
+//        $this->saveContactsWidget();
     }
 
     /**
@@ -227,6 +230,57 @@ class ImportController extends Controller
         $this->truncateTables(['{{%news}}', '{{%news_categories_pivot}}']);
         $this->importArticles();
         $this->importNews();
+    }
+
+    /**
+     * Import galleries
+     */
+    public function actionGalleries()
+    {
+        $this->truncateTables(['{{%galleries}}', '{{%gallery_items}}']);
+
+        foreach ($this->getGalleriesQuery()->batch(100, $this->getConnection()) as $items) {
+            foreach ($items as $item) {
+                $dir = Yii::getAlias('@www/ufiles/gallery/site_rus/' . $item['dir']);
+                if (is_dir($dir)) {
+                    $gallery = new Gallery();
+                    $gallery->id = $item['id'];
+                    $gallery->name = $item['name'];
+                    $gallery->save();
+                    $galleryItems = $this->importGalleryItems($gallery, $dir);
+                    $gallery->items = $galleryItems;
+                    $gallery->save(false);
+                } else {
+                    echo "Gallery directory not found: {$dir}", PHP_EOL;
+                }
+            }
+        }
+    }
+
+    /**
+     * @param Gallery $gallery
+     * @param string $dir
+     * @return GalleryItem[]
+     */
+    protected function importGalleryItems(Gallery $gallery, $dir)
+    {
+        $galleryItems = [];
+        foreach ($this->getGalleryItemsQuery($gallery->id)->batch(100, $this->getConnection()) as $items) {
+            foreach ($items as $item) {
+                $filePath = $dir . DIRECTORY_SEPARATOR . $item['image'];
+                if (is_file($filePath)) {
+                    $galleryItem = new GalleryItem($this->getFileInfo($filePath));
+                    $galleryItem->caption = $item['caption'];
+                    $galleryItem->alt_text = $item['alt_text'];
+                    $galleryItem->status = $item['status'];
+                    $galleryItem->sort = $item['sort'];
+                    $this->saveFile($gallery, 'uploadedItems', $galleryItem);
+                    $galleryItems[] = $galleryItem;
+                }
+            }
+        }
+        
+        return $galleryItems;
     }
 
     /**
@@ -744,6 +798,21 @@ class ImportController extends Controller
 
     /**
      * @param array $data
+     * @return GalleryWidget
+     */
+    protected function updateGalleryWidget(array $data)
+    {
+        $widget = GalleryWidget::findOne($data['id']);
+        $widget->display_title = $data['property4'] == 1 ? 0 : 1;
+        $widget->display_count = $data['property2'];
+        $widget->list_url = $data['linked_page_address'];
+        $widget->save();
+
+        return $widget;
+    }
+
+    /**
+     * @param array $data
      * @return LastArticlesWidget
      */
     protected function saveArticleCatWidget(array $data)
@@ -869,6 +938,43 @@ class ImportController extends Controller
         ])
             ->from('site_rus_banners')
             ->where(['type' => 1]);
+
+        return $query;
+    }
+    
+    /**
+     * @return Query
+     */
+    protected function getGalleriesQuery()
+    {
+        $query = new Query();
+        $query->select([
+            'id',
+            'title AS name',
+            'dir'
+        ])
+            ->from('site_rus_gallery_categories');
+
+        return $query;
+    }
+
+    /**
+     * @param int $galleryId
+     * @return Query
+     */
+    protected function getGalleryItemsQuery($galleryId)
+    {
+        $query = new Query();
+        $query->select([
+            'signature as caption',
+            'alt AS alt_text',
+            'big_image AS image',
+            'active AS status',
+            'idx AS sort',
+            'UNIX_TIMESTAMP(date) AS created_at',
+        ])
+            ->from('site_rus_gallery')
+            ->where(['category_id' => $galleryId]);
 
         return $query;
     }

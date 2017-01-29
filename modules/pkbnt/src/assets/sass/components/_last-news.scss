@@ -1,13 +1,16 @@
-.last-news-item-thumb {
-  float: left;
-  margin: 0 15px 5px 0;
-}
+.last-news-item {
+  font-size: 12px;
+  .last-news-item-thumb {
+    float: left;
+    margin: 0 7px 5px 0;
+  }
 
-.last-news-item-title {
-  font-size: 16px;
-  margin: 0 0 5px;
-}
+  .last-news-item-title {
+    font-size: 14px;
+    margin: 0 0 5px;
+  }
 
-.last-news-item-date {
-  color: $grey6;
+  .last-news-item-date {
+    color: $grey6;
+  }
 }

@@ -16,7 +16,9 @@ $fieldConfig = isset($fieldConfig) ? $fieldConfig : [];
 
 <?php if ($url = $model->getUrl()) : ?>
     <?php if (strpos($model->mime_type, 'image') === 0) : ?>
-        <img src="<?= $url ?>" class="img-responsive">
+        <?php if ($url = $model->getUrl(['w' => 225, 'h' => 126, 'fit' => 'crop'])) : ?>
+            <img src="<?= $url ?>" class="img-responsive">
+        <?php endif ?>
     <?php elseif (strpos($model->mime_type, 'video') === 0) : ?>
         <video width="100%" controls>
             <source src="<?= $url ?>" type="<?= $model->mime_type ?>">
@@ -28,6 +30,14 @@ $fieldConfig = isset($fieldConfig) ? $fieldConfig : [];
 <?= $form->field($model, 'filename', $fieldConfig)->textInput(['maxlength' => true]) ?>
 
 <?= $form->field($model, 'title', $fieldConfig)->textInput(['maxlength' => true]) ?>
+
+<?= $form->field($model, 'caption', $fieldConfig)->textarea(['maxlength' => true]) ?>
+
+<?= $form->field($model, 'alt_text', $fieldConfig)->textInput(['maxlength' => true]) ?>
+
+<?= $form->field($model, 'status', $fieldConfig)->checkbox() ?>
+
+<?= $form->field($model, 'sort', $fieldConfig)->hiddenInput(['data-field' => 'sort'])->label(false) ?>
 
 <?= $form->field($model, 'id', $fieldConfig)->hiddenInput()->label(false) ?>
 

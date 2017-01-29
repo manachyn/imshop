@@ -18,7 +18,7 @@ use im\blog\Module;
     </article>
     <?php endforeach ?>
     <?php if ($widget->list_url) : ?>
-        <a href="<?= $widget->list_url ?>" class="btn btn-default"><?= Module::t('last-articles-widget', 'All articles') ?></a>
+        <a href="<?= $widget->list_url ?>" class="btn btn-default btn-sm"><?= Module::t('last-articles-widget', 'All articles') ?></a>
     <?php endif; ?>
 </section>
 <?php endif ?>

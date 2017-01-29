@@ -39,6 +39,7 @@ module.exports = {
     resolve: {
         //root: path.resolve(__dirname),
         alias: {
+            'im/base': path.join(__dirname, "vendor/imsoft/base/src/assets/js"),
             'im/search': path.join(__dirname, "vendor/imsoft/search/src/assets/js"),
             'im/carousel': path.join(__dirname, "vendor/imsoft/carousel/src/assets/js"),
         },

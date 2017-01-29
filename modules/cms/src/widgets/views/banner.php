@@ -10,7 +10,7 @@
     <?php foreach ($banner->items as $item) { ?>
     <div style="background-image: url(<?= $item->getUrl() ?>)" class="item">
         <?php if ($item->caption) { ?>
-            <div class="carousel-caption container">
+            <div class="carousel-caption container-fluid">
                 <div class="row">
                     <div class="col-sm-12">
                         <?= $item->caption ?>

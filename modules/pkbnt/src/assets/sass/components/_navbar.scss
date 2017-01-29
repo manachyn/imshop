@@ -48,5 +48,10 @@
 }
 
 .navbar-top {
-  font-size: 13px;
+  font-size: 12px;
+  .navbar-nav {
+    a {
+      padding: 15px 10px;
+    }
+  }
 }

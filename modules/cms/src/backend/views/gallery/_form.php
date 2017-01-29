@@ -22,10 +22,14 @@ use yii\widgets\ActiveForm;
     <?= Html::hiddenInput('uploadedItems') ?>
     <?= ListView::widget([
         'dataProvider' => new ActiveDataProvider([
-            'query' => $model->itemsRelation()->orderBy('sort')
+            'query' => $model->itemsRelation()->orderBy('sort'),
+            'pagination' => [
+                'pageSize' => 100
+            ]
         ]),
         'itemView' => '@im/cms/backend/views/gallery-item/_form',
         'sortable' => true,
+        'mode' => ListView::MODE_GRID,
         'addLabel' => false,
         'viewParams' => ['form' => $form, 'fieldConfig' => ['namePrefix' => 'uploadedItems']]
     ]); ?>

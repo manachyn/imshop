@@ -2,7 +2,6 @@
 
 namespace im\cms;
 
-use im\base\routing\ModuleRulesTrait;
 use im\base\types\EntityType;
 use im\cms\frontend\forms\FeedbackForm;
 use yii\base\Application;
@@ -79,6 +78,7 @@ class Bootstrap implements BootstrapInterface
         $layoutManager->registerWidget('im\cms\widgets\BannerWidget');
         $layoutManager->registerWidget('im\cms\widgets\MenuWidget');
         $layoutManager->registerWidget('im\cms\widgets\FormWidget');
+        $layoutManager->registerWidget('im\cms\widgets\GalleryWidget');
     }
 
     /**
