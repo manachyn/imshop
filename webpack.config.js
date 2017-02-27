@@ -34,7 +34,12 @@ module.exports = {
                jQuery: "jquery",
                "window.jQuery": "jquery"
            }),
-        new ExtractTextPlugin("[name].css")
+        new ExtractTextPlugin("[name].css"),
+        // new webpack.optimize.UglifyJsPlugin({
+        //     compress: {
+        //         warnings: false
+        //     }
+        // })
     ],
     resolve: {
         //root: path.resolve(__dirname),

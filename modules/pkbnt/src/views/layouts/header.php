@@ -8,8 +8,6 @@
 
 use im\search\widgets\SearchWidget;
 
-$assetsPublishUrl = Yii::$app->assetManager->getPublishedUrl('@im/pkbnt/assets');
-
 ?>
 <div class="header">
     <div class="top-bar">
@@ -33,7 +31,7 @@ $assetsPublishUrl = Yii::$app->assetManager->getPublishedUrl('@im/pkbnt/assets')
             <div class="container">
                 <div class="row">
                     <div class="col-sm-3 logo">
-                        <a href="<?= Yii::$app->homeUrl ?>"><img src="<?= $assetsPublishUrl ?>/images/logo.jpg"></a>
+                        <a href="<?= Yii::$app->homeUrl ?>"><img src="<?= Yii::$app->assetManager->publish('@im/pkbnt/assets/images/logo.jpg')[1] ?>"></a>
                     </div>
                     <div class="col-sm-9">
                         <div class="row header-row">

@@ -38,7 +38,7 @@ class CacheManager extends \im\base\cache\CacheManager
     {
         return [
             Menu::className(),
-            $menu->location
+            'location' => $menu->location
         ];
     }
 

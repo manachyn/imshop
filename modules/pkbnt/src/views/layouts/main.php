@@ -26,19 +26,7 @@ MainAsset::register($this);
 <?= $this->render('//layouts/header') ?>
 <div class="container">
     <div class="row">
-        <div class="col-md-3">
-            <div class="widget-area-top-sidebar">
-                <?= WidgetArea::widget([
-                    'code' => 'topSidebar',
-                    'layout' => 'main',
-                    'context' => $this->context,
-                    'containerOptions' => [
-                        'tag' => 'div'
-                    ]
-                ]) ?>
-            </div>
-        </div>
-        <div class="col-md-9">
+        <div class="col-md-12">
             <div class="widget-area-top">
                 <?= WidgetArea::widget([
                     'code' => 'top',

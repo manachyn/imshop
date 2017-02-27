@@ -13,6 +13,7 @@ use yii\helpers\StringHelper;
     <?php if ($widget->title) { ?>
         <div class="widget-title last-news-widget-title"><?= $widget->title ?></div>
     <?php } ?>
+    <div class="widget-content">
     <?php foreach($news as $newsItem) : ?>
     <article class="last-news-item">
         <?php if ($image = $newsItem->image) { ?>
@@ -28,5 +29,6 @@ use yii\helpers\StringHelper;
     <?php if ($widget->list_url) : ?>
         <a href="<?= $widget->list_url ?>" class="btn btn-default btn-sm"><?= Module::t('last-news-widget', 'All news') ?></a>
     <?php endif; ?>
+    </div>
 </section>
 <?php endif ?>

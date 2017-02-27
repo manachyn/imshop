@@ -18,7 +18,7 @@ class m150708_151440_create_users_tables extends Migration
             'username' => Schema::TYPE_STRING . '(100) NOT NULL',
             'password_hash' => Schema::TYPE_STRING . ' NOT NULL',
             'auth_key' => Schema::TYPE_STRING . '(32) NOT NULL',
-            'access_token' => Schema::TYPE_STRING . ' NOT NULL',
+            'access_token' => $this->string()->defaultValue(null),
             'email' => Schema::TYPE_STRING . ' NOT NULL',
             'role' => Schema::TYPE_STRING . ' NOT NULL DEFAULT "user"',
             'status' => 'tinyint(1) NOT NULL DEFAULT 1',

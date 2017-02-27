@@ -4,6 +4,7 @@ namespace im\base\controllers;
 
 use Yii;
 use yii\base\Theme;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 
 /**
@@ -17,6 +18,24 @@ class BackendController extends Controller
      * If not set, it means theming is not enabled.
      */
     public $backendTheme;
+
+    /**
+     * @inheritdoc
+     */
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['@']
+                    ],
+                ],
+            ],
+        ];
+    }
 
     /**
      * @inheritdoc

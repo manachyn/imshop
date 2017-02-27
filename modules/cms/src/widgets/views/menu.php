@@ -11,5 +11,7 @@ use im\cms\widgets\Menu;
     <?php if ($widget->title) : ?>
         <h2 class="widget-title"><?= $widget->title ?></h2>
     <?php endif ?>
-    <?= Menu::widget(['menuId' => $widget->model_id]); ?>
+    <div class="widget-content">
+        <?= Menu::widget(['menuId' => $widget->model_id]); ?>
+    </div>
 </div>

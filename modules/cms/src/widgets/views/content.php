@@ -9,7 +9,7 @@
     <?php if ($widget->title) : ?>
         <h2 class="widget-title"><?= $widget->title ?></h2>
     <?php endif ?>
-    <div>
+    <div class="widget-content">
         <?= $widget->content ?>
     </div>
 </div>
